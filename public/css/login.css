@@ -1,0 +1,518 @@
+/* ======================== FONTS ======================== */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.heading-font,
+.section-title,
+.featured-title,
+.campaign-title,
+.btn,
+button,
+.raised,
+.campaign-count,
+.featured-badge,
+.pagination-number {
+    font-family: "Poppins", sans-serif;
+    letter-spacing: -0.01em;
+}
+
+/* Secondary Font Selectors */
+p,
+a,
+li,
+span,
+input,
+select,
+textarea,
+label,
+.body-font,
+.section-desc,
+.featured-desc,
+.filters-label,
+.goal,
+.pagination-info {
+    font-family: "Lato", sans-serif;
+    font-weight: 400;
+    text-decoration: none;
+}
+
+body {
+    font-family: "Lato", sans-serif;
+    margin: 0;
+    background: url('../img/backlogin.png') no-repeat center center fixed;
+    background-size: cover;
+    color: #000000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+
+}
+
+/* Blur overlay for background */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background: rgba(0, 0, 0, 0);
+    filter: blur(px);
+    pointer-events: none;
+}
+
+h2 {
+    font-family: 'Playfair Display', serif;
+}
+
+/* Make the login container a little transparent */
+.login-container {
+    position: relative;
+    z-index: 1;
+    /* CHANGED: Made slightly transparent (0.9) to blend with the sky background */
+    background: rgba(255, 255, 255, 0.9);
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); /* Softer blueish shadow */
+    width: 100%;
+    max-width: 420px;
+    backdrop-filter: blur(5px); /* Added glass effect */
+}
+
+.logo {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.logo img {
+    height: 60px;
+}
+
+.form-group {
+    position: relative;
+    margin-bottom: 24px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 16px 40px 8px 12px;
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.8); /* Slight transparency */
+    /* CHANGED: Border color to Blue-Grey to match theme */
+    border: 1.5px solid #94a3b8; 
+    color: #1e293b; /* Dark Navy Text */
+    border-radius: 7px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.form-group input::placeholder {
+    color: transparent;
+}
+
+.form-group input:focus {
+    /* CHANGED: Focus color to Sky Blue */
+    border-color: #3b82f6;
+    background: #ffffff;
+}
+
+.form-label {
+    position: absolute;
+    top: 16px;
+    left: 12px;
+    color: #64748b; /* Slate grey text */
+    background: transparent; /* Changed to transparent for blending */
+    padding: 0 6px;
+    transition: 0.2s ease all;
+    pointer-events: none;
+}
+
+.form-group input:focus+.form-label,
+.form-group input:not(:placeholder-shown)+.form-label {
+    top: -9px;
+    left: 8px;
+    font-size: 0.8rem;
+    background: white; /* Add white bg only when floating so line doesn't cut through */
+    /* CHANGED: Label color to Sky Blue */
+    color: #3b82f6;
+}
+
+/* Autofilling fix */
+.form-group input:-webkit-autofill {
+    -webkit-text-fill-color: #1e293b !important;
+    /* Changed autofill background to a very light blueish white */
+    -webkit-box-shadow: 0 0 0 1000px #f0f9ff inset !important;
+    box-shadow: 0 0 0 1000px #f0f9ff inset !important;
+}
+
+.form-group input:-moz-autofill {
+    -moz-text-fill-color: #1e293b !important;
+    box-shadow: 0 0 0 1000px #f0f9ff inset !important;
+}
+
+/* Keep the floating label up when autofilled */
+.form-group input:-webkit-autofill+.form-label,
+.form-group input:-moz-autofill+.form-label {
+    top: -9px;
+    left: 8px;
+    font-size: .8rem;
+    background: white;
+    color: #3b82f6;
+}
+
+.password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: #94a3b8; /* Lighter grey */
+}
+
+.password-warning {
+    display: none;
+    font-size: 0.85rem;
+    color: #ef4444; /* Standard Red */
+    margin-top: -12px;
+    margin-bottom: 12px;
+}
+
+.btn-main {
+    width: 100%;
+    padding: 13px;
+    /* CHANGED: Main Button to Sky Blue */
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    box-sizing: border-box;
+    transition: background 0.2s ease;
+}
+
+.btn-main:hover {
+    /* CHANGED: Darker Blue on Hover */
+    background: #2563eb;
+}
+
+.or {
+    text-align: center;
+    color: #64748b;
+    margin: 22px 0 12px;
+}
+
+.or::before,
+.or::after {
+    content: "";
+    display: inline-block;
+    width: 45px;
+    height: 1px;
+    background: #cbd5e1; /* Lighter grey line */
+    vertical-align: middle;
+    margin: 0 10px;
+}
+
+.social-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    /* CHANGED: Social button to Deep Navy Blue */
+    background: #1e293b;
+    color: #fafaff;
+    border: 1px solid #334155;
+    border-radius: 7px;
+    padding: 12px 0;
+    font-weight: 500;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: background 0.2s ease;
+}
+
+.social-btn:hover {
+    /* CHANGED: Slightly lighter navy on hover */
+    background: #0f172a;
+}
+
+.social-btn img {
+    height: 21px;
+    width: 21px;
+}
+
+.subtext {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 0.95rem;
+    color: #334155;
+}
+
+.subtext a {
+    /* CHANGED: Link color to Sky Blue */
+    color: #3b82f6;
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+
+    body {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .login-container {
+        padding: 24px;
+        border-radius: 12px;
+    }
+
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    .login-container {
+        padding: 32px;
+    }
+}
+
+@media (min-width: 1024px) and (max-width: 1439px) {
+    .login-container {
+        padding: 40px;
+    }
+}
+
+.error-box {
+    position: absolute;
+    top: -70px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #ef4444; /* error red */
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 6px;
+    text-align: center;
+    z-index: 10;
+    width: calc(100% - 40px);
+    max-width: 380px;
+    box-sizing: border-box;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    /* fade effect */
+}
+
+.error-box.show {
+    opacity: 1;
+}
+
+.forgot-password {
+    text-align: right;
+    margin-top: -10px;
+    margin-bottom: 8px;
+}
+
+.forgot-password a {
+    color: #475569;
+    font-weight: 500;
+    font-size: 0.95rem;
+    text-decoration: underline;
+    transition: color 0.2s ease;
+}
+
+.forgot-password a:hover {
+    /* CHANGED: Hover color to Sky Blue */
+    color: #3b82f6;
+}
+
+/* ======================== FORGOT PASSWORD MODAL ======================== */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 200;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.6); /* Navy tint opacity */
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+    will-change: opacity;
+}
+
+.modal.active {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    position: relative;
+    /* CHANGED: Modal Background to Deep Navy Blue */
+    background: #1e293b;
+    color: #fafaff;
+    padding: 28px 26px;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    will-change: opacity, transform;
+    text-align: left;
+    min-width: 280px;
+    border: 1px solid #334155;
+}
+
+.modal.active .modal-content {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.modal-content h2 {
+    font-weight: 700;
+    color: #f0f9ff;
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    text-align: center;
+    letter-spacing: 0.5px;
+}
+
+.modal-content form {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-content label {
+    color: #cbd5e1;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.modal-content input {
+    width: 100%;
+    padding: 12px 14px;
+    /* CHANGED: Input background to Darker Navy */
+    background: #0f172a;
+    border: 1.5px solid #334155;
+    color: #fafaff;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+    transition: border 0.2s ease;
+}
+
+.modal-content input:focus {
+    /* CHANGED: Modal Focus to Sky Blue */
+    border-color: #3b82f6;
+    outline: none;
+}
+
+.modal-content input::placeholder {
+    color: #64748b;
+}
+
+.modal-content .btn-main {
+    width: 100%;
+    padding: 13px;
+    /* CHANGED: Button to Sky Blue */
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+    margin-top: -25px;
+}
+
+.modal-content .btn-main:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+}
+
+.close {
+    position: absolute;
+    right: 18px;
+    top: 14px;
+    font-size: 22px;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.close:hover {
+    color: #fff;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    .modal-content {
+        padding: 24px 20px;
+        margin: 0 15px;
+    }
+
+    .modal-content h2 {
+        font-size: 1.2rem;
+    }
+
+    .modal-content input {
+        padding: 10px 12px;
+    }
+}
+
+.alert-message {
+    background: #dfffe1;
+    color: #146c2e;
+    border: 1px solid #b8efb8;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+    display: none;
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #fff;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+    vertical-align: middle;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}

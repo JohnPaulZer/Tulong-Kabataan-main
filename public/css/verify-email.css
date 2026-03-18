@@ -1,0 +1,156 @@
+:root {
+    /* CHANGED: From Purple to Deep Sky Blue to match the artwork strokes */
+    --primary: #2563eb; 
+    
+    /* CHANGED: Hover state color (slightly darker blue) */
+    --primary-hover: #3b82f6;;
+
+    --panel-bg: #ffffff;
+    
+    /* CHANGED: Text is now a very dark blue-grey, softer than black */
+    --text: #263238; 
+    
+    /* CHANGED: Muted text is a lighter blue-grey */
+    --muted: #546E7A; 
+    
+    /* CHANGED: Shadow now has a blue tint instead of purple */
+    --shadow: 0 10px 40px rgba(2, 136, 209, 0.15); 
+}
+
+/* 1. Primary Font Selectors */
+h1, h2, h3, h4, h5, h6,
+.heading-font, .section-title, .featured-title,
+.campaign-title, .btn, button, .raised,
+.campaign-count, .featured-badge, .pagination-number {
+    font-family: "Poppins", sans-serif;
+    letter-spacing: -0.01em;
+}
+
+/* 2. Secondary Font Selectors */
+p, a, li, span, input, select, textarea, label,
+.body-font, .section-desc, .featured-desc,
+.filters-label, .goal, .pagination-info {
+    font-family: "Lato", sans-serif;
+    font-weight: 400;
+    text-decoration: none;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    /* Ensure the path to your image is correct */
+    background: url('../img/backlogin.png') no-repeat center center fixed;
+    background-size: cover;
+    font-family: "Lato", sans-serif;
+    color: var(--text);
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+}
+
+.verify-container {
+    background: var(--panel-bg);
+    border-radius: 16px;
+    padding: 40px;
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+    box-shadow: var(--shadow);
+}
+
+.verify-icon {
+    font-size: 4rem;
+    color: var(--primary);
+    margin-bottom: 20px;
+}
+
+h1 {
+    font-family: "Playfair Display", serif;
+    font-size: 2rem;
+    margin-bottom: 16px;
+    color: var(--text);
+}
+
+.message {
+    color: var(--muted);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.3s;
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--muted);
+    /* Border is now a subtle blue-grey */
+    border: 1px solid #cfd8dc; 
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s;
+}
+
+.btn-secondary:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.success-message,
+.error-message {
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.success-message {
+    background: rgba(72, 187, 120, 0.1);
+    color: #48bb78;
+    border: 1px solid rgba(72, 187, 120, 0.3);
+}
+
+.error-message {
+    background: rgba(245, 101, 101, 0.1);
+    color: #f56565;
+    border: 1px solid rgba(245, 101, 101, 0.3);
+}
+
+.loading {
+    display: none;
+    color: var(--primary);
+    font-weight: 500;
+    margin-top: 20px;
+}
+
+.loading i {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

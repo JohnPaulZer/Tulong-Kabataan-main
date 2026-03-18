@@ -1,0 +1,538 @@
+/* ===========================
+       General Page Styling
+       =========================== */
+
+/* Hero Banner Fix */
+
+h1, h2, h3, h4, h5, h6,
+.heading-font, .section-title, .featured-title, .campaign-title,
+.btn, button, .raised, .campaign-count, .featured-badge, .pagination-number {
+    font-family: "Poppins", sans-serif;
+    letter-spacing: -0.01em;
+}
+
+/* 2. Secondary Font Selectors */
+p, a, li, span, input, select, textarea, label,
+.body-font, .section-desc, .featured-desc, .filters-label,
+.goal, .pagination-info {
+    font-family: "Lato", sans-serif;
+    font-weight: 400;
+    text-decoration: none;
+}
+
+/* --- FIXED HERO BANNER SECTION --- */
+.hero-banner {
+    /* IMPORTANT: Check your file path! 
+       1. If your image is in "public/img/bg1.jpg", use url('/img/bg1.jpg')
+       2. Make sure the file name matches exactly (bg1.jpg vs bg1.JPG or bg1.png)
+    */
+    background: url('/img/bg1.jpg') center/cover no-repeat; 
+    
+    position: relative;
+    color: white;
+    text-align: center;
+    padding: 9rem 1rem;
+    
+    /* Fallback color if image fails to load */
+    background-color: #4f46e5;      
+}
+
+.hero-banner::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    /* I lowered the opacity from 0.7 to 0.6 so the image is more visible */
+    background: rgba(79, 70, 229, 0.6); 
+}
+
+.hero-banner .hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.hero-banner h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: white;
+}
+
+.hero-banner p {
+    font-size: 1.1rem;
+    opacity: 0.95;
+    color: white;
+}
+
+/* --- END HERO BANNER FIX --- */
+
+
+/* Container */
+.form-container {
+    max-width: 720px;
+    margin: -3rem auto 2rem auto;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    padding: 2rem;
+    position: relative;
+    z-index: 2;
+}
+
+/* Header inside form */
+.form-header {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.form-header h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+    color: #222;
+}
+
+.form-header p {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 1rem;
+}
+
+/* Add Item Button */
+.add-item-btn {
+    background: linear-gradient(135deg, #4f46e5, #6366f1);
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 10px rgba(79, 70, 229, 0.3);
+}
+
+.add-item-btn:hover {
+    background: linear-gradient(135deg, #4338ca, #4f46e5);
+    transform: translateY(-1px);
+    box-shadow: 0 5px 14px rgba(79, 70, 229, 0.4);
+}
+
+/* Form Styling */
+.form-card {
+    background: #fafafa;
+    border-radius: 14px;
+    padding: 1.25rem;
+    box-shadow: 0 2px 6px rgba(44, 37, 57, 0.05);
+    margin-bottom: 1.25rem;
+}
+
+.donation-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem; /* Added from later rule */
+}
+
+.form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem; /* Added from later rule */
+}
+
+/* Merged Input Styles */
+.input-field,
+textarea,
+select {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid #E5E7EB;
+    border-radius: 10px;
+    font-size: 1rem;
+    background: #fff;
+    box-sizing: border-box;
+    font-family: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    margin-top: 0.2rem;
+}
+
+.input-field:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: #6366F1;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
+}
+
+/* Label styling */
+.form-group label {
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #374151;
+}
+
+/* Input note under fields */
+.input-note {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-top: 0.2rem;
+    font-style: italic;
+}
+
+/* Textarea height adjustment */
+textarea {
+    min-height: 90px;
+    resize: vertical;
+}
+
+/* Item Rows Styling */
+.item-row {
+    margin-bottom: 1.25rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 1.25rem;
+    background: #ffffff;
+    transition: all 0.3s ease;
+}
+
+.item-row:hover {
+    border-color: #c7d2fe;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+.item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.item-header h3 {
+    margin: 0;
+    color: #374151;
+    font-size: 1.1rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #4f46e5, #6366f1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.remove-item-btn {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.3s ease;
+}
+
+.remove-item-btn:hover {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    transform: translateY(-1px);
+}
+
+/* Availability Section */
+.location-availability {
+    background: linear-gradient(135deg, #eef4ff, #dbeafe);
+    border-radius: 14px;
+    padding: 1.25rem;
+    margin-top: 0.5rem;
+    border: 1px solid #dbeafe;
+}
+
+.location-title {
+    font-weight: 700;
+    color: #2563eb;
+    font-size: 1rem;
+    margin-bottom: 0.6rem;
+    display: block;
+}
+
+.location-availability ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.location-availability li {
+    font-size: 0.9rem;
+    color: #1e40af;
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.2rem 0;
+}
+
+.dot.blue {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #2563eb;
+    flex-shrink: 0;
+}
+
+/* Checkbox */
+.checkbox-section {
+    margin-top: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    background: #f8fafc;
+    padding: 1.25rem;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+}
+
+.checkbox-section div {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+}
+
+.checkbox-section input[type="checkbox"] {
+    margin-top: 0.2rem;
+    transform: scale(1.1);
+    accent-color: #4f46e5;
+}
+
+.checkbox-section label {
+    font-size: 0.9rem;
+    color: #374151;
+    line-height: 1.4;
+    font-weight: 500;
+}
+
+/* Submit Button */
+.submit-button {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.submit-button button {
+    padding: 0.9rem 2.5rem;
+    background: linear-gradient(135deg, #4F46E5, #6366F1);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+}
+
+.submit-button button:hover {
+    background: linear-gradient(135deg, #4338CA, #4F46E5);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5);
+}
+
+/* =========================
+       RESPONSIVE FIXES ONLY
+       ========================= */
+
+/* ---- Tablet (≤1023px) ---- */
+@media (max-width: 1023px) {
+    .form-container {
+        width: min(94vw, 720px);
+        padding: 1.5rem 1.25rem;
+    }
+
+    .form-row {
+        gap: 0.8rem;
+    }
+
+    .hero-banner h1 {
+        font-size: 2rem;
+    }
+
+    .hero-banner p {
+        font-size: 1rem;
+    }
+
+    .item-row {
+        padding: 1rem;
+    }
+}
+
+/* ---- Mobile (≤767px) ---- */
+@media (max-width: 767px) {
+    html, body {
+        font-size: 15px;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    .hero-banner {
+        padding: calc(72px + 1.5rem) 1rem 2rem;
+        min-height: 200px;
+        text-align: center;
+    }
+
+    .hero-banner .hero-content {
+        padding: 70px 0.25rem;
+    }
+
+    .hero-banner h1 {
+        font-size: 1.6rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .hero-banner p {
+        font-size: 0.9rem;
+    }
+
+    .form-container {
+        width: min(94vw, 680px);
+        margin: 1rem auto 1rem;
+        padding: 1rem 0.9rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .form-header h2 {
+        font-size: 1.3rem;
+    }
+
+    .form-header p {
+        font-size: 0.9rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .add-item-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 10px 16px;
+        font-size: 14px;
+    }
+    
+
+    .form-row {
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .form-group {
+        flex: 1 1 100%;
+    }
+
+    .input-field, textarea, select {
+        font-size: 16px;
+        padding: 0.75rem 0.8rem;
+    }
+
+    .item-row {
+        padding: 0.9rem;
+        margin-bottom: 0.9rem;
+    }
+
+    .item-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.8rem;
+    }
+
+    .item-header h3 {
+        font-size: 1rem;
+    }
+
+    .remove-item-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 8px;
+    }
+
+    .location-availability {
+        padding: 0.9rem;
+        margin-top: 0.7rem;
+        border-radius: 10px;
+    }
+
+    .location-title {
+        font-size: 0.9rem;
+    }
+
+    .location-availability li {
+        font-size: 0.85rem;
+        line-height: 1.3;
+    }
+
+    .checkbox-section {
+        gap: 0.6rem;
+        padding: 0.9rem;
+    }
+
+    .checkbox-section label {
+        line-height: 1.3;
+        font-size: 0.85rem;
+    }
+
+    .submit-button {
+        margin-top: 1.25rem;
+    }
+
+    .submit-button button {
+        width: 100%;
+        padding: 0.9rem;
+        font-size: 16px;
+        border-radius: 10px;
+    }
+    /* Update your select styling to handle text overflow when closed */
+select.input-field {
+    white-space: nowrap;      /* Keeps text on one line */
+    overflow: hidden;         /* Hides overflow */
+    text-overflow: ellipsis;  /* Adds '...' if text is too long for the box */
+    padding-right: 30px;      /* Ensures text doesn't overlap the arrow icon */
+}
+
+/* Specific fix for the Dropoff ID to ensure it stays within bounds */
+#dropoff_id {
+    max-width: 100%;
+}
+}
+
+/* ---- Very small phones (≤360px) safety net ---- */
+@media (max-width: 360px) {
+    .hero-banner h1 {
+        font-size: 1.4rem;
+    }
+
+    .form-header h2 {
+        font-size: 1.2rem;
+    }
+
+    .submit-button button {
+        padding: 0.8rem;
+    }
+
+    .item-row {
+        padding: 0.7rem;
+    }
+}

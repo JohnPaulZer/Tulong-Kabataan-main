@@ -1,0 +1,455 @@
+:root {
+    /* Theme Variables - White/Light Theme */
+    --primary: #3b82f6;
+    --primary-hover: #2563eb;
+    --panel-bg: #ffffff;
+    --input-bg: #ffffff;
+    --input-border: #d1d5db;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5, h6,
+.heading-font, .section-title, .btn, button, .campaign-count {
+    font-family: "Poppins", sans-serif;
+    letter-spacing: -0.01em;
+    color: var(--text);
+}
+
+p, a, li, span, input, label, .body-font {
+    font-family: "Lato", sans-serif;
+    font-weight: 400;
+    text-decoration: none;
+    color: var(--text);
+}
+
+/* 1. LOCK THE BODY */
+body {
+    font-family: "Lato", sans-serif;
+    margin: 0;
+    height: 100vh; /* Fixed height */
+    width: 100vw;
+    overflow: hidden; /* Prevent background scroll */
+    background: url('../img/backlogin.png') no-repeat center center fixed;
+    background-size: cover;
+    color: var(--text);
+    display: flex;
+    align-items: center; /* Center Vertically */
+    justify-content: center; /* Center Horizontally */
+}
+
+h2 {
+    font-family: "Playfair Display", serif;
+}
+
+/* 2. CONSTRAIN THE CONTAINER */
+.container {
+    display: flex;
+    background: var(--panel-bg);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    max-width: 880px;
+    width: 100%;
+    
+    /* FIX HEIGHT LOGIC */
+    height: auto; 
+    max-height: 85vh; /* Maximum height relative to screen */
+    margin: 0; /* Remove margin as flex centers it */
+}
+
+.panel-left {
+    background: var(--panel-bg);
+    min-width: 340px;
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 32px;
+    position: relative;
+    border-right: 1px solid #f3f4f6;
+}
+
+.logo {
+    font-weight: 700;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    margin-bottom: 2.5rem;
+    color: var(--text);
+    text-decoration: none;
+}
+
+.back-btn {
+    position: absolute;
+    top: 28px;
+    right: 32px;
+    background: #f3f4f6;
+    color: var(--text);
+    font-size: 0.9rem;
+    padding: 8px 20px;
+    border-radius: 999px;
+    border: 1px solid var(--input-border);
+    cursor: pointer;
+    transition: background 0.18s;
+}
+
+.back-btn:hover {
+    background: #e5e7eb;
+}
+
+.panel-image {
+    width: 100%;
+    height: 260px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 14px;
+    margin-bottom: 2.5rem;
+    transition: background-image 1s ease-in-out;
+}
+
+.caption {
+    color: var(--text);
+    font-size: 1.18rem;
+    font-weight: 500;
+    margin-top: 14px;
+    letter-spacing: 0.5px;
+}
+
+.dots {
+    margin-top: 24px;
+    display: flex;
+    gap: 8px;
+}
+
+.dot {
+    width: 24px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--input-border);
+    opacity: 1;
+    transition: background 0.3s;
+}
+
+.dot.active {
+    background: var(--primary);
+}
+
+/* 3. MAKE RIGHT PANEL SCROLLABLE */
+.panel-right {
+    flex: 1;
+    padding: 15px 40px 40px;
+    background: var(--panel-bg);
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; <--- REMOVED so it scrolls from top */
+    
+    /* SCROLL LOGIC */
+    overflow-y: auto; /* Enable vertical scroll */
+    height: 100%; /* Take full height of container */
+}
+
+.panel-right h2 {
+    margin-bottom: 16px;
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-top: 10px; /* Add slight top margin since we removed justify-center */
+}
+
+/* Custom Scrollbar for the right panel (optional/modern browsers) */
+.panel-right::-webkit-scrollbar {
+    width: 6px;
+}
+.panel-right::-webkit-scrollbar-track {
+    background: transparent;
+}
+.panel-right::-webkit-scrollbar-thumb {
+    background-color: #d1d5db;
+    border-radius: 20px;
+}
+
+.subtext {
+    color: var(--muted);
+    font-size: 1rem;
+    margin-bottom: 34px;
+}
+
+.subtext a {
+    color: var(--primary);
+    text-decoration: underline;
+    font-weight: 600;
+    margin-left: 8px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+}
+
+.form-row {
+    display: flex;
+    gap: 12px;
+}
+
+/* --- FIXED INPUT & LABEL STYLES --- */
+.form-group {
+    position: relative;
+    width: 100%;
+}
+
+.form-group input {
+    width: 100%;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 7px;
+    color: var(--text);
+    padding: 20px 14px 8px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input::placeholder {
+    color: transparent;
+}
+
+.form-group input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-label {
+    position: absolute;
+    top: 50%;
+    left: 14px;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    color: var(--muted);
+    background: transparent;
+    padding: 0;
+    transition: 0.2s ease all;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.form-group input:focus + .form-label,
+.form-group input:not(:placeholder-shown) + .form-label,
+.form-group input:-webkit-autofill + .form-label {
+    top: 0;
+    left: 10px;
+    transform: translateY(-50%);
+    font-size: 0.8rem;
+    color: var(--primary);
+    background: #ffffff;
+    padding: 0 4px;
+}
+
+.form-group input:-webkit-autofill,
+.form-group input:-webkit-autofill:hover,
+.form-group input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--text) !important;
+    -webkit-box-shadow: 0 0 0 1000px #e8f0fe inset !important;
+    box-shadow: 0 0 0 1000px #e8f0fe inset !important;
+    border-color: var(--primary) !important;
+    caret-color: var(--text);
+}
+
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 1.1rem;
+}
+
+.btn-main {
+    margin-top: 8px;
+    width: 100%;
+    background: var(--primary);
+    color: #ffffff;
+    border: none;
+    border-radius: 7px;
+    padding: 13px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-main:hover {
+    background: var(--primary-hover);
+}
+
+.or {
+    text-align: center;
+    color: var(--muted);
+    margin: 22px 0 12px;
+    font-size: 0.98em;
+}
+
+.or::before,
+.or::after {
+    content: "";
+    display: inline-block;
+    vertical-align: middle;
+    width: 45px;
+    height: 1px;
+    background: #e5e7eb;
+    margin: 0 10px;
+}
+
+.socials-row {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.social-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 7px;
+    border: 1px solid #374151;
+    background: #1f2937;
+    color: #ffffff;
+    font-weight: 500;
+    font-size: 1em;
+    padding: 12px 0;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.social-btn:hover {
+    background: #111827;
+}
+
+.social-btn img {
+    height: 21px;
+    width: 21px;
+}
+
+.input-error {
+    border-color: #dc2626 !important;
+    color: #dc2626;
+}
+
+.input-error::placeholder {
+    color: #dc2626 !important;
+}
+
+.input-error + .form-label {
+    color: #dc2626 !important;
+}
+
+/* =========================================
+   MEDIA QUERIES (MOBILE & TABLET)
+   ========================================= */
+
+/* 1. Tablet Portrait (768px to 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .container {
+        flex-direction: column;
+        width: 85%; /* Slightly narrower */
+        height: 85vh; /* Fixed height in middle */
+    }
+
+    .panel-left {
+        width: 100%;
+        /* Reduce Left Panel height significantly on tablet */
+        flex: 0 0 auto; /* Don't grow */
+        padding: 24px;
+        border-right: none;
+        border-bottom: 1px solid #f3f4f6;
+    }
+    
+    .logo {
+        margin-bottom: 1rem;
+    }
+
+    .panel-image {
+        /* Reduce image height */
+        height: 120px; 
+        margin-bottom: 1rem;
+    }
+
+    .panel-right {
+        width: 100%;
+        padding: 30px;
+        overflow-y: auto; /* Only this part scrolls */
+    }
+}
+
+/* 2. Mobile Devices (Up to 767px) */
+@media (max-width: 767px) {
+    .container {
+        flex-direction: column;
+        width: 90%; /* Leave gaps on sides */
+        
+        /* Strict Height Control for Mobile */
+        height: 85vh; 
+        max-height: 700px;
+        
+        /* Ensure border radius stays to look like a modal */
+        border-radius: 16px; 
+    }
+
+    .panel-left {
+        width: 100%;
+        flex: 0 0 auto; /* Don't grow */
+        border-right: none;
+        border-bottom: 1px solid #f3f4f6;
+        padding: 16px; /* Tight padding */
+    }
+    
+    .logo {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .back-btn {
+        top: 16px;
+        right: 16px;
+        padding: 5px 12px;
+        font-size: 0.8rem;
+    }
+
+    /* Shrink the image drastically or hide it to save space */
+    .panel-image {
+        height: 80px; 
+        margin-bottom: 0.5rem;
+    }
+    
+    .caption, .dots {
+        display: none; /* Hide caption/dots on tiny screens to save space */
+    }
+    
+    .panel-right {
+        width: 100%;
+        padding: 20px;
+        /* SCROLLABLE AREA */
+        flex: 1; /* Take all remaining height */
+        overflow-y: auto;
+    }
+
+    /* Stack form rows */
+    .form-row {
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .panel-right h2 {
+        font-size: 1.5rem;
+        margin-bottom: 12px;
+    }
+}
