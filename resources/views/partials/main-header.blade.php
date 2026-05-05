@@ -1,12 +1,12 @@
 <header class="header">
     @include('partials.universalmodal')
-    <link rel="stylesheet" href="{{ asset('css/main-header.css') }}?">
+    <link rel="stylesheet" href="{{ asset('css/main-header.css') }}?v=4">
     <div class="header-container">
         <div class="header-left">
-            <a href="{{ route('landpage') }}" class="logo">
+            <a href="{{ route('landpage') }}" class="logo" aria-label="Tulong Kabataan homepage">
                 <img src="{{ asset('img/log.png') }}" alt="Tulong Kabataan" style="height: 40px; vertical-align: middle;">
             </a>
-            <nav class="main-nav body-font">
+            <nav class="main-nav body-font" aria-label="Main navigation">
                 <a href="{{ route('campaignpage') }}">Campaigns</a>
                 <a href="{{ route('event.page') }}">Events</a>
                 <a href="{{ route('inkind.page') }}">Donate</a>
@@ -83,8 +83,9 @@
 
                 <!-- Notification Bell -->
                 <div class="notif-menu" id="notificationBell">
-                    <button class="icon-btn" id="notifBtn" aria-haspopup="true" aria-expanded="false">
-                        <i class="ri-notification-3-line"></i>
+                    <button class="icon-btn" id="notifBtn" aria-haspopup="true" aria-expanded="false"
+                        aria-label="Open notifications" aria-controls="notifDropdown">
+                        <i class="ri-notification-3-line" aria-hidden="true"></i>
                         <span class="badge" id="notificationBadge"
                             style="{{ auth()->user()->unreadNotifications()->count() > 0 ? '' : 'display: none;' }}">
                             {{ auth()->user()->unreadNotifications()->count() > 999 ? '999+' : auth()->user()->unreadNotifications()->count() }}
@@ -330,19 +331,20 @@
         @endauth
 
         <!-- Mobile menu (visible only on mobile/tablet due to CSS above) -->
-        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
-            <i class="ri-menu-line"></i>
+        <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu"
+            aria-controls="mobileDropdown" aria-expanded="false">
+            <i class="ri-menu-line" aria-hidden="true"></i>
         </button>
     </div>
     </div>
 
     <!-- Site-wide mobile tray (unchanged) -->
     <div class="mobile-dropdown" id="mobileDropdown">
-        <nav class="mobile-nav">
+        <nav class="mobile-nav" aria-label="Mobile navigation">
             <a href="{{ route('campaignpage') }}">Campaigns</a>
             <a href="{{ route('event.page') }}">Events</a>
             <a href="{{ route('inkind.page') }}">Donate</a>
-            <a href="#">About Us</a>
+            <a href="{{ route('about.us') }}">About Us</a>
         </nav>
     </div>
 
@@ -1287,6 +1289,17 @@
             const notifBtn = notifMenu ? notifMenu.querySelector('#notifBtn') : null;
             const notifDD = notifMenu ? notifMenu.querySelector('#notifDropdown') : null;
 
+            function setMobileIcon(isOpen) {
+                const icon = mobileBtn ? mobileBtn.querySelector('i') : null;
+
+                if (!icon) {
+                    return;
+                }
+
+                icon.className = isOpen ? 'ri-close-line' : 'ri-menu-line';
+                mobileBtn.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
+            }
+
             function closeAll() {
                 if (userDD) userDD.classList.remove('show');
                 if (mobileDD) mobileDD.classList.remove('show');
@@ -1295,6 +1308,7 @@
                 if (userBtn) userBtn.setAttribute('aria-expanded', 'false');
                 if (mobileBtn) mobileBtn.setAttribute('aria-expanded', 'false');
                 if (notifBtn) notifBtn.setAttribute('aria-expanded', 'false');
+                setMobileIcon(false);
             }
 
             if (userDD) userDD.addEventListener('click', (e) => e.stopPropagation());
@@ -1323,7 +1337,12 @@
                     if (willOpen) {
                         mobileDD.classList.add('show');
                         mobileBtn.setAttribute('aria-expanded', 'true');
+                        setMobileIcon(true);
                     }
+                });
+
+                mobileDD.querySelectorAll('a').forEach((link) => {
+                    link.addEventListener('click', closeAll);
                 });
             }
 
@@ -1344,7 +1363,14 @@
             document.addEventListener('click', (e) => {
                 if (!e.target.closest('.user-menu') &&
                     !e.target.closest('.mobile-menu-btn') &&
+                    !e.target.closest('.mobile-dropdown') &&
                     !e.target.closest('.notif-menu')) {
+                    closeAll();
+                }
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
                     closeAll();
                 }
             });

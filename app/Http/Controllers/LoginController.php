@@ -16,6 +16,8 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
+use App\Models\Campaign;
+use App\Models\EventRegistration;
 
 class LoginController
 {
@@ -33,7 +35,40 @@ class LoginController
     //   ===============================================LOGIN CONTROLLER PART==========================================
     public function landingpage()
     {
-        return $this->noCacheView('landpage');
+        $homepageStats = [
+            'total_donations' => $this->formatCompactNumber(Campaign::sum('current_amount')),
+            'active_volunteers' => $this->formatCompactNumber(EventRegistration::count()),
+            'successful_campaigns' => $this->formatCompactNumber(
+                Campaign::whereIn('status', ['ended', 'completed'])->count()
+            ),
+        ];
+
+        $featuredCampaigns = Campaign::withCount('donations')
+            ->where('status', 'active')
+            ->orderByDesc('views')
+            ->orderByDesc('current_amount')
+            ->orderByDesc('donor_count')
+            ->orderByDesc('donations_count')
+            ->latest()
+            ->take(3)
+            ->get();
+
+        return $this->noCacheView('landpage', compact('homepageStats', 'featuredCampaigns'));
+    }
+
+    private function formatCompactNumber($value): string
+    {
+        $value = (float) $value;
+
+        if ($value >= 1000000) {
+            return number_format($value / 1000000, 1) . 'M';
+        }
+
+        if ($value >= 1000) {
+            return number_format($value / 1000, 1) . 'K';
+        }
+
+        return number_format($value);
     }
     public function loginpage()
     {
