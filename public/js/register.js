@@ -195,7 +195,10 @@ const dots = document.querySelectorAll(".dot");
 function updateImage() {
     imageEl.style.backgroundImage = `url('${images[currentImage]}')`;
     dots.forEach((dot, idx) => {
-        dot.classList.toggle("active", idx === currentImage);
+        const isActive = idx === currentImage;
+        dot.classList.toggle("active", isActive);
+        dot.classList.toggle("bg-blue-500", isActive);
+        dot.classList.toggle("bg-gray-300", !isActive);
     });
 }
 

@@ -1,14 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tulong Kabataan Footer & Modals</title>
-    <!-- Remix Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
-
     <style>
         :root {
             --primary-color: #4f46e5;
@@ -22,16 +11,15 @@
             --footer-text: #b3b3cc;
         }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f1f5f9;
+        .footer,
+        .modal,
+        .footer *,
+        .footer *:before,
+        .footer *:after,
+        .modal *,
+        .modal *:before,
+        .modal *:after {
             box-sizing: border-box;
-        }
-
-        *, *:before, *:after {
-            box-sizing: inherit;
         }
 
         /* ==================== FOOTER STYLES ==================== */
@@ -515,15 +503,13 @@
             }
         }
     </style>
-</head>
-<body>
 
     <!-- Main Footer -->
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-top">
                 <div class="footer-content-left">
-                    <a href="#" class="footer-logo">
+                    <a href="{{ route('landpage') }}" class="footer-logo" aria-label="Tulong Kabataan homepage">
                         <!-- RESTORED LOGO AS REQUESTED -->
                         <img src="{{ asset('img/log1.png') }}" alt="Tulong Kabataan Logo">
                     </a>
@@ -559,14 +545,16 @@
     </footer>
 
     <!-- ==================== PRIVACY POLICY MODAL ==================== -->
-    <div id="privacyModal" class="modal">
+    <div id="privacyModal" class="modal" role="dialog" aria-modal="true"
+        aria-labelledby="privacyModalTitle" aria-hidden="true">
         <div class="modal-content">
             <div class="modal-header">
                 <div class="modal-title">
                     <i class="ri-shield-check-line"></i>
-                    <h3>Privacy Policy</h3>
+                    <h3 id="privacyModalTitle">Privacy Policy</h3>
                 </div>
-                <button class="close" onclick="closeModal('privacy')"><i class="ri-close-line"></i></button>
+                <button class="close" onclick="closeModal('privacy')" aria-label="Close privacy policy modal"><i
+                        class="ri-close-line" aria-hidden="true"></i></button>
             </div>
             <div class="modal-body">
                 <span class="last-updated">Last Updated: October 24, 2025</span>
@@ -612,14 +600,16 @@
     </div>
 
     <!-- ==================== TERMS OF SERVICE MODAL ==================== -->
-    <div id="termsModal" class="modal">
+    <div id="termsModal" class="modal" role="dialog" aria-modal="true"
+        aria-labelledby="termsModalTitle" aria-hidden="true">
         <div class="modal-content">
             <div class="modal-header">
                 <div class="modal-title">
                     <i class="ri-file-text-line"></i>
-                    <h3>Terms of Service</h3>
+                    <h3 id="termsModalTitle">Terms of Service</h3>
                 </div>
-                <button class="close" onclick="closeModal('terms')"><i class="ri-close-line"></i></button>
+                <button class="close" onclick="closeModal('terms')" aria-label="Close terms of service modal"><i
+                        class="ri-close-line" aria-hidden="true"></i></button>
             </div>
             <div class="modal-body">
                 <span class="last-updated">Effective Date: January 1, 2025</span>
@@ -664,14 +654,16 @@
     </div>
 
     <!-- ==================== CONTACT US MODAL ==================== -->
-    <div id="contactModal" class="modal">
+    <div id="contactModal" class="modal" role="dialog" aria-modal="true"
+        aria-labelledby="contactModalTitle" aria-hidden="true">
         <div class="modal-content">
             <div class="modal-header">
                 <div class="modal-title">
                     <i class="ri-customer-service-2-line"></i>
-                    <h3>Get in Touch</h3>
+                    <h3 id="contactModalTitle">Get in Touch</h3>
                 </div>
-                <button class="close" onclick="closeModal('contact')"><i class="ri-close-line"></i></button>
+                <button class="close" onclick="closeModal('contact')" aria-label="Close contact modal"><i
+                        class="ri-close-line" aria-hidden="true"></i></button>
             </div>
             <div class="modal-body">
                 <p style="margin-bottom: 30px;">
@@ -749,6 +741,7 @@
         function openModal(type) {
             if (modals[type]) {
                 modals[type].style.display = 'flex';
+                modals[type].setAttribute('aria-hidden', 'false');
                 document.body.style.overflow = 'hidden'; // Prevent background scrolling
             }
         }
@@ -756,6 +749,7 @@
         function closeModal(type) {
             if (modals[type]) {
                 modals[type].style.display = 'none';
+                modals[type].setAttribute('aria-hidden', 'true');
                 document.body.style.overflow = 'auto'; // Restore scrolling
             }
         }
@@ -770,6 +764,7 @@
         window.onclick = function(event) {
             if (event.target.classList.contains('modal')) {
                 event.target.style.display = 'none';
+                event.target.setAttribute('aria-hidden', 'true');
                 document.body.style.overflow = 'auto';
             }
         }
@@ -779,10 +774,9 @@
             if (event.key === 'Escape') {
                 Object.values(modals).forEach(modal => {
                     modal.style.display = 'none';
+                    modal.setAttribute('aria-hidden', 'true');
                 });
                 document.body.style.overflow = 'auto';
             }
         });
     </script>
-</body>
-</html>

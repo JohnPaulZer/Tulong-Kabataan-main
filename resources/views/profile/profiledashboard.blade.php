@@ -16,7 +16,7 @@
     <!-- ECharts Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
 
-    <link rel="stylesheet" href="{{ asset('css/landingpage.css') }}">
+    @vite('resources/css/app.css')
     <link rel="stylesheet" href="{{ asset('css/profile/campaigncard.css') }}">
     <link rel="stylesheet" href="{{ asset('css/profile/profiledashboard.css') }}">
 
