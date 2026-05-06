@@ -1,19 +1,31 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap');
 @import 'tailwindcss';
-@import './components/profile-dashboard.css';
-@import './components/profile-events.css';
-@import './components/profile-inkind.css';
-@import './components/profile-main.css';
-@import './components/main-header.css';
-@import './components/campaign-view.css';
-@import './components/campaign-page.css';
-@import './components/campaign-create.css';
-@import './components/event-page.css';
-@import './components/inkind-page.css';
-@import './components/inkind-modal.css';
-@import './components/admin-account.css';
-@import './components/admin-event.css';
-@import './components/admin-inkind.css';
+
+/* Layout */
+@import './layout/main-header.css';
+
+/* Profile pages */
+@import './pages/profile/dashboard.css';
+@import './pages/profile/events.css';
+@import './pages/profile/inkind.css';
+@import './pages/profile/main.css';
+
+/* Campaign pages */
+@import './pages/campaign/view.css';
+@import './pages/campaign/index.css';
+@import './pages/campaign/create.css';
+
+/* Event pages */
+@import './pages/event/index.css';
+
+/* In-kind pages */
+@import './pages/inkind/index.css';
+@import './pages/inkind/modal.css';
+
+/* Admin pages */
+@import './admin/account.css';
+@import './admin/event.css';
+@import './admin/inkind.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';

@@ -1,4 +1,4 @@
-/* Scoped campaign create styles */
+﻿/* Scoped campaign create styles */
 body.campaign-create-page h1, body.campaign-create-page h2, body.campaign-create-page h3, body.campaign-create-page h4, body.campaign-create-page h5, body.campaign-create-page h6, body.campaign-create-page .heading-font, body.campaign-create-page .section-title, body.campaign-create-page .featured-title, body.campaign-create-page .campaign-title, body.campaign-create-page .btn, body.campaign-create-page button, body.campaign-create-page .raised, body.campaign-create-page .campaign-count, body.campaign-create-page .featured-badge, body.campaign-create-page .pagination-number{
     font-family: var(--font-heading);
     letter-spacing: -0.01em; 

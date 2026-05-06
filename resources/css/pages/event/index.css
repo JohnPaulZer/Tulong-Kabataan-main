@@ -1,4 +1,4 @@
-/* Scoped event page styles */
+﻿/* Scoped event page styles */
 body.event-page h1, body.event-page h2, body.event-page h3, body.event-page h4, body.event-page h5, body.event-page h6, body.event-page .heading-font, body.event-page .section-title, body.event-page .featured-title, body.event-page .campaign-title, body.event-page .btn, body.event-page button, body.event-page .raised, body.event-page .campaign-count, body.event-page .featured-badge, body.event-page .pagination-number{
     font-family: var(--font-heading);
     letter-spacing: -0.01em;
