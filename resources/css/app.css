@@ -12,12 +12,46 @@
     --font-body: 'Lato', ui-sans-serif, system-ui, sans-serif;
 }
 
-@layer components {
-    .input-error {
-        @apply border-red-600 text-red-600 placeholder:text-red-600;
-    }
+.input-error {
+    border-color: var(--color-red-600) !important;
+    color: var(--color-red-600) !important;
+}
 
-    .input-error + .form-label {
-        @apply text-red-600;
+.input-error::placeholder,
+.input-error + .form-label {
+    color: var(--color-red-600) !important;
+}
+
+.error-box.show {
+    opacity: 1;
+}
+
+.login-modal.active {
+    display: flex;
+    visibility: visible;
+    opacity: 1;
+}
+
+.login-modal.active .login-modal-content {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
+}
+
+.login-spinner {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+    border: 2px solid #fff;
+    border-top-color: transparent;
+    border-radius: 9999px;
+    animation: login-spin 0.6s linear infinite;
+}
+
+@keyframes login-spin {
+    to {
+        transform: rotate(360deg);
     }
 }

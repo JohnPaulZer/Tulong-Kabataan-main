@@ -23,12 +23,8 @@ function checkFormValidity() {
 
     if (!hasEmailError && !hasPhoneError && !hasPasswordError) {
         submitBtn.disabled = false;
-        submitBtn.style.background = "";
-        submitBtn.style.cursor = "pointer";
     } else {
         submitBtn.disabled = true;
-        submitBtn.style.background = "#888";
-        submitBtn.style.cursor = "not-allowed";
     }
 }
 
@@ -197,7 +193,7 @@ function updateImage() {
     dots.forEach((dot, idx) => {
         const isActive = idx === currentImage;
         dot.classList.toggle("active", isActive);
-        dot.classList.toggle("bg-blue-500", isActive);
+        dot.classList.toggle("bg-indigo-600", isActive);
         dot.classList.toggle("bg-gray-300", !isActive);
     });
 }
