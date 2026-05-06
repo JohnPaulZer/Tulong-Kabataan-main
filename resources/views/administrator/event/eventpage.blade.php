@@ -16,10 +16,10 @@
     <!-- Charts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
 
-    <link rel="stylesheet" href="{{ asset('css/administrator/eventpage.css') }}">
+    @vite('resources/css/app.css')
 </head>
 
-<body>
+<body class="admin-event-page">
     @include('administrator.partials.loading-screen')
     @include('partials.universalmodal')
     @include('administrator.event.partials.eventmodal')

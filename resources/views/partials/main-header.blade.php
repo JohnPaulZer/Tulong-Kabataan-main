@@ -1,6 +1,5 @@
 <header class="header">
     @include('partials.universalmodal')
-    <link rel="stylesheet" href="{{ asset('css/main-header.css') }}?v=4">
     <div class="header-container">
         <div class="header-left">
             <a href="{{ route('landpage') }}" class="logo" aria-label="Tulong Kabataan homepage">

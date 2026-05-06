@@ -14,10 +14,10 @@
         rel="stylesheet">
     <!-- Charts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
-    <link rel="stylesheet" href="{{ asset('css/administrator/accountpage.css') }}">
+    @vite('resources/css/app.css')
 </head>
 
-<body>
+<body class="admin-account-page">
     @include('administrator.partials.loading-screen')
     @include('partials.universalmodal')
 

@@ -16,10 +16,9 @@
         rel="stylesheet">
 
     @vite('resources/css/app.css')
-    <link rel="stylesheet" href="{{ asset('css/inkind/inkindpage.css') }}">
 </head>
 
-<body>
+<body class="inkind-page">
 
     @include('partials.universalmodal')
     @include('partials.main-header')

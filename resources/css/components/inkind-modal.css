@@ -1,31 +1,13 @@
-/* ===========================
-       General Page Styling
-       =========================== */
-
-/* Hero Banner Fix */
-
-h1, h2, h3, h4, h5, h6,
-.heading-font, .section-title, .featured-title, .campaign-title,
-.btn, button, .raised, .campaign-count, .featured-badge, .pagination-number {
+/* Scoped in-kind modal page styles */
+body.inkind-modal-page h1, body.inkind-modal-page h2, body.inkind-modal-page h3, body.inkind-modal-page h4, body.inkind-modal-page h5, body.inkind-modal-page h6, body.inkind-modal-page .heading-font, body.inkind-modal-page .section-title, body.inkind-modal-page .featured-title, body.inkind-modal-page .campaign-title, body.inkind-modal-page .btn, body.inkind-modal-page button, body.inkind-modal-page .raised, body.inkind-modal-page .campaign-count, body.inkind-modal-page .featured-badge, body.inkind-modal-page .pagination-number{
     font-family: "Poppins", sans-serif;
     letter-spacing: -0.01em;
-}
-
-/* 2. Secondary Font Selectors */
-p, a, li, span, input, select, textarea, label,
-.body-font, .section-desc, .featured-desc, .filters-label,
-.goal, .pagination-info {
+}body.inkind-modal-page p, body.inkind-modal-page a, body.inkind-modal-page li, body.inkind-modal-page span, body.inkind-modal-page input, body.inkind-modal-page select, body.inkind-modal-page textarea, body.inkind-modal-page label, body.inkind-modal-page .body-font, body.inkind-modal-page .section-desc, body.inkind-modal-page .featured-desc, body.inkind-modal-page .filters-label, body.inkind-modal-page .goal, body.inkind-modal-page .pagination-info{
     font-family: "Lato", sans-serif;
     font-weight: 400;
     text-decoration: none;
-}
-
-/* --- FIXED HERO BANNER SECTION --- */
-.hero-banner {
-    /* IMPORTANT: Check your file path! 
-       1. If your image is in "public/img/bg1.jpg", use url('/img/bg1.jpg')
-       2. Make sure the file name matches exactly (bg1.jpg vs bg1.JPG or bg1.png)
-    */
+}body.inkind-modal-page .hero-banner{
+    
     background: url('/img/bg1.jpg') center/cover no-repeat; 
     
     position: relative;
@@ -33,42 +15,28 @@ p, a, li, span, input, select, textarea, label,
     text-align: center;
     padding: 9rem 1rem;
     
-    /* Fallback color if image fails to load */
+    
     background-color: #4f46e5;      
-}
-
-.hero-banner::after {
+}body.inkind-modal-page .hero-banner::after{
     content: "";
     position: absolute;
     inset: 0;
-    /* I lowered the opacity from 0.7 to 0.6 so the image is more visible */
+    
     background: rgba(79, 70, 229, 0.6); 
-}
-
-.hero-banner .hero-content {
+}body.inkind-modal-page .hero-banner .hero-content{
     position: relative;
     z-index: 1;
     max-width: 700px;
     margin: 0 auto;
-}
-
-.hero-banner h1 {
+}body.inkind-modal-page .hero-banner h1{
     font-size: 2.5rem;
     margin-bottom: 0.5rem;
     color: white;
-}
-
-.hero-banner p {
+}body.inkind-modal-page .hero-banner p{
     font-size: 1.1rem;
     opacity: 0.95;
     color: white;
-}
-
-/* --- END HERO BANNER FIX --- */
-
-
-/* Container */
-.form-container {
+}body.inkind-modal-page .form-container{
     max-width: 720px;
     margin: -3rem auto 2rem auto;
     background: #fff;
@@ -77,29 +45,19 @@ p, a, li, span, input, select, textarea, label,
     padding: 2rem;
     position: relative;
     z-index: 2;
-}
-
-/* Header inside form */
-.form-header {
+}body.inkind-modal-page .form-header{
     text-align: center;
     margin-bottom: 1rem;
-}
-
-.form-header h2 {
+}body.inkind-modal-page .form-header h2{
     font-size: 1.8rem;
     font-weight: 700;
     margin-bottom: 0.4rem;
     color: #222;
-}
-
-.form-header p {
+}body.inkind-modal-page .form-header p{
     font-size: 1rem;
     color: #555;
     margin-bottom: 1rem;
-}
-
-/* Add Item Button */
-.add-item-btn {
+}body.inkind-modal-page .add-item-btn{
     background: linear-gradient(135deg, #4f46e5, #6366f1);
     color: white;
     border: none;
@@ -114,47 +72,31 @@ p, a, li, span, input, select, textarea, label,
     gap: 6px;
     transition: all 0.3s ease;
     box-shadow: 0 3px 10px rgba(79, 70, 229, 0.3);
-}
-
-.add-item-btn:hover {
+}body.inkind-modal-page .add-item-btn:hover{
     background: linear-gradient(135deg, #4338ca, #4f46e5);
     transform: translateY(-1px);
     box-shadow: 0 5px 14px rgba(79, 70, 229, 0.4);
-}
-
-/* Form Styling */
-.form-card {
+}body.inkind-modal-page .form-card{
     background: #fafafa;
     border-radius: 14px;
     padding: 1.25rem;
     box-shadow: 0 2px 6px rgba(44, 37, 57, 0.05);
     margin-bottom: 1.25rem;
-}
-
-.donation-form {
+}body.inkind-modal-page .donation-form{
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-}
-
-.form-row {
+}body.inkind-modal-page .form-row{
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
-    margin-bottom: 1rem; /* Added from later rule */
-}
-
-.form-group {
+    margin-bottom: 1rem; 
+}body.inkind-modal-page .form-group{
     flex: 1;
     display: flex;
     flex-direction: column;
-    margin-bottom: 1rem; /* Added from later rule */
-}
-
-/* Merged Input Styles */
-.input-field,
-textarea,
-select {
+    margin-bottom: 1rem; 
+}body.inkind-modal-page .input-field, body.inkind-modal-page textarea, body.inkind-modal-page select{
     width: 100%;
     padding: 0.8rem 1rem;
     border: 1px solid #E5E7EB;
@@ -165,64 +107,42 @@ select {
     font-family: inherit;
     transition: border-color 0.2s, box-shadow 0.2s;
     margin-top: 0.2rem;
-}
-
-.input-field:focus,
-textarea:focus,
-select:focus {
+}body.inkind-modal-page .input-field:focus, body.inkind-modal-page textarea:focus, body.inkind-modal-page select:focus{
     outline: none;
     border-color: #6366F1;
     box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
-}
-
-/* Label styling */
-.form-group label {
+}body.inkind-modal-page .form-group label{
     margin-bottom: 0.4rem;
     font-weight: 600;
     font-size: 0.9rem;
     color: #374151;
-}
-
-/* Input note under fields */
-.input-note {
+}body.inkind-modal-page .input-note{
     font-size: 0.75rem;
     color: #6b7280;
     margin-top: 0.2rem;
     font-style: italic;
-}
-
-/* Textarea height adjustment */
-textarea {
+}body.inkind-modal-page textarea{
     min-height: 90px;
     resize: vertical;
-}
-
-/* Item Rows Styling */
-.item-row {
+}body.inkind-modal-page .item-row{
     margin-bottom: 1.25rem;
     border: 2px solid #e5e7eb;
     border-radius: 14px;
     padding: 1.25rem;
     background: #ffffff;
     transition: all 0.3s ease;
-}
-
-.item-row:hover {
+}body.inkind-modal-page .item-row:hover{
     border-color: #c7d2fe;
     transform: translateY(-1px);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-}
-
-.item-header {
+}body.inkind-modal-page .item-header{
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1rem;
     padding-bottom: 0.75rem;
     border-bottom: 1px solid #f3f4f6;
-}
-
-.item-header h3 {
+}body.inkind-modal-page .item-header h3{
     margin: 0;
     color: #374151;
     font-size: 1.1rem;
@@ -231,9 +151,7 @@ textarea {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-}
-
-.remove-item-btn {
+}body.inkind-modal-page .remove-item-btn{
     background: linear-gradient(135deg, #ef4444, #dc2626);
     color: white;
     border: none;
@@ -246,37 +164,26 @@ textarea {
     align-items: center;
     gap: 4px;
     transition: all 0.3s ease;
-}
-
-.remove-item-btn:hover {
+}body.inkind-modal-page .remove-item-btn:hover{
     background: linear-gradient(135deg, #dc2626, #b91c1c);
     transform: translateY(-1px);
-}
-
-/* Availability Section */
-.location-availability {
+}body.inkind-modal-page .location-availability{
     background: linear-gradient(135deg, #eef4ff, #dbeafe);
     border-radius: 14px;
     padding: 1.25rem;
     margin-top: 0.5rem;
     border: 1px solid #dbeafe;
-}
-
-.location-title {
+}body.inkind-modal-page .location-title{
     font-weight: 700;
     color: #2563eb;
     font-size: 1rem;
     margin-bottom: 0.6rem;
     display: block;
-}
-
-.location-availability ul {
+}body.inkind-modal-page .location-availability ul{
     list-style: none;
     padding: 0;
     margin: 0;
-}
-
-.location-availability li {
+}body.inkind-modal-page .location-availability li{
     font-size: 0.9rem;
     color: #1e40af;
     margin-bottom: 0.4rem;
@@ -284,18 +191,13 @@ textarea {
     align-items: center;
     gap: 0.5rem;
     padding: 0.2rem 0;
-}
-
-.dot.blue {
+}body.inkind-modal-page .dot.blue{
     width: 8px;
     height: 8px;
     border-radius: 50%;
     background: #2563eb;
     flex-shrink: 0;
-}
-
-/* Checkbox */
-.checkbox-section {
+}body.inkind-modal-page .checkbox-section{
     margin-top: 1.25rem;
     display: flex;
     flex-direction: column;
@@ -304,35 +206,24 @@ textarea {
     padding: 1.25rem;
     border-radius: 10px;
     border: 1px solid #e2e8f0;
-}
-
-.checkbox-section div {
+}body.inkind-modal-page .checkbox-section div{
     display: flex;
     align-items: flex-start;
     gap: 0.6rem;
-}
-
-.checkbox-section input[type="checkbox"] {
+}body.inkind-modal-page .checkbox-section input[type="checkbox"]{
     margin-top: 0.2rem;
     transform: scale(1.1);
     accent-color: #4f46e5;
-}
-
-.checkbox-section label {
+}body.inkind-modal-page .checkbox-section label{
     font-size: 0.9rem;
     color: #374151;
     line-height: 1.4;
     font-weight: 500;
-}
-
-/* Submit Button */
-.submit-button {
+}body.inkind-modal-page .submit-button{
     display: flex;
     justify-content: center;
     margin-top: 1.5rem;
-}
-
-.submit-button button {
+}body.inkind-modal-page .submit-button button{
     padding: 0.9rem 2.5rem;
     background: linear-gradient(135deg, #4F46E5, #6366F1);
     color: #fff;
@@ -343,196 +234,114 @@ textarea {
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
-}
-
-.submit-button button:hover {
+}body.inkind-modal-page .submit-button button:hover{
     background: linear-gradient(135deg, #4338CA, #4F46E5);
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5);
-}
-
-/* =========================
-       RESPONSIVE FIXES ONLY
-       ========================= */
-
-/* ---- Tablet (≤1023px) ---- */
-@media (max-width: 1023px) {
-    .form-container {
+}@media (max-width: 1023px){body.inkind-modal-page .form-container{
         width: min(94vw, 720px);
         padding: 1.5rem 1.25rem;
-    }
-
-    .form-row {
+    }body.inkind-modal-page .form-row{
         gap: 0.8rem;
-    }
-
-    .hero-banner h1 {
+    }body.inkind-modal-page .hero-banner h1{
         font-size: 2rem;
-    }
-
-    .hero-banner p {
+    }body.inkind-modal-page .hero-banner p{
         font-size: 1rem;
-    }
-
-    .item-row {
+    }body.inkind-modal-page .item-row{
         padding: 1rem;
     }
-}
-
-/* ---- Mobile (≤767px) ---- */
-@media (max-width: 767px) {
-    html, body {
+}@media (max-width: 767px){body.inkind-modal-page, body.inkind-modal-page{
         font-size: 15px;
         width: 100%;
         max-width: 100%;
         overflow-x: hidden;
-    }
-
-    .hero-banner {
+    }body.inkind-modal-page .hero-banner{
         padding: calc(72px + 1.5rem) 1rem 2rem;
         min-height: 200px;
         text-align: center;
-    }
-
-    .hero-banner .hero-content {
+    }body.inkind-modal-page .hero-banner .hero-content{
         padding: 70px 0.25rem;
-    }
-
-    .hero-banner h1 {
+    }body.inkind-modal-page .hero-banner h1{
         font-size: 1.6rem;
         margin-bottom: 0.4rem;
-    }
-
-    .hero-banner p {
+    }body.inkind-modal-page .hero-banner p{
         font-size: 0.9rem;
-    }
-
-    .form-container {
+    }body.inkind-modal-page .form-container{
         width: min(94vw, 680px);
         margin: 1rem auto 1rem;
         padding: 1rem 0.9rem;
         border-radius: 10px;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    }
-
-    .form-header h2 {
+    }body.inkind-modal-page .form-header h2{
         font-size: 1.3rem;
-    }
-
-    .form-header p {
+    }body.inkind-modal-page .form-header p{
         font-size: 0.9rem;
         margin-bottom: 0.8rem;
-    }
-
-    .add-item-btn {
+    }body.inkind-modal-page .add-item-btn{
         width: 100%;
         justify-content: center;
         padding: 10px 16px;
         font-size: 14px;
-    }
-    
-
-    .form-row {
+    }body.inkind-modal-page .form-row{
         display: flex;
         flex-direction: column;
         gap: 0.6rem;
         margin-bottom: 0.8rem;
-    }
-
-    .form-group {
+    }body.inkind-modal-page .form-group{
         flex: 1 1 100%;
-    }
-
-    .input-field, textarea, select {
+    }body.inkind-modal-page .input-field, body.inkind-modal-page textarea, body.inkind-modal-page select{
         font-size: 16px;
         padding: 0.75rem 0.8rem;
-    }
-
-    .item-row {
+    }body.inkind-modal-page .item-row{
         padding: 0.9rem;
         margin-bottom: 0.9rem;
-    }
-
-    .item-header {
+    }body.inkind-modal-page .item-header{
         flex-direction: column;
         align-items: flex-start;
         gap: 0.8rem;
-    }
-
-    .item-header h3 {
+    }body.inkind-modal-page .item-header h3{
         font-size: 1rem;
-    }
-
-    .remove-item-btn {
+    }body.inkind-modal-page .remove-item-btn{
         width: 100%;
         justify-content: center;
         padding: 8px;
-    }
-
-    .location-availability {
+    }body.inkind-modal-page .location-availability{
         padding: 0.9rem;
         margin-top: 0.7rem;
         border-radius: 10px;
-    }
-
-    .location-title {
+    }body.inkind-modal-page .location-title{
         font-size: 0.9rem;
-    }
-
-    .location-availability li {
+    }body.inkind-modal-page .location-availability li{
         font-size: 0.85rem;
         line-height: 1.3;
-    }
-
-    .checkbox-section {
+    }body.inkind-modal-page .checkbox-section{
         gap: 0.6rem;
         padding: 0.9rem;
-    }
-
-    .checkbox-section label {
+    }body.inkind-modal-page .checkbox-section label{
         line-height: 1.3;
         font-size: 0.85rem;
-    }
-
-    .submit-button {
+    }body.inkind-modal-page .submit-button{
         margin-top: 1.25rem;
-    }
-
-    .submit-button button {
+    }body.inkind-modal-page .submit-button button{
         width: 100%;
         padding: 0.9rem;
         font-size: 16px;
         border-radius: 10px;
-    }
-    /* Update your select styling to handle text overflow when closed */
-select.input-field {
-    white-space: nowrap;      /* Keeps text on one line */
-    overflow: hidden;         /* Hides overflow */
-    text-overflow: ellipsis;  /* Adds '...' if text is too long for the box */
-    padding-right: 30px;      /* Ensures text doesn't overlap the arrow icon */
-}
-
-/* Specific fix for the Dropoff ID to ensure it stays within bounds */
-#dropoff_id {
+    }body.inkind-modal-page select.input-field{
+    white-space: nowrap;      
+    overflow: hidden;         
+    text-overflow: ellipsis;  
+    padding-right: 30px;      
+}body.inkind-modal-page #dropoff_id{
     max-width: 100%;
 }
-}
-
-/* ---- Very small phones (≤360px) safety net ---- */
-@media (max-width: 360px) {
-    .hero-banner h1 {
+}@media (max-width: 360px){body.inkind-modal-page .hero-banner h1{
         font-size: 1.4rem;
-    }
-
-    .form-header h2 {
+    }body.inkind-modal-page .form-header h2{
         font-size: 1.2rem;
-    }
-
-    .submit-button button {
+    }body.inkind-modal-page .submit-button button{
         padding: 0.8rem;
-    }
-
-    .item-row {
+    }body.inkind-modal-page .item-row{
         padding: 0.7rem;
     }
 }

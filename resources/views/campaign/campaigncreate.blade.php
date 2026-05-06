@@ -14,11 +14,10 @@
         rel="stylesheet">
 
     @vite('resources/css/app.css')
-    <link rel="stylesheet" href="{{ asset('css/campaign/campaigncreatepage.css') }}?v=4">
 
 </head>
 
-<body>
+<body class="campaign-create-page">
 
     @include('partials.main-header')
     @include('partials.universalmodal')

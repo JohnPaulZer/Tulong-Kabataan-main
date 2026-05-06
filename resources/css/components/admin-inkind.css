@@ -1,118 +1,71 @@
-.pac-container {
+/* Scoped admin in-kind styles */
+body.admin-inkind-page .pac-container{
     background-color: #fff;
     border: 1px solid #e5e7eb;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     font-family: inherit;
     z-index: 10001 !important;
-    /* Ensure it appears above modal */
+    
     margin-top: 5px;
-}
-
-.pac-item {
+}body.admin-inkind-page .pac-item{
     padding: 10px 12px;
     font-size: 14px;
     color: #374151;
     cursor: pointer;
     border-bottom: 1px solid #f3f4f6;
     transition: background-color 0.2s;
-}
-
-.pac-item:hover {
+}body.admin-inkind-page .pac-item:hover{
     background-color: #f9fafb;
-}
-
-.pac-item:last-child {
+}body.admin-inkind-page .pac-item:last-child{
     border-bottom: none;
-}
-
-.pac-item-query {
+}body.admin-inkind-page .pac-item-query{
     font-size: 14px;
     color: #111827;
     font-weight: 500;
-}
-
-.pac-icon {
+}body.admin-inkind-page .pac-icon{
     margin-right: 10px;
-}
-
-.pac-matched {
+}body.admin-inkind-page .pac-matched{
     font-weight: 600;
     color: #3b82f6;
-}
-
-/* Google Maps Styling */
-#map,
-#viewMap {
+}body.admin-inkind-page #map, body.admin-inkind-page #viewMap{
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Map controls styling */
-.gmnoprint,
-.gm-style-cc {
+}body.admin-inkind-page .gmnoprint, body.admin-inkind-page .gm-style-cc{
     font-size: 11px;
-}
-
-/* Modal map styling */
-#viewMap {
+}body.admin-inkind-page #viewMap{
     height: 400px;
-}
-
-/* Responsive map */
-@media (max-width: 768px) {
-    #map {
+}@media (max-width: 768px){body.admin-inkind-page #map{
         height: 250px;
-    }
-
-    #viewMap {
+    }body.admin-inkind-page #viewMap{
         height: 300px;
     }
-}
-
-/* Coordinate display */
-#latDisplay,
-#lngDisplay {
+}body.admin-inkind-page #latDisplay, body.admin-inkind-page #lngDisplay{
     background-color: #f9fafb;
     cursor: not-allowed;
-}
-
-/* Location cards with map */
-.location:hover .map-preview {
+}body.admin-inkind-page .location:hover .map-preview{
     opacity: 0.8;
-}
-
-/* ADDED STYLE FOR IN-KIND TABLE */
-
-/* Table Toolbar */
-.table-toolbar {
+}body.admin-inkind-page .table-toolbar{
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
     padding-bottom: 16px;
     border-bottom: 1px solid var(--border);
-}
-
-.toolbar-actions {
+}body.admin-inkind-page .toolbar-actions{
     display: flex;
     align-items: center;
     gap: 15px;
     flex-wrap: wrap;
-}
-
-/* Filter Tabs - smaller version */
-.filter-tabs {
+}body.admin-inkind-page .filter-tabs{
     display: flex;
     gap: 6px;
     border-radius: 8px;
     background: #f3f4f6;
     padding: 4px;
     order: 2;
-    /* Move filters after search */
-}
-
-.filter-btn {
+    
+}body.admin-inkind-page .filter-btn{
     padding: 6px 14px;
     border: none;
     border-radius: 6px;
@@ -123,30 +76,20 @@
     cursor: pointer;
     transition: all 0.2s ease;
     white-space: nowrap;
-}
-
-.filter-btn:hover {
+}body.admin-inkind-page .filter-btn:hover{
     color: #3b82f6;
     background: #e5e7eb;
-}
-
-.filter-btn.active {
+}body.admin-inkind-page .filter-btn.active{
     background: #3b82f6;
     color: #fff;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-/* Search box - move to left */
-.search {
+}body.admin-inkind-page .search{
     position: relative;
     display: inline-flex;
     align-items: center;
     order: 1;
-    /* Move search before filters */
-}
-
-
-.donations-table select {
+    
+}body.admin-inkind-page .donations-table select{
     padding: 4px 8px;
     border: 1px solid #ccc;
     border-radius: 6px;
@@ -154,14 +97,10 @@
     background: #f9f9f9;
     cursor: pointer;
     transition: all 0.2s;
-}
-
-.donations-table select:hover {
+}body.admin-inkind-page .donations-table select:hover{
     border-color: #666;
     background: #fff;
-}
-
-.badge {
+}body.admin-inkind-page .badge{
     display: inline-block;
     padding: 6px 12px;
     border-radius: 999px;
@@ -169,21 +108,15 @@
     font-weight: 600;
     text-transform: capitalize;
     transition: all 0.3s ease-in-out;
-}
-
-.badge.scheduled {
+}body.admin-inkind-page .badge.scheduled{
     background-color: #fff6e5;
     color: #f39c12;
     border: 1px solid #f39c12;
-}
-
-.badge.received {
+}body.admin-inkind-page .badge.received{
     background-color: #eafaf1;
     color: #2ecc71;
     border: 1px solid #2ecc71;
-}
-
-.modal {
+}body.admin-inkind-page .modal{
     position: fixed;
     z-index: 9990;
     left: 0;
@@ -195,109 +128,68 @@
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.modal-content {
+}body.admin-inkind-page .modal-content{
     background: #fff;
     padding: 20px;
     border-radius: 12px;
     width: 400px;
     max-width: 95%;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-}
-
-.modal-content h3 {
+}body.admin-inkind-page .modal-content h3{
     margin-top: 0;
     margin-bottom: 12px;
     font-size: 18px;
-}
-
-.modal-content label {
+}body.admin-inkind-page .modal-content label{
     display: block;
     margin: 8px 0 4px;
     font-size: 14px;
     font-weight: 600;
-}
-
-.modal-content input,
-.modal-content select {
+}body.admin-inkind-page .modal-content input, body.admin-inkind-page .modal-content select{
     width: 100%;
     padding: 8px;
     border: 1px solid #d1d5db;
     border-radius: 6px;
     margin-bottom: 10px;
     font-size: 14px;
-}
-
-.close-btn {
+}body.admin-inkind-page .close-btn{
     float: right;
     font-size: 22px;
     cursor: pointer;
-}
-
-
-
-
-/*ADDED STYLE FOR MANAGING DROP OFF *\
-                /* Grid styling */
-.locations-grid {
+}body.admin-inkind-page .locations-grid{
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 16px;
     margin-top: 16px;
-}
-
-/* Location card */
-.location {
+}body.admin-inkind-page .location{
     background: #fff;
     border: 1px solid #e5e7eb;
     border-radius: 10px;
     padding: 16px;
     transition: all 0.2s ease-in-out;
     cursor: pointer;
-}
-
-/* Hover effect */
-.location:hover {
+}body.admin-inkind-page .location:hover{
     border-color: #2563eb;
     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
     transform: translateY(-2px);
-}
-
-/* Input styling */
-.styled-input {
+}body.admin-inkind-page .styled-input{
     flex: 1;
     padding: 8px 12px;
     border: 1px solid #d1d5db;
     border-radius: 6px;
     font-size: 14px;
     transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.styled-input:focus {
+}body.admin-inkind-page .styled-input:focus{
     border-color: #2563eb;
     outline: none;
     box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.3);
-}
-
-/* Button hover improvements */
-.btn:hover {
+}body.admin-inkind-page .btn:hover{
     opacity: 0.9;
-}
-
-.btn-danger:hover {
+}body.admin-inkind-page .btn-danger:hover{
     background: #dc2626;
-}
-
-.btn-info:hover {
+}body.admin-inkind-page .btn-info:hover{
     background: #2563eb;
     color: #fff;
-}
-
-
-/* Toggle container */
-/* Track */
-.slider {
+}body.admin-inkind-page .slider{
     position: absolute;
     cursor: pointer;
     top: 0;
@@ -307,130 +199,97 @@
     background-color: #ccc;
     transition: .3s;
     border-radius: 34px;
-}
-
-/* Knob */
-.slider::before {
+}body.admin-inkind-page .slider::before{
     position: absolute;
     content: "";
     height: 16px;
     width: 16px;
     top: 50%;
-    /* center vertically */
+    
     left: 3px;
     transform: translateY(-50%);
-    /* perfect centering */
+    
     background-color: white;
     transition: .3s;
     border-radius: 50%;
-}
-
-/* When checked */
-.switch input:checked+.slider {
+}body.admin-inkind-page .switch input:checked+.slider{
     background-color: #16a34a;
-    /* green */
-}
-
-.switch input:checked+.slider::before {
+    
+}body.admin-inkind-page .switch input:checked+.slider::before{
     transform: translate(20px, -50%);
-    /* move horizontally while staying centered */
-}
-
-.location-head form {
+    
+}body.admin-inkind-page .location-head form{
     display: flex;
     align-items: center;
-    /* makes text align with toggle vertically */
+    
     gap: 6px;
-    /* small spacing between toggle and label */
-}
-
-.status-text {
+    
+}body.admin-inkind-page .status-text{
     line-height: 1;
-    /* prevents extra vertical spacing */
+    
     display: inline-block;
-    /* keeps consistent alignment */
+    
     margin-top: 0;
-    /* ensures no unwanted offset */
-}
-
-.location.selected {
+    
+}body.admin-inkind-page .location.selected{
     border: 2px solid #3b82f6;
-    /* blue highlight */
+    
     border-radius: 8px;
     background: #f0f9ff;
-    /* light blue background */
-}
-
-
-:root {
+    
+}body.admin-inkind-page{
     --primary: #3b82f6;
     --bg: #f9fafb;
-    /* gray-50 */
+    
     --text: #111827;
-    /* gray-900 */
+    
     --muted: #6b7280;
-    /* gray-500 */
+    
     --muted-700: #374151;
-    /* gray-700 */
+    
     --border: #e5e7eb;
-    /* gray-200 */
+    
     --card: #ffffff;
     --shadow: 0 1px 2px rgba(0, 0, 0, 0.06),
         0 1px 3px rgba(0, 0, 0, 0.1);
     --radius: 12px;
     --header-h: 64px;
-    /* 16 * 4 */
+    
     --sidebar-w: 256px;
-    /* 64 * 4 */
-}
-
-* {
+    
+}body.admin-inkind-page *{
     box-sizing: border-box;
-}
-
-html,
-body {
+}body.admin-inkind-page, body.admin-inkind-page{
     height: 100%;
-}
-
-body {
+}body.admin-inkind-page{
     margin: 0;
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto,
         Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
     background: var(--bg);
     color: var(--text);
     line-height: 1.45;
-}
-
-/* Header */
-.header {
+}body.admin-inkind-page .header{
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     height: var(--header-h);
     background: #fff;
-    /* gray-900 */
+    
     color: #fff;
     z-index: 50;
     box-shadow: var(--shadow);
-}
-
-.header__inner {
+}body.admin-inkind-page .header__inner{
     height: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 16px;
-}
-
-.header__left {
+}body.admin-inkind-page .header__left{
     display: flex;
     align-items: center;
     gap: 12px;
-}
-
-.menu-btn {
+}body.admin-inkind-page .menu-btn{
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -441,26 +300,18 @@ body {
     color: #fff;
     border-radius: 8px;
     cursor: pointer;
-}
-
-.menu-btn:hover {
+}body.admin-inkind-page .menu-btn:hover{
     background: #374151;
-}
-
-.brand {
+}body.admin-inkind-page .brand{
     font-weight: 1000;
     font-size: 25px;
     letter-spacing: 0.06em;
     color: black;
-}
-
-.logo-word {
+}body.admin-inkind-page .logo-word{
     font-family: "Pacifico", cursive;
     color: var(--primary);
     font-size: 24px;
-}
-
-.notif {
+}body.admin-inkind-page .notif{
     position: relative;
     display: inline-flex;
     align-items: center;
@@ -472,13 +323,9 @@ body {
     color: #000000;
     border: 0;
     cursor: pointer;
-}
-
-.notif:hover {
+}body.admin-inkind-page .notif:hover{
     background: #374151;
-}
-
-.notif .badge {
+}body.admin-inkind-page .notif .badge{
     position: absolute;
     top: -6px;
     right: -6px;
@@ -492,36 +339,26 @@ body {
     align-items: center;
     justify-content: center;
     font-weight: 700;
-}
-
-/* Sidebar */
-.sidebar {
+}body.admin-inkind-page .sidebar{
     position: fixed;
     left: 0;
     top: var(--header-h);
     bottom: 0;
     width: var(--sidebar-w);
     background: #1e3a8a;
-    /* blue-800 */
+    
     color: #fff;
     transform: translateX(-100%);
     transition: transform 0.3s ease;
     z-index: 40;
     padding: 16px;
     overflow: auto;
-}
-
-.sidebar.open {
+}body.admin-inkind-page .sidebar.open{
     transform: translateX(0);
-}
-
-.sidebar nav {
+}body.admin-inkind-page .sidebar nav{
     display: grid;
     gap: 8px;
-}
-
-.side-btn,
-.side-link {
+}body.admin-inkind-page .side-btn, body.admin-inkind-page .side-link{
     display: flex;
     align-items: center;
     gap: 12px;
@@ -530,104 +367,59 @@ body {
     background: transparent;
     border: 0;
     color: #d1d5db;
-    /* gray-300 */
+    
     text-decoration: none;
     cursor: pointer;
     white-space: nowrap;
-}
-
-.side-btn.primary {
+}body.admin-inkind-page .side-btn.primary{
     background: var(--primary);
     color: #fff;
-}
-
-.side-btn:hover,
-.side-link:hover {
+}body.admin-inkind-page .side-btn:hover, body.admin-inkind-page .side-link:hover{
     background: #1e40af;
-}
-
-/* blue-700 */
-
-/* Sidebar overlay (mobile) */
-.overlay {
+}body.admin-inkind-page .overlay{
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.5);
     z-index: 30;
     display: none;
-}
-
-.overlay.show {
+}body.admin-inkind-page .overlay.show{
     display: block;
-}
-
-@media (min-width: 1024px) {
-    .main {
+}@media (min-width: 1024px){body.admin-inkind-page .main{
         margin-left: var(--sidebar-w);
-    }
-
-    .menu-btn {
+    }body.admin-inkind-page .menu-btn{
         display: none;
-    }
-
-    .sidebar {
+    }body.admin-inkind-page .sidebar{
         transform: translateX(0);
-    }
-
-    .overlay {
+    }body.admin-inkind-page .overlay{
         display: none !important;
-    }
-
-    .header__inner {
+    }body.admin-inkind-page .header__inner{
         padding: 0 24px;
     }
-}
-
-/* Main content — push to the right to allow for sidebar width on large screens */
-.main {
+}body.admin-inkind-page .main{
     margin-top: 64px;
     padding: 20px;
     transition: margin-left 0.28s ease;
     margin-left: 260px;
     min-height: calc(100vh - 64px);
-}
-
-.main.fullwidth {
+}body.admin-inkind-page .main.fullwidth{
     margin-left: 0;
-}
-
-/* Responsive: collapse sidebar on small screens */
-@media (max-width: 1024px) {
-    .sidebar {
+}@media (max-width: 1024px){body.admin-inkind-page .sidebar{
         transform: translateX(-110%);
-    }
-
-    .sidebar.visible {
+    }body.admin-inkind-page .sidebar.visible{
         transform: translateX(0);
-    }
-
-    .overlay {
+    }body.admin-inkind-page .overlay{
         display: none;
-    }
-
-    .overlay.visible {
+    }body.admin-inkind-page .overlay.visible{
         display: block;
-    }
-
-    .main {
+    }body.admin-inkind-page .main{
         margin-left: 0;
     }
-}
-
-.main {
+}body.admin-inkind-page .main{
     flex: 1;
     padding: 32px;
     max-width: calc(100% - 260px);
     box-sizing: border-box;
-}
-
-/* Buttons */
-.btn {
+}body.admin-inkind-page .btn{
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -636,116 +428,75 @@ body {
     border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
-}
-
-.btn.primary {
+}body.admin-inkind-page .btn.primary{
     background: var(--primary);
     color: #fff;
-}
-
-.btn.primary.small {
+}body.admin-inkind-page .btn.primary.small{
     padding: 8px 10px;
     font-size: 14px;
-}
-
-.btn.primary:hover {
+}body.admin-inkind-page .btn.primary:hover{
     background: var(--primary-dark);
-}
-
-.btn.secondary {
+}body.admin-inkind-page .btn.secondary{
     background: var(--secondary);
     color: #fff;
-}
-
-.btn.secondary.small {
+}body.admin-inkind-page .btn.secondary.small{
     padding: 8px 10px;
     font-size: 14px;
-}
-
-.btn.secondary:hover {
+}body.admin-inkind-page .btn.secondary:hover{
     background: var(--secondary-dark);
-}
-
-.btn-icon {
+}body.admin-inkind-page .btn-icon{
     background: transparent;
     border: 0;
     cursor: pointer;
     padding: 8px 10px;
     border-radius: 8px;
-}
-
-/* Cards */
-.card {
+}body.admin-inkind-page .card{
     background: var(--card-bg);
     border-radius: var(--radius);
     border: 1px solid var(--border);
     padding: 20px;
     box-shadow: var(--shadow);
     margin-bottom: 20px;
-}
-
-.card h2 {
+}body.admin-inkind-page .card h2{
     margin: 0 0 12px 0;
     font-size: 18px;
     color: #111827;
-}
-
-/* Locations grid */
-.locations-grid {
+}body.admin-inkind-page .locations-grid{
     display: grid;
     grid-template-columns: repeat(1, 1fr);
     gap: 12px;
     margin-top: 8px;
-}
-
-@media (min-width: 720px) {
-    .locations-grid {
+}@media (min-width: 720px){body.admin-inkind-page .locations-grid{
         grid-template-columns: repeat(2, 1fr);
     }
-}
-
-@media (min-width: 1024px) {
-    .locations-grid {
+}@media (min-width: 1024px){body.admin-inkind-page .locations-grid{
         grid-template-columns: repeat(3, 1fr);
     }
-}
-
-.location {
+}body.admin-inkind-page .location{
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 14px;
-}
-
-.location-head {
+}body.admin-inkind-page .location-head{
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 8px;
-}
-
-.location h3 {
+}body.admin-inkind-page .location h3{
     margin: 0;
     font-size: 15px;
     color: #111827;
     font-weight: 600;
-}
-
-/* Switch */
-.switch {
+}body.admin-inkind-page .switch{
     display: inline-block;
     position: relative;
     width: 46px;
     height: 28px;
-}
-
-.switch input {
+}body.admin-inkind-page .switch input{
     opacity: 0;
     width: 0;
     height: 0;
     position: absolute;
-}
-
-.switch-slider {
+}body.admin-inkind-page .switch-slider{
     position: absolute;
     cursor: pointer;
     top: 0;
@@ -755,9 +506,7 @@ body {
     background: #e5e7eb;
     border-radius: 999px;
     transition: background 0.2s;
-}
-
-.switch-slider:before {
+}body.admin-inkind-page .switch-slider:before{
     content: "";
     position: absolute;
     left: 4px;
@@ -768,41 +517,25 @@ body {
     border-radius: 50%;
     transition: transform 0.2s;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-.switch input:checked+.switch-slider {
+}body.admin-inkind-page .switch input:checked+.switch-slider{
     background: var(--secondary);
-}
-
-.switch input:checked+.switch-slider:before {
+}body.admin-inkind-page .switch input:checked+.switch-slider:before{
     transform: translateX(18px);
-}
-
-/* Stats grid */
-.stats-grid {
+}body.admin-inkind-page .stats-grid{
     display: grid;
     gap: 18px;
     grid-template-columns: 1fr;
     margin-bottom: 12px;
-}
-
-@media (min-width: 900px) {
-    .stats-grid {
+}@media (min-width: 900px){body.admin-inkind-page .stats-grid{
         grid-template-columns: repeat(3, 1fr);
     }
-}
-
-.stat {
+}body.admin-inkind-page .stat{
     padding: 18px;
-}
-
-.stat-body {
+}body.admin-inkind-page .stat-body{
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-
-.stat-icon {
+}body.admin-inkind-page .stat-icon{
     width: 48px;
     height: 48px;
     border-radius: 10px;
@@ -810,128 +543,81 @@ body {
     align-items: center;
     justify-content: center;
     font-size: 20px;
-}
-
-.stat-icon.gift {
+}body.admin-inkind-page .stat-icon.gift{
     background: #eff6ff;
     color: var(--primary);
-}
-
-.stat-icon.truck {
+}body.admin-inkind-page .stat-icon.truck{
     background: #fff7ed;
     color: #f97316;
-}
-
-.stat-icon.map {
+}body.admin-inkind-page .stat-icon.map{
     background: #ecfdf5;
     color: var(--secondary);
-}
-
-.muted {
+}body.admin-inkind-page .muted{
     color: var(--muted);
-}
-
-.small {
+}body.admin-inkind-page .small{
     font-size: 13px;
-}
-
-.xsmall {
+}body.admin-inkind-page .xsmall{
     font-size: 12px;
     color: #6b7280;
-}
-
-.big {
+}body.admin-inkind-page .big{
     font-size: 28px;
     font-weight: 700;
     margin: 6px 0;
-}
-
-.accent {
+}body.admin-inkind-page .accent{
     color: var(--secondary);
-}
-
-/* Chart */
-.chart {
+}body.admin-inkind-page .chart{
     height: 300px;
     margin-top: 6px;
-}
-
-/* Table area */
-.table-card .table-toolbar {
+}body.admin-inkind-page .table-card .table-toolbar{
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid var(--border);
     padding-bottom: 16px;
     margin-bottom: 12px;
-}
-
-.search {
+}body.admin-inkind-page .search{
     position: relative;
     display: inline-flex;
     align-items: center;
-}
-
-.search input {
+}body.admin-inkind-page .search input{
     padding: 10px 12px 10px 36px;
     border-radius: 8px;
     border: 1px solid #d1d5db;
     min-width: 260px;
     outline: none;
-}
-
-.search-icon {
+}body.admin-inkind-page .search-icon{
     position: absolute;
     left: 10px;
     font-size: 16px;
     color: #9ca3af;
-}
-
-/* Table */
-.table-wrap {
+}body.admin-inkind-page .table-wrap{
     overflow-x: auto;
-}
-
-.donations-table {
+}body.admin-inkind-page .donations-table{
     width: 100%;
     border-collapse: collapse;
     min-width: 900px;
-}
-
-.donations-table thead {
+}body.admin-inkind-page .donations-table thead{
     background: #f9fafb;
-}
-
-.donations-table th,
-.donations-table td {
+}body.admin-inkind-page .donations-table th, body.admin-inkind-page .donations-table td{
     padding: 16px 12px;
     text-align: left;
     border-bottom: 1px solid #f3f4f6;
     vertical-align: middle;
     font-size: 14px;
     color: #111827;
-}
-
-.donations-table th {
+}body.admin-inkind-page .donations-table th{
     font-size: 12px;
     color: #6b7280;
     text-transform: uppercase;
     font-weight: 700;
     letter-spacing: 0.04em;
-}
-
-.col-check {
+}body.admin-inkind-page .col-check{
     width: 48px;
-}
-
-/* Donor cell */
-.donor {
+}body.admin-inkind-page .donor{
     display: flex;
     align-items: center;
     gap: 12px;
-}
-
-.avatar {
+}body.admin-inkind-page .avatar{
     width: 40px;
     height: 40px;
     border-radius: 999px;
@@ -940,9 +626,7 @@ body {
     justify-content: center;
     font-weight: 700;
     color: #fff;
-}
-
-.avatar.blue {
+}body.admin-inkind-page .avatar.blue{
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -953,207 +637,129 @@ body {
     font-weight: 600;
     font-size: 14px;
     background: #3b82f6;
-    /* Blue background for initials */
+    
     overflow: hidden;
-    /* Important for image cropping */
+    
     position: relative;
-}
-
-.avatar.blue .user-avatar {
+}body.admin-inkind-page .avatar.blue .user-avatar{
     width: 100%;
     height: 100%;
     object-fit: cover;
-    /* Ensures image fills the circle */
-}
-
-.avatar.blue i.ri-user-line {
+    
+}body.admin-inkind-page .avatar.blue i.ri-user-line{
     font-size: 18px;
-}
-
-
-
-.amount {
+}body.admin-inkind-page .amount{
     font-weight: 700;
     color: #111827;
-}
-
-.method {
+}body.admin-inkind-page .method{
     display: flex;
     align-items: center;
     gap: 8px;
-}
-
-.method-icon {
+}body.admin-inkind-page .method-icon{
     font-size: 16px;
     color: #9ca3af;
-}
-
-/* Badges */
-.badge {
+}body.admin-inkind-page .badge{
     display: inline-block;
     padding: 6px 10px;
     border-radius: 999px;
     font-size: 12px;
     font-weight: 700;
-}
-
-.badge.success {
+}body.admin-inkind-page .badge.success{
     background: #ecfdf5;
     color: #065f46;
-}
-
-.badge.pending {
+}body.admin-inkind-page .badge.pending{
     background: #fffbeb;
     color: #92400e;
-}
-
-.badge.failed {
+}body.admin-inkind-page .badge.failed{
     background: #fff1f2;
     color: #7f1d1d;
-}
-
-/* Row actions */
-.row-actions {
+}body.admin-inkind-page .row-actions{
     display: flex;
     gap: 8px;
-}
-
-.icon-btn {
+}body.admin-inkind-page .icon-btn{
     background: transparent;
     border: 0;
     cursor: pointer;
     font-size: 16px;
     color: var(--primary);
-}
-
-/* Table footer / pagination */
-.table-footer {
+}body.admin-inkind-page .table-footer{
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding-top: 12px;
     border-top: 1px solid var(--border);
     margin-top: 12px;
-}
-
-.pagination {
+}body.admin-inkind-page .pagination{
     display: flex;
     gap: 8px;
-}
-
-.page {
+}body.admin-inkind-page .page{
     border: 1px solid #d1d5db;
     padding: 8px 10px;
     background: #fff;
     border-radius: 8px;
     cursor: pointer;
-}
-
-.page.active {
+}body.admin-inkind-page .page.active{
     background: var(--primary);
     color: #fff;
     border-color: var(--primary);
-}
-
-/* Responsive */
-@media (max-width: 880px) {
-    .header {
+}@media (max-width: 880px){body.admin-inkind-page .header{
         flex-direction: column;
         align-items: flex-start;
         gap: 16px;
-    }
-
-    .header-actions {
+    }body.admin-inkind-page .header-actions{
         width: 100%;
         display: flex;
         justify-content: flex-start;
         gap: 8px;
     }
-}
-
-.side-link.active,
-.side-btn.active {
+}body.admin-inkind-page .side-link.active, body.admin-inkind-page .side-btn.active{
     background: var(--primary);
     color: #fff !important;
-}
-
-/* Impact Report Modal Styles */
-#impactReportModal {
+}body.admin-inkind-page #impactReportModal{
     display: none;
-}
-
-/* Modal Content */
-#impactReportModal .modal-content {
+}body.admin-inkind-page #impactReportModal .modal-content{
     max-width: 800px;
     max-height: 90vh;
     overflow-y: auto;
-}
-
-/* Close Button */
-#impactReportModal .close-btn {
+}body.admin-inkind-page #impactReportModal .close-btn{
     float: right;
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
     color: #666;
-}
-
-#impactReportModal .close-btn:hover {
+}body.admin-inkind-page #impactReportModal .close-btn:hover{
     color: #000;
-}
-
-/* Modal Heading */
-#impactReportModal h2 {
+}body.admin-inkind-page #impactReportModal h2{
     margin: 0 0 20px 0;
     color: #111827;
     font-size: 24px;
     font-weight: 600;
-}
-
-/* Message Box */
-#impact-message {
+}body.admin-inkind-page #impact-message{
     display: none;
     padding: 10px;
     margin-bottom: 15px;
     border-radius: 6px;
     font-size: 14px;
-}
-
-/* Form Labels */
-#impactReportForm label {
+}body.admin-inkind-page #impactReportForm label{
     display: block;
     margin-bottom: 5px;
     font-weight: 600;
     color: #374151;
-}
-
-/* Form Inputs */
-#impactReportForm input[type="text"],
-#impactReportForm input[type="date"],
-#impactReportForm textarea {
+}body.admin-inkind-page #impactReportForm input[type="text"], body.admin-inkind-page #impactReportForm input[type="date"], body.admin-inkind-page #impactReportForm textarea{
     width: 100%;
     padding: 10px;
     border: 1px solid #d1d5db;
     border-radius: 6px;
     font-size: 14px;
     box-sizing: border-box;
-}
-
-#impactReportForm input[type="text"]:focus,
-#impactReportForm input[type="date"]:focus,
-#impactReportForm textarea:focus {
+}body.admin-inkind-page #impactReportForm input[type="text"]:focus, body.admin-inkind-page #impactReportForm input[type="date"]:focus, body.admin-inkind-page #impactReportForm textarea:focus{
     outline: none;
     border-color: #3b82f6;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-#impactReportForm textarea {
+}body.admin-inkind-page #impactReportForm textarea{
     resize: vertical;
     min-height: 100px;
-}
-
-/* Photo Upload Area */
-#photo-upload-area {
+}body.admin-inkind-page #photo-upload-area{
     border: 2px dashed #d1d5db;
     border-radius: 8px;
     padding: 40px 20px;
@@ -1161,37 +767,24 @@ body {
     cursor: pointer;
     background: #f9fafb;
     transition: all 0.2s ease;
-}
-
-#photo-upload-area:hover {
+}body.admin-inkind-page #photo-upload-area:hover{
     border-color: #3b82f6;
     background: #f0f9ff;
-}
-
-#photo-upload-area i {
+}body.admin-inkind-page #photo-upload-area i{
     font-size: 36px;
     color: #6b7280;
     margin-bottom: 12px;
-}
-
-#photo-upload-area p {
+}body.admin-inkind-page #photo-upload-area p{
     margin: 0;
     color: #374151;
     font-weight: 500;
-}
-
-#photo-upload-area p:last-child {
+}body.admin-inkind-page #photo-upload-area p:last-child{
     font-size: 13px;
     color: #9ca3af;
     font-weight: normal;
-}
-
-/* Photo Preview */
-#impact_photo_preview {
+}body.admin-inkind-page #impact_photo_preview{
     margin-top: 15px;
-}
-
-.photo-preview-item {
+}body.admin-inkind-page .photo-preview-item{
     margin-bottom: 10px;
     padding: 10px;
     border: 1px solid #e5e7eb;
@@ -1200,30 +793,20 @@ body {
     align-items: center;
     gap: 10px;
     background: white;
-}
-
-.photo-preview-item img {
+}body.admin-inkind-page .photo-preview-item img{
     width: 80px;
     height: 60px;
     object-fit: cover;
     border-radius: 4px;
-}
-
-.photo-preview-info {
+}body.admin-inkind-page .photo-preview-info{
     flex: 1;
-}
-
-.photo-preview-name {
+}body.admin-inkind-page .photo-preview-name{
     font-size: 14px;
     color: #374151;
-}
-
-.photo-preview-size {
+}body.admin-inkind-page .photo-preview-size{
     font-size: 12px;
     color: #6b7280;
-}
-
-.remove-photo-btn {
+}body.admin-inkind-page .remove-photo-btn{
     padding: 4px 8px;
     background: #ef4444;
     color: white;
@@ -1232,68 +815,46 @@ body {
     cursor: pointer;
     font-size: 12px;
     transition: background 0.2s ease;
-}
-
-.remove-photo-btn:hover {
+}body.admin-inkind-page .remove-photo-btn:hover{
     background: #dc2626;
-}
-
-/* Donation Selection Section */
-.donation-selection-label {
+}body.admin-inkind-page .donation-selection-label{
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
     color: #374151;
-}
-
-.donation-selection-subtitle {
+}body.admin-inkind-page .donation-selection-subtitle{
     font-size: 14px;
     color: #6b7280;
     margin-bottom: 15px;
-}
-
-/* Search and Controls Container */
-.search-controls-container {
+}body.admin-inkind-page .search-controls-container{
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 15px;
     gap: 15px;
     flex-wrap: wrap;
-}
-
-/* Search Box */
-.search-box {
+}body.admin-inkind-page .search-box{
     flex: 1;
     min-width: 250px;
     position: relative;
-}
-
-.search-box input {
+}body.admin-inkind-page .search-box input{
     width: 100%;
     padding: 8px 12px 8px 40px;
     border: 1px solid #d1d5db;
     border-radius: 6px;
     font-size: 14px;
     box-sizing: border-box;
-}
-
-.search-box i {
+}body.admin-inkind-page .search-box i{
     position: absolute;
     left: 12px;
     top: 50%;
     transform: translateY(-50%);
     color: #6b7280;
     pointer-events: none;
-}
-
-/* Quick Actions */
-.quick-actions {
+}body.admin-inkind-page .quick-actions{
     display: flex;
     gap: 8px;
-}
-
-.action-btn {
+}body.admin-inkind-page .action-btn{
     border: none;
     padding: 8px 16px;
     border-radius: 6px;
@@ -1303,28 +864,17 @@ body {
     align-items: center;
     gap: 6px;
     transition: background 0.2s ease;
-}
-
-.select-all-btn {
+}body.admin-inkind-page .select-all-btn{
     background: #3b82f6;
     color: white;
-}
-
-.select-all-btn:hover {
+}body.admin-inkind-page .select-all-btn:hover{
     background: #2563eb;
-}
-
-.clear-all-btn {
+}body.admin-inkind-page .clear-all-btn{
     background: #6b7280;
     color: white;
-}
-
-.clear-all-btn:hover {
+}body.admin-inkind-page .clear-all-btn:hover{
     background: #4b5563;
-}
-
-/* Donations Container */
-#donations-container {
+}body.admin-inkind-page #donations-container{
     border: 1px solid #e5e7eb;
     border-radius: 8px;
     overflow: hidden;
@@ -1332,15 +882,10 @@ body {
     overflow-y: auto;
     background: white;
     padding: 10px;
-}
-
-/* Loading State */
-.loading-state {
+}body.admin-inkind-page .loading-state{
     text-align: center;
     padding: 30px;
-}
-
-.spinner {
+}body.admin-inkind-page .spinner{
     display: inline-block;
     width: 30px;
     height: 30px;
@@ -1349,21 +894,14 @@ body {
     border-radius: 50%;
     animation: spin 1s linear infinite;
     margin-bottom: 15px;
-}
-
-@keyframes spin {
+}@keyframes spin{
     to {
         transform: rotate(360deg);
     }
-}
-
-.loading-state p {
+}body.admin-inkind-page .loading-state p{
     color: #6b7280;
     margin: 0;
-}
-
-/* Summary Section */
-.summary-container {
+}body.admin-inkind-page .summary-container{
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -1372,21 +910,15 @@ body {
     background: #f0f9ff;
     border-radius: 8px;
     border: 1px solid #bae6fd;
-}
-
-.summary-stats {
+}body.admin-inkind-page .summary-stats{
     display: flex;
     gap: 20px;
     flex-wrap: wrap;
-}
-
-.summary-item {
+}body.admin-inkind-page .summary-item{
     display: flex;
     align-items: center;
     gap: 8px;
-}
-
-.summary-icon {
+}body.admin-inkind-page .summary-icon{
     width: 30px;
     height: 30px;
     border-radius: 50%;
@@ -1395,57 +927,34 @@ body {
     justify-content: center;
     color: white;
     font-size: 16px;
-}
-
-.donor-icon {
+}body.admin-inkind-page .donor-icon{
     background: #0369a1;
-}
-
-.items-icon {
+}body.admin-inkind-page .items-icon{
     background: #059669;
-}
-
-.categories-icon {
+}body.admin-inkind-page .categories-icon{
     background: #7c3aed;
-}
-
-.summary-label {
+}body.admin-inkind-page .summary-label{
     font-size: 12px;
     color: #64748b;
-}
-
-.summary-value {
+}body.admin-inkind-page .summary-value{
     font-weight: 600;
     font-size: 18px;
-}
-
-#selected-donors-count {
+}body.admin-inkind-page #selected-donors-count{
     color: #0369a1;
-}
-
-#selected-items-count {
+}body.admin-inkind-page #selected-items-count{
     color: #059669;
-}
-
-#selected-categories-count {
+}body.admin-inkind-page #selected-categories-count{
     color: #7c3aed;
-}
-
-.selected-count {
+}body.admin-inkind-page .selected-count{
     font-weight: 600;
     font-size: 18px;
     color: #16a34a;
-}
-
-/* Form Buttons */
-.form-buttons {
+}body.admin-inkind-page .form-buttons{
     display: flex;
     gap: 10px;
     justify-content: flex-end;
     margin-top: 25px;
-}
-
-.btn {
+}body.admin-inkind-page .btn{
     padding: 10px 20px;
     border-radius: 6px;
     cursor: pointer;
@@ -1456,151 +965,93 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
-}
-
-.btn-primary {
+}body.admin-inkind-page .btn-primary{
     background: #3b82f6;
     color: white;
     border-color: #3b82f6;
-}
-
-.btn-primary:hover {
+}body.admin-inkind-page .btn-primary:hover{
     background: #2563eb;
     border-color: #2563eb;
-}
-
-.btn-secondary {
+}body.admin-inkind-page .btn-secondary{
     background: white;
     color: #374151;
     border-color: #d1d5db;
-}
-
-.btn-secondary:hover {
+}body.admin-inkind-page .btn-secondary:hover{
     background: #f9fafb;
     border-color: #9ca3af;
-}
-
-.btn-small {
+}body.admin-inkind-page .btn-small{
     padding: 8px 16px;
     font-size: 14px;
-}
-
-.btn:disabled {
+}body.admin-inkind-page .btn:disabled{
     opacity: 0.6;
     cursor: not-allowed;
-}
-
-/* Hidden File Input */
-#impact_photo {
+}body.admin-inkind-page #impact_photo{
     display: none;
-}
-
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-    #impactReportModal .modal-content {
+}@media (max-width: 768px){body.admin-inkind-page #impactReportModal .modal-content{
         width: 95%;
         max-height: 95vh;
         margin: 10px auto;
-    }
-
-    .search-controls-container {
+    }body.admin-inkind-page .search-controls-container{
         flex-direction: column;
         align-items: stretch;
-    }
-
-    .search-box {
+    }body.admin-inkind-page .search-box{
         min-width: 100%;
-    }
-
-    .quick-actions {
+    }body.admin-inkind-page .quick-actions{
         justify-content: center;
-    }
-
-    .summary-container {
+    }body.admin-inkind-page .summary-container{
         flex-direction: column;
         gap: 15px;
         align-items: stretch;
-    }
-
-    .summary-stats {
+    }body.admin-inkind-page .summary-stats{
         justify-content: space-around;
-    }
-
-    .selected-count {
+    }body.admin-inkind-page .selected-count{
         text-align: center;
-    }
-
-    .form-buttons {
+    }body.admin-inkind-page .form-buttons{
         flex-direction: column;
-    }
-
-    .btn {
+    }body.admin-inkind-page .btn{
         width: 100%;
         justify-content: center;
     }
-}
-
-@media (max-width: 480px) {
-    .summary-stats {
+}@media (max-width: 480px){body.admin-inkind-page .summary-stats{
         flex-direction: column;
         gap: 15px;
         align-items: center;
-    }
-
-    .summary-item {
+    }body.admin-inkind-page .summary-item{
         width: 100%;
         justify-content: center;
     }
-}
-
-/* Error States */
-.error-message {
+}body.admin-inkind-page .error-message{
     background: #fee2e2;
     border: 1px solid #fecaca;
     color: #dc2626;
-}
-
-.success-message {
+}body.admin-inkind-page .success-message{
     background: #d1fae5;
     border: 1px solid #a7f3d0;
     color: #059669;
-}
-
-.warning-message {
+}body.admin-inkind-page .warning-message{
     background: #fef3c7;
     border: 1px solid #fde68a;
     color: #d97706;
-}
-
-.info-message {
+}body.admin-inkind-page .info-message{
     background: #dbeafe;
     border: 1px solid #bfdbfe;
     color: #1d4ed8;
-}
-
-/* Donation Group Styles */
-.donation-group {
+}body.admin-inkind-page .donation-group{
     background: white;
     border: 1px solid #e5e7eb;
     border-radius: 8px;
     padding: 15px;
     margin-bottom: 10px;
-}
-
-.donation-group-header {
+}body.admin-inkind-page .donation-group-header{
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 12px;
-}
-
-.donor-info {
+}body.admin-inkind-page .donor-info{
     display: flex;
     align-items: center;
     gap: 12px;
-}
-
-.donor-avatar {
+}body.admin-inkind-page .donor-avatar{
     width: 40px;
     height: 40px;
     color: white;
@@ -1611,36 +1062,24 @@ body {
     font-weight: 600;
     overflow: hidden;
     position: relative;
-}
-
-.donor-avatar img {
+}body.admin-inkind-page .donor-avatar img{
     width: 100%;
     height: 100%;
     object-fit: cover;
-}
-
-.avatar-initials {
+}body.admin-inkind-page .avatar-initials{
     font-size: 14px;
     font-weight: 600;
-}
-
-.donor-details {
+}body.admin-inkind-page .donor-details{
     flex: 1;
-}
-
-.donor-name {
+}body.admin-inkind-page .donor-name{
     font-weight: 600;
     color: #111827;
     font-size: 15px;
-}
-
-.donor-meta {
+}body.admin-inkind-page .donor-meta{
     font-size: 13px;
     color: #6b7280;
     line-height: 1.4;
-}
-
-.donor-type {
+}body.admin-inkind-page .donor-type{
     font-size: 11px;
     color: #9ca3af;
     background: #f3f4f6;
@@ -1648,9 +1087,7 @@ body {
     border-radius: 10px;
     display: inline-block;
     margin-top: 2px;
-}
-
-.select-group-btn {
+}body.admin-inkind-page .select-group-btn{
     padding: 6px 12px;
     background: #3b82f6;
     color: white;
@@ -1659,21 +1096,13 @@ body {
     cursor: pointer;
     font-size: 13px;
     transition: background 0.2s ease;
-}
-
-.select-group-btn:hover {
+}body.admin-inkind-page .select-group-btn:hover{
     background: #2563eb;
-}
-
-/* Donation Items Container */
-.donation-items {
+}body.admin-inkind-page .donation-items{
     margin-left: 10px;
     border-left: 2px solid #e5e7eb;
     padding-left: 15px;
-}
-
-/* Individual Donation Item */
-.donation-item {
+}body.admin-inkind-page .donation-item{
     display: flex;
     align-items: center;
     gap: 10px;
@@ -1681,18 +1110,12 @@ body {
     cursor: pointer;
     transition: all 0.2s ease;
     border-bottom: 1px solid #f3f4f6;
-}
-
-.donation-item:last-child {
+}body.admin-inkind-page .donation-item:last-child{
     border-bottom: none;
-}
-
-.donation-item:hover {
+}body.admin-inkind-page .donation-item:hover{
     background: #f9fafb;
     border-radius: 4px;
-}
-
-.item-checkbox {
+}body.admin-inkind-page .item-checkbox{
     width: 18px;
     height: 18px;
     border: 2px solid #d1d5db;
@@ -1703,193 +1126,126 @@ body {
     flex-shrink: 0;
     cursor: pointer;
     transition: all 0.2s ease;
-}
-
-.item-checkbox:hover {
+}body.admin-inkind-page .item-checkbox:hover{
     border-color: #3b82f6;
-}
-
-.item-checkbox.checked {
+}body.admin-inkind-page .item-checkbox.checked{
     background: #3b82f6;
     border-color: #3b82f6;
-}
-
-.item-checkbox.checked::after {
+}body.admin-inkind-page .item-checkbox.checked::after{
     content: '';
     display: block;
     width: 10px;
     height: 10px;
     background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E") no-repeat center;
     background-size: contain;
-}
-
-.item-details {
+}body.admin-inkind-page .item-details{
     flex: 1;
     min-width: 0;
-    /* Prevents flex item from overflowing */
-}
-
-.item-header {
+    
+}body.admin-inkind-page .item-header{
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 8px;
     margin-bottom: 4px;
-}
-
-.item-name {
+}body.admin-inkind-page .item-name{
     font-size: 14px;
     color: #111827;
     flex: 1;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-.item-meta {
+}body.admin-inkind-page .item-meta{
     display: flex;
     align-items: center;
     gap: 8px;
     flex-shrink: 0;
-}
-
-.item-quantity {
+}body.admin-inkind-page .item-quantity{
     font-size: 13px;
     color: #16a34a;
     font-weight: 500;
     white-space: nowrap;
-}
-
-.item-category {
+}body.admin-inkind-page .item-category{
     font-size: 12px;
     color: #6b7280;
     background: #f3f4f6;
     padding: 2px 8px;
     border-radius: 12px;
     white-space: nowrap;
-}
-
-.item-footer {
+}body.admin-inkind-page .item-footer{
     display: flex;
     gap: 15px;
     flex-wrap: wrap;
-}
-
-.item-date,
-.item-location {
+}body.admin-inkind-page .item-date, body.admin-inkind-page .item-location{
     display: flex;
     align-items: center;
     gap: 6px;
     font-size: 12px;
     color: #6b7280;
-}
-
-.item-date i,
-.item-location i {
+}body.admin-inkind-page .item-date i, body.admin-inkind-page .item-location i{
     font-size: 12px;
-}
-
-/* Hidden Checkbox */
-.hidden-checkbox {
+}body.admin-inkind-page .hidden-checkbox{
     display: none;
-}
-
-/* No Donations Message */
-#no-donations {
+}body.admin-inkind-page #no-donations{
     padding: 50px;
     text-align: center;
-}
-
-#no-donations i {
+}body.admin-inkind-page #no-donations i{
     font-size: 48px;
     color: #d1d5db;
     margin-bottom: 15px;
-}
-
-#no-donations h4 {
+}body.admin-inkind-page #no-donations h4{
     color: #6b7280;
     margin-bottom: 10px;
     font-size: 18px;
-}
-
-#no-donations p {
+}body.admin-inkind-page #no-donations p{
     color: #9ca3af;
     font-size: 14px;
     max-width: 300px;
     margin: 0 auto;
     line-height: 1.5;
-}
-
-/* No Search Results */
-#search-no-results {
+}body.admin-inkind-page #search-no-results{
     display: none;
     padding: 40px;
     text-align: center;
     color: #6b7280;
-}
-
-#search-no-results i {
+}body.admin-inkind-page #search-no-results i{
     font-size: 32px;
     margin-bottom: 12px;
     color: #d1d5db;
-}
-
-#search-no-results p {
+}body.admin-inkind-page #search-no-results p{
     margin: 0;
     font-size: 14px;
-}
-
-/* Responsive Styles */
-@media (max-width: 768px) {
-    .donation-group-header {
+}@media (max-width: 768px){body.admin-inkind-page .donation-group-header{
         flex-direction: column;
         align-items: flex-start;
         gap: 12px;
-    }
-
-    .select-group-btn {
+    }body.admin-inkind-page .select-group-btn{
         align-self: flex-end;
-    }
-
-    .item-header {
+    }body.admin-inkind-page .item-header{
         flex-direction: column;
         align-items: flex-start;
         gap: 4px;
-    }
-
-    .item-meta {
+    }body.admin-inkind-page .item-meta{
         width: 100%;
         justify-content: space-between;
-    }
-
-    .item-footer {
+    }body.admin-inkind-page .item-footer{
         flex-direction: column;
         gap: 8px;
     }
-}
-
-@media (max-width: 480px) {
-    .donation-items {
+}@media (max-width: 480px){body.admin-inkind-page .donation-items{
         margin-left: 0;
         border-left: none;
         padding-left: 0;
         border-top: 2px solid #e5e7eb;
         padding-top: 15px;
-    }
-
-    .donation-group {
+    }body.admin-inkind-page .donation-group{
         padding: 12px;
-    }
-
-    .item-meta {
+    }body.admin-inkind-page .item-meta{
         flex-direction: column;
         align-items: flex-start;
         gap: 4px;
     }
-}
-
-/* Impact Report Modal Styles */
-#impactReportModal {
+}body.admin-inkind-page #impactReportModal{
     display: none;
     position: fixed;
     top: 0;
@@ -1900,20 +1256,14 @@ body {
     z-index: 1000;
     align-items: center;
     justify-content: center;
-}
-
-/* Modal Content */
-#impactReportModal .modal-content {
+}body.admin-inkind-page #impactReportModal .modal-content{
     width: 850px;
     max-height: 90vh;
     overflow-y: auto;
     background: white;
     border-radius: 8px;
     border: 1px solid #e5e7eb;
-}
-
-/* Close Button */
-#impactReportModal .close-btn {
+}body.admin-inkind-page #impactReportModal .close-btn{
     float: right;
     font-size: 28px;
     font-weight: bold;
@@ -1923,14 +1273,9 @@ body {
     border: none;
     padding: 0;
     line-height: 1;
-}
-
-#impactReportModal .close-btn:hover {
+}body.admin-inkind-page #impactReportModal .close-btn:hover{
     color: #000;
-}
-
-/* Modal Heading */
-#impactReportModal h2 {
+}body.admin-inkind-page #impactReportModal h2{
     margin: 0 0 20px 0;
     color: #111827;
     font-size: 24px;
@@ -1938,40 +1283,22 @@ body {
     padding: 25px 30px 0;
     border-bottom: 1px solid #f3f4f6;
     padding-bottom: 20px;
-}
-
-/* Form Container */
-#impactReportForm {
+}body.admin-inkind-page #impactReportForm{
     padding: 0 30px 25px;
-}
-
-/* Form Groups */
-.form-group {
+}body.admin-inkind-page .form-group{
     margin-bottom: 25px;
-}
-
-.form-group:last-child {
+}body.admin-inkind-page .form-group:last-child{
     margin-bottom: 0;
-}
-
-/* Form Labels */
-#impactReportForm label {
+}body.admin-inkind-page #impactReportForm label{
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
     color: #374151;
     font-size: 14px;
-}
-
-.required::after {
+}body.admin-inkind-page .required::after{
     content: " *";
     color: #ef4444;
-}
-
-/* Form Inputs */
-#impactReportForm input[type="text"],
-#impactReportForm input[type="date"],
-#impactReportForm textarea {
+}body.admin-inkind-page #impactReportForm input[type="text"], body.admin-inkind-page #impactReportForm input[type="date"], body.admin-inkind-page #impactReportForm textarea{
     width: 100%;
     padding: 12px;
     border: 1px solid #d1d5db;
@@ -1980,60 +1307,36 @@ body {
     box-sizing: border-box;
     background: white;
     color: #111827;
-}
-
-#impactReportForm input[type="text"]:focus,
-#impactReportForm input[type="date"]:focus,
-#impactReportForm textarea:focus {
+}body.admin-inkind-page #impactReportForm input[type="text"]:focus, body.admin-inkind-page #impactReportForm input[type="date"]:focus, body.admin-inkind-page #impactReportForm textarea:focus{
     outline: none;
     border-color: #3b82f6;
-}
-
-#impactReportForm textarea {
+}body.admin-inkind-page #impactReportForm textarea{
     resize: vertical;
     min-height: 100px;
-}
-
-/* Placeholder styling */
-#impactReportForm input::placeholder,
-#impactReportForm textarea::placeholder {
+}body.admin-inkind-page #impactReportForm input::placeholder, body.admin-inkind-page #impactReportForm textarea::placeholder{
     color: #9ca3af;
-}
-
-/* Photo Upload Area */
-#photo-upload-area {
+}body.admin-inkind-page #photo-upload-area{
     border: 2px dashed #d1d5db;
     border-radius: 8px;
     padding: 40px 20px;
     text-align: center;
     cursor: pointer;
     background: #f9fafb;
-}
-
-#photo-upload-area i {
+}body.admin-inkind-page #photo-upload-area i{
     font-size: 36px;
     color: #6b7280;
     margin-bottom: 12px;
-}
-
-#photo-upload-area p {
+}body.admin-inkind-page #photo-upload-area p{
     margin: 0;
     color: #374151;
     font-weight: 500;
-}
-
-#photo-upload-area p:last-child {
+}body.admin-inkind-page #photo-upload-area p:last-child{
     font-size: 13px;
     color: #9ca3af;
     font-weight: normal;
-}
-
-/* Photo Preview */
-#impact_photo_preview {
+}body.admin-inkind-page #impact_photo_preview{
     margin-top: 15px;
-}
-
-.photo-preview-item {
+}body.admin-inkind-page .photo-preview-item{
     margin-bottom: 10px;
     padding: 12px;
     border: 1px solid #e5e7eb;
@@ -2042,30 +1345,20 @@ body {
     align-items: center;
     gap: 12px;
     background: white;
-}
-
-.photo-preview-item img {
+}body.admin-inkind-page .photo-preview-item img{
     width: 80px;
     height: 60px;
     object-fit: cover;
     border-radius: 4px;
-}
-
-.photo-preview-info {
+}body.admin-inkind-page .photo-preview-info{
     flex: 1;
-}
-
-.photo-preview-name {
+}body.admin-inkind-page .photo-preview-name{
     font-size: 14px;
     color: #374151;
-}
-
-.photo-preview-size {
+}body.admin-inkind-page .photo-preview-size{
     font-size: 12px;
     color: #6b7280;
-}
-
-.remove-photo-btn {
+}body.admin-inkind-page .remove-photo-btn{
     padding: 6px 12px;
     background: #ef4444;
     color: white;
@@ -2073,35 +1366,23 @@ body {
     border-radius: 4px;
     cursor: pointer;
     font-size: 12px;
-}
-
-.remove-photo-btn:hover {
+}body.admin-inkind-page .remove-photo-btn:hover{
     background: #dc2626;
-}
-
-/* Donation Selection Section */
-.donation-selection-container {
+}body.admin-inkind-page .donation-selection-container{
     background: #f9fafb;
     border-radius: 8px;
     padding: 20px;
     margin-top: 5px;
-}
-
-.donation-selection-label {
+}body.admin-inkind-page .donation-selection-label{
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
     color: #374151;
-}
-
-.donation-selection-subtitle {
+}body.admin-inkind-page .donation-selection-subtitle{
     font-size: 14px;
     color: #6b7280;
     margin-bottom: 15px;
-}
-
-/* Search and Controls Container */
-.search-controls-container {
+}body.admin-inkind-page .search-controls-container{
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -2112,16 +1393,11 @@ body {
     padding: 15px;
     border-radius: 6px;
     border: 1px solid #e5e7eb;
-}
-
-/* Search Box */
-.search-box {
+}body.admin-inkind-page .search-box{
     flex: 1;
     min-width: 300px;
     position: relative;
-}
-
-.search-box input {
+}body.admin-inkind-page .search-box input{
     width: 100%;
     padding: 10px 12px 10px 40px;
     border: 1px solid #d1d5db;
@@ -2129,29 +1405,20 @@ body {
     font-size: 14px;
     box-sizing: border-box;
     background: white;
-}
-
-.search-box input:focus {
+}body.admin-inkind-page .search-box input:focus{
     border-color: #3b82f6;
     outline: none;
-}
-
-.search-box i {
+}body.admin-inkind-page .search-box i{
     position: absolute;
     left: 12px;
     top: 50%;
     transform: translateY(-50%);
     color: #6b7280;
     pointer-events: none;
-}
-
-/* Quick Actions */
-.quick-actions {
+}body.admin-inkind-page .quick-actions{
     display: flex;
     gap: 10px;
-}
-
-.action-btn {
+}body.admin-inkind-page .action-btn{
     border: none;
     padding: 10px 16px;
     border-radius: 6px;
@@ -2160,30 +1427,19 @@ body {
     display: flex;
     align-items: center;
     gap: 6px;
-}
-
-.select-all-btn {
+}body.admin-inkind-page .select-all-btn{
     background: #3b82f6;
     color: white;
-}
-
-.select-all-btn:hover {
+}body.admin-inkind-page .select-all-btn:hover{
     background: #2563eb;
-}
-
-.clear-all-btn {
+}body.admin-inkind-page .clear-all-btn{
     background: white;
     color: #374151;
     border: 1px solid #d1d5db;
-}
-
-.clear-all-btn:hover {
+}body.admin-inkind-page .clear-all-btn:hover{
     background: #f9fafb;
     border-color: #9ca3af;
-}
-
-/* Donations Container */
-#donations-container {
+}body.admin-inkind-page #donations-container{
     border: 1px solid #e5e7eb;
     border-radius: 6px;
     overflow: hidden;
@@ -2191,15 +1447,10 @@ body {
     overflow-y: auto;
     background: white;
     padding: 15px;
-}
-
-/* Loading State */
-.loading-state {
+}body.admin-inkind-page .loading-state{
     text-align: center;
     padding: 40px 20px;
-}
-
-.spinner {
+}body.admin-inkind-page .spinner{
     display: inline-block;
     width: 30px;
     height: 30px;
@@ -2207,16 +1458,11 @@ body {
     border-top-color: #3b82f6;
     border-radius: 50%;
     margin-bottom: 15px;
-}
-
-.loading-state p {
+}body.admin-inkind-page .loading-state p{
     color: #6b7280;
     margin: 0;
     font-size: 14px;
-}
-
-/* Summary Section */
-.summary-container {
+}body.admin-inkind-page .summary-container{
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -2225,21 +1471,15 @@ body {
     background: #f0f9ff;
     border-radius: 8px;
     border: 1px solid #bae6fd;
-}
-
-.summary-stats {
+}body.admin-inkind-page .summary-stats{
     display: flex;
     gap: 25px;
     flex-wrap: wrap;
-}
-
-.summary-item {
+}body.admin-inkind-page .summary-item{
     display: flex;
     align-items: center;
     gap: 10px;
-}
-
-.summary-icon {
+}body.admin-inkind-page .summary-icon{
     width: 36px;
     height: 36px;
     border-radius: 50%;
@@ -2248,59 +1488,36 @@ body {
     justify-content: center;
     color: white;
     font-size: 16px;
-}
-
-.donor-icon {
+}body.admin-inkind-page .donor-icon{
     background: #0369a1;
-}
-
-.items-icon {
+}body.admin-inkind-page .items-icon{
     background: #059669;
-}
-
-.categories-icon {
+}body.admin-inkind-page .categories-icon{
     background: #7c3aed;
-}
-
-.summary-label {
+}body.admin-inkind-page .summary-label{
     font-size: 12px;
     color: #64748b;
-}
-
-.summary-value {
+}body.admin-inkind-page .summary-value{
     font-weight: 600;
     font-size: 18px;
-}
-
-#selected-donors-count {
+}body.admin-inkind-page #selected-donors-count{
     color: #0369a1;
-}
-
-#selected-items-count {
+}body.admin-inkind-page #selected-items-count{
     color: #059669;
-}
-
-#selected-categories-count {
+}body.admin-inkind-page #selected-categories-count{
     color: #7c3aed;
-}
-
-.selected-count {
+}body.admin-inkind-page .selected-count{
     font-weight: 600;
     font-size: 18px;
     color: #16a34a;
-}
-
-/* Form Buttons */
-.form-buttons {
+}body.admin-inkind-page .form-buttons{
     display: flex;
     gap: 12px;
     justify-content: flex-end;
     margin-top: 25px;
     padding-top: 20px;
     border-top: 1px solid #e5e7eb;
-}
-
-.btn {
+}body.admin-inkind-page .btn{
     padding: 12px 24px;
     border-radius: 6px;
     cursor: pointer;
@@ -2310,51 +1527,31 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
-}
-
-.btn-primary {
+}body.admin-inkind-page .btn-primary{
     background: #3b82f6;
     color: white;
     border-color: #3b82f6;
-}
-
-.btn-primary:hover {
+}body.admin-inkind-page .btn-primary:hover{
     background: #2563eb;
     border-color: #2563eb;
-}
-
-.btn-secondary {
+}body.admin-inkind-page .btn-secondary{
     background: white;
     color: #374151;
     border-color: #d1d5db;
-}
-
-.btn-secondary:hover {
+}body.admin-inkind-page .btn-secondary:hover{
     background: #f9fafb;
     border-color: #9ca3af;
-}
-
-.btn-small {
+}body.admin-inkind-page .btn-small{
     padding: 8px 16px;
     font-size: 14px;
-}
-
-.btn:disabled {
+}body.admin-inkind-page .btn:disabled{
     opacity: 0.6;
     cursor: not-allowed;
-}
-
-.btn i {
+}body.admin-inkind-page .btn i{
     font-size: 16px;
-}
-
-/* Hidden File Input */
-#impact_photo {
+}body.admin-inkind-page #impact_photo{
     display: none;
-}
-
-/* Message Box */
-#impact-message {
+}body.admin-inkind-page #impact-message{
     display: none;
     padding: 12px;
     margin: 0 30px 20px;
@@ -2362,227 +1559,135 @@ body {
     font-size: 14px;
     font-weight: 500;
     border: 1px solid;
-}
-
-/* Error States */
-.error-message {
+}body.admin-inkind-page .error-message{
     background: #fee2e2;
     border-color: #fecaca;
     color: #dc2626;
-}
-
-.success-message {
+}body.admin-inkind-page .success-message{
     background: #d1fae5;
     border-color: #a7f3d0;
     color: #059669;
-}
-
-.warning-message {
+}body.admin-inkind-page .warning-message{
     background: #fef3c7;
     border-color: #fde68a;
     color: #d97706;
-}
-
-.info-message {
+}body.admin-inkind-page .info-message{
     background: #dbeafe;
     border-color: #bfdbfe;
     color: #1d4ed8;
-}
-
-/* Responsive Adjustments */
-@media (max-width: 1024px) {
-    #impactReportModal .modal-content {
+}@media (max-width: 1024px){body.admin-inkind-page #impactReportModal .modal-content{
         width: 90%;
     }
-}
-
-@media (max-width: 768px) {
-    #impactReportModal .modal-content {
+}@media (max-width: 768px){body.admin-inkind-page #impactReportModal .modal-content{
         width: 95%;
         max-height: 95vh;
         margin: 10px auto;
-    }
-
-    #impactReportModal h2 {
+    }body.admin-inkind-page #impactReportModal h2{
         padding: 20px 20px 15px;
         font-size: 22px;
-    }
-
-    #impactReportForm {
+    }body.admin-inkind-page #impactReportForm{
         padding: 0 20px 20px;
-    }
-
-    .donation-selection-container {
+    }body.admin-inkind-page .donation-selection-container{
         padding: 15px;
-    }
-
-    .search-controls-container {
+    }body.admin-inkind-page .search-controls-container{
         flex-direction: column;
         align-items: stretch;
         gap: 12px;
-    }
-
-    .search-box {
+    }body.admin-inkind-page .search-box{
         min-width: 100%;
-    }
-
-    .quick-actions {
+    }body.admin-inkind-page .quick-actions{
         width: 100%;
         justify-content: center;
-    }
-
-    .summary-container {
+    }body.admin-inkind-page .summary-container{
         flex-direction: column;
         gap: 15px;
         align-items: stretch;
         padding: 15px;
-    }
-
-    .summary-stats {
+    }body.admin-inkind-page .summary-stats{
         justify-content: center;
         gap: 15px;
-    }
-
-    .selected-count {
+    }body.admin-inkind-page .selected-count{
         text-align: center;
-    }
-
-    .form-buttons {
+    }body.admin-inkind-page .form-buttons{
         flex-direction: column;
         gap: 10px;
-    }
-
-    .btn {
+    }body.admin-inkind-page .btn{
         width: 100%;
         justify-content: center;
-    }
-
-    #impact-message {
+    }body.admin-inkind-page #impact-message{
         margin: 0 20px 15px;
     }
-}
-
-@media (max-width: 480px) {
-    #impactReportModal .modal-content {
+}@media (max-width: 480px){body.admin-inkind-page #impactReportModal .modal-content{
         width: 100%;
         height: 100vh;
         max-height: 100vh;
         border-radius: 0;
         margin: 0;
-    }
-
-    #impactReportModal h2 {
+    }body.admin-inkind-page #impactReportModal h2{
         font-size: 20px;
         padding: 15px 15px 12px;
-    }
-
-    #impactReportForm {
+    }body.admin-inkind-page #impactReportForm{
         padding: 0 15px 15px;
-    }
-
-    .donation-selection-container {
+    }body.admin-inkind-page .donation-selection-container{
         padding: 12px;
-    }
-
-    .form-group {
+    }body.admin-inkind-page .form-group{
         margin-bottom: 20px;
-    }
-
-    #donations-container {
+    }body.admin-inkind-page #donations-container{
         max-height: 300px;
         padding: 10px;
-    }
-
-    .photo-preview-item {
+    }body.admin-inkind-page .photo-preview-item{
         flex-direction: column;
         text-align: center;
         gap: 10px;
-    }
-
-    .photo-preview-item img {
+    }body.admin-inkind-page .photo-preview-item img{
         width: 100%;
         height: 80px;
-    }
-
-    .remove-photo-btn {
+    }body.admin-inkind-page .remove-photo-btn{
         width: 100%;
         justify-content: center;
-    }
-
-    .action-btn {
+    }body.admin-inkind-page .action-btn{
         width: 100%;
         justify-content: center;
-    }
-
-    .quick-actions {
+    }body.admin-inkind-page .quick-actions{
         flex-direction: column;
-    }
-
-    .summary-stats {
+    }body.admin-inkind-page .summary-stats{
         flex-direction: column;
         gap: 12px;
         align-items: center;
         width: 100%;
-    }
-
-    .summary-item {
+    }body.admin-inkind-page .summary-item{
         width: 100%;
         justify-content: center;
-    }
-
-    .summary-icon {
+    }body.admin-inkind-page .summary-icon{
         width: 32px;
         height: 32px;
         font-size: 14px;
-    }
-
-    .summary-value {
+    }body.admin-inkind-page .summary-value{
         font-size: 16px;
-    }
-
-    .selected-count {
+    }body.admin-inkind-page .selected-count{
         font-size: 16px;
         padding: 12px;
-    }
-
-    .btn {
+    }body.admin-inkind-page .btn{
         padding: 14px;
     }
-}
-
-
-/* Print Styles */
-@media print {
-    #impactReportModal {
+}@media print{body.admin-inkind-page #impactReportModal{
         position: absolute;
         width: 100%;
         height: auto;
         background: white;
         display: block !important;
-    }
-
-    #impactReportModal .modal-content {
+    }body.admin-inkind-page #impactReportModal .modal-content{
         width: 100%;
         max-height: none;
         box-shadow: none;
         border: none;
-    }
-
-    .close-btn,
-    .form-buttons,
-    #photo-upload-area,
-    .search-controls-container {
+    }body.admin-inkind-page .close-btn, body.admin-inkind-page .form-buttons, body.admin-inkind-page #photo-upload-area, body.admin-inkind-page .search-controls-container{
         display: none !important;
-    }
-
-    #donations-container {
+    }body.admin-inkind-page #donations-container{
         max-height: none;
         overflow: visible;
     }
-}
-
-/* Add Impact Report Button Styles */
-button[onclick="openImpactModal()"] {
+}body.admin-inkind-page button[onclick="openImpactModal()"]{
     background: #3b82f6;
     color: white;
     border: none;
@@ -2596,32 +1701,21 @@ button[onclick="openImpactModal()"] {
     gap: 8px;
     transition: background 0.2s ease;
     height: 36px;
-    /* Match the search input height */
-}
-
-button[onclick="openImpactModal()"]:hover {
+    
+}body.admin-inkind-page button[onclick="openImpactModal()"]:hover{
     background: #2563eb;
-}
-
-button[onclick="openImpactModal()"] i {
+}body.admin-inkind-page button[onclick="openImpactModal()"] i{
     font-size: 16px;
-}
-
-.badge.distributed {
+}body.admin-inkind-page .badge.distributed{
     background-color: #f3f0f3;
     color: #6d28d9;
     border: 1px solid #6d28d9;
-}
-
-/* Disabled dropdown for distributed donations */
-select:disabled {
+}body.admin-inkind-page select:disabled{
     background: #f3f4f6 !important;
     color: #6b7280 !important;
     border-color: #d1d5db !important;
     cursor: not-allowed !important;
     opacity: 0.8;
-}
-
-select:disabled option {
+}body.admin-inkind-page select:disabled option{
     color: #6b7280;
 }

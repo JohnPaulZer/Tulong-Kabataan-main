@@ -1,46 +1,26 @@
-/* ================================= GLOBAL / RESET ================================= */
-
-/* CRITICAL FIX: This ensures padding doesn't make elements wider than 100% */
-*, *::before, *::after {
+/* Scoped campaign listing styles */
+body.campaign-page *, body.campaign-page *::before, body.campaign-page *::after{
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-}
-
-h1, h2, h3, h4, h5, h6,
-.heading-font, .section-title, .featured-title, .campaign-title,
-.btn, button, .raised, .campaign-count, .featured-badge, .pagination-number {
+}body.campaign-page h1, body.campaign-page h2, body.campaign-page h3, body.campaign-page h4, body.campaign-page h5, body.campaign-page h6, body.campaign-page .heading-font, body.campaign-page .section-title, body.campaign-page .featured-title, body.campaign-page .campaign-title, body.campaign-page .btn, body.campaign-page button, body.campaign-page .raised, body.campaign-page .campaign-count, body.campaign-page .featured-badge, body.campaign-page .pagination-number{
     font-family: "Poppins", sans-serif;
     letter-spacing: -0.01em; 
-}
-
-/* 2. Secondary Font: Lato (Body text, inputs, small UI) */
-body, p, a, li, span, input, select, textarea, label,
-.body-font, .section-desc, .featured-desc, .filters-label, .goal, .pagination-info {
+}body.campaign-page, body.campaign-page p, body.campaign-page a, body.campaign-page li, body.campaign-page span, body.campaign-page input, body.campaign-page select, body.campaign-page textarea, body.campaign-page label, body.campaign-page .body-font, body.campaign-page .section-desc, body.campaign-page .featured-desc, body.campaign-page .filters-label, body.campaign-page .goal, body.campaign-page .pagination-info{
     font-family: "Lato", sans-serif;
     font-weight: 400;
     text-decoration: none;
-}
-
-/* ================================= CAMPAIGN SECTION WRAPPERS ================================= */
-
-.campaigns-section {
+}body.campaign-page .campaigns-section{
     background: #f8fafc;
     padding: 2px 0;
     border-bottom: 1px solid #e2e8f0;
-}
-
-.tk-container {
+}body.campaign-page .tk-container{
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 24px;
     width: 100%;
     position: relative;
-}
-
-/* ================================= SECTION HEADER ================================= */
-
-.tk-section-header {
+}body.campaign-page .tk-section-header{
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -49,34 +29,26 @@ body, p, a, li, span, input, select, textarea, label,
     margin-bottom: 40px;
     margin-top: 32px;
     width: 100%;
-}
-
-.tk-section-header-left {
+}body.campaign-page .tk-section-header-left{
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
     flex: 1;
     min-width: 0;
-}
-
-.section-title {
+}body.campaign-page .section-title{
     font-size: clamp(26px, 4vw, 36px);
     font-weight: 800;
     color: #1e293b;
     margin: 0;
     line-height: 1.2;
     letter-spacing: -0.02em;
-}
-
-.section-desc {
+}body.campaign-page .section-desc{
     color: #64748b;
     margin: 0;
     line-height: 1.6;
     font-size: clamp(15px, 2vw, 17px);
-}
-
-.btn.create-campaign {
+}body.campaign-page .btn.create-campaign{
     background: #4f46e5;
     color: #fff;
     border: none;
@@ -94,27 +66,16 @@ body, p, a, li, span, input, select, textarea, label,
     text-decoration: none;
     white-space: nowrap;
     flex-shrink: 0;
-}
-
-.btn.create-campaign i { font-size: 18px; }
-
-.btn.create-campaign:hover,
-.btn.create-campaign:focus {
+}body.campaign-page .btn.create-campaign i{ font-size: 18px; }body.campaign-page .btn.create-campaign:hover, body.campaign-page .btn.create-campaign:focus{
     background: #4338ca;
     transform: translateY(-2px);
     box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.4);
-}
-
-/* ================================= FEATURED PROGRAM ================================= */
-
-.tk-featured-program {
+}body.campaign-page .tk-featured-program{
     margin: 0 0 48px 0;
     display: flex;
     justify-content: center;
     width: 100%;
-}
-
-.tk-featured-card {
+}body.campaign-page .tk-featured-card{
     width: 100%;
     max-width: 1200px;
     background: #fff;
@@ -126,35 +87,26 @@ body, p, a, li, span, input, select, textarea, label,
     flex-direction: column;
     border: 1px solid #f1f5f9;
     transition: transform 0.3s ease;
-}
-
-/* FIX: Image Zooming on Featured Card */
-.featured-img {
+}body.campaign-page .featured-img{
     width: 100%;
-    /* Removed fixed height clamp which caused cropping/zooming */
+    
     height: auto; 
-    /* Enforces a wide cinematic ratio that scales proportionally */
+    
     aspect-ratio: 21 / 9; 
     object-fit: cover;
     border-radius: 24px 24px 0 0;
-}
-
-.tk-featured-content {
+}body.campaign-page .tk-featured-content{
     padding: clamp(24px, 3vw, 40px);
     display: flex;
     flex-direction: column;
     gap: 20px;
-}
-
-.tk-featured-content-header {
+}body.campaign-page .tk-featured-content-header{
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 12px;
-}
-
-.featured-badge {
+}body.campaign-page .featured-badge{
     background: #eef2ff;
     color: #4f46e5;
     font-weight: 700;
@@ -164,43 +116,33 @@ body, p, a, li, span, input, select, textarea, label,
     letter-spacing: 0.05em;
     text-transform: uppercase;
     border: 1px solid #e0e7ff;
-}
-
-.featured-views {
+}body.campaign-page .featured-views{
     color: #64748b;
     font-size: 14px;
     display: flex;
     align-items: center;
     gap: 8px;
     font-weight: 600;
-}
-
-.featured-title {
+}body.campaign-page .featured-title{
     font-size: clamp(24px, 3vw, 32px);
     font-family: "Poppins", sans-serif;
     font-weight: 700;
     margin: 0;
     color: #1e293b;
     line-height: 1.3;
-}
-
-.featured-desc {
+}body.campaign-page .featured-desc{
     color: #475569;
     font-size: clamp(16px, 2vw, 17px);
     line-height: 1.7;
     margin: 0;
-}
-    
-.tk-featured-actions {
+}body.campaign-page .tk-featured-actions{
     display: flex;
     align-items: center;
     gap: 16px;
     margin-top: 12px;
     justify-content: flex-end;
     flex-wrap: wrap;
-}
-
-.btn.featured-support {
+}body.campaign-page .btn.featured-support{
     background: #4f46e5;
     color: #fff;
     border: none;
@@ -211,15 +153,11 @@ body, p, a, li, span, input, select, textarea, label,
     cursor: pointer;
     transition: all 0.2s ease;
     box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
-}
-
-.btn.featured-support:hover {
+}body.campaign-page .btn.featured-support:hover{
     background: #4338ca;
     transform: translateY(-2px);
     box-shadow: 0 8px 12px -1px rgba(79, 70, 229, 0.3);
-}
-
-.btn.featured-share {
+}body.campaign-page .btn.featured-share{
     background: #fff;
     color: #4f46e5;
     border: 1px solid #e2e8f0;
@@ -229,26 +167,16 @@ body, p, a, li, span, input, select, textarea, label,
     cursor: pointer;
     transition: all 0.2s;
     font-weight: 600;
-}
-
-.btn.featured-share:hover {
+}body.campaign-page .btn.featured-share:hover{
     border-color: #4f46e5;
     background: #f5f3ff;
     transform: translateY(-2px);
-}
-
-/* ================================= MAIN LAYOUT ================================= */
-
-.tk-campaigns-layout {
+}body.campaign-page .tk-campaigns-layout{
     display: flex;
     gap: 40px;
     align-items: flex-start;
     width: 100%;
-}
-
-/* ================================= FILTERS SIDEBAR ================================= */
-
-.tk-filters-sidebar {
+}body.campaign-page .tk-filters-sidebar{
     width: 280px;
     background: #fff;
     border-radius: 16px;
@@ -261,9 +189,7 @@ body, p, a, li, span, input, select, textarea, label,
     top: 24px;
     flex-shrink: 0;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
-}
-
-.filters-header {
+}body.campaign-page .filters-header{
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -271,9 +197,7 @@ body, p, a, li, span, input, select, textarea, label,
     font-weight: 700;
     color: #1e293b;
     margin-bottom: 8px;
-}
-
-.filters-reset {
+}body.campaign-page .filters-reset{
     color: #4f46e5;
     font-size: 13px;
     background: none;
@@ -283,22 +207,14 @@ body, p, a, li, span, input, select, textarea, label,
     padding: 4px 8px;
     border-radius: 6px;
     transition: background 0.2s;
-}
-
-.filters-reset:hover { background: #eef2ff; text-decoration: none; }
-
-.filters-group { display: flex; flex-direction: column; gap: 12px; }
-
-.filters-label {
+}body.campaign-page .filters-reset:hover{ background: #eef2ff; text-decoration: none; }body.campaign-page .filters-group{ display: flex; flex-direction: column; gap: 12px; }body.campaign-page .filters-label{
     font-size: 12px;
     color: #94a3b8;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 8px;
-}
-
-.filter-checkbox {
+}body.campaign-page .filter-checkbox{
     display: flex;
     align-items: center;
     gap: 12px;
@@ -307,36 +223,26 @@ body, p, a, li, span, input, select, textarea, label,
     cursor: pointer;
     padding: 4px 0;
     transition: color 0.2s;
-}
-
-.filter-checkbox:hover label { color: #4f46e5; }
-
-.filter-checkbox input[type="checkbox"] {
+}body.campaign-page .filter-checkbox:hover label{ color: #4f46e5; }body.campaign-page .filter-checkbox input[type="checkbox"]{
     accent-color: #4f46e5;
     width: 18px;
     height: 18px;
     cursor: pointer;
     border-radius: 4px;
-}
-
-.filter-checkbox label {
+}body.campaign-page .filter-checkbox label{
     cursor: pointer;
     color: #475569;
     flex: 1;
     transition: color 0.2s;
     font-weight: 500;
-}
-
-.filter-checkbox span {
+}body.campaign-page .filter-checkbox span{
     color: #94a3b8;
     font-size: 13px;
     font-weight: 500;
     background: #f1f5f9;
     padding: 2px 8px;
     border-radius: 10px;
-}
-
-.btn.filter-apply {
+}body.campaign-page .btn.filter-apply{
     background: #4f46e5;
     color: #fff;
     font-size: 15px;
@@ -349,17 +255,11 @@ body, p, a, li, span, input, select, textarea, label,
     transition: all 0.2s;
     width: 100%;
     box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);
-}
-
-.btn.filter-apply:hover {
+}body.campaign-page .btn.filter-apply:hover{
     background: #4338ca;
     transform: translateY(-1px);
     box-shadow: 0 4px 6px rgba(79, 70, 229, 0.3);
-}
-
-/* ================================= CAMPAIGNS MAIN AREA ================================= */
-
-.tk-campaigns-main {
+}body.campaign-page .tk-campaigns-main{
     flex: 1;
     min-width: 0;
     display: flex;
@@ -368,14 +268,10 @@ body, p, a, li, span, input, select, textarea, label,
     border-radius: 16px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     border: 1px solid #e2e8f0;
-    overflow: hidden; /* Important for containing children */
+    overflow: hidden; 
     margin-bottom: 4rem;
     width: 100%;
-}
-
-/* ================================= ENHANCED TOOLBAR ================================= */
-
-.tk-campaigns-toolbar {
+}body.campaign-page .tk-campaigns-toolbar{
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -386,9 +282,7 @@ body, p, a, li, span, input, select, textarea, label,
     flex-wrap: wrap; 
     width: 100%;
     z-index: 5;
-}
-
-.campaign-count {
+}body.campaign-page .campaign-count{
     font-size: 15px;
     color: #334155;
     font-weight: 600;
@@ -397,31 +291,23 @@ body, p, a, li, span, input, select, textarea, label,
     border-radius: 99px;
     border: 1px solid #e2e8f0;
     white-space: nowrap;
-}
-
-.tk-campaign-toolbar-actions {
+}body.campaign-page .tk-campaign-toolbar-actions{
     display: flex;
     align-items: center;
     gap: 20px;
     flex-wrap: wrap;
     justify-content: flex-end;
     flex: 1;
-}
-
-.toolbar-sort, .toolbar-perpage {
+}body.campaign-page .toolbar-sort, body.campaign-page .toolbar-perpage{
     display: flex;
     align-items: center;
     gap: 12px;
-}
-
-.toolbar-sort label, .toolbar-perpage label {
+}body.campaign-page .toolbar-sort label, body.campaign-page .toolbar-perpage label{
     font-size: 14px;
     color: #64748b;
     font-weight: 600;
     white-space: nowrap;
-}
-
-.toolbar-sort select, .toolbar-perpage select {
+}body.campaign-page .toolbar-sort select, body.campaign-page .toolbar-perpage select{
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -441,21 +327,13 @@ body, p, a, li, span, input, select, textarea, label,
     background-position: right 12px center;
     background-size: 16px;
     max-width: 100%; 
-}
-
-.toolbar-sort select:hover, .toolbar-perpage select:hover {
+}body.campaign-page .toolbar-sort select:hover, body.campaign-page .toolbar-perpage select:hover{
     border-color: #94a3b8;
     background-color: #f8fafc;
-}
-
-.toolbar-sort select:focus, .toolbar-perpage select:focus {
+}body.campaign-page .toolbar-sort select:focus, body.campaign-page .toolbar-perpage select:focus{
     border-color: #4f46e5;
     box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-}
-
-/* ================================= UNIFORM GRID & CAMPAIGN CARDS ================================= */
-
-.tk-campaigns-grid {
+}body.campaign-page .tk-campaigns-grid{
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 32px;
@@ -463,9 +341,7 @@ body, p, a, li, span, input, select, textarea, label,
     width: 100%;
     align-items: stretch;
     background-color: #fcfcfc;
-}
-
-.tk-campaign-card {
+}body.campaign-page .tk-campaign-card{
     background: #fff;
     border-radius: 16px;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
@@ -475,38 +351,27 @@ body, p, a, li, span, input, select, textarea, label,
     display: flex;
     flex-direction: column;
     height: 100%;
-}
-
-.tk-campaign-card:hover {
+}body.campaign-page .tk-campaign-card:hover{
     transform: translateY(-6px);
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.03);
     border-color: #e2e8f0;
-}
-
-/* FIX: Image Zooming on Campaign Cards */
-.campaign-img-wrap {
+}body.campaign-page .campaign-img-wrap{
     position: relative;
     width: 100%;
-    /* Removed fixed 220px height which caused zoom on tablets/mobile */
+    
     height: auto; 
-    /* This ensures aspect ratio stays 16:9 regardless of screen size */
+    
     aspect-ratio: 16 / 9; 
     overflow: hidden;
     flex-shrink: 0;
-}
-
-.campaign-img {
+}body.campaign-page .campaign-img{
     width: 100%;
     height: 100%;
     object-fit: cover;
     transition: transform 0.6s ease;
-}
-
-.tk-campaign-card:hover .campaign-img {
+}body.campaign-page .tk-campaign-card:hover .campaign-img{
     transform: scale(1.08);
-}
-
-.views-badge {
+}body.campaign-page .views-badge{
     position: absolute;
     top: 16px;
     left: 16px;
@@ -522,17 +387,13 @@ body, p, a, li, span, input, select, textarea, label,
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     backdrop-filter: blur(8px);
     border: 1px solid rgba(255,255,255,0.4);
-}
-
-.tk-campaign-content {
+}body.campaign-page .tk-campaign-content{
     padding: 24px;
     display: flex;
     flex-direction: column;
     gap: 16px;
     flex: 1;
-}
-
-.campaign-title {
+}body.campaign-page .campaign-title{
     font-size: 19px;
     font-weight: 700;
     color: #1e293b;
@@ -544,45 +405,28 @@ body, p, a, li, span, input, select, textarea, label,
     -webkit-box-orient: vertical;
     overflow: hidden;
     min-height: 54px;
-}
-
-.tk-campaign-card:hover .campaign-title { color: #4f46e5; }
-
-.progress-container {
+}body.campaign-page .tk-campaign-card:hover .campaign-title{ color: #4f46e5; }body.campaign-page .progress-container{
     margin-top: auto; 
     width: 100%;
     padding-top: 12px;
-}
-
-.progress-bar-bg {
+}body.campaign-page .progress-bar-bg{
     background: #f1f5f9;
     border-radius: 9999px;
     height: 10px;
     width: 100%;
     margin-bottom: 12px;
     overflow: hidden;
-}
-
-.progress-bar {
+}body.campaign-page .progress-bar{
     background: linear-gradient(90deg, #4f46e5, #818cf8);
     height: 10px;
     border-radius: 9999px;
     transition: width 0.8s ease-out;
-}
-
-.stats-row {
+}body.campaign-page .stats-row{
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-size: 14px;
-}
-
-.raised { font-weight: 400; color: #64748b; font-size: 14px; }
-.goal { color: #4f46e5; font-weight: 700; }
-
-/* ================================= PAGINATION FIX ================================= */
-
-.modern-pagination {
+}body.campaign-page .raised{ font-weight: 400; color: #64748b; font-size: 14px; }body.campaign-page .goal{ color: #4f46e5; font-weight: 700; }body.campaign-page .modern-pagination{
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -591,32 +435,22 @@ body, p, a, li, span, input, select, textarea, label,
     background: #fff;
     flex-wrap: wrap; 
     gap: 20px;
-}
-
-.pagination-info {
+}body.campaign-page .pagination-info{
     color: #64748b;
     font-size: 14px;
     font-weight: 500;
-}
-
-.pagination-info strong { color: #1e293b; }
-
-.pagination-controls {
+}body.campaign-page .pagination-info strong{ color: #1e293b; }body.campaign-page .pagination-controls{
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 10px;
     flex-wrap: nowrap;
-}
-
-.pagination-numbers {
+}body.campaign-page .pagination-numbers{
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 6px;
-}
-
-.pagination-btn, .pagination-number {
+}body.campaign-page .pagination-btn, body.campaign-page .pagination-number{
     display: flex;
     align-items: center;
     justify-content: center;
@@ -632,45 +466,29 @@ body, p, a, li, span, input, select, textarea, label,
     font-weight: 600;
     text-decoration: none;
     flex-shrink: 0;
-}
-
-.pagination-btn:hover:not(.pagination-btn--disabled),
-.pagination-number:hover {
+}body.campaign-page .pagination-btn:hover:not(.pagination-btn--disabled), body.campaign-page .pagination-number:hover{
     border-color: #4f46e5;
     color: #4f46e5;
     background: #eef2ff;
     transform: translateY(-1px);
-}
-
-.pagination-btn--disabled {
+}body.campaign-page .pagination-btn--disabled{
     opacity: 0.5;
     cursor: not-allowed;
     background: #f8fafc;
-}
-
-.pagination-number--active {
+}body.campaign-page .pagination-number--active{
     background: #4f46e5;
     color: white;
     border-color: #4f46e5;
     box-shadow: 0 2px 4px rgba(79, 70, 229, 0.25);
-}
-
-.pagination-number--active:hover {
+}body.campaign-page .pagination-number--active:hover{
     background: #4338ca;
     color: white;
-}
-
-@media (max-width: 600px) {
-    .modern-pagination {
+}@media (max-width: 600px){body.campaign-page .modern-pagination{
         justify-content: center;
         flex-direction: column;
         gap: 16px;
     }
-}
-
-/* ================= EVENT DETAILS MODAL (ENHANCED & FLOATING) ================= */
-
-.evt-details-modal {
+}body.campaign-page .evt-details-modal{
     position: fixed;
     top: 0;
     left: 0;
@@ -682,11 +500,7 @@ body, p, a, li, span, input, select, textarea, label,
     z-index: 10000;
     padding: 24px; 
     box-sizing: border-box;
-}
-
-.evt-details-modal.active { display: flex; }
-
-.evt-details-modal-overlay {
+}body.campaign-page .evt-details-modal.active{ display: flex; }body.campaign-page .evt-details-modal-overlay{
     position: absolute;
     top: 0;
     left: 0;
@@ -695,9 +509,7 @@ body, p, a, li, span, input, select, textarea, label,
     background: rgba(0, 0, 0, 0.65);
     backdrop-filter: blur(6px);
     transition: opacity 0.3s ease;
-}
-
-.evt-details-modal-content {
+}body.campaign-page .evt-details-modal-content{
     position: relative;
     background: #ffffff;
     width: 100%;
@@ -710,21 +522,13 @@ body, p, a, li, span, input, select, textarea, label,
     border: 1px solid rgba(255, 255, 255, 0.6);
     overflow: hidden;
     animation: modalPopIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.evt-details-modal-body {
+}body.campaign-page .evt-details-modal-body{
     padding: 32px 40px;
     overflow-y: auto; 
     flex-grow: 1;
     scrollbar-width: thin;
     scrollbar-color: #cbd5e1 transparent;
-}
-
-.evt-details-modal-body::-webkit-scrollbar { width: 6px; }
-.evt-details-modal-body::-webkit-scrollbar-track { background: transparent; }
-.evt-details-modal-body::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
-
-.evt-details-modal-close {
+}body.campaign-page .evt-details-modal-body::-webkit-scrollbar{ width: 6px; }body.campaign-page .evt-details-modal-body::-webkit-scrollbar-track{ background: transparent; }body.campaign-page .evt-details-modal-body::-webkit-scrollbar-thumb{ background-color: #cbd5e1; border-radius: 20px; }body.campaign-page .evt-details-modal-close{
     position: absolute;
     top: 20px;
     right: 20px;
@@ -743,46 +547,34 @@ body, p, a, li, span, input, select, textarea, label,
     z-index: 20;
     transition: all 0.2s ease;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-.evt-details-modal-close:hover {
+}body.campaign-page .evt-details-modal-close:hover{
     background: #fff;
     color: #ef4444;
     transform: rotate(90deg) scale(1.1);
-}
-
-.evt-details-modal-header {
+}body.campaign-page .evt-details-modal-header{
     flex-shrink: 0;
     position: relative;
     background: #f3f4f6;
-}
-
-.evt-details-modal-image {
+}body.campaign-page .evt-details-modal-image{
     width: 100%;
     height: 0;
     padding-bottom: 45%;
     position: relative;
-}
-
-.evt-details-modal-image img {
+}body.campaign-page .evt-details-modal-image img{
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-}
-
-.evt-details-modal-title {
+}body.campaign-page .evt-details-modal-title{
     font-family: 'Poppins', sans-serif;
     font-size: 1.85rem;
     font-weight: 700;
     color: #111827;
     margin-bottom: 12px;
     line-height: 1.3;
-}
-
-.evt-status-badge {
+}body.campaign-page .evt-status-badge{
     display: inline-flex;
     align-items: center;
     padding: 6px 14px;
@@ -792,13 +584,7 @@ body, p, a, li, span, input, select, textarea, label,
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 24px;
-}
-.evt-status-upcoming { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
-.evt-status-ongoing { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
-.evt-status-ended { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
-.evt-status-closed { background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; }
-
-.evt-details-modal-info {
+}body.campaign-page .evt-status-upcoming{ background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }body.campaign-page .evt-status-ongoing{ background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }body.campaign-page .evt-status-ended{ background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }body.campaign-page .evt-status-closed{ background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; }body.campaign-page .evt-details-modal-info{
     background: #f8fafc;
     padding: 24px;
     border-radius: 12px;
@@ -806,260 +592,143 @@ body, p, a, li, span, input, select, textarea, label,
     border: 1px solid #e2e8f0;
     display: grid;
     gap: 16px;
-}
-
-.evt-detail-item {
+}body.campaign-page .evt-detail-item{
     display: flex;
     align-items: flex-start;
     color: #475569;
     font-size: 0.95rem;
     line-height: 1.5;
-}
-.evt-detail-item i {
+}body.campaign-page .evt-detail-item i{
     flex-shrink: 0; margin-right: 14px; margin-top: 3px;
     font-size: 1.2rem; color: #4f46e5; width: 24px; text-align: center;
-}
-
-.evt-details-modal-section { margin-bottom: 32px; }
-.evt-details-modal-section h3 {
+}body.campaign-page .evt-details-modal-section{ margin-bottom: 32px; }body.campaign-page .evt-details-modal-section h3{
     font-size: 1.15rem; font-weight: 600; color: #1e293b;
     margin-bottom: 12px; border-left: 4px solid #4f46e5; padding-left: 12px;
-}
-.evt-details-modal-section p { color: #64748b; line-height: 1.7; font-size: 0.95rem; }
-
-.evt-volunteer-roles {
+}body.campaign-page .evt-details-modal-section p{ color: #64748b; line-height: 1.7; font-size: 0.95rem; }body.campaign-page .evt-volunteer-roles{
     display: grid; gap: 16px;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-}
-.evt-volunteer-role {
+}body.campaign-page .evt-volunteer-role{
     background: white; padding: 16px; border-radius: 12px;
     border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-}
-.evt-volunteer-role h4 { font-size: 0.95rem; font-weight: 600; color: #334155; margin-bottom: 4px; }
-.evt-volunteer-role p { color: #64748b; font-size: 0.85rem; margin: 0; }
-
-.evt-details-modal-footer {
+}body.campaign-page .evt-volunteer-role h4{ font-size: 0.95rem; font-weight: 600; color: #334155; margin-bottom: 4px; }body.campaign-page .evt-volunteer-role p{ color: #64748b; font-size: 0.85rem; margin: 0; }body.campaign-page .evt-details-modal-footer{
     padding: 24px 40px 32px;
     background: white;
     border-top: 1px solid #f1f5f9;
     display: flex;
     gap: 16px;
     flex-shrink: 0;
-}
-
-.evt-details-modal-register-btn, .evt-details-modal-close-btn {
+}body.campaign-page .evt-details-modal-register-btn, body.campaign-page .evt-details-modal-close-btn{
     flex: 1; padding: 14px 24px; border: none; border-radius: 12px;
     font-weight: 600; cursor: pointer; transition: all 0.2s ease;
     font-size: 1rem; display: inline-flex; justify-content: center; align-items: center; gap: 8px;
-}
-
-.evt-details-modal-register-btn {
+}body.campaign-page .evt-details-modal-register-btn{
     background: #4f46e5; color: white;
     box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
-}
-.evt-details-modal-register-btn:hover { background: #4338ca; transform: translateY(-2px); }
-.evt-details-modal-register-btn:disabled { background: #e2e8f0; color: #94a3b8; box-shadow: none; cursor: not-allowed; transform: none; }
-
-.evt-details-modal-close-btn { background: white; color: #475569; border: 1px solid #e2e8f0; }
-.evt-details-modal-close-btn:hover { background: #f8fafc; border-color: #cbd5e1; }
-
-@keyframes modalPopIn {
+}body.campaign-page .evt-details-modal-register-btn:hover{ background: #4338ca; transform: translateY(-2px); }body.campaign-page .evt-details-modal-register-btn:disabled{ background: #e2e8f0; color: #94a3b8; box-shadow: none; cursor: not-allowed; transform: none; }body.campaign-page .evt-details-modal-close-btn{ background: white; color: #475569; border: 1px solid #e2e8f0; }body.campaign-page .evt-details-modal-close-btn:hover{ background: #f8fafc; border-color: #cbd5e1; }@keyframes modalPopIn{
     0% { opacity: 0; transform: scale(0.95) translateY(10px); }
     100% { opacity: 1; transform: scale(1) translateY(0); }
-}
-
-/* ================================= MEDIA QUERIES ================================= */
-
-.mobile-filter-wrap {
+}body.campaign-page .mobile-filter-wrap{
     display: none;
-}
-
-/* Large Desktop */
-@media (min-width: 1280px) {
-    .tk-campaigns-grid {
+}@media (min-width: 1280px){body.campaign-page .tk-campaigns-grid{
         grid-template-columns: repeat(3, 1fr);
     }
-}
-
-/* Desktop/Laptop */
-@media (min-width: 1024px) and (max-width: 1279px) {
-    .tk-campaigns-grid {
+}@media (min-width: 1024px) and (max-width: 1279px){body.campaign-page .tk-campaigns-grid{
         grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .tk-filters-sidebar {
+    }body.campaign-page .tk-filters-sidebar{
         width: 250px;
     }
-}
-
-/* Tablet Landscape */
-@media (min-width: 900px) and (max-width: 1023px) {
-    .tk-campaigns-grid {
+}@media (min-width: 900px) and (max-width: 1023px){body.campaign-page .tk-campaigns-grid{
         grid-template-columns: repeat(2, 1fr);
-    }
-    .tk-filters-sidebar {
+    }body.campaign-page .tk-filters-sidebar{
         width: 230px;
     }
-}
-
-/* Tablet Portrait */
-@media (max-width: 899px) {
-    .tk-campaigns-layout {
+}@media (max-width: 899px){body.campaign-page .tk-campaigns-layout{
         flex-direction: column;
         gap: 24px;
-    }
-    
-    .tk-filters-sidebar {
+    }body.campaign-page .tk-filters-sidebar{
         width: 100%;
         position: static;
         flex-direction: row;
         flex-wrap: wrap;
         gap: 20px;
-    }
-    
-    .filters-group {
+    }body.campaign-page .filters-group{
         flex: 1;
         min-width: 180px;
-    }
-
-    .tk-campaigns-grid {
+    }body.campaign-page .tk-campaigns-grid{
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    }
-    
-    .evt-details-modal {
+    }body.campaign-page .evt-details-modal{
         padding: 24px;
         align-items: center;
-    }
-    .evt-details-modal-content {
+    }body.campaign-page .evt-details-modal-content{
         max-width: 100%;
         max-height: 85vh;
         border-radius: 16px;
         margin: 0;
-    }
-    .evt-details-modal-image { padding-bottom: 50%; }
-    .evt-details-modal-body { padding: 24px; }
-    .evt-details-modal-title { font-size: 1.6rem; }
-    .evt-details-modal-footer { padding: 20px 24px 24px; }
-}
-
-/* Mobile */
-@media only screen and (max-width: 767px) {
-    .tk-filters-sidebar {
+    }body.campaign-page .evt-details-modal-image{ padding-bottom: 50%; }body.campaign-page .evt-details-modal-body{ padding: 24px; }body.campaign-page .evt-details-modal-title{ font-size: 1.6rem; }body.campaign-page .evt-details-modal-footer{ padding: 20px 24px 24px; }
+}@media only screen and (max-width: 767px){body.campaign-page .tk-filters-sidebar{
         display: none; 
-    }
-    
-    .mobile-filter-wrap {
+    }body.campaign-page .mobile-filter-wrap{
         display: block; 
         margin-bottom: 20px;
         width: 100%;
-    }
-
-    .tk-section-header {
+    }body.campaign-page .tk-section-header{
         flex-direction: column;
         align-items: flex-start;
         padding-top: 100px;
-    }
-    
-    /* FIX: Ensure featured image is not too tall on mobile */
-    .featured-img {
+    }body.campaign-page .featured-img{
         aspect-ratio: 16 / 9;
-    }
-    
-    .btn.create-campaign {
+    }body.campaign-page .btn.create-campaign{
         width: 100%;
         justify-content: center;
         margin-top: 12px;
-    }
-    
-    /* TOOLBAR MOBILE FIXES */
-    .tk-campaigns-toolbar {
+    }body.campaign-page .tk-campaigns-toolbar{
         flex-direction: column;
-        align-items: stretch; /* Stretches elements to full width */
+        align-items: stretch; 
         gap: 16px;
         padding: 20px;
-    }
-    
-    .campaign-count {
+    }body.campaign-page .campaign-count{
         text-align: center;
-    }
-    
-    .tk-campaign-toolbar-actions {
+    }body.campaign-page .tk-campaign-toolbar-actions{
         width: 100%;
         justify-content: space-between;
-    }
-    
-    .modern-pagination {
+    }body.campaign-page .modern-pagination{
         flex-direction: column;
         text-align: center;
-    }
-    
-    .tk-container {
+    }body.campaign-page .tk-container{
         padding: 0 20px;
-    }
-    
-    .evt-details-modal {
+    }body.campaign-page .evt-details-modal{
         padding: 16px; 
         align-items: center;
-    }
-    .evt-details-modal-content {
+    }body.campaign-page .evt-details-modal-content{
         max-height: 90vh; 
         border-radius: 16px;
-    }
-    .evt-details-modal-close {
+    }body.campaign-page .evt-details-modal-close{
         top: 12px; right: 12px;
         width: 32px; height: 32px; font-size: 1rem;
-    }
-    
-    /* FIX: Reduce modal image height on mobile */
-    .evt-details-modal-image { padding-bottom: 35%; }
-
-    .evt-details-modal-body { padding: 20px 16px; }
-    .evt-details-modal-title { font-size: 1.4rem; margin-bottom: 12px; }
-    
-    /* FIX: Stack buttons efficiently */
-    .evt-details-modal-footer {
+    }body.campaign-page .evt-details-modal-image{ padding-bottom: 35%; }body.campaign-page .evt-details-modal-body{ padding: 20px 16px; }body.campaign-page .evt-details-modal-title{ font-size: 1.4rem; margin-bottom: 12px; }body.campaign-page .evt-details-modal-footer{
         padding: 12px 16px;
         flex-direction: column-reverse;
         gap: 8px;
-    }
-    .evt-details-modal-register-btn, 
-    .evt-details-modal-close-btn {
+    }body.campaign-page .evt-details-modal-register-btn, body.campaign-page .evt-details-modal-close-btn{
         width: 100%;
         padding: 10px 12px;
-    }
-    .evt-volunteer-roles { grid-template-columns: 1fr; }
-}
-
-/* Small Mobile */
-@media only screen and (max-width: 480px) {
-    .tk-campaigns-grid {
+    }body.campaign-page .evt-volunteer-roles{ grid-template-columns: 1fr; }
+}@media only screen and (max-width: 480px){body.campaign-page .tk-campaigns-grid{
         grid-template-columns: 1fr; 
         padding: 20px;
-    }
-    
-    .tk-campaign-toolbar-actions {
+    }body.campaign-page .tk-campaign-toolbar-actions{
         flex-direction: column;
         align-items: stretch;
-    }
-    
-    .toolbar-sort, .toolbar-perpage {
+    }body.campaign-page .toolbar-sort, body.campaign-page .toolbar-perpage{
         width: 100%;
         justify-content: space-between;
-    }
-    
-    .toolbar-sort select, .toolbar-perpage select {
+    }body.campaign-page .toolbar-sort select, body.campaign-page .toolbar-perpage select{
         flex: 1;
-    }
-    
-    .tk-featured-content-header,
-    .tk-featured-actions {
+    }body.campaign-page .tk-featured-content-header, body.campaign-page .tk-featured-actions{
         flex-direction: column;
         align-items: flex-start;
         width: 100%;
-    }
-    
-    .btn.featured-support,
-    .btn.featured-share {
+    }body.campaign-page .btn.featured-support, body.campaign-page .btn.featured-share{
         width: 100%;
         text-align: center;
         justify-content: center;

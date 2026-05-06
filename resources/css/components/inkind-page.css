@@ -1,144 +1,65 @@
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-.heading-font,
-.section-title,
-.featured-title,
-.campaign-title,
-.btn,
-/* Buttons look stronger in Poppins */
-button,
-.raised,
-/* Money amounts look better in Poppins */
-.campaign-count,
-/* "12 Campaigns" text */
-.featured-badge,
-.pagination-number {
+/* Scoped in-kind page styles */
+body.inkind-page h1, body.inkind-page h2, body.inkind-page h3, body.inkind-page h4, body.inkind-page h5, body.inkind-page h6, body.inkind-page .heading-font, body.inkind-page .section-title, body.inkind-page .featured-title, body.inkind-page .campaign-title, body.inkind-page .btn, body.inkind-page button, body.inkind-page .raised, body.inkind-page .campaign-count, body.inkind-page .featured-badge, body.inkind-page .pagination-number{
     font-family: "Poppins", sans-serif;
-    /* Poppins looks best with slightly tighter tracking */
+    
     letter-spacing: -0.01em;
-}
-
-/* 2. Secondary Font: Lato (Body text, inputs, small UI) */
-body,
-p,
-a,
-li,
-span,
-input,
-select,
-textarea,
-label,
-.body-font,
-.section-desc,
-.featured-desc,
-.filters-label,
-.goal,
-/* "of $10,000" text */
-.pagination-info {
+}body.inkind-page, body.inkind-page p, body.inkind-page a, body.inkind-page li, body.inkind-page span, body.inkind-page input, body.inkind-page select, body.inkind-page textarea, body.inkind-page label, body.inkind-page .body-font, body.inkind-page .section-desc, body.inkind-page .featured-desc, body.inkind-page .filters-label, body.inkind-page .goal, body.inkind-page .pagination-info{
     font-family: "Lato", sans-serif;
-    /* Lato is very legible but sometimes needs 400 or 500 weight */
+    
     font-weight: 400;
     text-decoration: none;
-}
-
-/* =================== SPECIFIC WEIGHT TWEAKS =================== */
-
-/* Ensure titles are bold enough */
-.section-title,
-.campaign-title,
-.featured-title {
+}body.inkind-page .section-title, body.inkind-page .campaign-title, body.inkind-page .featured-title{
     font-weight: 700;
     color: #1e293b;
-    /* Dark slate for high contrast */
-}
-
-/* Ensure body text isn't too thin */
-p {
+    
+}body.inkind-page p{
     line-height: 1.6;
-    /* Lato reads better with more breathing room */
-}
-
-/* Make buttons bold */
-.btn {
+    
+}body.inkind-page .btn{
     font-weight: 600;
-}
-
-/* Fix for input placeholders looking too light */
-input::placeholder {
+}body.inkind-page input::placeholder{
     font-family: "Lato", sans-serif;
     font-weight: 400;
-}
-
-/* ------------------------------
-           Global page gutters (EXCEPT header & footer)
-        ------------------------------ */
-:root {
+}body.inkind-page{
     --page-gutter: clamp(14px, 4vw, 28px);
     --content-max: 1200px;
     --header-h: 56px;
-    /* will be updated by JS */
-}
-
-/* Everything inside <main> gets comfy left/right spacing */
-main.page-wrap {
+    
+}body.inkind-page main.page-wrap{
     width: 100%;
-}
-
-main.page-wrap>* {
+}body.inkind-page main.page-wrap>*{
     padding-left: var(--page-gutter);
     padding-right: var(--page-gutter);
-}
-
-/* Keep content nicely centered when a section uses full-width blocks */
-.constrain {
+}body.inkind-page .constrain{
     max-width: var(--content-max);
     margin-inline: auto;
     width: 100%;
-}
-
-/* ------------------------------
-           Hero Section Styles
-        ------------------------------ */
-.hero-section {
+}body.inkind-page .hero-section{
     position: relative;
     min-height: 600px;
     display: flex;
     align-items: stretch;
     justify-content: center;
-}
-
-.image-container {
+}body.inkind-page .image-container{
     position: absolute;
     inset: 0;
-}
-
-.hero-image {
+}body.inkind-page .hero-image{
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: top;
-}
-
-.overlay {
+}body.inkind-page .overlay{
     position: absolute;
     inset: 0;
     background-color: rgba(93, 80, 156, 0.7);
-}
-
-.content {
+}body.inkind-page .content{
     position: absolute;
     inset: 0;
     z-index: 20;
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.text-container {
+}body.inkind-page .text-container{
     max-width: 40rem;
     display: flex;
     flex-direction: column;
@@ -148,95 +69,62 @@ main.page-wrap>* {
     text-align: center;
     padding-left: var(--page-gutter);
     padding-right: var(--page-gutter);
-}
-
-.title {
+}body.inkind-page .title{
     font-size: clamp(28px, 6vw, 55px);
     color: #fff;
     font-weight: bold;
-}
-
-.description {
+}body.inkind-page .description{
     font-size: clamp(15px, 2.5vw, 20px);
     color: rgba(255, 255, 255, 0.9);
     margin-bottom: 2rem;
-}
-
-.button-group {
+}body.inkind-page .button-group{
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
     justify-content: center;
-}
-
-.donate-btn,
-.learn-btn {
+}body.inkind-page .donate-btn, body.inkind-page .learn-btn{
     padding: .75rem 1.5rem;
     font-size: 15px;
     font-weight: 1000;
     border-radius: 8px;
     cursor: pointer;
     transition: background-color .3s;
-}
-
-.donate-btn {
+}body.inkind-page .donate-btn{
     background: #fff;
     color: #4f46e5;
     border: none;
     margin-bottom: 10px;
-}
-
-.donate-btn:hover {
+}body.inkind-page .donate-btn:hover{
     background: #f3f4f6;
-}
-
-.learn-btn {
+}body.inkind-page .learn-btn{
     border: 2px solid #fff;
     color: #fff;
     background: transparent;
-}
-
-.learn-btn:hover {
+}body.inkind-page .learn-btn:hover{
     background: rgba(255, 255, 255, .1);
-}
-
-@media (max-width: 700px) {
-    .hero-section {
+}@media (max-width: 700px){body.inkind-page .hero-section{
         min-height: 520px;
     }
-}
-
-/* ------------------------------
-           Impact statistics
-        ------------------------------ */
-.impact-statistics {
+}body.inkind-page .impact-statistics{
     padding: 3rem 0;
     background: #fff;
-}
-
-.container {
+}body.inkind-page .container{
     width: 100%;
     padding: 0 1rem;
     max-width: var(--content-max);
     margin: 0 auto;
-}
-
-.grid {
+}body.inkind-page .grid{
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 2rem;
-}
-
-.stat-card {
+}body.inkind-page .stat-card{
     display: flex;
     align-items: center;
     background: #f9fafb;
     border-radius: 12px;
     padding: 1.5rem;
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, .1), 0 10px 10px -5px rgba(0, 0, 0, .04);
-}
-
-.icon-container {
+}body.inkind-page .icon-container{
     width: 4rem;
     height: 4rem;
     display: flex;
@@ -245,80 +133,49 @@ main.page-wrap>* {
     background: #e0f2fe;
     border-radius: 50%;
     margin-right: 1rem;
-}
-
-.icon {
+}body.inkind-page .icon{
     font-size: 2rem;
     color: #0369a1;
-}
-
-.stat-text {
+}body.inkind-page .stat-text{
     flex: 1;
-}
-
-.stat-number {
+}body.inkind-page .stat-number{
     font-size: clamp(22px, 4vw, 32px);
     font-weight: bold;
     color: #1f2937;
-}
-
-.stat-description {
+}body.inkind-page .stat-description{
     color: #4b5563;
     font-size: clamp(13px, 2.4vw, 16px);
     margin-top: .5rem;
-}
-
-@media (max-width: 1000px) {
-    .grid {
+}@media (max-width: 1000px){body.inkind-page .grid{
         grid-template-columns: 1fr 1fr;
         gap: 1.25rem;
     }
-}
-
-@media (max-width: 640px) {
-    .grid {
+}@media (max-width: 640px){body.inkind-page .grid{
         grid-template-columns: 1fr;
-    }
-
-    .container {
+    }body.inkind-page .container{
         padding-left: 0;
         padding-right: 0;
     }
-}
-
-/* ------------------------------
-           Donation categories
-        ------------------------------ */
-.donation-categories-v2 {
+}body.inkind-page .donation-categories-v2{
     padding: 3rem 0;
     background: #fff;
-}
-
-.section-header {
+}body.inkind-page .section-header{
     text-align: center;
     margin-bottom: 2rem;
-}
-
-.section-title {
+}body.inkind-page .section-title{
     font-size: clamp(22px, 4.6vw, 32px);
     font-weight: bold;
     margin-bottom: .7rem;
     color: #1a1a1a;
-}
-
-.section-description {
+}body.inkind-page .section-description{
     font-size: clamp(14px, 2.5vw, 17px);
     color: #444;
     margin-bottom: 2.5rem;
-}
-
-.category-grid-v2 {
+}body.inkind-page .category-grid-v2{
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
-}
-
-.category-card-v2 {
+}body.inkind-page .category-card-v2{
     background: #fff;
     border-radius: 18px;
     box-shadow: 0 2px 12px 0 rgba(44, 37, 57, .07);
@@ -328,14 +185,10 @@ main.page-wrap>* {
     min-height: 290px;
     transition: box-shadow .2s, transform .2s;
     border: 1px solid #f0f0f0;
-}
-
-.category-card-v2:hover {
+}body.inkind-page .category-card-v2:hover{
     box-shadow: 0 8px 32px 0 rgba(44, 37, 57, .13);
     transform: translateY(-2px);
-}
-
-.icon-circle {
+}body.inkind-page .icon-circle{
     width: 44px;
     height: 44px;
     border-radius: 50%;
@@ -345,186 +198,109 @@ main.page-wrap>* {
     font-size: 1.7rem;
     margin-bottom: 1.1rem;
     background: #f5f5f5;
-}
-
-.icon-circle.red {
+}body.inkind-page .icon-circle.red{
     background: #fee2e2;
     color: #ef4444;
-}
-
-.icon-circle.blue {
+}body.inkind-page .icon-circle.blue{
     background: #dbeafe;
     color: #2563eb;
-}
-
-.icon-circle.yellow {
+}body.inkind-page .icon-circle.yellow{
     background: #fef9c3;
     color: #eab308;
-}
-
-.icon-circle.green {
+}body.inkind-page .icon-circle.green{
     background: #d1fae5;
     color: #10b981;
-}
-
-.icon-circle.purple {
+}body.inkind-page .icon-circle.purple{
     background: #ede9fe;
     color: #8b5cf6;
-}
-
-.icon-circle.indigo {
+}body.inkind-page .icon-circle.indigo{
     background: #e0e7ff;
     color: #6366f1;
-}
-
-.category-title-v2 {
+}body.inkind-page .category-title-v2{
     font-size: 1.13rem;
     font-weight: bold;
     color: #222;
     margin-bottom: .7rem;
-}
-
-.category-desc-v2 {
+}body.inkind-page .category-desc-v2{
     color: #444;
     font-size: .98rem;
     margin-bottom: 1.2rem;
-}
-
-.needs-box {
+}body.inkind-page .needs-box{
     border-radius: 12px;
     padding: .8rem 1rem;
     margin-top: .5rem;
     margin-bottom: .2rem;
     font-size: .97rem;
-}
-
-.needs-title-v2 {
+}body.inkind-page .needs-title-v2{
     font-weight: bold;
     margin-bottom: .7rem;
     font-size: 1rem;
-}
-
-.needs-box ul {
+}body.inkind-page .needs-box ul{
     list-style: none;
     padding: 0;
     margin: 0;
-}
-
-.needs-box li {
+}body.inkind-page .needs-box li{
     display: flex;
     align-items: center;
     margin-bottom: .4rem;
     font-size: .97rem;
     color: #333;
-}
-
-.ri-checkbox-circle-fill {
+}body.inkind-page .ri-checkbox-circle-fill{
     margin-right: .5rem;
     font-size: 1.1rem;
-}
-
-.red-bg {
+}body.inkind-page .red-bg{
     background: #fee2e2;
-}
-
-.blue-bg {
+}body.inkind-page .blue-bg{
     background: #dbeafe;
-}
-
-.yellow-bg {
+}body.inkind-page .yellow-bg{
     background: #fef9c3;
-}
-
-.green-bg {
+}body.inkind-page .green-bg{
     background: #d1fae5;
-}
-
-.purple-bg {
+}body.inkind-page .purple-bg{
     background: #ede9fe;
-}
-
-.indigo-bg {
+}body.inkind-page .indigo-bg{
     background: #e0e7ff;
-}
-
-.red {
+}body.inkind-page .red{
     color: #ef4444;
-}
-
-.blue {
+}body.inkind-page .blue{
     color: #2563eb;
-}
-
-.yellow {
+}body.inkind-page .yellow{
     color: #eab308;
-}
-
-.green {
+}body.inkind-page .green{
     color: #10b981;
-}
-
-.purple {
+}body.inkind-page .purple{
     color: #8b5cf6;
-}
-
-.indigo {
+}body.inkind-page .indigo{
     color: #6366f1;
-}
-
-@media (max-width:1100px) {
-    .category-grid-v2 {
+}@media (max-width:1100px){body.inkind-page .category-grid-v2{
         grid-template-columns: 1fr 1fr;
     }
-}
-
-@media (max-width:700px) {
-    .category-grid-v2 {
+}@media (max-width:700px){body.inkind-page .category-grid-v2{
         grid-template-columns: 1fr;
-    }
-
-    .category-card-v2 {
+    }body.inkind-page .category-card-v2{
         min-height: 0;
     }
-}
-
-/* ------------------------------
-           Centered Header (already responsive)
-        ------------------------------ */
-.centered-header {
+}body.inkind-page .centered-header{
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     min-height: 180px;
     text-align: center;
-}
-
-.centered-header .section-title {
+}body.inkind-page .centered-header .section-title{
     margin-bottom: 1.1rem;
-}
-
-.centered-header .section-description {
+}body.inkind-page .centered-header .section-description{
     margin-bottom: 0;
-}
-
-/* Reduce spacing for section header in mobile view */
-@media (max-width: 700px) {
-    .donation-categories-v2 {
+}@media (max-width: 700px){body.inkind-page .donation-categories-v2{
         padding-top: 1.2rem;
         padding-bottom: 1.2rem;
-    }
-
-    .centered-header {
+    }body.inkind-page .centered-header{
         min-height: 80px;
         margin-bottom: 0.7rem;
-    }
-
-    .centered-header .section-title {
+    }body.inkind-page .centered-header .section-title{
         font-size: 1.3rem;
         margin-bottom: 0.5rem;
-    }
-
-    .centered-header .section-description {
+    }body.inkind-page .centered-header .section-description{
         font-size: 0.98rem;
         margin-bottom: 0.2rem;
         margin-top: 0.2rem;
