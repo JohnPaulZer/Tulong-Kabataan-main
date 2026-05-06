@@ -543,6 +543,12 @@
     </div>
 
     <script>
+        try {
+            sessionStorage.removeItem('tkLoadingMode');
+        } catch (error) {
+            // Storage can be unavailable in private browsing modes.
+        }
+
         function togglePassword() {
             const passwordInput = document.getElementById('password');
             const eyeIconOff = document.getElementById('eye-icon-off');
@@ -561,6 +567,12 @@
 
         // Handle form submission with Laravel integration
         document.getElementById('login-form').addEventListener('submit', function(e) {
+            try {
+                sessionStorage.setItem('tkLoadingMode', 'brand');
+            } catch (error) {
+                // Storage can be unavailable in private browsing modes.
+            }
+
             const btn = document.getElementById('login-btn');
             const loader = document.getElementById('btn-loader');
             const btnText = document.getElementById('btn-text');
@@ -590,4 +602,3 @@
 </body>
 
 </html>
-

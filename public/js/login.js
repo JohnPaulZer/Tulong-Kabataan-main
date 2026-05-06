@@ -18,6 +18,23 @@ if (errorBox) {
     setTimeout(() => errorBox.classList.remove("show"), 3000);
 }
 
+try {
+    sessionStorage.removeItem("tkLoadingMode");
+} catch (error) {
+    // Storage can be unavailable in private browsing modes.
+}
+
+function requestBrandLoader() {
+    try {
+        sessionStorage.setItem("tkLoadingMode", "brand");
+    } catch (error) {
+        // Storage can be unavailable in private browsing modes.
+    }
+}
+
+document.getElementById("login-form")?.addEventListener("submit", requestBrandLoader);
+document.querySelector('a[href*="/auth/google"]')?.addEventListener("click", requestBrandLoader);
+
 window.addEventListener("pageshow", (event) => {
     if (event.persisted) location.reload();
 });

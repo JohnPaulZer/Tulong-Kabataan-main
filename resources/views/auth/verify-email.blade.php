@@ -10,6 +10,8 @@
     @vite('resources/css/app.css')
 </head>
 <body class="relative flex min-h-screen items-center justify-center overflow-hidden bg-[url('/img/backlogin.png')] bg-cover bg-center bg-no-repeat px-4 py-8 font-body text-slate-950">
+    @include('administrator.partials.loading-screen')
+
     <div class="absolute inset-0 bg-slate-950/25 backdrop-blur-[1px]"></div>
     <div class="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-white/40 to-transparent"></div>
 
@@ -88,6 +90,16 @@
         
         // Check immediately when page loads
         document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('form[action="{{ route('logout') }}"]').forEach(function(form) {
+                form.addEventListener('submit', function() {
+                    try {
+                        sessionStorage.setItem('tkLoadingMode', 'brand');
+                    } catch (error) {
+                        // Storage can be unavailable in private browsing modes.
+                    }
+                });
+            });
+
             // Check if coming from verification link (has verified session)
             @if(session('verified'))
                 // Show loading immediately
@@ -130,4 +142,3 @@
     </script>
 </body>
 </html>
-
