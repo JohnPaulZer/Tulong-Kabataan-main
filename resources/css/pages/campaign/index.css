@@ -1,5 +1,5 @@
 ﻿/* Scoped campaign listing styles */
-body.campaign-page *, body.campaign-page *::before, body.campaign-page *::after{
+body.campaign-page .campaigns-section *, body.campaign-page .campaigns-section *::before, body.campaign-page .campaigns-section *::after{
     box-sizing: border-box;
     margin: 0;
     padding: 0;
@@ -734,4 +734,3 @@ body.campaign-page *, body.campaign-page *::before, body.campaign-page *::after{
         justify-content: center;
     }
 }
-

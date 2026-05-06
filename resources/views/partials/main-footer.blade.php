@@ -730,6 +730,10 @@
         </div>
     </div>
 
+    <button type="button" class="back-to-top-btn" id="backToTopBtn" aria-label="Back to top">
+        <i class="ri-arrow-up-line" aria-hidden="true"></i>
+    </button>
+
     <script>
         // Modal Logic
         const modals = {
@@ -779,5 +783,29 @@
                 document.body.style.overflow = 'auto';
             }
         });
-    </script>
 
+        (function() {
+            const backToTopBtn = document.getElementById('backToTopBtn');
+
+            if (!backToTopBtn) {
+                return;
+            }
+
+            const toggleBackToTop = () => {
+                backToTopBtn.classList.toggle('is-visible', window.scrollY > 320);
+            };
+
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+
+            window.addEventListener('scroll', toggleBackToTop, {
+                passive: true
+            });
+
+            toggleBackToTop();
+        })();
+    </script>
