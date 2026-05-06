@@ -249,7 +249,7 @@
 
         .modal-title h3 {
             margin: 0;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Merriweather', serif;
             font-size: 1.25rem;
             color: var(--text-main);
             font-weight: 600;
@@ -297,7 +297,7 @@
 
         /* Typography inside Modal */
         .modal-body h4 {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Merriweather', serif;
             color: var(--primary-color);
             font-size: 1.1rem;
             margin-top: 32px;
@@ -780,3 +780,4 @@
             }
         });
     </script>
+

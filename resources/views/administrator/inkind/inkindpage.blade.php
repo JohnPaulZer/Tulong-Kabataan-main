@@ -8,10 +8,6 @@
         <link rel="icon" href="{{ asset('img/log2.png') }}" type="image/png" />
         <!-- Remixicon -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" />
-        <!-- Google Fonts: Playfair Display & Open Sans -->
-        <link
-            href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Playfair+Display:wght@700;800&display=swap"
-            rel="stylesheet" />
         <!-- Charts -->
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script
@@ -2762,3 +2758,4 @@
     </body>
 
     </html>
+

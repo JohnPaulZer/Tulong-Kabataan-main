@@ -150,3 +150,4 @@ function handlePaginationClick() {
     setTimeout(scrollToTop, 450);
 }
 </script>
+

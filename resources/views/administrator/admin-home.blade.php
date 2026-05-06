@@ -7,9 +7,9 @@
     <title>Tulong Kabataan | Administrator Dashboard</title>
     <link rel="icon" href="{{ asset('img/log2.png') }}" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
-    <!-- Google Fonts: Playfair Display & Open Sans -->
+    <!-- Google Fonts: Merriweather & Inter -->
     <link
-        href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,400&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap"
         rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
 
@@ -51,7 +51,7 @@
         .campaign-count,
         .featured-badge,
         .pagination-number {
-            font-family: "Poppins", sans-serif;
+            font-family: 'Merriweather', serif;
             letter-spacing: -0.01em;
         }
 
@@ -70,7 +70,7 @@
         .filters-label,
         .goal,
         .pagination-info {
-            font-family: "Lato", sans-serif;
+            font-family: 'Inter', sans-serif;
             font-weight: 400;
             text-decoration: none;
         }
@@ -86,7 +86,7 @@
 
         body {
             margin: 0;
-            font-family: 'Lato', sans-serif;
+            font-family: 'Inter', sans-serif;
             background: var(--bg);
             color: var(--text);
             line-height: 1.45;
@@ -297,8 +297,8 @@
         }
 
         .section-header h2 {
-            /* Assuming 'Playfair Display' is a strong, decorative font */
-            font-family: 'Playfair Display', serif;
+            /* Assuming 'Merriweather' is a strong, decorative font */
+            font-family: 'Merriweather', serif;
             font-size: 26px;
             /* Slightly larger heading */
             color: var(--text);
@@ -362,7 +362,7 @@
         }
 
         .accomplishment-card__content h3 {
-            /* Replaced 'Open Sans' with a standard sans-serif for consistency if 'Inter' is used in body */
+            /* Using a standard sans-serif for consistency with the Inter body font */
             font-family: inherit;
             font-size: 20px;
             /* Larger title */
@@ -434,7 +434,7 @@
             background: none;
             border: none;
             padding: 12px 20px;
-            font-family: "Poppins", sans-serif;
+            font-family: 'Merriweather', serif;
             font-size: 15px;
             font-weight: 600;
             color: var(--muted);
@@ -519,7 +519,7 @@
             border-radius: 6px;
             cursor: pointer;
             transition: all 0.2s;
-            font-family: 'Lato', sans-serif;
+            font-family: 'Inter', sans-serif;
             font-size: 14px;
             display: inline-flex;
             justify-content: center;
@@ -1963,3 +1963,4 @@
 </body>
 
 </html>
+

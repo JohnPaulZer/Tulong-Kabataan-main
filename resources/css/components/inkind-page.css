@@ -1,10 +1,10 @@
 /* Scoped in-kind page styles */
 body.inkind-page h1, body.inkind-page h2, body.inkind-page h3, body.inkind-page h4, body.inkind-page h5, body.inkind-page h6, body.inkind-page .heading-font, body.inkind-page .section-title, body.inkind-page .featured-title, body.inkind-page .campaign-title, body.inkind-page .btn, body.inkind-page button, body.inkind-page .raised, body.inkind-page .campaign-count, body.inkind-page .featured-badge, body.inkind-page .pagination-number{
-    font-family: "Poppins", sans-serif;
+    font-family: var(--font-heading);
     
     letter-spacing: -0.01em;
 }body.inkind-page, body.inkind-page p, body.inkind-page a, body.inkind-page li, body.inkind-page span, body.inkind-page input, body.inkind-page select, body.inkind-page textarea, body.inkind-page label, body.inkind-page .body-font, body.inkind-page .section-desc, body.inkind-page .featured-desc, body.inkind-page .filters-label, body.inkind-page .goal, body.inkind-page .pagination-info{
-    font-family: "Lato", sans-serif;
+    font-family: var(--font-body);
     
     font-weight: 400;
     text-decoration: none;
@@ -18,7 +18,7 @@ body.inkind-page h1, body.inkind-page h2, body.inkind-page h3, body.inkind-page 
 }body.inkind-page .btn{
     font-weight: 600;
 }body.inkind-page input::placeholder{
-    font-family: "Lato", sans-serif;
+    font-family: var(--font-body);
     font-weight: 400;
 }body.inkind-page{
     --page-gutter: clamp(14px, 4vw, 28px);
@@ -306,3 +306,4 @@ body.inkind-page h1, body.inkind-page h2, body.inkind-page h3, body.inkind-page 
         margin-top: 0.2rem;
     }
 }
+

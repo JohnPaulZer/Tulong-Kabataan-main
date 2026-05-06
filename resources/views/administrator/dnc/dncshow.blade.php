@@ -10,7 +10,7 @@
   <style>
   /* Global */
   body {
-    font-family: 'Open Sans', Arial, sans-serif;
+    font-family: 'Inter', Arial, sans-serif;
     background: #f9fafb;
     margin: 0;
     padding: 0;
@@ -299,3 +299,4 @@ function downloadPDF() {
 
 </body>
 </html>
+

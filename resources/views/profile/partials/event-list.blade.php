@@ -98,3 +98,4 @@
         <p>You haven't registered for any events yet.</p>
     </div>
 @endforelse
+

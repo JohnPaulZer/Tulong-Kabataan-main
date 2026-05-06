@@ -51,10 +51,10 @@ body.profile-events-page{
     --shadow-sm: 0 1px 3px rgba(0, 0, 0, .06);
     --ring-primary: 0 0 0 2px rgba(59, 130, 246, .3);
 }body.profile-events-page h1, body.profile-events-page h2, body.profile-events-page h3, body.profile-events-page h4, body.profile-events-page h5, body.profile-events-page h6, body.profile-events-page .heading-font, body.profile-events-page .section-title, body.profile-events-page .featured-title, body.profile-events-page .campaign-title, body.profile-events-page .btn, body.profile-events-page button, body.profile-events-page .raised, body.profile-events-page .campaign-count, body.profile-events-page .featured-badge, body.profile-events-page .pagination-number{
-    font-family: "Poppins", sans-serif;
+    font-family: var(--font-heading);
     letter-spacing: -0.01em;
 }body.profile-events-page p, body.profile-events-page a, body.profile-events-page li, body.profile-events-page span, body.profile-events-page input, body.profile-events-page select, body.profile-events-page textarea, body.profile-events-page label, body.profile-events-page .body-font, body.profile-events-page .section-desc, body.profile-events-page .featured-desc, body.profile-events-page .filters-label, body.profile-events-page .goal, body.profile-events-page .pagination-info{
-    font-family: "Lato", sans-serif;
+    font-family: var(--font-body);
     font-weight: 400;
     text-decoration: none;
 }body.profile-events-page{
@@ -64,7 +64,7 @@ body.profile-events-page{
     box-sizing: inherit; 
 }body.profile-events-page{
     margin: 0;
-    font-family: 'Open Sans', sans-serif;
+    font-family: var(--font-body);
     background: var(--gray-50);
     overflow-x: hidden;
     
@@ -570,3 +570,4 @@ body.profile-events-page{
     color: var(--gray-600);
     margin: 0;
 }
+

@@ -1,13 +1,13 @@
 /* Scoped admin account styles */
 body.admin-account-page h1, body.admin-account-page h2, body.admin-account-page h3, body.admin-account-page h4, body.admin-account-page h5, body.admin-account-page h6, body.admin-account-page .heading-font, body.admin-account-page .section-title, body.admin-account-page .featured-title, body.admin-account-page .campaign-title, body.admin-account-page .btn, body.admin-account-page button, body.admin-account-page .raised, body.admin-account-page .campaign-count, body.admin-account-page .featured-badge, body.admin-account-page .pagination-number{
 
-    font-family: "Poppins", sans-serif;
+    font-family: var(--font-heading);
 
     letter-spacing: -0.01em;
 
 }body.admin-account-page p, body.admin-account-page a, body.admin-account-page li, body.admin-account-page span, body.admin-account-page input, body.admin-account-page select, body.admin-account-page textarea, body.admin-account-page label, body.admin-account-page .body-font, body.admin-account-page .section-desc, body.admin-account-page .featured-desc, body.admin-account-page .filters-label, body.admin-account-page .goal, body.admin-account-page .pagination-info{
 
-    font-family: "Lato", sans-serif;
+    font-family: var(--font-body);
 
     font-weight: 400;
 
@@ -1960,3 +1960,4 @@ body.admin-account-page h1, body.admin-account-page h2, body.admin-account-page 
             z-index: 4000;
 
         }
+

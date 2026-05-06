@@ -5,7 +5,7 @@
     <title>Password Reset | Tulong Kabataan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body style="margin:0; font-family:'Open Sans', Arial, sans-serif; background:#474056; color:#fafaff;">
+<body style="margin:0; font-family: 'Inter', Arial, sans-serif; background:#474056; color:#fafaff;">
 
     <div style="padding:40px 15px;">
         <table width="100%" cellspacing="0" cellpadding="0"
@@ -13,7 +13,7 @@
                    padding:36px 28px; box-shadow:0 10px 25px rgba(0,0,0,0.25); border-collapse:separate;">
             
             <tr>
-                <td style="font-family:'Playfair Display',serif; color:#f3e8ff;
+                <td style="font-family: 'Merriweather', serif; color:#f3e8ff;
                            font-size:22px; font-weight:700; padding-bottom:16px; text-align:center;">
                     Reset Your Password
                 </td>
@@ -58,3 +58,4 @@
 
 </body>
 </html>
+

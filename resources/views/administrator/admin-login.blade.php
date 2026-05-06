@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tulong Kabataan - Admin Login</title>
     <link
-        href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,400&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap"
         rel="stylesheet">
     <style>
         /* Import Google Font */
@@ -31,7 +31,7 @@
             justify-content: center;
             position: relative;
             margin: 0;
-            font-family: "Lato", sans-serif;
+            font-family: 'Inter', sans-serif;
             font-weight: 400;
             text-decoration: none;
             line-height: 1.6;
@@ -55,7 +55,7 @@
 
         /* ==================== TYPOGRAPHY SYSTEM ==================== */
 
-        /* 1. Primary Font: Poppins */
+        /* 1. Primary Font: Merriweather */
         h1,
         h2,
         h3,
@@ -72,7 +72,7 @@
         .campaign-count,
         .featured-badge,
         .pagination-number {
-            font-family: "Poppins", sans-serif;
+            font-family: 'Merriweather', serif;
             letter-spacing: -0.01em;
         }
 
@@ -91,7 +91,7 @@
         .filters-label,
         .goal,
         .pagination-info {
-            font-family: "Lato", sans-serif;
+            font-family: 'Inter', sans-serif;
             font-weight: 400;
             text-decoration: none;
         }
@@ -590,3 +590,4 @@
 </body>
 
 </html>
+

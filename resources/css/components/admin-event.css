@@ -19,8 +19,8 @@ body.admin-event-page{
     --header-h: 64px;
     --sidebar-w: 256px;
     
-    --font-heading: "Poppins", sans-serif;
-    --font-body: "Lato", sans-serif;
+    --font-heading: "Merriweather", serif;
+    --font-body: "Inter", sans-serif;
 }body.admin-event-page *{ 
     box-sizing: border-box;
 }body.admin-event-page h1, body.admin-event-page h2, body.admin-event-page h3, body.admin-event-page h4, body.admin-event-page h5, body.admin-event-page h6, body.admin-event-page .heading-font, body.admin-event-page .section-title, body.admin-event-page .featured-title, body.admin-event-page .campaign-title, body.admin-event-page .btn, body.admin-event-page button, body.admin-event-page .raised, body.admin-event-page .campaign-count, body.admin-event-page .featured-badge, body.admin-event-page .pagination-number{
@@ -409,3 +409,4 @@ body.admin-event-page{
         transform: scale(1) translateY(0);
     }
 }
+

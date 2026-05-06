@@ -30,7 +30,7 @@ body.profile-page{
     margin: 0;
     width: 100%;
     background: #f9fafb;
-    font-family: "Lato", sans-serif;
+    font-family: var(--font-body);
     font-weight: 400;
     text-decoration: none;
     line-height: 1.6;
@@ -39,10 +39,10 @@ body.profile-page{
     height: auto;
     display: block;
 }body.profile-page h1, body.profile-page h2, body.profile-page h3, body.profile-page h4, body.profile-page h5, body.profile-page h6, body.profile-page .heading-font, body.profile-page .section-title, body.profile-page .featured-title, body.profile-page .campaign-title, body.profile-page .btn, body.profile-page button, body.profile-page .raised, body.profile-page .campaign-count, body.profile-page .featured-badge, body.profile-page .pagination-number{
-    font-family: "Poppins", sans-serif;
+    font-family: var(--font-heading);
     letter-spacing: -0.01em;
 }body.profile-page p, body.profile-page a, body.profile-page li, body.profile-page span, body.profile-page input, body.profile-page select, body.profile-page textarea, body.profile-page label, body.profile-page .body-font, body.profile-page .section-desc, body.profile-page .featured-desc, body.profile-page .filters-label, body.profile-page .goal, body.profile-page .pagination-info{
-    font-family: "Lato", sans-serif;
+    font-family: var(--font-body);
     font-weight: 400;
     text-decoration: none;
 }body.profile-page .prof-flex{
@@ -560,3 +560,4 @@ body.profile-page{
         padding-top: 90px;
     }
 }
+

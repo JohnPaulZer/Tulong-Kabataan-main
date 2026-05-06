@@ -8,13 +8,6 @@
     <link rel="icon" href="{{ asset('img/log2.png') }}" type="image/png" />
     <!-- Remixicon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" />
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,400&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap"
-        rel="stylesheet">
-
     @vite('resources/css/app.css')
     <style>
         /* * GLOBAL VARIABLES & RESET */
@@ -33,8 +26,8 @@
             --bg-light: #f8fafc;
             /* Very pale blue-gray */
             --transition: all 0.3s ease;
-            --font-heading: 'Poppins', sans-serif;
-            --font-body: 'Lato', sans-serif;
+            --font-heading: 'Merriweather', serif;
+            --font-body: 'Inter', sans-serif;
         }
 
         * {
@@ -548,3 +541,4 @@
 </body>
 
 </html>
+
