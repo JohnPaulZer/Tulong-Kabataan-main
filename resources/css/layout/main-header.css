@@ -926,21 +926,27 @@ body.reloading{
         display: inline;
     }
 }@media (max-width: 767px){.header .header-container{
-        min-height: 60px;
-        padding: 10px 14px;
-        gap: 8px;
+        height: 58px;
+        min-height: 58px;
+        padding: 0 12px;
+        gap: 6px;
     }.header .logo img{
-        height: 30px !important;
-        max-width: min(145px, 42vw);
+        height: 26px !important;
+        max-width: min(130px, 38vw);
     }.header .sign-in-btn, .header .register-btn{
         min-width: 0;
         width: auto;
-        height: 32px;
-        padding: 0 8px;
-        font-size: 13px;
+        height: 34px;
+        padding: 0 10px;
+        font-size: 12px;
         gap: 4px;
+        border-radius: 10px;
     }.header .register-btn{
         margin-left: 0;
+    }.header .sign-in-btn i, .header .register-btn i{
+        font-size: 1rem;
+    }.header .header-right{
+        gap: 6px !important;
     }.header .user-btn{
         max-width: 126px;
         padding: 6px 8px;

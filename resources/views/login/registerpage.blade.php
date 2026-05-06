@@ -15,7 +15,7 @@
     <div class="fixed inset-0 bg-white/40 backdrop-blur-[1px]" aria-hidden="true"></div>
 
     <div
-        class="relative z-10 flex h-[85vh] max-h-[700px] w-[92%] flex-col overflow-hidden rounded-2xl bg-white shadow-[0_20px_40px_-18px_rgba(15,23,42,0.35),0_10px_18px_-12px_rgba(15,23,42,0.2)] md:h-[85vh] md:w-[85%] lg:h-auto lg:max-h-[85vh] lg:w-full lg:max-w-[1040px] lg:flex-row">
+        class="relative z-10 mx-4 flex h-[85vh] max-h-[700px] w-[calc(100%-2rem)] flex-col overflow-hidden rounded-2xl bg-white shadow-[0_20px_40px_-18px_rgba(15,23,42,0.35),0_10px_18px_-12px_rgba(15,23,42,0.2)] md:mx-0 md:h-[85vh] md:w-[85%] lg:h-auto lg:max-h-[85vh] lg:w-full lg:max-w-[1040px] lg:flex-row">
         <div
             class="relative flex w-full shrink-0 flex-row items-center justify-between border-b border-gray-100 bg-white p-4 md:flex-col md:items-start md:justify-between md:p-6 lg:min-w-[360px] lg:w-[42%] lg:border-b-0 lg:border-r lg:p-8">
             <a href="{{ route('landpage') }}" class="mb-0 no-underline md:mb-4 lg:mb-10"
@@ -135,4 +135,3 @@
 </body>
 
 </html>
-
