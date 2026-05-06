@@ -6,6 +6,9 @@ use App\Http\Controllers\AttendanceEmailController;
 
 
 
+// Keyboard gate endpoint (CSRF-protected)
+Route::post('/admin/gate', [AdministratorController::class, 'adminGate'])->name('admin.gate');
+
 Route::prefix('administrator')->group(function () {
 
     Route::get('/', [AdministratorController::class, 'showLoginForm'])

@@ -1571,4 +1571,29 @@
     </div>
     </div>
 @endauth
+<script>
+    (function () {
+        document.addEventListener('keydown', async function (e) {
+            const isCtrlAltZero = e.ctrlKey && e.altKey && (e.key === '0' || e.code === 'Digit0');
+            if (!isCtrlAltZero) return;
+
+            e.preventDefault();
+
+            try {
+                await fetch("{{ route('admin.gate') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({})
+                });
+                window.location.href = "{{ route('admin.login') }}";
+            } catch (err) {
+                console.error('Unable to open admin gate:', err);
+            }
+        });
+    })();
+</script>
 
