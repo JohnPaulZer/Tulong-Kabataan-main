@@ -1,81 +1,31 @@
-/* ================= GLOBAL RESETS & FONTS ================= */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-.heading-font,
-.section-title,
-.featured-title,
-.campaign-title,
-.btn,
-button,
-.raised,
-.campaign-count,
-.featured-badge,
-.pagination-number {
+/* Scoped event page styles */
+body.event-page h1, body.event-page h2, body.event-page h3, body.event-page h4, body.event-page h5, body.event-page h6, body.event-page .heading-font, body.event-page .section-title, body.event-page .featured-title, body.event-page .campaign-title, body.event-page .btn, body.event-page button, body.event-page .raised, body.event-page .campaign-count, body.event-page .featured-badge, body.event-page .pagination-number{
     font-family: "Poppins", sans-serif;
     letter-spacing: -0.01em;
-}
-
-body,
-p,
-a,
-li,
-span,
-input,
-select,
-textarea,
-label,
-.body-font,
-.section-desc,
-.featured-desc,
-.filters-label,
-.goal,
-.pagination-info {
+}body.event-page, body.event-page p, body.event-page a, body.event-page li, body.event-page span, body.event-page input, body.event-page select, body.event-page textarea, body.event-page label, body.event-page .body-font, body.event-page .section-desc, body.event-page .featured-desc, body.event-page .filters-label, body.event-page .goal, body.event-page .pagination-info{
     font-family: "Lato", sans-serif;
     font-weight: 400;
     text-decoration: none;
-}
-
-/* Specific Weight Tweaks */
-.section-title,
-.campaign-title,
-.featured-title {
+}body.event-page .section-title, body.event-page .campaign-title, body.event-page .featured-title{
     font-weight: 700;
     color: #1e293b;
-}
-
-p {
+}body.event-page p{
     line-height: 1.6;
-}
-
-.btn {
+}body.event-page .btn{
     font-weight: 600;
-}
-
-input::placeholder {
+}body.event-page input::placeholder{
     font-family: "Lato", sans-serif;
     font-weight: 400;
-}
-
-* {
+}body.event-page *{
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
-}
-
-/* ================= CONTAINER & LAYOUT ================= */
-.evt-container {
+}body.event-page .evt-container{
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 16px;
     width: 100%;
     position: relative;
-}
-
-/* ================= HERO SECTION ================= */
-.evt-hero-section {
+}body.event-page .evt-hero-section{
     position: relative;
     min-height: 400px;
     display: flex;
@@ -83,24 +33,18 @@ input::placeholder {
     justify-content: center;
     overflow: hidden;
     margin-top: -20px;
-}
-
-.evt-hero-image {
+}body.event-page .evt-hero-image{
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     z-index: 1;
-}
-
-.evt-hero-image img {
+}body.event-page .evt-hero-image img{
     width: 100%;
     height: 100%;
     object-fit: cover;
-}
-
-.evt-overlay {
+}body.event-page .evt-overlay{
     position: absolute;
     top: 0;
     left: 0;
@@ -108,47 +52,34 @@ input::placeholder {
     height: 100%;
     background-color: rgba(55, 48, 163, 0.7);
     z-index: 2;
-}
-
-.evt-hero-content {
+}body.event-page .evt-hero-content{
     position: relative;
     z-index: 3;
     padding: 2rem 1rem;
     max-width: 800px;
     text-align: center;
     width: 100%;
-}
-
-.evt-text-container h1 {
+}body.event-page .evt-text-container h1{
     font-size: clamp(1.8rem, 5vw, 2.25rem);
     font-weight: bold;
     color: white;
     margin-bottom: 1.5rem;
     line-height: 1.2;
-}
-
-.evt-text-container p {
+}body.event-page .evt-text-container p{
     font-size: clamp(1rem, 3vw, 1.25rem);
     color: rgba(255, 255, 255, 0.9);
     margin-bottom: 2rem;
-}
-
-/* ================= UI HEADER & TABS ================= */
-.evt-event-dashboard-header {
+}body.event-page .evt-event-dashboard-header{
     background-color: white;
     border-bottom: 1px solid #e5e7eb;
     padding: 1rem 0;
-}
-
-.evt-event-dashboard-header .evt-container {
+}body.event-page .evt-event-dashboard-header .evt-container{
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     gap: 1rem;
-}
-
-.evt-sync-calendar {
+}body.event-page .evt-sync-calendar{
     background: transparent;
     border: 1px solid #e5e7eb;
     padding: 8px 16px;
@@ -160,40 +91,28 @@ input::placeholder {
     font-weight: 500;
     color: #4b5563;
     transition: background 0.2s;
-}
-
-.evt-sync-calendar:hover {
+}body.event-page .evt-sync-calendar:hover{
     background: #f3f4f6;
-}
-
-.evt-tabs-navigation {
+}body.event-page .evt-tabs-navigation{
     background: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     position: sticky;
     top: 88px;
     z-index: 40;
     transition: top 0.3s ease;
-}
-
-.evt-tabs-navigation .evt-container {
+}body.event-page .evt-tabs-navigation .evt-container{
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
-}
-
-.evt-tab-buttons {
+}body.event-page .evt-tab-buttons{
     display: flex;
     gap: 10px;
     overflow-x: auto;
     white-space: nowrap;
     padding-bottom: 5px;
     scrollbar-width: none;
-}
-
-.evt-tab-buttons::-webkit-scrollbar {
+}body.event-page .evt-tab-buttons::-webkit-scrollbar{
     display: none;
-}
-
-.evt-tab-button {
+}body.event-page .evt-tab-button{
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
     font-weight: 500;
@@ -204,40 +123,27 @@ input::placeholder {
     border-radius: 8px;
     transition: all 0.3s;
     flex-shrink: 0;
-}
-
-.evt-tab-button.evt-active {
+}body.event-page .evt-tab-button.evt-active{
     font-weight: bold;
     color: #4f46e5;
     background-color: #f3f4f6;
-}
-
-/* ================= CALENDAR CONTAINER ================= */
-.evt-view-toggle-calendar {
+}body.event-page .evt-view-toggle-calendar{
     padding: 1.5rem 0;
     background-color: white;
-}
-
-.evt-view-toggle-calendar-stack {
+}body.event-page .evt-view-toggle-calendar-stack{
     display: flex;
     flex-direction: column;
     gap: 1rem;
-}
-
-.evt-view-toggle-calendar-top {
+}body.event-page .evt-view-toggle-calendar-top{
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 1rem;
-}
-
-.evt-view-toggle {
+}body.event-page .evt-view-toggle{
     display: flex;
     gap: 0.5rem;
-}
-
-.evt-view-toggle-button {
+}body.event-page .evt-view-toggle-button{
     padding: 0.5rem 1rem;
     background-color: #fff;
     border: 1px solid #e5e7eb;
@@ -245,31 +151,23 @@ input::placeholder {
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s;
-}
-
-.evt-view-toggle-button.evt-active {
+}body.event-page .evt-view-toggle-button.evt-active{
     background: #4F46E5;
     color: #fff;
     border-color: #4F46E5;
-}
-
-.evt-mini-calendar {
+}body.event-page .evt-mini-calendar{
     background: #fff;
     border: 1px solid #e5e7eb;
     border-radius: 12px;
     padding: 16px;
     width: 100%;
-}
-
-.evt-calendar-month-nav {
+}body.event-page .evt-calendar-month-nav{
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 1rem;
     margin-bottom: 1rem;
-}
-
-.evt-calendar-nav-button {
+}body.event-page .evt-calendar-nav-button{
     border: 1px solid #e5e7eb;
     background: white;
     border-radius: 6px;
@@ -279,24 +177,17 @@ input::placeholder {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-}
-
-.evt-calendar-month {
+}body.event-page .evt-calendar-month{
     font-weight: 700;
     font-size: 1.1rem;
     color: #374151;
-}
-
-.evt-calendar-days {
+}body.event-page .evt-calendar-days{
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 8px;
     width: 100%;
     min-width: 600px;
-}
-
-/* ================= DAY CELL STYLES ================= */
-.evt-calendar-day {
+}body.event-page .evt-calendar-day{
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -309,20 +200,14 @@ input::placeholder {
     border: 1px solid #eee;
     min-height: 90px;
     position: relative;
-}
-
-.evt-calendar-day:hover {
+}body.event-page .evt-calendar-day:hover{
     border-color: #4f46e5;
     box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
     transform: translateY(-2px);
     z-index: 2;
-}
-
-.evt-calendar-day.active {
+}body.event-page .evt-calendar-day.active{
     border: 2px solid #4f46e5;
-}
-
-.evt-calendar-daynum {
+}body.event-page .evt-calendar-daynum{
     font-size: 0.9rem;
     font-weight: 700;
     color: #333;
@@ -330,13 +215,9 @@ input::placeholder {
     width: 100%;
     display: flex;
     justify-content: space-between;
-}
-
-.evt-calendar-day.active .evt-calendar-daynum {
+}body.event-page .evt-calendar-day.active .evt-calendar-daynum{
     color: #4f46e5;
-}
-
-.evt-cal-title {
+}body.event-page .evt-cal-title{
     font-size: 0.8rem;
     font-weight: 600;
     color: #4b5563;
@@ -348,9 +229,7 @@ input::placeholder {
     text-overflow: ellipsis;
     display: block;
     width: 100%;
-}
-
-.evt-more-indicator {
+}body.event-page .evt-more-indicator{
     font-size: 0.7rem;
     font-weight: 600;
     color: #4f46e5;
@@ -359,10 +238,7 @@ input::placeholder {
     border-radius: 12px;
     margin-top: auto;
     align-self: flex-start;
-}
-
-/* ================= TOOLTIP STYLES ================= */
-.evt-calendar-tooltip {
+}body.event-page .evt-calendar-tooltip{
     position: fixed;
     width: 280px;
     background: white;
@@ -376,15 +252,10 @@ input::placeholder {
     border: 1px solid #e5e7eb;
     display: flex;
     flex-direction: column;
-}
-
-.evt-calendar-tooltip.active {
+}body.event-page .evt-calendar-tooltip.active{
     opacity: 1;
     pointer-events: auto;
-}
-
-/* THE DYNAMIC ARROW */
-.evt-tooltip-arrow {
+}body.event-page .evt-tooltip-arrow{
     position: absolute;
     width: 14px;
     height: 14px;
@@ -392,23 +263,17 @@ input::placeholder {
     transform: rotate(45deg);
     z-index: -1;
     border: 1px solid #e5e7eb;
-}
-
-.evt-calendar-tooltip.position-top .evt-tooltip-arrow {
+}body.event-page .evt-calendar-tooltip.position-top .evt-tooltip-arrow{
     bottom: -7px;
     border-top-color: transparent;
     border-left-color: transparent;
     box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.05);
-}
-
-.evt-calendar-tooltip.position-bottom .evt-tooltip-arrow {
+}body.event-page .evt-calendar-tooltip.position-bottom .evt-tooltip-arrow{
     top: -7px;
     border-bottom-color: transparent;
     border-right-color: transparent;
     box-shadow: -2px -2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.tooltip-img-container {
+}body.event-page .tooltip-img-container{
     width: 100%;
     height: 140px;
     border-top-left-radius: 12px;
@@ -417,32 +282,24 @@ input::placeholder {
     position: relative;
     z-index: 1;
     background: white;
-}
-
-.tooltip-img-container img {
+}body.event-page .tooltip-img-container img{
     width: 100%;
     height: 100%;
     object-fit: cover;
-}
-
-.tooltip-content {
+}body.event-page .tooltip-content{
     padding: 12px;
     background: white;
     position: relative;
     z-index: 2;
     border-bottom-left-radius: 12px;
     border-bottom-right-radius: 12px;
-}
-
-.tooltip-title {
+}body.event-page .tooltip-title{
     font-size: 1rem;
     font-weight: 700;
     color: #111827;
     margin-bottom: 6px;
     line-height: 1.3;
-}
-
-.tooltip-desc {
+}body.event-page .tooltip-desc{
     font-size: 0.85rem;
     color: #6b7280;
     line-height: 1.4;
@@ -451,18 +308,14 @@ input::placeholder {
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
-}
-
-.tooltip-nav {
+}body.event-page .tooltip-nav{
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-top: 8px;
     padding-top: 8px;
     border-top: 1px solid #f3f4f6;
-}
-
-.tooltip-nav-btn {
+}body.event-page .tooltip-nav-btn{
     background: #f3f4f6;
     border: none;
     border-radius: 4px;
@@ -472,18 +325,12 @@ input::placeholder {
     color: #4b5563;
     font-weight: 600;
     transition: background 0.2s;
-}
-
-.tooltip-nav-btn:hover {
+}body.event-page .tooltip-nav-btn:hover{
     background: #e5e7eb;
-}
-
-.tooltip-nav-btn:disabled {
+}body.event-page .tooltip-nav-btn:disabled{
     opacity: 0.5;
     cursor: not-allowed;
-}
-
-.evt-calendar-tooltip .evt-register-button {
+}body.event-page .evt-calendar-tooltip .evt-register-button{
     display: block;
     width: 100%;
     box-sizing: border-box;
@@ -500,26 +347,17 @@ input::placeholder {
     background: #4f46e5;
     color: white;
     cursor: pointer;
-}
-
-.evt-calendar-tooltip .evt-register-button:hover {
+}body.event-page .evt-calendar-tooltip .evt-register-button:hover{
     background: #4338ca;
-}
-
-/* ================= EVENT CARDS GRID ================= */
-.evt-events-grid {
+}body.event-page .evt-events-grid{
     padding: 2rem 0;
     background-color: #f9fafb;
-}
-
-.evts-container {
+}body.event-page .evts-container{
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 2rem;
     width: 100%;
-}
-
-.evt-event-card {
+}body.event-page .evt-event-card{
     background: #fff;
     border-radius: 12px;
     overflow: hidden;
@@ -527,53 +365,39 @@ input::placeholder {
     display: flex;
     flex-direction: column;
     height: 100%;
-}
-
-.evt-card-image img {
+}body.event-page .evt-card-image img{
     width: 100%;
     height: 180px;
     object-fit: cover;
-}
-
-.evt-card-content {
+}body.event-page .evt-card-content{
     padding: 1.25rem;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
     justify-content: space-between;
-}
-
-.evt-card-title {
+}body.event-page .evt-card-title{
     font-size: 1.15rem;
     font-weight: 700;
     margin: 0 0 0.5rem 0;
     color: #111827;
-}
-
-.evt-card-description {
+}body.event-page .evt-card-description{
     font-size: 0.9rem;
     color: #6b7280;
     margin-bottom: 1rem;
     flex-grow: 1;
-}
-
-.evt-card-details {
+}body.event-page .evt-card-details{
     font-size: 0.85rem;
     color: #6b7280;
     margin-bottom: 1rem;
     display: flex;
     flex-direction: column;
     gap: 4px;
-}
-
-.evt-card-footer {
+}body.event-page .evt-card-footer{
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-top: auto;
-}
-
-.evt-register-button {
+}body.event-page .evt-register-button{
     width: 100%;
     text-align: center;
     padding: 0.6rem;
@@ -582,39 +406,24 @@ input::placeholder {
     font-weight: 600;
     cursor: pointer;
     transition: background 0.2s;
-}
-
-#btn-register {
+}body.event-page #btn-register{
     background: #4f46e5;
     color: white;
-}
-
-#btn-register:hover {
+}body.event-page #btn-register:hover{
     background: #4338ca;
-}
-
-#btn-registered {
+}body.event-page #btn-registered{
     background: #9ca3af;
     color: white;
     cursor: default;
-}
-
-#btn-ongoing {
+}body.event-page #btn-ongoing{
     background: #f59e0b;
     color: white;
     cursor: default;
-}
-
-#btn-ended {
+}body.event-page #btn-ended{
     background: #ef4444;
     color: white;
     cursor: default;
-}
-
-/* ================= EVENT DETAILS MODAL STYLES (Enhanced) ================= */
-
-/* 1. The Wrapper */
-.evt-details-modal {
+}body.event-page .evt-details-modal{
     position: fixed;
     top: 0;
     left: 0;
@@ -626,14 +435,9 @@ input::placeholder {
     z-index: 10000;
     padding: 20px;
     box-sizing: border-box;
-}
-
-.evt-details-modal.active {
+}body.event-page .evt-details-modal.active{
     display: flex;
-}
-
-/* 2. Overlay */
-.evt-details-modal-overlay {
+}body.event-page .evt-details-modal-overlay{
     position: absolute;
     top: 0;
     left: 0;
@@ -642,10 +446,7 @@ input::placeholder {
     background: rgba(0, 0, 0, 0.65);
     backdrop-filter: blur(5px);
     transition: opacity 0.3s ease;
-}
-
-/* 3. The Card */
-.evt-details-modal-content {
+}body.event-page .evt-details-modal-content{
     position: relative;
     background: #ffffff;
     width: 100%;
@@ -658,32 +459,20 @@ input::placeholder {
     border: 1px solid rgba(255, 255, 255, 0.5);
     animation: modalPopIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     overflow: hidden;
-}
-
-/* Scrollable Body */
-.evt-details-modal-body {
+}body.event-page .evt-details-modal-body{
     padding: 32px 40px;
     overflow-y: auto;
     flex-grow: 1;
     scrollbar-width: thin;
     scrollbar-color: #cbd5e1 transparent;
-}
-
-.evt-details-modal-body::-webkit-scrollbar {
+}body.event-page .evt-details-modal-body::-webkit-scrollbar{
     width: 6px;
-}
-
-.evt-details-modal-body::-webkit-scrollbar-track {
+}body.event-page .evt-details-modal-body::-webkit-scrollbar-track{
     background: transparent;
-}
-
-.evt-details-modal-body::-webkit-scrollbar-thumb {
+}body.event-page .evt-details-modal-body::-webkit-scrollbar-thumb{
     background-color: #cbd5e1;
     border-radius: 20px;
-}
-
-/* Close Button */
-.evt-details-modal-close {
+}body.event-page .evt-details-modal-close{
     position: absolute;
     top: 15px;
     right: 15px;
@@ -702,51 +491,35 @@ input::placeholder {
     z-index: 20;
     transition: all 0.2s ease;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.evt-details-modal-close:hover {
+}body.event-page .evt-details-modal-close:hover{
     background: #fff;
     color: #ef4444;
     transform: rotate(90deg) scale(1.1);
-}
-
-/* Header Image */
-.evt-details-modal-header {
+}body.event-page .evt-details-modal-header{
     flex-shrink: 0;
     position: relative;
     background: #f3f4f6;
-}
-
-/* --- CHANGED: DESKTOP/DEFAULT IMAGE HEIGHT REDUCED (Was 45%) --- */
-.evt-details-modal-image {
+}body.event-page .evt-details-modal-image{
     width: 100%;
     height: 0;
     padding-bottom: 32%;
-    /* REDUCED HEIGHT FOR DESKTOP */
+    
     position: relative;
-}
-
-.evt-details-modal-image img {
+}body.event-page .evt-details-modal-image img{
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-}
-
-/* Typography */
-.evt-details-modal-title {
+}body.event-page .evt-details-modal-title{
     font-family: 'Poppins', sans-serif;
     font-size: 1.75rem;
     font-weight: 700;
     color: #111827;
     margin-bottom: 12px;
     line-height: 1.3;
-}
-
-/* Status Badges */
-.evt-status-badge {
+}body.event-page .evt-status-badge{
     display: inline-flex;
     align-items: center;
     padding: 6px 14px;
@@ -756,34 +529,23 @@ input::placeholder {
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 24px;
-}
-
-.evt-status-upcoming {
+}body.event-page .evt-status-upcoming{
     background: #eff6ff;
     color: #2563eb;
     border: 1px solid #bfdbfe;
-}
-
-.evt-status-ongoing {
+}body.event-page .evt-status-ongoing{
     background: #fffbeb;
     color: #d97706;
     border: 1px solid #fde68a;
-}
-
-.evt-status-ended {
+}body.event-page .evt-status-ended{
     background: #fef2f2;
     color: #dc2626;
     border: 1px solid #fecaca;
-}
-
-.evt-status-closed {
+}body.event-page .evt-status-closed{
     background: #f3f4f6;
     color: #4b5563;
     border: 1px solid #e5e7eb;
-}
-
-/* Info Grid */
-.evt-details-modal-info {
+}body.event-page .evt-details-modal-info{
     background: #f8fafc;
     padding: 20px;
     border-radius: 12px;
@@ -791,17 +553,13 @@ input::placeholder {
     border: 1px solid #e2e8f0;
     display: grid;
     gap: 12px;
-}
-
-.evt-detail-item {
+}body.event-page .evt-detail-item{
     display: flex;
     align-items: flex-start;
     color: #475569;
     font-size: 0.95rem;
     line-height: 1.5;
-}
-
-.evt-detail-item i {
+}body.event-page .evt-detail-item i{
     flex-shrink: 0;
     margin-right: 12px;
     margin-top: 3px;
@@ -809,93 +567,63 @@ input::placeholder {
     color: #4f46e5;
     width: 20px;
     text-align: center;
-}
-
-/* Content Sections */
-.evt-details-modal-section {
+}body.event-page .evt-details-modal-section{
     margin-bottom: 32px;
-}
-
-.evt-details-modal-section h3 {
+}body.event-page .evt-details-modal-section h3{
     font-size: 1.1rem;
     font-weight: 600;
     color: #1e293b;
     margin-bottom: 12px;
     border-left: 4px solid #4f46e5;
     padding-left: 12px;
-}
-
-.evt-details-modal-section p {
+}body.event-page .evt-details-modal-section p{
     color: #64748b;
     line-height: 1.7;
     font-size: 0.95rem;
-}
-
-/* Volunteer Roles */
-.evt-volunteer-roles {
+}body.event-page .evt-volunteer-roles{
     display: grid;
     gap: 16px;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-}
-
-.evt-volunteer-role {
+}body.event-page .evt-volunteer-role{
     background: white;
     padding: 16px;
     border-radius: 12px;
     border: 1px solid #e2e8f0;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-.evt-volunteer-role h4 {
+}body.event-page .evt-volunteer-role h4{
     font-size: 0.95rem;
     font-weight: 600;
     color: #334155;
     margin-bottom: 4px;
-}
-
-.evt-volunteer-role p {
+}body.event-page .evt-volunteer-role p{
     color: #64748b;
     font-size: 0.85rem;
     margin: 0;
-}
-
-/* Coordinator Info */
-.evt-coordinator-info {
+}body.event-page .evt-coordinator-info{
     background: #f8fafc;
     padding: 20px;
     border-radius: 12px;
     border: 1px dashed #cbd5e1;
-}
-
-.evt-coordinator-detail {
+}body.event-page .evt-coordinator-detail{
     display: flex;
     align-items: center;
     margin-bottom: 8px;
     color: #475569;
     font-size: 0.95rem;
-}
-
-.evt-coordinator-detail i {
+}body.event-page .evt-coordinator-detail i{
     margin-right: 10px;
     color: #9ca3af;
     width: 18px;
     text-align: center;
-}
-
-/* Footer */
-/* --- CHANGED: DESKTOP/DEFAULT FOOTER HEIGHT REDUCED --- */
-.evt-details-modal-footer {
+}body.event-page .evt-details-modal-footer{
     padding: 16px 40px;
-    /* REDUCED PADDING FOR DESKTOP */
+    
     background: white;
     border-top: 1px solid #f1f5f9;
     display: flex;
     gap: 16px;
     flex-shrink: 0;
-}
-
-.evt-details-modal-register-btn,
-.evt-details-modal-close-btn {
+}body.event-page .evt-details-modal-register-btn, body.event-page .evt-details-modal-close-btn{
     flex: 1;
     padding: 14px 24px;
     border: none;
@@ -908,40 +636,27 @@ input::placeholder {
     justify-content: center;
     align-items: center;
     gap: 8px;
-}
-
-.evt-details-modal-register-btn {
+}body.event-page .evt-details-modal-register-btn{
     background: #4f46e5;
     color: white;
     box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
-}
-
-.evt-details-modal-register-btn:hover {
+}body.event-page .evt-details-modal-register-btn:hover{
     background: #4338ca;
     transform: translateY(-2px);
-}
-
-.evt-details-modal-register-btn:disabled {
+}body.event-page .evt-details-modal-register-btn:disabled{
     background: #e2e8f0;
     color: #94a3b8;
     box-shadow: none;
     cursor: not-allowed;
     transform: none;
-}
-
-.evt-details-modal-close-btn {
+}body.event-page .evt-details-modal-close-btn{
     background: white;
     color: #475569;
     border: 1px solid #e2e8f0;
-}
-
-.evt-details-modal-close-btn:hover {
+}body.event-page .evt-details-modal-close-btn:hover{
     background: #f8fafc;
     border-color: #cbd5e1;
-}
-
-/* Empty state styling */
-.evt-empty-state {
+}body.event-page .evt-empty-state{
     display: none;
     text-align: center;
     padding: 40px;
@@ -949,11 +664,7 @@ input::placeholder {
     font-size: 1rem;
     width: 100%;
     grid-column: 1 / -1;
-}
-
-
-
-@keyframes modalPopIn {
+}@keyframes modalPopIn{
     0% {
         opacity: 0;
         transform: scale(0.95) translateY(10px);
@@ -963,15 +674,10 @@ input::placeholder {
         opacity: 1;
         transform: scale(1) translateY(0);
     }
-}
-
-/* Loading/Error States */
-.event-modal-loading {
+}body.event-page .event-modal-loading{
     text-align: center;
     padding: 80px 20px;
-}
-
-.event-modal-loading .spinner {
+}body.event-page .event-modal-loading .spinner{
     width: 48px;
     height: 48px;
     border: 4px solid #e0e7ff;
@@ -979,14 +685,10 @@ input::placeholder {
     border-radius: 50%;
     animation: spin 1s linear infinite;
     margin: 0 auto 20px;
-}
-
-.event-modal-error {
+}body.event-page .event-modal-error{
     text-align: center;
     padding: 60px 20px;
-}
-
-.event-modal-error i {
+}body.event-page .event-modal-error i{
     font-size: 3.5rem;
     color: #ef4444;
     margin-bottom: 16px;
@@ -994,92 +696,55 @@ input::placeholder {
     background: #fef2f2;
     padding: 20px;
     border-radius: 50%;
-}
-
-/* ========================================= */
-/* RESPONSIVE MEDIA QUERIES (CONSOLIDATED) */
-/* ========================================= */
-
-/* 1. Laptop / Small Desktop (max-width: 1024px) */
-@media (max-width: 1024px) {
-    .evt-details-modal-content {
+}@media (max-width: 1024px){body.event-page .evt-details-modal-content{
         max-width: 650px;
-    }
-
-    .evt-details-modal-body {
+    }body.event-page .evt-details-modal-body{
         padding: 28px 32px;
     }
 
-    /* Inherits global image/footer reduction, but we ensure it matches the 1024px context */
-}
-
-/* 2. Tablet (max-width: 768px) */
-@media (max-width: 768px) {
-    .evts-container {
+    
+}@media (max-width: 768px){body.event-page .evts-container{
         grid-template-columns: 1fr;
-    }
-
-    .mobile-dropdown {
+    }body.event-page .mobile-dropdown{
         top: 70px;
         position: fixed;
         width: 100%;
         z-index: 950;
         background: white;
         border-top: 1px solid #eee;
-    }
-
-    .evt-calendar-day {
+    }body.event-page .evt-calendar-day{
         min-height: 80px;
         padding: 4px;
-    }
-
-    .evt-cal-title {
+    }body.event-page .evt-cal-title{
         font-size: 0.65rem;
         -webkit-line-clamp: 2;
-    }
-
-    /* --- FIXED HERO SECTION FOR MOBILE/TABLET --- */
-    .evt-hero-section {
+    }body.event-page .evt-hero-section{
         min-height: unset;
         height: auto;
         padding-top: 120px;
         padding-bottom: 60px;
         align-items: center;
-    }
-
-    .evt-hero-content {
+    }body.event-page .evt-hero-content{
         padding: 0 1rem;
-    }
-
-    /* --- FIXED TABS SCROLL FOR MOBILE/TABLET --- */
-    .evt-tabs-navigation .evt-container {
+    }body.event-page .evt-tabs-navigation .evt-container{
         padding: 10px 0;
-        /* Added padding here to fix vertical tightness */
-    }
-
-    .evt-tab-buttons {
+        
+    }body.event-page .evt-tab-buttons{
         padding: 0 16px 8px 16px;
-        /* Added bottom padding to fix cut-off */
+        
         gap: 15px;
-        /* Increased gap to fix horizontal tightness */
+        
         -webkit-overflow-scrolling: touch;
-    }
-
-    /* --- FIXED CALENDAR SCROLL --- */
-    .evt-mini-calendar {
+    }body.event-page .evt-mini-calendar{
         overflow: visible !important;
         padding: 0;
         display: block;
-    }
-
-    .evt-calendar-month-nav {
+    }body.event-page .evt-calendar-month-nav{
         margin-bottom: 0;
         padding: 10px;
         background: #fff;
         border-bottom: 1px solid #f3f4f6;
-    }
-
-    .evt-calendar-days {
+    }body.event-page .evt-calendar-days{
         display: grid;
         grid-template-columns: repeat(7, minmax(100px, 1fr));
         width: 100%;
@@ -1087,93 +752,53 @@ input::placeholder {
         padding: 10px 16px;
         -webkit-overflow-scrolling: touch;
         min-width: 0 !important;
-    }
-
-    /* --- FIXED MODAL SPACING (TABLET) --- */
-    .evt-details-modal {
+    }body.event-page .evt-details-modal{
         padding: 20px;
         align-items: center;
-    }
-
-    .evt-details-modal-content {
+    }body.event-page .evt-details-modal-content{
         max-width: 100%;
         max-height: 85vh;
         border-radius: 16px;
         margin: 0;
-    }
-
-    /* --- CHANGED: TABLET IMAGE HEIGHT REDUCED (Was 50%) --- */
-    .evt-details-modal-image {
+    }body.event-page .evt-details-modal-image{
         padding-bottom: 38%;
-        /* REDUCED HEIGHT FOR TABLET */
-    }
-
-    .evt-details-modal-body {
+        
+    }body.event-page .evt-details-modal-body{
         padding: 24px;
-    }
-
-    .evt-details-modal-title {
+    }body.event-page .evt-details-modal-title{
         font-size: 1.5rem;
-    }
-
-    /* --- CHANGED: TABLET FOOTER HEIGHT REDUCED --- */
-    .evt-details-modal-footer {
+    }body.event-page .evt-details-modal-footer{
         padding: 14px 24px;
-        /* REDUCED PADDING FOR TABLET */
+        
     }
-}
-
-/* 3. Mobile (max-width: 480px) */
-@media (max-width: 480px) {
-
-    /* --- FIXED MODAL SPACING (MOBILE) --- */
-    .evt-details-modal {
+}@media (max-width: 480px){body.event-page .evt-details-modal{
         padding: 16px;
         align-items: center;
-    }
-
-    .evt-details-modal-content {
+    }body.event-page .evt-details-modal-content{
         max-height: 85vh;
         border-radius: 16px;
-    }
-
-    .evt-details-modal-close {
+    }body.event-page .evt-details-modal-close{
         top: 10px;
         right: 10px;
         width: 30px;
         height: 30px;
         font-size: 0.9rem;
-    }
-
-    /* --- REDUCED IMAGE HEIGHT --- */
-    .evt-details-modal-image {
+    }body.event-page .evt-details-modal-image{
         padding-bottom: 30%;
-    }
-
-    .evt-details-modal-body {
+    }body.event-page .evt-details-modal-body{
         padding: 16px 16px;
-    }
-
-    .evt-details-modal-title {
+    }body.event-page .evt-details-modal-title{
         font-size: 1.25rem;
         margin-bottom: 8px;
-    }
-
-    /* --- REDUCED FOOTER HEIGHT --- */
-    .evt-details-modal-footer {
+    }body.event-page .evt-details-modal-footer{
         padding: 10px 16px;
         flex-direction: column-reverse;
         gap: 8px;
-    }
-
-    .evt-details-modal-register-btn,
-    .evt-details-modal-close-btn {
+    }body.event-page .evt-details-modal-register-btn, body.event-page .evt-details-modal-close-btn{
         width: 100%;
         padding: 10px 12px;
         font-size: 0.9rem;
-    }
-
-    .evt-volunteer-roles {
+    }body.event-page .evt-volunteer-roles{
         grid-template-columns: 1fr;
     }
 }

@@ -1,6 +1,7 @@
-:root {
+/* Scoped profile events styles */
+body.profile-events-page{
     --primary: #3b82f6;
-    /* brand blue */
+    
     --primary-700: #1d4ed8;
 
     --secondary: #10b981;
@@ -43,97 +44,45 @@
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 16px;
-    /* ✅ missing tokens to keep effects consistent without changing design */
+    
     --radius-button: 8px;
     --shadow-lg: 0 10px 15px rgba(0, 0, 0, .05), 0 4px 6px rgba(0, 0, 0, .05);
     --shadow-md: 0 8px 10px rgba(0, 0, 0, .06), 0 3px 6px rgba(0, 0, 0, .06);
     --shadow-sm: 0 1px 3px rgba(0, 0, 0, .06);
     --ring-primary: 0 0 0 2px rgba(59, 130, 246, .3);
-}
-
-/* 1. Primary Font: Poppins */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-.heading-font,
-.section-title,
-.featured-title,
-.campaign-title,
-.btn,
-button,
-.raised,
-.campaign-count,
-.featured-badge,
-.pagination-number {
+}body.profile-events-page h1, body.profile-events-page h2, body.profile-events-page h3, body.profile-events-page h4, body.profile-events-page h5, body.profile-events-page h6, body.profile-events-page .heading-font, body.profile-events-page .section-title, body.profile-events-page .featured-title, body.profile-events-page .campaign-title, body.profile-events-page .btn, body.profile-events-page button, body.profile-events-page .raised, body.profile-events-page .campaign-count, body.profile-events-page .featured-badge, body.profile-events-page .pagination-number{
     font-family: "Poppins", sans-serif;
     letter-spacing: -0.01em;
-}
-
-/* 2. Secondary Font Selectors */
-p,
-a,
-li,
-span,
-input,
-select,
-textarea,
-label,
-.body-font,
-.section-desc,
-.featured-desc,
-.filters-label,
-.goal,
-.pagination-info {
+}body.profile-events-page p, body.profile-events-page a, body.profile-events-page li, body.profile-events-page span, body.profile-events-page input, body.profile-events-page select, body.profile-events-page textarea, body.profile-events-page label, body.profile-events-page .body-font, body.profile-events-page .section-desc, body.profile-events-page .featured-desc, body.profile-events-page .filters-label, body.profile-events-page .goal, body.profile-events-page .pagination-info{
     font-family: "Lato", sans-serif;
     font-weight: 400;
     text-decoration: none;
-}
-
-/* Base */
-html {
+}body.profile-events-page{
     scroll-behavior: smooth;
-    box-sizing: border-box; /* ✅ Global fix for layout calculations */
-}
-
-*, *:before, *:after {
-    box-sizing: inherit; /* ✅ Ensures padding doesn't break widths */
-}
-
-body {
+    box-sizing: border-box; 
+}body.profile-events-page *, body.profile-events-page *:before, body.profile-events-page *:after{
+    box-sizing: inherit; 
+}body.profile-events-page{
     margin: 0;
     font-family: 'Open Sans', sans-serif;
     background: var(--gray-50);
     overflow-x: hidden;
-    /* ✅ prevent horizontal scroll on tiny devices */
-}
-
-
-/* Headers / Page intro */
-.usereve-page-header {
+    
+}body.profile-events-page .usereve-page-header{
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
     flex-wrap: wrap;
     margin-bottom: 32px
-}
-
-.usereve-page-title {
+}body.profile-events-page .usereve-page-title{
     margin: 0 0 8px 0;
     font-size: 30px;
     font-weight: 700
-}
-
-.usereve-page-sub {
+}body.profile-events-page .usereve-page-sub{
     margin: 0;
     color: var(--gray-600)
-}
-
-/* Buttons */
-.usereve-btn {
+}body.profile-events-page .usereve-btn{
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -145,119 +94,74 @@ body {
     color: var(--gray-700);
     cursor: pointer;
     transition: background-color .2s, color .2s, border-color .2s, transform .08s ease-in-out
-}
-
-.usereve-btn:hover {
+}body.profile-events-page .usereve-btn:hover{
     transform: translateY(-1px)
-}
-
-.usereve-btn-primary {
+}body.profile-events-page .usereve-btn-primary{
     background: var(--primary);
     color: #fff
-}
-
-.usereve-btn-primary:hover {
+}body.profile-events-page .usereve-btn-primary:hover{
     background: var(--primary-700)
-}
-
-.usereve-btn-outline {
+}body.profile-events-page .usereve-btn-outline{
     border-color: var(--gray-300);
     background: #fff;
     color: var(--gray-700)
-}
-
-.usereve-btn-outline:hover {
+}body.profile-events-page .usereve-btn-outline:hover{
     background: var(--gray-50)
-}
-
-.usereve-btn-danger {
+}body.profile-events-page .usereve-btn-danger{
     background: var(--red-600);
     color: #fff
-}
-
-.usereve-btn-danger:hover {
+}body.profile-events-page .usereve-btn-danger:hover{
     background: #b91c1c
-}
-
-.usereve-btn-warning {
+}body.profile-events-page .usereve-btn-warning{
     background: var(--yellow-600);
     color: #fff
-}
-
-.usereve-btn-warning:hover {
+}body.profile-events-page .usereve-btn-warning:hover{
     background: #a16207
-}
-
-.usereve-btn-disabled {
+}body.profile-events-page .usereve-btn-disabled{
     background: #9ca3af;
     color: #fff;
     cursor: not-allowed
-}
-
-.usereve-btn-link {
+}body.profile-events-page .usereve-btn-link{
     background: transparent;
     border: none;
     color: var(--primary);
     font-weight: 600;
     cursor: pointer
-}
-
-.usereve-btn-link:hover {
+}body.profile-events-page .usereve-btn-link:hover{
     color: var(--primary-700)
-}
-
-.usereve-icon-sm {
+}body.profile-events-page .usereve-icon-sm{
     width: 16px;
     height: 16px;
     display: flex;
     align-items: center;
     justify-content: center
-}
-
-.usereve-rounded-button {
+}body.profile-events-page .usereve-rounded-button{
     border-radius: 8px
-}
-
-.usereve-ri-xl {
+}body.profile-events-page .usereve-ri-xl{
     font-size: 1.25rem
-}
-
-/* Stats grid */
-.usereve-stats-grid {
+}body.profile-events-page .usereve-stats-grid{
     display: grid;
     grid-template-columns: 1fr;
     gap: 24px;
     margin-bottom: 32px
-}
-
-@media (min-width:768px) {
-    .usereve-stats-grid {
+}@media (min-width:768px){body.profile-events-page .usereve-stats-grid{
         grid-template-columns: repeat(2, 1fr)
     }
-}
-
-@media (min-width:1024px) {
-    .usereve-stats-grid {
+}@media (min-width:1024px){body.profile-events-page .usereve-stats-grid{
         grid-template-columns: repeat(4, 1fr)
     }
-}
-
-.usereve-card {
+}body.profile-events-page .usereve-card{
     background: #fff;
     border-radius: 12px;
     box-shadow: var(--shadow-sm);
     padding: 24px
-}
-
-.usereve-card-head {
+}body.profile-events-page .usereve-card-head{
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 16px;
     gap: 8px;
-}
-
-.usereve-icon-box {
+}body.profile-events-page .usereve-icon-box{
     width: 48px;
     height: 48px;
     border-radius: 10px;
@@ -265,64 +169,41 @@ body {
     align-items: center;
     justify-content: center;
     flex: 0 0 auto;
-}
-
-.usereve-icon-blue {
+}body.profile-events-page .usereve-icon-blue{
     background: var(--blue-100)
-}
-
-.usereve-icon-green {
+}body.profile-events-page .usereve-icon-green{
     background: var(--green-100)
-}
-
-.usereve-icon-purple {
+}body.profile-events-page .usereve-icon-purple{
     background: var(--purple-100)
-}
-
-.usereve-icon-orange {
+}body.profile-events-page .usereve-icon-orange{
     background: var(--orange-100)
-}
-
-.usereve-trend {
+}body.profile-events-page .usereve-trend{
     font-size: 14px;
     font-weight: 600;
     min-width: 0;
-}
-
-.usereve-trend.usereve-pos {
+}body.profile-events-page .usereve-trend.usereve-pos{
     color: var(--green-600)
-}
-
-.usereve-metric {
+}body.profile-events-page .usereve-metric{
     font-size: 24px;
     font-weight: 800;
     margin: 0 0 4px 0
-}
-
-.usereve-muted {
+}body.profile-events-page .usereve-muted{
     color: var(--gray-600);
     margin: 0
-}
-
-/* Filter tabs + toolbar */
-.usereve-panel {
+}body.profile-events-page .usereve-panel{
     background: #fff;
     border-radius: 12px;
     box-shadow: var(--shadow-sm);
     padding: 24px;
     margin-bottom: 32px
-}
-
-.usereve-panel-top {
+}body.profile-events-page .usereve-panel-top{
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 24px;
     gap: 16px;
     flex-wrap: wrap
-}
-
-.usereve-tab-group {
+}body.profile-events-page .usereve-tab-group{
     display: inline-flex;
     background: var(--gray-100);
     padding: 4px;
@@ -333,13 +214,9 @@ body {
     scrollbar-width: none;
     max-width: 100%;
     mask-image: linear-gradient(to right, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 1) 16px, rgba(0, 0, 0, 1) calc(100% - 16px), rgba(0, 0, 0, 0) 100%);
-}
-
-.usereve-tab-group::-webkit-scrollbar {
+}body.profile-events-page .usereve-tab-group::-webkit-scrollbar{
     display: none;
-}
-
-.usereve-tab {
+}body.profile-events-page .usereve-tab{
     flex: 0 0 auto;
     padding: 8px 16px;
     border-radius: 8px;
@@ -350,30 +227,19 @@ body {
     font-size: 14px;
     cursor: pointer;
     transition: background-color .2s, color .2s
-}
-
-.usereve-tab.usereve-is-active {
+}body.profile-events-page .usereve-tab.usereve-is-active{
     background: var(--primary);
     color: #fff
-}
-
-.usereve-toolbar {
+}body.profile-events-page .usereve-toolbar{
     display: flex;
     align-items: center;
     gap: 12px;
     flex-wrap: wrap;
-}
-
-/* ----------------------------------------------------- */
-/* ✅ SEARCH BAR FIX - START */
-/* ----------------------------------------------------- */
-.usereve-search {
+}body.profile-events-page .usereve-search{
     position: relative;
     min-width: 0;
-}
-
-.usereve-search input {
-    /* ✅ Added box-sizing so padding is included in width */
+}body.profile-events-page .usereve-search input{
+    
     box-sizing: border-box; 
     padding: 8px 16px 8px 36px;
     border: 1px solid var(--gray-300);
@@ -381,18 +247,14 @@ body {
     font-size: 14px;
     outline: none;
     
-    /* ✅ Changed from fixed width/vw to fluid width with max-cap */
+    
     width: 100%;
     min-width: 220px;
     max-width: 320px;
-}
-
-.usereve-search input:focus {
+}body.profile-events-page .usereve-search input:focus{
     box-shadow: var(--ring-primary);
     border-color: transparent
-}
-
-.usereve-search .usereve-icon-left {
+}body.profile-events-page .usereve-search .usereve-icon-left{
     position: absolute;
     left: 10px;
     top: 0;
@@ -401,19 +263,10 @@ body {
     align-items: center;
     color: #9ca3af;
     font-size: 14px;
-    pointer-events: none; /* Prevents icon from blocking clicks */
-}
-/* ----------------------------------------------------- */
-/* ✅ SEARCH BAR FIX - END */
-/* ----------------------------------------------------- */
-
-
-/* Event list / cards */
-.usereve-stack>*+* {
+    pointer-events: none; 
+}body.profile-events-page .usereve-stack>*+*{
     margin-top: 16px
-}
-
-.usereve-event-card {
+}body.profile-events-page .usereve-event-card{
     background: var(--white);
     border: 1px solid var(--gray-200);
     border-radius: var(--radius-lg);
@@ -423,121 +276,78 @@ body {
     gap: 12px;
     box-shadow: var(--shadow-sm);
     transition: box-shadow .2s ease, transform .15s ease;
-}
-
-.usereve-event-card:hover {
+}body.profile-events-page .usereve-event-card:hover{
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
-}
-
-/* Status-based subtle background tint */
-.usereve-event-card[data-status="ongoing"] {
+}body.profile-events-page .usereve-event-card[data-status="ongoing"]{
     background: var(--yellow-50);
     border-color: var(--yellow-100);
-}
-
-.usereve-event-card[data-status="attended"] {
+}body.profile-events-page .usereve-event-card[data-status="attended"]{
     background: var(--purple-50);
     border-color: var(--purple-100);
-}
-
-.usereve-event-card[data-status="absent"] {
+}body.profile-events-page .usereve-event-card[data-status="absent"]{
     background: var(--red-50);
     border-color: var(--red-100);
-}
-
-/* Head and layout */
-.usereve-event-head {
+}body.profile-events-page .usereve-event-head{
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     flex-wrap: wrap;
     gap: 16px;
-}
-
-/* Titles and badges */
-.usereve-event-title {
+}body.profile-events-page .usereve-event-title{
     font-size: 18px;
     font-weight: 700;
     color: var(--gray-900);
     margin: 0;
-}
-
-.usereve-title-row {
+}body.profile-events-page .usereve-title-row{
     display: flex;
     align-items: center;
     flex-wrap: wrap;
     gap: 8px;
     margin-bottom: 8px;
-}
-
-/* Meta information */
-.usereve-meta-row {
+}body.profile-events-page .usereve-meta-row{
     display: flex;
     flex-wrap: wrap;
     gap: 14px;
     font-size: 13.5px;
     color: var(--gray-600);
-}
-
-.usereve-meta {
+}body.profile-events-page .usereve-meta{
     display: inline-flex;
     align-items: center;
     gap: 8px;
     min-width: 0;
-}
-
-.usereve-meta i {
+}body.profile-events-page .usereve-meta i{
     color: var(--primary);
     font-size: 15px;
     flex: 0 0 auto;
-}
-
-/* Description */
-.usereve-desc {
+}body.profile-events-page .usereve-desc{
     font-size: 14px;
     color: var(--gray-700);
     line-height: 1.5;
     margin: 8px 0 12px;
-}
-
-/* Badges */
-.usereve-badge {
+}body.profile-events-page .usereve-badge{
     font-size: 12px;
     font-weight: 700;
     padding: 2px 8px;
     border-radius: 9999px;
-}
-
-.usereve-badge--green {
+}body.profile-events-page .usereve-badge--green{
     background: var(--green-100);
     color: #065f46;
-}
-
-.usereve-badge--yellow {
+}body.profile-events-page .usereve-badge--yellow{
     background: var(--yellow-100);
     color: #92400e;
-}
-
-.usereve-badge--purple {
+}body.profile-events-page .usereve-badge--purple{
     background: var(--purple-100);
     color: #5b21b6;
-}
-
-.usereve-badge--red {
+}body.profile-events-page .usereve-badge--red{
     background: var(--red-100);
     color: #991b1b;
-}
-
-/* Buttons row */
-.usereve-btn-row {
+}body.profile-events-page .usereve-btn-row{
     display: flex;
     gap: 8px;
     justify-content: flex-end;
     flex-wrap: wrap;
-}
-
-.usereve-btn {
+}body.profile-events-page .usereve-btn{
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -548,31 +358,19 @@ body {
     border: 1px solid transparent;
     cursor: pointer;
     transition: background-color .2s, transform .1s;
-}
-
-.usereve-btn:hover {
+}body.profile-events-page .usereve-btn:hover{
     transform: translateY(-1px);
-}
-
-.usereve-btn-danger {
+}body.profile-events-page .usereve-btn-danger{
     background: var(--red-600);
     color: #fff;
-}
-
-.usereve-btn-danger:hover {
+}body.profile-events-page .usereve-btn-danger:hover{
     background: #b91c1c;
-}
-
-/* Empty state */
-.usereve-empty {
+}body.profile-events-page .usereve-empty{
     text-align: center;
     color: var(--gray-600);
     font-size: 14px;
     padding: 20px 0;
-}
-
-/* Duplicate Unregister style unified (kept same visuals) */
-.usereve-btn-danger {
+}body.profile-events-page .usereve-btn-danger{
     background: #dc2626;
     color: #fff;
     border: none;
@@ -582,25 +380,16 @@ body {
     padding: 10px 22px;
     transition: background-color 0.2s ease, transform 0.1s ease;
     cursor: pointer;
-}
-
-.usereve-btn-danger:hover {
+}body.profile-events-page .usereve-btn-danger:hover{
     background: #b91c1c;
     transform: translateY(-1px);
-}
-
-.usereve-btn-danger:active {
+}body.profile-events-page .usereve-btn-danger:active{
     transform: scale(0.98);
-}
-
-/* Muted panels */
-.usereve-muted-panel {
+}body.profile-events-page .usereve-muted-panel{
     background: var(--gray-50);
     border-radius: 8px;
     padding: 16px
-}
-
-.usereve-panel-warning {
+}body.profile-events-page .usereve-panel-warning{
     background: var(--yellow-100);
     border-radius: 8px;
     padding: 16px;
@@ -608,9 +397,7 @@ body {
     display: flex;
     align-items: center;
     gap: 8px
-}
-
-.usereve-panel-danger {
+}body.profile-events-page .usereve-panel-danger{
     background: var(--red-100);
     border-radius: 8px;
     padding: 16px;
@@ -618,278 +405,151 @@ body {
     display: flex;
     align-items: center;
     gap: 8px
-}
-
-/* Simple grids */
-.usereve-three-cols {
+}body.profile-events-page .usereve-three-cols{
     display: grid;
     grid-template-columns: 1fr;
     gap: 16px
-}
-
-@media (min-width:768px) {
-    .usereve-three-cols {
+}@media (min-width:768px){body.profile-events-page .usereve-three-cols{
         grid-template-columns: repeat(3, 1fr)
     }
-}
-
-.usereve-stat-center {
+}body.profile-events-page .usereve-stat-center{
     text-align: center
-}
-
-.usereve-stat-value {
+}body.profile-events-page .usereve-stat-value{
     font-size: 18px;
     font-weight: 800
-}
-
-.usereve-stat-label {
+}body.profile-events-page .usereve-stat-label{
     color: var(--gray-600);
     font-size: 14px
-}
-
-/* Analytics */
-.usereve-section-title {
+}body.profile-events-page .usereve-section-title{
     display: flex;
     align-items: center;
     gap: 12px;
     font-size: 20px;
     font-weight: 700;
     margin: 0
-}
-
-.usereve-sub-title {
+}body.profile-events-page .usereve-sub-title{
     display: flex;
     align-items: center;
     gap: 8px;
     margin: 0 0 12px 0;
     font-size: 18px;
     font-weight: 600
-}
-
-.usereve-grid-two {
+}body.profile-events-page .usereve-grid-two{
     display: grid;
     grid-template-columns: 1fr;
     gap: 32px
-}
-
-@media (min-width:1024px) {
-    .usereve-grid-two {
+}@media (min-width:1024px){body.profile-events-page .usereve-grid-two{
         grid-template-columns: repeat(2, 1fr)
     }
-}
-
-.usereve-chart {
+}body.profile-events-page .usereve-chart{
     height: 256px;
     width: 100%
-}
-
-.usereve-grid-three {
+}body.profile-events-page .usereve-grid-three{
     display: grid;
     grid-template-columns: 1fr;
     gap: 24px;
     margin-top: 24px
-}
-
-@media (min-width:768px) {
-    .usereve-grid-three {
+}@media (min-width:768px){body.profile-events-page .usereve-grid-three{
         grid-template-columns: repeat(3, 1fr)
     }
-}
-
-.usereve-gradient-card {
+}body.profile-events-page .usereve-gradient-card{
     border-radius: 8px;
     padding: 16px
-}
-
-.usereve-gradient-card.usereve-blue {
+}body.profile-events-page .usereve-gradient-card.usereve-blue{
     background: linear-gradient(to right, #eff6ff, #dbeafe)
-}
-
-.usereve-gradient-card.usereve-green {
+}body.profile-events-page .usereve-gradient-card.usereve-green{
     background: linear-gradient(to right, #ecfdf5, #d1fae5)
-}
-
-.usereve-gradient-card.usereve-purple {
+}body.profile-events-page .usereve-gradient-card.usereve-purple{
     background: linear-gradient(to right, #f5f3ff, #ede9fe)
-}
-
-.usereve-big {
+}body.profile-events-page .usereve-big{
     margin: 0 0 6px 0;
     font-weight: 700
-}
-
-.usereve-accent {
+}body.profile-events-page .usereve-accent{
     font-size: 12px;
     margin: 0
-}
-
-.usereve-accent.usereve-blue {
+}body.profile-events-page .usereve-accent.usereve-blue{
     color: var(--primary)
-}
-
-.usereve-accent.usereve-green {
+}body.profile-events-page .usereve-accent.usereve-green{
     color: var(--green-600)
-}
-
-.usereve-accent.usereve-purple {
+}body.profile-events-page .usereve-accent.usereve-purple{
     color: var(--purple-600)
-}
-
-/* Content wrapping helpers */
-.usereve-page-title,
-.usereve-page-sub,
-.usereve-event-title,
-.usereve-meta-row,
-.usereve-desc {
+}body.profile-events-page .usereve-page-title, body.profile-events-page .usereve-page-sub, body.profile-events-page .usereve-event-title, body.profile-events-page .usereve-meta-row, body.profile-events-page .usereve-desc{
     overflow-wrap: anywhere;
     word-break: break-word;
-}
-
-/* =========================
-    MOBILE: icon-only sidebar
-    ========================= */
-@media (max-width:768px) {
-
-   
-    /* Panel tweaks */
-    .usereve-panel {
+}@media (max-width:768px){body.profile-events-page .usereve-panel{
         padding: 16px;
-    }
-
-    .usereve-panel-top {
+    }body.profile-events-page .usereve-panel-top{
         gap: 16px;
-        /* ✅ Stack search below tabs on mobile to prevent overlap */
+        
         flex-direction: column; 
         align-items: stretch;
-    }
-    
-    .usereve-tab-group {
-        /* ✅ Make tabs take full width */
+    }body.profile-events-page .usereve-tab-group{
+        
         width: 100%;
         max-width: 100%;
-    }
-
-    /* ✅ MOBILE SEARCH FIX: Remove width cap and force full width */
-    .usereve-search {
+    }body.profile-events-page .usereve-search{
         width: 100%;
-    }
-
-    .usereve-search input {
+    }body.profile-events-page .usereve-search input{
         width: 100%;
         max-width: 100%;
-    }
-
-    .usereve-event-head {
+    }body.profile-events-page .usereve-event-head{
         gap: 12px;
-    }
-
-    .usereve-page-title {
+    }body.profile-events-page .usereve-page-title{
         font-size: 26px;
         margin-top: 80px;
     }
-}
-
-/* Narrow phones (≤480px) */
-@media (max-width:480px) {
-    .usereve-page-title {
+}@media (max-width:480px){body.profile-events-page .usereve-page-title{
         font-size: 22px;
-    }
-
-    .usereve-page-sub {
+    }body.profile-events-page .usereve-page-sub{
         font-size: 14px;
-    }
-
-    .usereve-card {
+    }body.profile-events-page .usereve-card{
         padding: 16px;
-    }
-
-    .usereve-panel {
+    }body.profile-events-page .usereve-panel{
         padding: 16px;
-    }
-
-    .usereve-metric {
+    }body.profile-events-page .usereve-metric{
         font-size: 22px;
-    }
-
-    .usereve-trend {
+    }body.profile-events-page .usereve-trend{
         font-size: 13px;
-    }
-
-    .usereve-event-head {
+    }body.profile-events-page .usereve-event-head{
         flex-direction: column;
         align-items: stretch;
-    }
-
-    .usereve-btn-row {
+    }body.profile-events-page .usereve-btn-row{
         justify-content: flex-start;
-    }
-
-    .usereve-chart {
+    }body.profile-events-page .usereve-chart{
         height: 210px;
     }
-}
-
-/* Mobile M (≤375px) */
-@media (max-width:375px) {
-    .usereve-page-title {
+}@media (max-width:375px){body.profile-events-page .usereve-page-title{
         font-size: 20px;
-    }
-
-    .usereve-tab {
+    }body.profile-events-page .usereve-tab{
         padding: 8px 12px;
         font-size: 13px;
-    }
-
-    .usereve-btn {
+    }body.profile-events-page .usereve-btn{
         padding: 7px 14px;
         font-size: 13px;
-    }
-
-    .usereve-event-title {
+    }body.profile-events-page .usereve-event-title{
         font-size: 16px;
-    }
-
-    .usereve-meta-row {
+    }body.profile-events-page .usereve-meta-row{
         font-size: 13px;
         gap: 10px;
-    }
-
-    .usereve-desc {
+    }body.profile-events-page .usereve-desc{
         font-size: 13.5px;
-    }
-
-    .usereve-chart {
+    }body.profile-events-page .usereve-chart{
         height: 190px;
     }
-}
-
-/* Mobile S (≤340px) */
-@media (max-width:340px) {
-    .usereve-page-title {
+}@media (max-width:340px){body.profile-events-page .usereve-page-title{
         font-size: 18px;
-    }
-
-    .usereve-tab {
+    }body.profile-events-page .usereve-tab{
         padding: 6px 10px;
         font-size: 12.5px;
-    }
-
-    .usereve-btn {
+    }body.profile-events-page .usereve-btn{
         padding: 6px 12px;
         font-size: 12.5px;
-    }
-
-    .usereve-card,
-    .usereve-panel {
+    }body.profile-events-page .usereve-card, body.profile-events-page .usereve-panel{
         padding: 14px;
-    }
-
-    .usereve-chart {
+    }body.profile-events-page .usereve-chart{
         height: 170px;
     }
-}
-
-.usereve-no-results-events {
+}body.profile-events-page .usereve-no-results-events{
     text-align: center;
     padding: 48px 20px;
     background: var(--gray-50);
@@ -897,22 +557,16 @@ body {
     border: 2px dashed var(--gray-200);
     margin-top: 16px;
     grid-column: 1 / -1;
-}
-
-.usereve-no-results-events i {
+}body.profile-events-page .usereve-no-results-events i{
     font-size: 48px;
     margin-bottom: 16px;
     display: block;
     color: var(--gray-400);
-}
-
-.usereve-no-results-events h3 {
+}body.profile-events-page .usereve-no-results-events h3{
     margin: 0 0 8px 0;
     font-size: 18px;
     color: var(--gray-700);
-}
-
-.usereve-no-results-events p {
+}body.profile-events-page .usereve-no-results-events p{
     color: var(--gray-600);
     margin: 0;
 }

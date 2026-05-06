@@ -15,10 +15,9 @@
         rel="stylesheet">
 
     @vite('resources/css/app.css')
-    <link rel="stylesheet" href="{{ asset('css/event/eventpage.css') }}">
 </head>
 
-<body>
+<body class="event-page">
 
     @include('partials.universalmodal')
     @include('partials.main-header')

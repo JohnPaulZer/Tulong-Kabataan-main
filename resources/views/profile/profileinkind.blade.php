@@ -16,10 +16,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
 
     @vite('resources/css/app.css')
-    <link rel="stylesheet" href="{{ asset('css/profile/profileinkind.css') }}">
 </head>
 
-<body>
+<body class="profile-inkind-page">
 
     @include('profile.partials.universalmodal')
     @include('administrator.partials.loading-screen')

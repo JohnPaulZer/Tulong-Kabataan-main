@@ -14,10 +14,9 @@
         rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
     @vite('resources/css/app.css')
-    <link rel="stylesheet" href="{{ asset('css/profile/profilevent.css') }}">
 </head>
 
-<body>
+<body class="profile-events-page">
     @include('profile.partials.universalmodal')
     @include('partials.main-header')
     @include('administrator.partials.loading-screen')

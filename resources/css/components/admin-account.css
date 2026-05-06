@@ -1,78 +1,11 @@
-        /* added style for functionality */
-
-
-
-        /* 1. Primary Font: Poppins */
-
-h1,
-
-h2,
-
-h3,
-
-h4,
-
-h5,
-
-h6,
-
-.heading-font,
-
-.section-title,
-
-.featured-title,
-
-.campaign-title,
-
-.btn,
-
-button,
-
-.raised,
-
-.campaign-count,
-
-.featured-badge,
-
-.pagination-number {
+/* Scoped admin account styles */
+body.admin-account-page h1, body.admin-account-page h2, body.admin-account-page h3, body.admin-account-page h4, body.admin-account-page h5, body.admin-account-page h6, body.admin-account-page .heading-font, body.admin-account-page .section-title, body.admin-account-page .featured-title, body.admin-account-page .campaign-title, body.admin-account-page .btn, body.admin-account-page button, body.admin-account-page .raised, body.admin-account-page .campaign-count, body.admin-account-page .featured-badge, body.admin-account-page .pagination-number{
 
     font-family: "Poppins", sans-serif;
 
     letter-spacing: -0.01em;
 
-}
-
-
-
-/* 2. Secondary Font Selectors */
-
-p,
-
-a,
-
-li,
-
-span,
-
-input,
-
-select,
-
-textarea,
-
-label,
-
-.body-font,
-
-.section-desc,
-
-.featured-desc,
-
-.filters-label,
-
-.goal,
-
-.pagination-info {
+}body.admin-account-page p, body.admin-account-page a, body.admin-account-page li, body.admin-account-page span, body.admin-account-page input, body.admin-account-page select, body.admin-account-page textarea, body.admin-account-page label, body.admin-account-page .body-font, body.admin-account-page .section-desc, body.admin-account-page .featured-desc, body.admin-account-page .filters-label, body.admin-account-page .goal, body.admin-account-page .pagination-info{
 
     font-family: "Lato", sans-serif;
 
@@ -80,13 +13,7 @@ label,
 
     text-decoration: none;
 
-}
-
-
-
-
-
-        .filter-buttons a {
+}body.admin-account-page .filter-buttons a{
 
             padding: 6px 12px;
 
@@ -96,147 +23,95 @@ label,
 
             color: #374151;
 
-            /* gray */
+            
 
             font-weight: 500;
 
-        }
-
-
-
-        .filter-buttons a.active {
+        }body.admin-account-page .filter-buttons a.active{
 
             background: #2563eb;
 
             color: #fff;
 
-        }
-
-
-
-        /* Pending */
-
-        #pending.active {
+        }body.admin-account-page #pending.active{
 
             background: #f59e0b;
 
-            /* amber */
+            
 
-        }
-
-
-
-        #pending:hover {
+        }body.admin-account-page #pending:hover{
 
             background: #fbbf24;
 
-            /* lighter amber */
+            
 
             color: #fff;
 
-        }
-
-
-
-        /* Approved */
-
-        #approved.active {
+        }body.admin-account-page #approved.active{
 
             background: #16a34a;
 
-            /* green */
+            
 
-        }
-
-
-
-        #approved:hover {
+        }body.admin-account-page #approved:hover{
 
             background: #22c55e;
 
-            /* lighter green */
+            
 
             color: #fff;
 
-        }
-
-
-
-        /* Rejected */
-
-        #rejected.active {
+        }body.admin-account-page #rejected.active{
 
             background: #ef4444;
 
-            /* red */
+            
 
-        }
-
-
-
-        #rejected:hover {
+        }body.admin-account-page #rejected:hover{
 
             background: #f87171;
 
-            /* lighter red */
+            
 
             color: #fff;
 
-        }
-
-
-
-        /* Reupload */
-
-        #reupload.active {
+        }body.admin-account-page #reupload.active{
 
             background: #3b82f6;
 
-            /* blue */
+            
 
-        }
-
-
-
-        #reupload:hover {
+        }body.admin-account-page #reupload:hover{
 
             background: #60a5fa;
 
-            /* lighter blue */
+            
 
             color: #fff;
 
-        }
-
-
-
-
-
-
-
-        :root {
+        }body.admin-account-page{
 
             --primary: #3b82f6;
 
             --bg: #f9fafb;
 
-            /* gray-50 */
+            
 
             --text: #111827;
 
-            /* gray-900 */
+            
 
             --muted: #6b7280;
 
-            /* gray-500 */
+            
 
             --muted-700: #374151;
 
-            /* gray-700 */
+            
 
             --border: #e5e7eb;
 
-            /* gray-200 */
+            
 
             --card: #ffffff;
 
@@ -246,35 +121,21 @@ label,
 
             --header-h: 64px;
 
-            /* 16 * 4 */
+            
 
             --sidebar-w: 256px;
 
-            /* 64 * 4 */
+            
 
-        }
-
-
-
-        * {
+        }body.admin-account-page *{
 
             box-sizing: border-box;
 
-        }
-
-
-
-        html,
-
-        body {
+        }body.admin-account-page, body.admin-account-page{
 
             height: 100%;
 
-        }
-
-
-
-        body {
+        }body.admin-account-page{
 
             margin: 0;
 
@@ -286,13 +147,7 @@ label,
 
             line-height: 1.45;
 
-        }
-
-
-
-        /* Header */
-
-        .header {
+        }body.admin-account-page .header{
 
             position: fixed;
 
@@ -306,7 +161,7 @@ label,
 
             background: #fff;
 
-            /* gray-900 */
+            
 
             color: #fff;
 
@@ -314,11 +169,7 @@ label,
 
             box-shadow: var(--shadow);
 
-        }
-
-
-
-        .header__inner {
+        }body.admin-account-page .header__inner{
 
             height: 100%;
 
@@ -330,11 +181,7 @@ label,
 
             padding: 0 16px;
 
-        }
-
-
-
-        .header__left {
+        }body.admin-account-page .header__left{
 
             display: flex;
 
@@ -342,11 +189,7 @@ label,
 
             gap: 12px;
 
-        }
-
-
-
-        .menu-btn {
+        }body.admin-account-page .menu-btn{
 
             display: inline-flex;
 
@@ -368,19 +211,11 @@ label,
 
             cursor: pointer;
 
-        }
-
-
-
-        .menu-btn:hover {
+        }body.admin-account-page .menu-btn:hover{
 
             background: #374151;
 
-        }
-
-
-
-        .brand {
+        }body.admin-account-page .brand{
 
             font-weight: 1000;
 
@@ -390,11 +225,7 @@ label,
 
             color: black;
 
-        }
-
-
-
-        .logo-word {
+        }body.admin-account-page .logo-word{
 
             font-family: "Pacifico", cursive;
 
@@ -402,11 +233,7 @@ label,
 
             font-size: 24px;
 
-        }
-
-
-
-        .notif {
+        }body.admin-account-page .notif{
 
             position: relative;
 
@@ -430,19 +257,11 @@ label,
 
             cursor: pointer;
 
-        }
-
-
-
-        .notif:hover {
+        }body.admin-account-page .notif:hover{
 
             background: #374151;
 
-        }
-
-
-
-        .notif .badge {
+        }body.admin-account-page .notif .badge{
 
             position: absolute;
 
@@ -470,13 +289,7 @@ label,
 
             font-weight: 700;
 
-        }
-
-
-
-        /* Sidebar */
-
-        .sidebar {
+        }body.admin-account-page .sidebar{
 
             position: fixed;
 
@@ -490,7 +303,7 @@ label,
 
             background: #1e3a8a;
 
-            /* blue-800 */
+            
 
             color: #fff;
 
@@ -504,31 +317,17 @@ label,
 
             overflow: auto;
 
-        }
-
-
-
-        .sidebar.open {
+        }body.admin-account-page .sidebar.open{
 
             transform: translateX(0);
 
-        }
-
-
-
-        .sidebar nav {
+        }body.admin-account-page .sidebar nav{
 
             display: grid;
 
             gap: 8px;
 
-        }
-
-
-
-        .side-btn,
-
-        .side-link {
+        }body.admin-account-page .side-btn, body.admin-account-page .side-link{
 
             display: flex;
 
@@ -546,7 +345,7 @@ label,
 
             color: #d1d5db;
 
-            /* gray-300 */
+            
 
             text-decoration: none;
 
@@ -554,37 +353,17 @@ label,
 
             white-space: nowrap;
 
-        }
-
-
-
-        .side-btn.primary {
+        }body.admin-account-page .side-btn.primary{
 
             background: var(--primary);
 
             color: #fff;
 
-        }
-
-
-
-        .side-btn:hover,
-
-        .side-link:hover {
+        }body.admin-account-page .side-btn:hover, body.admin-account-page .side-link:hover{
 
             background: #1e40af;
 
-        }
-
-
-
-        /* blue-700 */
-
-
-
-        /* Sidebar overlay (mobile) */
-
-        .overlay {
+        }body.admin-account-page .overlay{
 
             position: fixed;
 
@@ -596,69 +375,33 @@ label,
 
             display: none;
 
-        }
-
-
-
-        .overlay.show {
+        }body.admin-account-page .overlay.show{
 
             display: block;
 
-        }
-
-
-
-
-
-
-
-        @media (min-width:1024px) {
-
-            .main {
+        }@media (min-width:1024px){body.admin-account-page .main{
 
                 margin-left: var(--sidebar-w);
 
-            }
-
-
-
-            .menu-btn {
+            }body.admin-account-page .menu-btn{
 
                 display: none;
 
-            }
-
-
-
-            .sidebar {
+            }body.admin-account-page .sidebar{
 
                 transform: translateX(0);
 
-            }
-
-
-
-            .overlay {
+            }body.admin-account-page .overlay{
 
                 display: none !important;
 
-            }
-
-
-
-            .header__inner {
+            }body.admin-account-page .header__inner{
 
                 padding: 0 24px;
 
             }
 
-        }
-
-
-
-        /* Main content — push to the right to allow for sidebar width on large screens */
-
-        .main {
+        }body.admin-account-page .main{
 
             margin-top: 64px;
 
@@ -670,65 +413,33 @@ label,
 
             min-height: calc(100vh - 64px);
 
-        }
-
-
-
-        .main.fullwidth {
+        }body.admin-account-page .main.fullwidth{
 
             margin-left: 0;
 
-        }
-
-
-
-        /* Responsive: collapse sidebar on small screens */
-
-        @media (max-width: 1024px) {
-
-            .sidebar {
+        }@media (max-width: 1024px){body.admin-account-page .sidebar{
 
                 transform: translateX(-110%);
 
-            }
-
-
-
-            .sidebar.visible {
+            }body.admin-account-page .sidebar.visible{
 
                 transform: translateX(0);
 
-            }
-
-
-
-            .overlay {
+            }body.admin-account-page .overlay{
 
                 display: none;
 
-            }
-
-
-
-            .overlay.visible {
+            }body.admin-account-page .overlay.visible{
 
                 display: block;
 
-            }
-
-
-
-            .main {
+            }body.admin-account-page .main{
 
                 margin-left: 0;
 
             }
 
-        }
-
-
-
-        main.main {
+        }body.admin-account-page main.main{
 
             flex: 1;
 
@@ -736,11 +447,7 @@ label,
 
             flex-direction: column;
 
-        }
-
-
-
-        header.topbar {
+        }body.admin-account-page header.topbar{
 
             border-bottom: 1px solid #e6e9ee;
 
@@ -752,13 +459,7 @@ label,
 
             align-items: center;
 
-        }
-
-
-
-        .topbar .left,
-
-        .topbar .right {
+        }body.admin-account-page .topbar .left, body.admin-account-page .topbar .right{
 
             display: flex;
 
@@ -766,11 +467,7 @@ label,
 
             gap: 16px
 
-        }
-
-
-
-        .date-input {
+        }body.admin-account-page .date-input{
 
             border: 1px solid #d1d5db;
 
@@ -782,19 +479,11 @@ label,
 
             background: #fff
 
-        }
-
-
-
-        .dropdown {
+        }body.admin-account-page .dropdown{
 
             position: relative;
 
-        }
-
-
-
-        .dropdown button {
+        }body.admin-account-page .dropdown button{
 
             background: #fff;
 
@@ -812,11 +501,7 @@ label,
 
             cursor: pointer;
 
-        }
-
-
-
-        .dropdown-menu {
+        }body.admin-account-page .dropdown-menu{
 
             display: none;
 
@@ -838,11 +523,7 @@ label,
 
             z-index: 40;
 
-        }
-
-
-
-        .dropdown-menu button {
+        }body.admin-account-page .dropdown-menu button{
 
             display: block;
 
@@ -858,19 +539,11 @@ label,
 
             cursor: pointer
 
-        }
-
-
-
-        .dropdown-menu button:hover {
+        }body.admin-account-page .dropdown-menu button:hover{
 
             background: #f8fafc
 
-        }
-
-
-
-        .top-actions {
+        }body.admin-account-page .top-actions{
 
             display: flex;
 
@@ -878,11 +551,7 @@ label,
 
             gap: 12px
 
-        }
-
-
-
-        .btn {
+        }body.admin-account-page .btn{
 
             padding: 8px 12px;
 
@@ -902,11 +571,7 @@ label,
 
             align-items: center
 
-        }
-
-
-
-        .btn-primary {
+        }body.admin-account-page .btn-primary{
 
             background: var(--primary);
 
@@ -914,11 +579,7 @@ label,
 
             border-color: var(--primary)
 
-        }
-
-
-
-        .avatar {
+        }body.admin-account-page .avatar{
 
             width: 32px;
 
@@ -938,47 +599,23 @@ label,
 
             font-weight: 700
 
-        }
-
-
-
-        /* -------------------------
-
-     Content container
-
-     ------------------------- */
-
-        .container {
+        }body.admin-account-page .container{
 
             padding: 28px
 
-        }
-
-
-
-        .page-header h2 {
+        }body.admin-account-page .page-header h2{
 
             margin: 0;
 
             font-size: 22px
 
-        }
-
-
-
-        .page-header p {
+        }body.admin-account-page .page-header p{
 
             margin: 6px 0 0;
 
             color: var(--muted)
 
-        }
-
-
-
-        /* Stat cards grid */
-
-        .stats-grid {
+        }body.admin-account-page .stats-grid{
 
             display: grid;
 
@@ -988,11 +625,7 @@ label,
 
             margin: 20px 0
 
-        }
-
-
-
-        .stat-card {
+        }body.admin-account-page .stat-card{
 
             background: #fff;
 
@@ -1004,35 +637,19 @@ label,
 
             border-left: 6px solid var(--primary)
 
-        }
-
-
-
-        .stat-card.orange {
+        }body.admin-account-page .stat-card.orange{
 
             border-left-color: #f97316
 
-        }
-
-
-
-        .stat-card.yellow {
+        }body.admin-account-page .stat-card.yellow{
 
             border-left-color: #f59e0b
 
-        }
-
-
-
-        .stat-card.red {
+        }body.admin-account-page .stat-card.red{
 
             border-left-color: #ef4444
 
-        }
-
-
-
-        .stat-card .icon-wrap {
+        }body.admin-account-page .stat-card .icon-wrap{
 
             width: 48px;
 
@@ -1046,11 +663,7 @@ label,
 
             justify-content: center
 
-        }
-
-
-
-        .stat-card h3 {
+        }body.admin-account-page .stat-card h3{
 
             margin: 6px 0 0;
 
@@ -1058,11 +671,7 @@ label,
 
             font-size: 13px
 
-        }
-
-
-
-        .stat-card p.count {
+        }body.admin-account-page .stat-card p.count{
 
             margin: 6px 0 0;
 
@@ -1072,13 +681,7 @@ label,
 
             color: #111827
 
-        }
-
-
-
-        /* Main white card */
-
-        .card {
+        }body.admin-account-page .card{
 
             background: #fff;
 
@@ -1088,11 +691,7 @@ label,
 
             overflow: hidden
 
-        }
-
-
-
-        .card .card-header {
+        }body.admin-account-page .card .card-header{
 
             padding: 20px;
 
@@ -1104,21 +703,13 @@ label,
 
             align-items: center
 
-        }
-
-
-
-        .filter-buttons {
+        }body.admin-account-page .filter-buttons{
 
             display: flex;
 
             gap: 8px
 
-        }
-
-
-
-        .filter-buttons button {
+        }body.admin-account-page .filter-buttons button{
 
             padding: 6px 10px;
 
@@ -1132,29 +723,17 @@ label,
 
             cursor: pointer
 
-        }
-
-
-
-        .filter-buttons button.active {
+        }body.admin-account-page .filter-buttons button.active{
 
             background: var(--primary);
 
             color: #fff
 
-        }
-
-
-
-        .card .card-body {
+        }body.admin-account-page .card .card-body{
 
             padding: 20px
 
-        }
-
-
-
-        .search-row {
+        }body.admin-account-page .search-row{
 
             display: flex;
 
@@ -1164,11 +743,7 @@ label,
 
             margin-bottom: 14px
 
-        }
-
-
-
-        .search-box {
+        }body.admin-account-page .search-box{
 
             position: relative;
 
@@ -1176,11 +751,7 @@ label,
 
             max-width: 560px
 
-        }
-
-
-
-        .search-box input {
+        }body.admin-account-page .search-box input{
 
             width: 100%;
 
@@ -1192,11 +763,7 @@ label,
 
             font-size: 14px
 
-        }
-
-
-
-        .search-box .ri-search-line {
+        }body.admin-account-page .search-box .ri-search-line{
 
             position: absolute;
 
@@ -1208,13 +775,7 @@ label,
 
             color: #9ca3af
 
-        }
-
-
-
-        /* Account item */
-
-        .account-list {
+        }body.admin-account-page .account-list{
 
             display: flex;
 
@@ -1222,11 +783,7 @@ label,
 
             gap: 18px
 
-        }
-
-
-
-        .account-item {
+        }body.admin-account-page .account-item{
 
             background: #fff;
 
@@ -1236,11 +793,7 @@ label,
 
             border-radius: 10px
 
-        }
-
-
-
-        .account-top {
+        }body.admin-account-page .account-top{
 
             display: flex;
 
@@ -1248,11 +801,7 @@ label,
 
             align-items: flex-start
 
-        }
-
-
-
-        .account-item .avatar-large {
+        }body.admin-account-page .account-item .avatar-large{
 
             width: 64px;
 
@@ -1274,29 +823,17 @@ label,
 
             font-size: 18px
 
-        }
-
-
-
-        .account-main {
+        }body.admin-account-page .account-main{
 
             flex: 1
 
-        }
-
-
-
-        .account-main h4 {
+        }body.admin-account-page .account-main h4{
 
             margin: 0;
 
             font-size: 18px
 
-        }
-
-
-
-        .meta-row {
+        }body.admin-account-page .meta-row{
 
             color: var(--muted);
 
@@ -1304,11 +841,7 @@ label,
 
             margin-top: 6px
 
-        }
-
-
-
-        .meta-tags {
+        }body.admin-account-page .meta-tags{
 
             display: flex;
 
@@ -1318,11 +851,7 @@ label,
 
             flex-wrap: wrap
 
-        }
-
-
-
-        .tag {
+        }body.admin-account-page .tag{
 
             display: inline-block;
 
@@ -1332,41 +861,25 @@ label,
 
             font-size: 12px
 
-        }
-
-
-
-        .tag.pending {
+        }body.admin-account-page .tag.pending{
 
             background: #fef3c7;
 
             color: #b45309
 
-        }
-
-
-
-        .tag.approved {
+        }body.admin-account-page .tag.approved{
 
             background: #d1fae5;
 
             color: #065f46
 
-        }
-
-
-
-        .tag.rejected {
+        }body.admin-account-page .tag.rejected{
 
             background: #fee2e2;
 
             color: #9b1c1c
 
-        }
-
-
-
-        .account-grid {
+        }body.admin-account-page .account-grid{
 
             display: grid;
 
@@ -1376,11 +889,7 @@ label,
 
             margin-top: 14px
 
-        }
-
-
-
-        .documents .doc {
+        }body.admin-account-page .documents .doc{
 
             display: flex;
 
@@ -1394,11 +903,7 @@ label,
 
             background: #fbfdff
 
-        }
-
-
-
-        .doc .icon-box {
+        }body.admin-account-page .doc .icon-box{
 
             width: 36px;
 
@@ -1412,11 +917,7 @@ label,
 
             justify-content: center
 
-        }
-
-
-
-        .notes {
+        }body.admin-account-page .notes{
 
             background: #fbfdff;
 
@@ -1424,11 +925,7 @@ label,
 
             padding: 12px
 
-        }
-
-
-
-        textarea.notes-input {
+        }body.admin-account-page textarea.notes-input{
 
             width: 100%;
 
@@ -1442,11 +939,7 @@ label,
 
             resize: none
 
-        }
-
-
-
-        .account-actions {
+        }body.admin-account-page .account-actions{
 
             display: flex;
 
@@ -1456,11 +949,7 @@ label,
 
             align-items: center
 
-        }
-
-
-
-        .btn-approve {
+        }body.admin-account-page .btn-approve{
 
             background: #16a34a;
 
@@ -1474,11 +963,7 @@ label,
 
             cursor: pointer
 
-        }
-
-
-
-        .btn-reject {
+        }body.admin-account-page .btn-reject{
 
             background: #dc2626;
 
@@ -1492,11 +977,7 @@ label,
 
             cursor: pointer
 
-        }
-
-
-
-        .btn-details {
+        }body.admin-account-page .btn-details{
 
             background: transparent;
 
@@ -1510,11 +991,7 @@ label,
 
             cursor: pointer;
 
-        }
-
-
-
-        .btn-info {
+        }body.admin-account-page .btn-info{
 
             background: #2563eb;
 
@@ -1528,11 +1005,7 @@ label,
 
             cursor: pointer
 
-        }
-
-
-
-        .btn-outline {
+        }body.admin-account-page .btn-outline{
 
             background: #fff;
 
@@ -1544,17 +1017,7 @@ label,
 
             cursor: pointer
 
-        }
-
-
-
-
-
-
-
-        /* pagination row */
-
-        .pager {
+        }body.admin-account-page .pager{
 
             display: flex;
 
@@ -1566,21 +1029,13 @@ label,
 
             color: var(--muted)
 
-        }
-
-
-
-        .pager .pages {
+        }body.admin-account-page .pager .pages{
 
             display: flex;
 
             gap: 8px
 
-        }
-
-
-
-        .pager button {
+        }body.admin-account-page .pager button{
 
             padding: 8px 10px;
 
@@ -1592,11 +1047,7 @@ label,
 
             cursor: pointer
 
-        }
-
-
-
-        .pager button.active {
+        }body.admin-account-page .pager button.active{
 
             background: var(--primary);
 
@@ -1604,13 +1055,7 @@ label,
 
             border-color: var(--primary)
 
-        }
-
-
-
-        /* confirmation modal */
-
-        .modal-backdrop {
+        }body.admin-account-page .modal-backdrop{
 
             position: fixed;
 
@@ -1626,11 +1071,7 @@ label,
 
             z-index: 80
 
-        }
-
-
-
-        .modal {
+        }body.admin-account-page .modal{
 
             background: #fff;
 
@@ -1642,21 +1083,13 @@ label,
 
             width: 92%
 
-        }
-
-
-
-        .modal h3 {
+        }body.admin-account-page .modal h3{
 
             margin: 0;
 
             font-size: 18px
 
-        }
-
-
-
-        .modal .modal-controls {
+        }body.admin-account-page .modal .modal-controls{
 
             display: flex;
 
@@ -1666,17 +1099,7 @@ label,
 
             margin-top: 14px
 
-        }
-
-
-
-        /* notification */
-
-        /* Place notification message at the top center middle of the screen */
-
-        /* filepath: c:\Users\johnp\OneDrive\Desktop\jp\actverdash.html */
-
-        .notification {
+        }body.admin-account-page .notification{
 
             position: fixed;
 
@@ -1704,117 +1127,57 @@ label,
 
             max-width: 90vw;
 
-        }
-
-
-
-        /* small responsive */
-
-        @media (max-width:980px) {
-
-            .stats-grid {
+        }@media (max-width:980px){body.admin-account-page .stats-grid{
 
                 grid-template-columns: repeat(2, 1fr)
 
-            }
-
-
-
-            aside.sidebar {
+            }body.admin-account-page aside.sidebar{
 
                 width: 220px
 
             }
 
-        }
-
-
-
-        @media (max-width:720px) {
-
-            .stats-grid {
+        }@media (max-width:720px){body.admin-account-page .stats-grid{
 
                 grid-template-columns: 1fr
 
-            }
-
-
-
-            .account-grid {
+            }body.admin-account-page .account-grid{
 
                 grid-template-columns: 1fr
 
-            }
-
-
-
-            .topbar {
+            }body.admin-account-page .topbar{
 
                 padding: 12px
 
-            }
-
-
-
-            aside.sidebar {
+            }body.admin-account-page aside.sidebar{
 
                 display: none
 
             }
 
-        }
-
-
-
-        /* small helper classes used by JS toggles */
-
-        .show {
+        }body.admin-account-page .show{
 
             display: block
 
-        }
-
-
-
-        .hidden {
+        }body.admin-account-page .hidden{
 
             display: none
 
-        }
-
-
-
-        .muted {
+        }body.admin-account-page .muted{
 
             color: var(--muted)
 
-        }
-
-
-
-        .rounded-button {
+        }body.admin-account-page .rounded-button{
 
             border-radius: var(--rounded-button)
 
-        }
-
-
-
-        .side-link.active,
-
-        .side-btn.active {
+        }body.admin-account-page .side-link.active, body.admin-account-page .side-btn.active{
 
             background: var(--primary);
 
             color: #fff !important;
 
-        }
-
-
-
-        /*===================================== Details Modal CSS =======================================*/
-
-        .proof-modal {
+        }body.admin-account-page .proof-modal{
 
             display: none;
 
@@ -1836,27 +1199,23 @@ label,
 
             z-index: 3000;
 
-        }
-
-
-
-        .proof-modal-content {
+        }body.admin-account-page .proof-modal-content{
 
             background: #fff;
 
             padding: 20px;
 
-            /* Reduced padding for more image space */
+            
 
             border-radius: 12px;
 
             max-width: 1300px;
 
-            /* Increased max-width */
+            
 
             width: 97%;
 
-            /* Increased width percentage */
+            
 
             max-height: 90vh;
 
@@ -1870,15 +1229,11 @@ label,
 
             gap: 15px;
 
-            /* Reduced gap */
+            
 
             overflow-y: auto;
 
-        }
-
-
-
-        .proof-modal-close {
+        }body.admin-account-page .proof-modal-close{
 
             position: absolute;
 
@@ -1912,19 +1267,11 @@ label,
 
             transition: background 0.2s;
 
-        }
-
-
-
-        .proof-modal-close:hover {
+        }body.admin-account-page .proof-modal-close:hover{
 
             background: #dc2626;
 
-        }
-
-
-
-        .proof-modal-header {
+        }body.admin-account-page .proof-modal-header{
 
             margin-bottom: 10px;
 
@@ -1934,11 +1281,7 @@ label,
 
             padding-bottom: 15px;
 
-        }
-
-
-
-        .proof-modal-title {
+        }body.admin-account-page .proof-modal-title{
 
             font-size: 20px;
 
@@ -1948,17 +1291,13 @@ label,
 
             margin: 0;
 
-        }
-
-
-
-        .proof-modal-body {
+        }body.admin-account-page .proof-modal-body{
 
             display: flex;
 
             gap: 20px;
 
-            /* Reduced gap */
+            
 
             align-items: flex-start;
 
@@ -1966,17 +1305,13 @@ label,
 
             min-height: 650px;
 
-            /* Increased min-height */
+            
 
-        }
-
-
-
-        .proof-details {
+        }body.admin-account-page .proof-details{
 
             flex: 0 0 280px;
 
-            /* Reduced width for details */
+            
 
             background: #f8fafc;
 
@@ -1986,11 +1321,7 @@ label,
 
             border: 1px solid #e2e8f0;
 
-        }
-
-
-
-        .proof-detail-item {
+        }body.admin-account-page .proof-detail-item{
 
             display: flex;
 
@@ -2002,19 +1333,11 @@ label,
 
             border-bottom: 1px solid #e2e8f0;
 
-        }
-
-
-
-        .proof-detail-item:last-child {
+        }body.admin-account-page .proof-detail-item:last-child{
 
             border-bottom: none;
 
-        }
-
-
-
-        .proof-detail-label {
+        }body.admin-account-page .proof-detail-label{
 
             font-weight: 600;
 
@@ -2022,11 +1345,7 @@ label,
 
             font-size: 14px;
 
-        }
-
-
-
-        .proof-detail-value {
+        }body.admin-account-page .proof-detail-value{
 
             font-weight: 500;
 
@@ -2040,11 +1359,7 @@ label,
 
             word-break: break-word;
 
-        }
-
-
-
-        #detailStatus {
+        }body.admin-account-page #detailStatus{
 
             padding: 4px 8px;
 
@@ -2054,51 +1369,31 @@ label,
 
             font-weight: 600;
 
-        }
-
-
-
-        #detailStatus.pending {
+        }body.admin-account-page #detailStatus.pending{
 
             background: #fef3c7;
 
             color: #92400e;
 
-        }
-
-
-
-        #detailStatus.approved {
+        }body.admin-account-page #detailStatus.approved{
 
             background: #d1fae5;
 
             color: #065f46;
 
-        }
-
-
-
-        #detailStatus.rejected {
+        }body.admin-account-page #detailStatus.rejected{
 
             background: #fee2e2;
 
             color: #991b1b;
 
-        }
-
-
-
-        #detailStatus.reupload {
+        }body.admin-account-page #detailStatus.reupload{
 
             background: #dbeafe;
 
             color: #1e40af;
 
-        }
-
-
-
-        #detailReference {
+        }body.admin-account-page #detailReference{
 
             font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
 
@@ -2110,15 +1405,11 @@ label,
 
             font-size: 12px;
 
-        }
-
-
-
-        .proof-image-container {
+        }body.admin-account-page .proof-image-container{
 
             flex: 1.2;
 
-            /* Increased flex ratio for more image space */
+            
 
             display: flex;
 
@@ -2128,13 +1419,7 @@ label,
 
             height: 100%;
 
-        }
-
-
-
-        /* Carousel Styles */
-
-        .carousel-container {
+        }body.admin-account-page .carousel-container{
 
             width: 100%;
 
@@ -2142,11 +1427,7 @@ label,
 
             position: relative;
 
-        }
-
-
-
-        .carousel-main {
+        }body.admin-account-page .carousel-main{
 
             position: relative;
 
@@ -2154,7 +1435,7 @@ label,
 
             height: 550px;
 
-            /* Increased height */
+            
 
             overflow: hidden;
 
@@ -2162,11 +1443,7 @@ label,
 
             background: #f9fafb;
 
-        }
-
-
-
-        .carousel-slide {
+        }body.admin-account-page .carousel-slide{
 
             display: flex;
 
@@ -2176,11 +1453,7 @@ label,
 
             transition: transform 0.5s ease;
 
-        }
-
-
-
-        .carousel-item {
+        }body.admin-account-page .carousel-item{
 
             min-width: 100%;
 
@@ -2196,21 +1469,17 @@ label,
 
             padding: 15px;
 
-            /* Reduced padding */
+            
 
             box-sizing: border-box;
 
-        }
-
-
-
-        .carousel-item img {
+        }body.admin-account-page .carousel-item img{
 
             max-width: 100%;
 
             max-height: 450px;
 
-            /* Significantly increased height */
+            
 
             object-fit: contain;
 
@@ -2220,19 +1489,11 @@ label,
 
             transition: transform 0.3s;
 
-        }
-
-
-
-        .carousel-item img:hover {
+        }body.admin-account-page .carousel-item img:hover{
 
             transform: scale(1.02);
 
-        }
-
-
-
-        .carousel-caption {
+        }body.admin-account-page .carousel-caption{
 
             margin-top: 10px;
 
@@ -2252,11 +1513,7 @@ label,
 
             width: 100%;
 
-        }
-
-
-
-        .carousel-btn {
+        }body.admin-account-page .carousel-btn{
 
             position: absolute;
 
@@ -2290,35 +1547,19 @@ label,
 
             transition: background 0.3s;
 
-        }
-
-
-
-        .carousel-btn:hover {
+        }body.admin-account-page .carousel-btn:hover{
 
             background: rgba(0, 0, 0, 0.8);
 
-        }
-
-
-
-        .carousel-prev {
+        }body.admin-account-page .carousel-prev{
 
             left: 15px;
 
-        }
-
-
-
-        .carousel-next {
+        }body.admin-account-page .carousel-next{
 
             right: 15px;
 
-        }
-
-
-
-        .carousel-indicators {
+        }body.admin-account-page .carousel-indicators{
 
             position: absolute;
 
@@ -2336,11 +1577,7 @@ label,
 
             z-index: 10;
 
-        }
-
-
-
-        .carousel-indicator {
+        }body.admin-account-page .carousel-indicator{
 
             width: 10px;
 
@@ -2358,29 +1595,15 @@ label,
 
             transition: background 0.3s;
 
-        }
-
-
-
-        .carousel-indicator.active {
+        }body.admin-account-page .carousel-indicator.active{
 
             background: white;
 
-        }
-
-
-
-        /* Thumbnail Gallery */
-
-        .thumbnail-gallery {
+        }body.admin-account-page .thumbnail-gallery{
 
             margin-top: 15px;
 
-        }
-
-
-
-        .thumbnails-container {
+        }body.admin-account-page .thumbnails-container{
 
             display: flex;
 
@@ -2390,11 +1613,7 @@ label,
 
             justify-content: center;
 
-        }
-
-
-
-        .thumbnail-item {
+        }body.admin-account-page .thumbnail-item{
 
             width: 80px;
 
@@ -2410,29 +1629,17 @@ label,
 
             transition: border-color 0.3s, transform 0.3s;
 
-        }
-
-
-
-        .thumbnail-item.active {
+        }body.admin-account-page .thumbnail-item.active{
 
             border-color: #3b82f6;
 
-        }
-
-
-
-        .thumbnail-item:hover {
+        }body.admin-account-page .thumbnail-item:hover{
 
             transform: translateY(-2px);
 
             border-color: #93c5fd;
 
-        }
-
-
-
-        .thumbnail-item img {
+        }body.admin-account-page .thumbnail-item img{
 
             width: 100%;
 
@@ -2440,11 +1647,7 @@ label,
 
             object-fit: cover;
 
-        }
-
-
-
-        .thumbnail-label {
+        }body.admin-account-page .thumbnail-label{
 
             font-size: 11px;
 
@@ -2462,57 +1665,31 @@ label,
 
             white-space: nowrap;
 
-        }
-
-
-
-        /* Responsive Design */
-
-        @media (max-width: 900px) {
-
-            .proof-modal-body {
+        }@media (max-width: 900px){body.admin-account-page .proof-modal-body{
 
                 flex-direction: column;
 
-            }
-
-
-
-            .proof-details {
+            }body.admin-account-page .proof-details{
 
                 flex: 0 0 auto;
 
                 width: 100%;
 
-            }
-
-
-
-            .carousel-main {
+            }body.admin-account-page .carousel-main{
 
                 height: 400px;
 
-                /* Increased mobile height */
+                
 
-            }
-
-
-
-            .carousel-item img {
+            }body.admin-account-page .carousel-item img{
 
                 max-height: 300px;
 
-                /* Increased mobile image height */
+                
 
             }
 
-        }
-
-
-
-        /* No Images Message */
-
-        .no-images {
+        }body.admin-account-page .no-images{
 
             display: flex;
 
@@ -2528,11 +1705,7 @@ label,
 
             text-align: center;
 
-        }
-
-
-
-        .no-images i {
+        }body.admin-account-page .no-images i{
 
             font-size: 48px;
 
@@ -2540,45 +1713,21 @@ label,
 
             color: #9ca3af;
 
-        }
-
-
-
-
-
-        /* For even larger viewports */
-
-        @media (min-width: 1600px) {
-
-            .proof-modal-content {
+        }@media (min-width: 1600px){body.admin-account-page .proof-modal-content{
 
                 max-width: 1400px;
 
-            }
-
-
-
-            .carousel-main {
+            }body.admin-account-page .carousel-main{
 
                 height: 600px;
 
-            }
-
-
-
-            .carousel-item img {
+            }body.admin-account-page .carousel-item img{
 
                 max-height: 500px;
 
             }
 
-        }
-
-
-
-        /* Filter Buttons Styling */
-
-        .filter-buttons {
+        }body.admin-account-page .filter-buttons{
 
             display: flex;
 
@@ -2586,11 +1735,7 @@ label,
 
             flex-wrap: wrap;
 
-        }
-
-
-
-        .filter-btn {
+        }body.admin-account-page .filter-btn{
 
             padding: 8px 16px;
 
@@ -2612,21 +1757,13 @@ label,
 
             outline: none;
 
-        }
-
-
-
-        .filter-btn:hover {
+        }body.admin-account-page .filter-btn:hover{
 
             background: #e5e7eb;
 
             border-color: #9ca3af;
 
-        }
-
-
-
-        .filter-btn.active {
+        }body.admin-account-page .filter-btn.active{
 
             background: #3b82f6;
 
@@ -2636,21 +1773,13 @@ label,
 
             font-weight: 600;
 
-        }
-
-
-
-        .filter-btn.active:hover {
+        }body.admin-account-page .filter-btn.active:hover{
 
             background: #2563eb;
 
             border-color: #2563eb;
 
-        }
-
-
-
-        .avatar-large {
+        }body.admin-account-page .avatar-large{
 
             width: 40px;
 
@@ -2676,11 +1805,7 @@ label,
 
             overflow: hidden;
 
-        }
-
-
-
-        .avatar-large img {
+        }body.admin-account-page .avatar-large img{
 
             width: 100%;
 
@@ -2690,13 +1815,7 @@ label,
 
             border-radius: 50%;
 
-        }
-
-
-
-        /* Image Overlay Styles */
-
-        .image-overlay {
+        }body.admin-account-page .image-overlay{
 
             position: fixed;
 
@@ -2720,11 +1839,7 @@ label,
 
             animation: fadeIn 0.3s ease;
 
-        }
-
-
-
-        @keyframes fadeIn {
+        }@keyframes fadeIn{
 
             from {
 
@@ -2740,11 +1855,7 @@ label,
 
             }
 
-        }
-
-
-
-        .overlay-close {
+        }body.admin-account-page .overlay-close{
 
             position: absolute;
 
@@ -2778,19 +1889,11 @@ label,
 
             transition: background 0.3s;
 
-        }
-
-
-
-        .overlay-close:hover {
+        }body.admin-account-page .overlay-close:hover{
 
             background: #dc2626;
 
-        }
-
-
-
-        .overlay-image-container {
+        }body.admin-account-page .overlay-image-container{
 
             width: 90%;
 
@@ -2806,11 +1909,7 @@ label,
 
             position: relative;
 
-        }
-
-
-
-        .overlay-image-container img {
+        }body.admin-account-page .overlay-image-container img{
 
             max-width: 100%;
 
@@ -2822,11 +1921,7 @@ label,
 
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
 
-        }
-
-
-
-        .overlay-caption {
+        }body.admin-account-page .overlay-caption{
 
             margin-top: 20px;
 
@@ -2846,41 +1941,21 @@ label,
 
             max-width: 80%;
 
-        }
-
-
-
-        /* Make the carousel images clickable */
-
-        .carousel-image {
+        }body.admin-account-page .carousel-image{
 
             cursor: pointer;
 
             transition: transform 0.3s ease;
 
-        }
-
-
-
-        .carousel-image:hover {
+        }body.admin-account-page .carousel-image:hover{
 
             transform: scale(1.03);
 
-        }
-
-
-
-        /* Ensure the details modal has lower z-index than overlay */
-
-        .proof-modal {
+        }body.admin-account-page .proof-modal{
 
             z-index: 3000;
 
-        }
-
-
-
-        .image-overlay {
+        }body.admin-account-page .image-overlay{
 
             z-index: 4000;
 

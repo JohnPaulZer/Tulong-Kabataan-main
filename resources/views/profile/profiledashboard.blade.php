@@ -17,12 +17,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
 
     @vite('resources/css/app.css')
-    <link rel="stylesheet" href="{{ asset('css/profile/campaigncard.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/profile/profiledashboard.css') }}">
 
 </head>
 
-<body>
+<body class="profile-dashboard-page">
 
     @include('profile.partials.universalmodal')
     @include('partials.main-header')

@@ -17,10 +17,10 @@
         <script
             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCxE6u2I1N_uFuYp8hZH2OSh_VEPo1N85M&libraries=places&callback=initAutocomplete"
             async defer></script>
-        <link rel="stylesheet" href="{{ asset('css/administrator/inkindpage.css') }}">
+        @vite('resources/css/app.css')
     </head>
 
-    <body>
+    <body class="admin-inkind-page">
 
         @include('partials.universalmodal')
         <!-- Header --> 

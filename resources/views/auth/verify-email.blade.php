@@ -3,57 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Verify Email | Tulong Kabataan</title>
     <link rel="icon" href="{{ asset('img/log2.png') }}" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
     <link
         href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,400&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/verify-email.css') }}">
+    @vite('resources/css/app.css')
 </head>
-<body>
-    <div class="verify-container">
-        <div class="verify-icon">
+<body class="relative flex min-h-screen items-center justify-center overflow-hidden bg-[url('/img/backlogin.png')] bg-cover bg-center bg-no-repeat px-4 py-8 font-body text-slate-950">
+    <div class="absolute inset-0 bg-slate-950/25 backdrop-blur-[1px]"></div>
+    <div class="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-white/40 to-transparent"></div>
+
+    <main class="relative z-10 w-full max-w-[500px] rounded-2xl border border-white/70 bg-white/90 p-6 text-center shadow-[0_20px_60px_rgba(15,23,42,0.35)] backdrop-blur-md sm:p-10">
+        <div class="mb-5 text-6xl text-indigo-600">
             <i class="ri-mail-send-line"></i>
         </div>
         
-        <h1>Verify Your Email</h1>
+        <h1 class="mb-4 font-heading text-3xl font-bold tracking-normal text-slate-950">Verify Your Email</h1>
         
         @if (session('message'))
-            <div class="success-message">
+            <div class="mb-5 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">
                 {{ session('message') }}
             </div>
         @endif
 
-        <div class="message">
+        <p class="mb-7 text-base leading-relaxed text-slate-600 sm:text-lg">
             Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn't receive the email, we will gladly send you another.
-        </div>
+        </p>
 
-        <div class="loading" id="loadingMessage">
+        <div class="mt-5 hidden font-semibold text-indigo-600" id="loadingMessage">
             <i class="ri-loader-4-line"></i>
             Verifying your email...
         </div>
 
-        <div id="buttonContainer" style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-            <form method="POST" action="{{ route('verification.send') }}" style="display: inline;">
+        <div id="buttonContainer" class="flex flex-wrap justify-center gap-3">
+            <form method="POST" action="{{ route('verification.send') }}">
                 @csrf
-                <button type="submit" class="btn-primary">
+                <button type="submit" class="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-5 py-3 font-heading text-sm font-semibold text-white transition hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2">
                     RESEND VERIFICATION EMAIL
                 </button>
             </form>
 
-            <form method="POST" action="{{ route('logout') }}" style="display: inline;">
-            @csrf
-            <button type="submit" class="btn-secondary">
-                <i class="ri-logout-box-r-line" style="margin-right:6px;"></i>
-                Log Out
-            </button>
-        </form>
-
-
-         
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-5 py-3 font-heading text-sm font-semibold text-slate-600 transition hover:border-indigo-300 hover:text-indigo-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2">
+                    <i class="ri-logout-box-r-line"></i>
+                    Log Out
+                </button>
+            </form>
         </div>
-    </div>
+    </main>
 
     <script>
         // Check if user has verified their email every 2 seconds
