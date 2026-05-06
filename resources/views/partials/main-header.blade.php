@@ -329,23 +329,54 @@
             </div>
         @endauth
 
-        <!-- Mobile menu (visible only on mobile/tablet due to CSS above) -->
-        <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu"
-            aria-controls="mobileDropdown" aria-expanded="false">
-            <i class="ri-menu-line" aria-hidden="true"></i>
-        </button>
     </div>
     </div>
 
-    <!-- Site-wide mobile tray (unchanged) -->
-    <div class="mobile-dropdown" id="mobileDropdown">
-        <nav class="mobile-nav" aria-label="Mobile navigation">
-            <a href="{{ route('campaignpage') }}">Campaigns</a>
-            <a href="{{ route('event.page') }}">Events</a>
-            <a href="{{ route('inkind.page') }}">Donate</a>
-            <a href="{{ route('about.us') }}">About Us</a>
-        </nav>
-    </div>
+    @php
+        $mobileNavItems = [
+            [
+                'route' => 'landpage',
+                'label' => 'Home',
+                'icon' => 'ri-home-5-line',
+                'active' => request()->routeIs('landpage'),
+            ],
+            [
+                'route' => 'campaignpage',
+                'label' => 'Campaigns',
+                'icon' => 'ri-heart-line',
+                'active' => request()->routeIs('campaignpage', 'campaign.view', 'campaign.createpage'),
+            ],
+            [
+                'route' => 'event.page',
+                'label' => 'Events',
+                'icon' => 'ri-calendar-event-line',
+                'active' => request()->routeIs('event.page', 'event.view', 'event.register'),
+            ],
+            [
+                'route' => 'inkind.page',
+                'label' => 'Donate',
+                'icon' => 'ri-hand-heart-line',
+                'active' => request()->routeIs('inkind.page', 'inkindmodal', 'inkind.tracking'),
+            ],
+            [
+                'route' => 'about.us',
+                'label' => 'About',
+                'icon' => 'ri-information-line',
+                'active' => request()->routeIs('about.us'),
+            ],
+        ];
+    @endphp
+
+    <nav class="mobile-bottom-nav" aria-label="Mobile navigation">
+        @foreach ($mobileNavItems as $item)
+            <a href="{{ route($item['route']) }}"
+                class="mobile-bottom-nav__item {{ $item['active'] ? 'is-active' : '' }}"
+                aria-label="{{ $item['label'] }}" @if ($item['active']) aria-current="page" @endif>
+                <i class="{{ $item['icon'] }}" aria-hidden="true"></i>
+                <span class="mobile-bottom-nav__label">{{ $item['label'] }}</span>
+            </a>
+        @endforeach
+    </nav>
 
     @auth
         {{-- Notification-script --}}
@@ -1273,45 +1304,27 @@
         </script>
     @endauth
 
-    {{-- Mobile Dropdown & User Menu Script --}}
+    {{-- Header dropdown script --}}
     <script>
         (function() {
             const userMenu = document.getElementById('userMenu');
             const userBtn = userMenu ? userMenu.querySelector('#userMenuBtn') : null;
             const userDD = userMenu ? userMenu.querySelector('#userDropdown') : null;
 
-            const mobileBtn = document.getElementById('mobileMenuBtn');
-            const mobileDD = document.getElementById('mobileDropdown');
-
             // Get notification elements
             const notifMenu = document.getElementById('notificationBell');
             const notifBtn = notifMenu ? notifMenu.querySelector('#notifBtn') : null;
             const notifDD = notifMenu ? notifMenu.querySelector('#notifDropdown') : null;
 
-            function setMobileIcon(isOpen) {
-                const icon = mobileBtn ? mobileBtn.querySelector('i') : null;
-
-                if (!icon) {
-                    return;
-                }
-
-                icon.className = isOpen ? 'ri-close-line' : 'ri-menu-line';
-                mobileBtn.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
-            }
-
             function closeAll() {
                 if (userDD) userDD.classList.remove('show');
-                if (mobileDD) mobileDD.classList.remove('show');
                 if (notifDD) notifDD.classList.remove('show');
 
                 if (userBtn) userBtn.setAttribute('aria-expanded', 'false');
-                if (mobileBtn) mobileBtn.setAttribute('aria-expanded', 'false');
                 if (notifBtn) notifBtn.setAttribute('aria-expanded', 'false');
-                setMobileIcon(false);
             }
 
             if (userDD) userDD.addEventListener('click', (e) => e.stopPropagation());
-            if (mobileDD) mobileDD.addEventListener('click', (e) => e.stopPropagation());
             if (notifDD) notifDD.addEventListener('click', (e) => e.stopPropagation());
 
             // Toggle user dropdown
@@ -1324,24 +1337,6 @@
                         userDD.classList.add('show');
                         userBtn.setAttribute('aria-expanded', 'true');
                     }
-                });
-            }
-
-            // Toggle site mobile tray
-            if (mobileBtn && mobileDD) {
-                mobileBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const willOpen = !mobileDD.classList.contains('show');
-                    closeAll();
-                    if (willOpen) {
-                        mobileDD.classList.add('show');
-                        mobileBtn.setAttribute('aria-expanded', 'true');
-                        setMobileIcon(true);
-                    }
-                });
-
-                mobileDD.querySelectorAll('a').forEach((link) => {
-                    link.addEventListener('click', closeAll);
                 });
             }
 
@@ -1361,8 +1356,6 @@
             // Click anywhere outside to close everything
             document.addEventListener('click', (e) => {
                 if (!e.target.closest('.user-menu') &&
-                    !e.target.closest('.mobile-menu-btn') &&
-                    !e.target.closest('.mobile-dropdown') &&
                     !e.target.closest('.notif-menu')) {
                     closeAll();
                 }
@@ -1596,4 +1589,3 @@
         });
     })();
 </script>
-

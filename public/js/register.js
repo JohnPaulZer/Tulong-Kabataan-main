@@ -10,6 +10,22 @@ const passwordInput = document.getElementById("password");
 const passwordFeedback = document.getElementById("passwordFeedback");
 const togglePassword = document.getElementById("togglePassword");
 
+try {
+    sessionStorage.removeItem("tkLoadingMode");
+} catch (error) {
+    // Storage can be unavailable in private browsing modes.
+}
+
+function requestBrandLoader() {
+    try {
+        sessionStorage.setItem("tkLoadingMode", "brand");
+    } catch (error) {
+        // Storage can be unavailable in private browsing modes.
+    }
+}
+
+submitBtn?.closest("form")?.addEventListener("submit", requestBrandLoader);
+
 function checkFormValidity() {
     const hasEmailError =
         emailInput.classList.contains("input-error") ||
