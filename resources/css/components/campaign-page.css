@@ -4,10 +4,10 @@ body.campaign-page *, body.campaign-page *::before, body.campaign-page *::after{
     margin: 0;
     padding: 0;
 }body.campaign-page h1, body.campaign-page h2, body.campaign-page h3, body.campaign-page h4, body.campaign-page h5, body.campaign-page h6, body.campaign-page .heading-font, body.campaign-page .section-title, body.campaign-page .featured-title, body.campaign-page .campaign-title, body.campaign-page .btn, body.campaign-page button, body.campaign-page .raised, body.campaign-page .campaign-count, body.campaign-page .featured-badge, body.campaign-page .pagination-number{
-    font-family: "Poppins", sans-serif;
+    font-family: var(--font-heading);
     letter-spacing: -0.01em; 
 }body.campaign-page, body.campaign-page p, body.campaign-page a, body.campaign-page li, body.campaign-page span, body.campaign-page input, body.campaign-page select, body.campaign-page textarea, body.campaign-page label, body.campaign-page .body-font, body.campaign-page .section-desc, body.campaign-page .featured-desc, body.campaign-page .filters-label, body.campaign-page .goal, body.campaign-page .pagination-info{
-    font-family: "Lato", sans-serif;
+    font-family: var(--font-body);
     font-weight: 400;
     text-decoration: none;
 }body.campaign-page .campaigns-section{
@@ -125,7 +125,7 @@ body.campaign-page *, body.campaign-page *::before, body.campaign-page *::after{
     font-weight: 600;
 }body.campaign-page .featured-title{
     font-size: clamp(24px, 3vw, 32px);
-    font-family: "Poppins", sans-serif;
+    font-family: var(--font-heading);
     font-weight: 700;
     margin: 0;
     color: #1e293b;
@@ -568,7 +568,7 @@ body.campaign-page *, body.campaign-page *::before, body.campaign-page *::after{
     height: 100%;
     object-fit: cover;
 }body.campaign-page .evt-details-modal-title{
-    font-family: 'Poppins', sans-serif;
+    font-family: var(--font-heading);
     font-size: 1.85rem;
     font-weight: 700;
     color: #111827;
@@ -734,3 +734,4 @@ body.campaign-page *, body.campaign-page *::before, body.campaign-page *::after{
         justify-content: center;
     }
 }
+

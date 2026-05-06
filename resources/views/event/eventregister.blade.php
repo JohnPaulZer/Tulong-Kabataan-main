@@ -44,7 +44,7 @@
         display: flex;
         flex-direction: column;
         overflow: hidden;
-        font-family: 'Poppins', sans-serif;
+        font-family: 'Merriweather', serif;
     }
 
     /* ======================================
@@ -550,3 +550,4 @@
         </form>
     </div>
 </div>
+

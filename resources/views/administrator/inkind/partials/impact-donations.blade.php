@@ -159,3 +159,4 @@
     <i class="ri-search-line" style="font-size: 32px; margin-bottom: 12px;"></i>
     <p>No donations match your search criteria.</p>
 </div>
+

@@ -1,9 +1,9 @@
 /* Scoped event page styles */
 body.event-page h1, body.event-page h2, body.event-page h3, body.event-page h4, body.event-page h5, body.event-page h6, body.event-page .heading-font, body.event-page .section-title, body.event-page .featured-title, body.event-page .campaign-title, body.event-page .btn, body.event-page button, body.event-page .raised, body.event-page .campaign-count, body.event-page .featured-badge, body.event-page .pagination-number{
-    font-family: "Poppins", sans-serif;
+    font-family: var(--font-heading);
     letter-spacing: -0.01em;
 }body.event-page, body.event-page p, body.event-page a, body.event-page li, body.event-page span, body.event-page input, body.event-page select, body.event-page textarea, body.event-page label, body.event-page .body-font, body.event-page .section-desc, body.event-page .featured-desc, body.event-page .filters-label, body.event-page .goal, body.event-page .pagination-info{
-    font-family: "Lato", sans-serif;
+    font-family: var(--font-body);
     font-weight: 400;
     text-decoration: none;
 }body.event-page .section-title, body.event-page .campaign-title, body.event-page .featured-title{
@@ -14,7 +14,7 @@ body.event-page h1, body.event-page h2, body.event-page h3, body.event-page h4, 
 }body.event-page .btn{
     font-weight: 600;
 }body.event-page input::placeholder{
-    font-family: "Lato", sans-serif;
+    font-family: var(--font-body);
     font-weight: 400;
 }body.event-page *{
     box-sizing: border-box;
@@ -513,7 +513,7 @@ body.event-page h1, body.event-page h2, body.event-page h3, body.event-page h4, 
     height: 100%;
     object-fit: cover;
 }body.event-page .evt-details-modal-title{
-    font-family: 'Poppins', sans-serif;
+    font-family: var(--font-heading);
     font-size: 1.75rem;
     font-weight: 700;
     color: #111827;
@@ -802,3 +802,4 @@ body.event-page h1, body.event-page h2, body.event-page h3, body.event-page h4, 
         grid-template-columns: 1fr;
     }
 }
+

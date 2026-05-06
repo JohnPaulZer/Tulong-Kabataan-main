@@ -54,10 +54,10 @@ body.profile-inkind-page{
 }body.profile-inkind-page{
     scroll-behavior: smooth;
 }body.profile-inkind-page h1, body.profile-inkind-page h2, body.profile-inkind-page h3, body.profile-inkind-page h4, body.profile-inkind-page h5, body.profile-inkind-page h6, body.profile-inkind-page .heading-font, body.profile-inkind-page .section-title, body.profile-inkind-page .featured-title, body.profile-inkind-page .campaign-title, body.profile-inkind-page .btn, body.profile-inkind-page button, body.profile-inkind-page .raised, body.profile-inkind-page .campaign-count, body.profile-inkind-page .featured-badge, body.profile-inkind-page .pagination-number{
-    font-family: "Poppins", sans-serif;
+    font-family: var(--font-heading);
     letter-spacing: -0.01em;
 }body.profile-inkind-page p, body.profile-inkind-page a, body.profile-inkind-page li, body.profile-inkind-page span, body.profile-inkind-page input, body.profile-inkind-page select, body.profile-inkind-page textarea, body.profile-inkind-page label, body.profile-inkind-page .body-font, body.profile-inkind-page .section-desc, body.profile-inkind-page .featured-desc, body.profile-inkind-page .filters-label, body.profile-inkind-page .goal, body.profile-inkind-page .pagination-info{
-    font-family: "Lato", sans-serif;
+    font-family: var(--font-body);
     font-weight: 400;
     text-decoration: none;
 }body.profile-inkind-page *, body.profile-inkind-page *::before, body.profile-inkind-page *::after{
@@ -525,3 +525,4 @@ body.profile-inkind-page{
     border-radius: var(--radius-lg);
     border: 2px dashed var(--gray-200);
 }
+

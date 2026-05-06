@@ -30,11 +30,11 @@ body.profile-dashboard-page *, body.profile-dashboard-page *::before, body.profi
     --radius-sm: 8px;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }body.profile-dashboard-page h1, body.profile-dashboard-page h2, body.profile-dashboard-page h3, body.profile-dashboard-page h4, body.profile-dashboard-page h5, body.profile-dashboard-page h6, body.profile-dashboard-page .heading-font, body.profile-dashboard-page .section-title, body.profile-dashboard-page .featured-title, body.profile-dashboard-page .campaign-title, body.profile-dashboard-page .btn, body.profile-dashboard-page button, body.profile-dashboard-page .raised, body.profile-dashboard-page .campaign-count, body.profile-dashboard-page .featured-badge, body.profile-dashboard-page .pagination-number{
-    font-family: "Poppins", sans-serif;
+    font-family: var(--font-heading);
     letter-spacing: -0.01em;
     color: var(--gray-800);
 }body.profile-dashboard-page p, body.profile-dashboard-page a, body.profile-dashboard-page li, body.profile-dashboard-page span, body.profile-dashboard-page input, body.profile-dashboard-page select, body.profile-dashboard-page textarea, body.profile-dashboard-page label, body.profile-dashboard-page .body-font, body.profile-dashboard-page .section-desc, body.profile-dashboard-page .featured-desc, body.profile-dashboard-page .filters-label, body.profile-dashboard-page .goal, body.profile-dashboard-page .pagination-info{
-    font-family: "Lato", sans-serif;
+    font-family: var(--font-body);
     font-weight: 400;
     text-decoration: none;
     line-height: 1.6;
@@ -1579,3 +1579,4 @@ body.profile-dashboard-page .campaign-item{
     font-size: 13px;
     line-height: 1.4;
 }
+

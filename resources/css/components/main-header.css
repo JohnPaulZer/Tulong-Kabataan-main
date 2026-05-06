@@ -112,7 +112,7 @@ body.reloading{
 }.header .mobile-dropdown{
     display: none;
 }.header .body-font{
-    font-family: "Lato", sans-serif;
+    font-family: var(--font-body);
 }.header .header-container> :last-child{
     margin-left: auto;
 }.header .user-menu{

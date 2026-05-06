@@ -1,9 +1,9 @@
 /* Scoped in-kind modal page styles */
 body.inkind-modal-page h1, body.inkind-modal-page h2, body.inkind-modal-page h3, body.inkind-modal-page h4, body.inkind-modal-page h5, body.inkind-modal-page h6, body.inkind-modal-page .heading-font, body.inkind-modal-page .section-title, body.inkind-modal-page .featured-title, body.inkind-modal-page .campaign-title, body.inkind-modal-page .btn, body.inkind-modal-page button, body.inkind-modal-page .raised, body.inkind-modal-page .campaign-count, body.inkind-modal-page .featured-badge, body.inkind-modal-page .pagination-number{
-    font-family: "Poppins", sans-serif;
+    font-family: var(--font-heading);
     letter-spacing: -0.01em;
 }body.inkind-modal-page p, body.inkind-modal-page a, body.inkind-modal-page li, body.inkind-modal-page span, body.inkind-modal-page input, body.inkind-modal-page select, body.inkind-modal-page textarea, body.inkind-modal-page label, body.inkind-modal-page .body-font, body.inkind-modal-page .section-desc, body.inkind-modal-page .featured-desc, body.inkind-modal-page .filters-label, body.inkind-modal-page .goal, body.inkind-modal-page .pagination-info{
-    font-family: "Lato", sans-serif;
+    font-family: var(--font-body);
     font-weight: 400;
     text-decoration: none;
 }body.inkind-modal-page .hero-banner{
@@ -345,3 +345,4 @@ body.inkind-modal-page h1, body.inkind-modal-page h2, body.inkind-modal-page h3,
         padding: 0.7rem;
     }
 }
+

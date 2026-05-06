@@ -5,17 +5,17 @@
     <title>Verify Your Email | Tulong Kabataan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link
-        href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,400&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap"
         rel="stylesheet">
 </head>
-<body style="margin:0; font-family: 'Lato', sans-serif; background:#dcf2fd; color:#1a2e40;">
+<body style="margin:0; font-family: 'Inter', sans-serif; background:#dcf2fd; color:#1a2e40;">
 
     <div style="padding:40px 15px;"> <table width="100%" cellspacing="0" cellpadding="0"
             style="max-width:500px; margin:auto; background:#ffffff; border-radius:16px;
                    padding:36px 28px; box-shadow:0 10px 25px rgba(0,0,0,0.1); border-collapse:separate;">
             
             <tr>
-                <td style="font-family: 'Lato', sans-serif; color:#0d3b66;
+                <td style="font-family: 'Inter', sans-serif; color:#0d3b66;
                            font-size:22px; font-weight:700; padding-bottom:16px; text-align:center;">
                     Verify Your Email
                 </td>
@@ -61,3 +61,4 @@
 
 </body>
 </html>
+

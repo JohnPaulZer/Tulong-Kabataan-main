@@ -1,9 +1,9 @@
 /* Scoped campaign create styles */
 body.campaign-create-page h1, body.campaign-create-page h2, body.campaign-create-page h3, body.campaign-create-page h4, body.campaign-create-page h5, body.campaign-create-page h6, body.campaign-create-page .heading-font, body.campaign-create-page .section-title, body.campaign-create-page .featured-title, body.campaign-create-page .campaign-title, body.campaign-create-page .btn, body.campaign-create-page button, body.campaign-create-page .raised, body.campaign-create-page .campaign-count, body.campaign-create-page .featured-badge, body.campaign-create-page .pagination-number{
-    font-family: "Poppins", sans-serif;
+    font-family: var(--font-heading);
     letter-spacing: -0.01em; 
 }body.campaign-create-page, body.campaign-create-page p, body.campaign-create-page a, body.campaign-create-page li, body.campaign-create-page span, body.campaign-create-page input, body.campaign-create-page select, body.campaign-create-page textarea, body.campaign-create-page label, body.campaign-create-page .body-font, body.campaign-create-page .section-desc, body.campaign-create-page .featured-desc, body.campaign-create-page .filters-label, body.campaign-create-page .goal, body.campaign-create-page .pagination-info{
-    font-family: "Lato", sans-serif;
+    font-family: var(--font-body);
     font-weight: 400;
     text-decoration: none;
     -webkit-font-smoothing: antialiased;
@@ -17,7 +17,7 @@ body.campaign-create-page h1, body.campaign-create-page h2, body.campaign-create
 }body.campaign-create-page .btn{
     font-weight: 600;
 }body.campaign-create-page input::placeholder{
-    font-family: "Lato", sans-serif;
+    font-family: var(--font-body);
     font-weight: 400;
     color: #94a3b8;
 }body.campaign-create-page .tk-container{
@@ -72,7 +72,7 @@ body.campaign-create-page h1, body.campaign-create-page h2, body.campaign-create
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
     padding: 32px;
 }body.campaign-create-page .tk-title{
-    font-family: "Playfair Display", serif;
+    font-family: var(--font-heading);
     font-size: 32px;
     margin: 0 0 8px 0;
     color: var(--ink-900);
@@ -532,3 +532,4 @@ body.campaign-create-page h1, body.campaign-create-page h2, body.campaign-create
         text-align: left;
     }
 }
+
