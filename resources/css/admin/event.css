@@ -1,4 +1,4 @@
-/* Scoped admin event styles */
+﻿/* Scoped admin event styles */
 body.admin-event-page{
     
     --primary: #3b82f6;
@@ -313,7 +313,7 @@ body.admin-event-page{
     border: 1px solid #bae6fd; border-radius: 8px;
     font-size: 14px; color: #0369a1; display: flex; align-items: center; gap: 8px;
     width: 100%; font-weight: 500;
-}body.admin-event-page .selection-count::before{ content: "✓"; color: var(--primary); font-weight: 800; }body.admin-event-page .selection-mode .participant-row{ cursor: pointer; border-left: 4px solid var(--primary); }body.admin-event-page .selection-mode .participant-row:hover{ background: #eff6ff !important; }body.admin-event-page .selection-mode .p-checkbox{ display: flex; align-items: center; justify-content: center; }body.admin-event-page .select-participants-dropdown.selection-active .dropdown-menu{ display: block !important; }body.admin-event-page .participant-name, body.admin-event-page .participant-email{
+}body.admin-event-page .selection-count::before{ content: "âœ“"; color: var(--primary); font-weight: 800; }body.admin-event-page .selection-mode .participant-row{ cursor: pointer; border-left: 4px solid var(--primary); }body.admin-event-page .selection-mode .participant-row:hover{ background: #eff6ff !important; }body.admin-event-page .selection-mode .p-checkbox{ display: flex; align-items: center; justify-content: center; }body.admin-event-page .select-participants-dropdown.selection-active .dropdown-menu{ display: block !important; }body.admin-event-page .participant-name, body.admin-event-page .participant-email{
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px;
 }body.admin-event-page .p-right{ flex-shrink: 0; min-width: 120px; text-align: right; }body.admin-event-page .participants-list::-webkit-scrollbar{ width: 6px; }body.admin-event-page .participants-list::-webkit-scrollbar-track{ background: transparent; }body.admin-event-page .participants-list::-webkit-scrollbar-thumb{ background: #d1d5db; border-radius: 10px; }body.admin-event-page .participants-list::-webkit-scrollbar-thumb:hover{ background: #9ca3af; }@media (max-width: 980px){body.admin-event-page .summary-grid{ grid-template-columns: repeat(2, 1fr); }body.admin-event-page .charts-row{ grid-template-columns: 1fr; }body.admin-event-page .container{ padding: 0 16px; }
 }@media (max-width: 768px){body.admin-event-page .participants-header{ flex-direction: column; align-items: flex-start; }body.admin-event-page .bulk-action{ width: 100%; justify-content: space-between; }body.admin-event-page .btn-mark-all, body.admin-event-page .btn-mark-missing, body.admin-event-page .btn-select-participants{ flex: 1; justify-content: center; }

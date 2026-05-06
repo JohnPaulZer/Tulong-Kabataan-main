@@ -1,4 +1,4 @@
-/* Scoped in-kind page styles */
+﻿/* Scoped in-kind page styles */
 body.inkind-page h1, body.inkind-page h2, body.inkind-page h3, body.inkind-page h4, body.inkind-page h5, body.inkind-page h6, body.inkind-page .heading-font, body.inkind-page .section-title, body.inkind-page .featured-title, body.inkind-page .campaign-title, body.inkind-page .btn, body.inkind-page button, body.inkind-page .raised, body.inkind-page .campaign-count, body.inkind-page .featured-badge, body.inkind-page .pagination-number{
     font-family: var(--font-heading);
     

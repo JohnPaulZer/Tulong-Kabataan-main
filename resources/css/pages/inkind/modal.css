@@ -1,4 +1,4 @@
-/* Scoped in-kind modal page styles */
+﻿/* Scoped in-kind modal page styles */
 body.inkind-modal-page h1, body.inkind-modal-page h2, body.inkind-modal-page h3, body.inkind-modal-page h4, body.inkind-modal-page h5, body.inkind-modal-page h6, body.inkind-modal-page .heading-font, body.inkind-modal-page .section-title, body.inkind-modal-page .featured-title, body.inkind-modal-page .campaign-title, body.inkind-modal-page .btn, body.inkind-modal-page button, body.inkind-modal-page .raised, body.inkind-modal-page .campaign-count, body.inkind-modal-page .featured-badge, body.inkind-modal-page .pagination-number{
     font-family: var(--font-heading);
     letter-spacing: -0.01em;

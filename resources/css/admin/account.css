@@ -1,4 +1,4 @@
-/* Scoped admin account styles */
+﻿/* Scoped admin account styles */
 body.admin-account-page h1, body.admin-account-page h2, body.admin-account-page h3, body.admin-account-page h4, body.admin-account-page h5, body.admin-account-page h6, body.admin-account-page .heading-font, body.admin-account-page .section-title, body.admin-account-page .featured-title, body.admin-account-page .campaign-title, body.admin-account-page .btn, body.admin-account-page button, body.admin-account-page .raised, body.admin-account-page .campaign-count, body.admin-account-page .featured-badge, body.admin-account-page .pagination-number{
 
     font-family: var(--font-heading);
