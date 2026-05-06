@@ -1,5 +1,5 @@
 ﻿/* Scoped campaign view styles */
-body.campaign-view-page *, body.campaign-view-page *::before, body.campaign-view-page *::after{
+body.campaign-view-page main *, body.campaign-view-page main *::before, body.campaign-view-page main *::after{
     box-sizing: border-box;
     margin: 0;
     padding: 0;
@@ -1020,4 +1020,3 @@ body.campaign-view-page *, body.campaign-view-page *::before, body.campaign-view
         aspect-ratio: 16/9;
     }
 }
-
