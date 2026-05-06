@@ -31,25 +31,14 @@
         </div>
     </section>
 
-    <section class="evt-event-dashboard-header">
-        <div class="evt-container">
-            <div class="evt-breadcrumb"></div>
-            <div class="evt-header-actions">
-                <div class="evt-action-buttons">
-                    <button class="evt-sync-calendar">
-                        <i class="ri-calendar-line"></i> Sync Calendar
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <section class="evt-tabs-navigation">
         <div class="evt-container">
-            <div class="evt-tab-buttons">
-                <button class="evt-tab-button evt-active">All Events</button>
-                <button class="evt-tab-button">Ongoing Events</button>
-                <button class="evt-tab-button">Past Events</button>
+            <div class="evt-tabs-scroll">
+                <div class="evt-tab-buttons">
+                    <button type="button" class="evt-tab-button evt-active">All Events</button>
+                    <button type="button" class="evt-tab-button">Ongoing Events</button>
+                    <button type="button" class="evt-tab-button">Past Events</button>
+                </div>
             </div>
         </div>
     </section>
@@ -283,6 +272,35 @@
         const eventDaysOngoing = buildEventDayLookup(calendarEventsAll, 'ongoing');
         const eventDaysPast = buildEventDayLookup(calendarEventsAll, 'past');
 
+        function centerMiniCalendarOnMobile() {
+            const calendarRail = document.querySelector('.evt-mini-calendar');
+            const calendarNavigation = document.querySelector('.evt-calendar-navigation');
+
+            if (!calendarRail || !calendarNavigation) {
+                return;
+            }
+
+            if (!window.matchMedia('(max-width: 768px)').matches) {
+                calendarRail.scrollLeft = 0;
+                return;
+            }
+
+            const maxScrollLeft = calendarRail.scrollWidth - calendarRail.clientWidth;
+            if (maxScrollLeft <= 0) {
+                calendarRail.scrollLeft = 0;
+                return;
+            }
+
+            const centeredScrollLeft = Math.max(0, (calendarNavigation.offsetWidth - calendarRail.clientWidth) / 2);
+            calendarRail.scrollLeft = Math.min(maxScrollLeft, centeredScrollLeft);
+        }
+
+        function scheduleMiniCalendarCentering() {
+            window.requestAnimationFrame(() => {
+                window.requestAnimationFrame(centerMiniCalendarOnMobile);
+            });
+        }
+
 
         // ==================== CALENDAR RENDERING FUNCTIONS ====================
         /**
@@ -318,6 +336,7 @@
 
             // Attach tooltip and click handlers to all days
             setupTooltipHandlers(lookup);
+            scheduleMiniCalendarCentering();
         }
 
         /**
@@ -702,6 +721,103 @@
         // ==================== TAB SWITCHING LOGIC ====================
         const tabButtons = document.querySelectorAll('.evt-tab-button');
         const eventsContainer = document.querySelector('.evts-container');
+        const tabsScroll = document.querySelector('.evt-tabs-scroll');
+
+        function centerEventTabInRail(tabButton) {
+            if (!tabsScroll || !tabButton || window.innerWidth > 768) {
+                return;
+            }
+
+            const targetLeft = tabButton.offsetLeft - ((tabsScroll.clientWidth - tabButton.offsetWidth) / 2);
+            const maxScrollLeft = tabsScroll.scrollWidth - tabsScroll.clientWidth;
+            const nextScrollLeft = Math.max(0, Math.min(targetLeft, maxScrollLeft));
+
+            tabsScroll.scrollTo({
+                left: nextScrollLeft,
+                behavior: 'smooth'
+            });
+        }
+
+        function initializeTabsHorizontalScroll() {
+            if (!tabsScroll || tabsScroll.dataset.scrollReady === 'true') {
+                return;
+            }
+
+            tabsScroll.dataset.scrollReady = 'true';
+
+            let isPointerDown = false;
+            let hasDragged = false;
+            let startX = 0;
+            let startScrollLeft = 0;
+
+            const canScroll = () => window.innerWidth <= 768 && tabsScroll.scrollWidth > tabsScroll.clientWidth + 4;
+
+            tabsScroll.addEventListener('wheel', function(event) {
+                if (!canScroll()) {
+                    return;
+                }
+
+                const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+                if (!delta) {
+                    return;
+                }
+
+                tabsScroll.scrollLeft += delta;
+                event.preventDefault();
+            }, {
+                passive: false
+            });
+
+            tabsScroll.addEventListener('pointerdown', function(event) {
+                if (!canScroll()) {
+                    return;
+                }
+
+                if (event.pointerType === 'mouse' && event.button !== 0) {
+                    return;
+                }
+
+                isPointerDown = true;
+                hasDragged = false;
+                startX = event.clientX;
+                startScrollLeft = tabsScroll.scrollLeft;
+            });
+
+            tabsScroll.addEventListener('pointermove', function(event) {
+                if (!isPointerDown || !canScroll()) {
+                    return;
+                }
+
+                const deltaX = event.clientX - startX;
+                if (!hasDragged && Math.abs(deltaX) < 5) {
+                    return;
+                }
+
+                hasDragged = true;
+                tabsScroll.scrollLeft = startScrollLeft - deltaX;
+                event.preventDefault();
+            });
+
+            const stopDragging = () => {
+                isPointerDown = false;
+                window.setTimeout(() => {
+                    hasDragged = false;
+                }, 0);
+            };
+
+            tabsScroll.addEventListener('pointerup', stopDragging);
+            tabsScroll.addEventListener('pointercancel', stopDragging);
+            tabsScroll.addEventListener('pointerleave', stopDragging);
+
+            tabsScroll.addEventListener('click', function(event) {
+                if (!hasDragged) {
+                    return;
+                }
+
+                event.preventDefault();
+                event.stopPropagation();
+            }, true);
+        }
 
         /**
          * Initialize tab switching functionality
@@ -711,6 +827,7 @@
                 btn.addEventListener('click', function() {
                     tabButtons.forEach(b => b.classList.remove('evt-active'));
                     this.classList.add('evt-active');
+                    centerEventTabInRail(this);
                     const tabText = this.textContent.trim();
 
                     // Filter events based on selected tab
@@ -1343,6 +1460,7 @@
             setupModalFormValidation();
 
             // Initialize calendar functionality
+            initializeTabsHorizontalScroll();
             initializeTabSwitching();
             initializeViewToggle();
             initializeCalendarNavigation();
@@ -2028,4 +2146,3 @@
 </body>
 
 </html>
-

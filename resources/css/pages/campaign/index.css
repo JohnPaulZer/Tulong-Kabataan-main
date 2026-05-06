@@ -674,7 +674,8 @@ body.campaign-page .campaigns-section *, body.campaign-page .campaigns-section *
     }body.campaign-page .tk-section-header{
         flex-direction: column;
         align-items: flex-start;
-        padding-top: 100px;
+        margin-top: 20px;
+        margin-bottom: 28px;
     }body.campaign-page .featured-img{
         aspect-ratio: 16 / 9;
     }body.campaign-page .btn.create-campaign{

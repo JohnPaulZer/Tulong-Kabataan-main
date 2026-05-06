@@ -100,33 +100,42 @@ body.event-page h1, body.event-page h2, body.event-page h3, body.event-page h4, 
     top: 88px;
     z-index: 40;
     transition: top 0.3s ease;
+    border-top: 1px solid #eef2f7;
 }body.event-page .evt-tabs-navigation .evt-container{
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
+}body.event-page .evt-tabs-scroll{
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+}body.event-page .evt-tabs-scroll::-webkit-scrollbar{
+    display: none;
 }body.event-page .evt-tab-buttons{
     display: flex;
+    width: max-content;
+    align-items: center;
     gap: 10px;
-    overflow-x: auto;
     white-space: nowrap;
-    padding-bottom: 5px;
-    scrollbar-width: none;
-}body.event-page .evt-tab-buttons::-webkit-scrollbar{
-    display: none;
+    padding: 0;
 }body.event-page .evt-tab-button{
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
     font-weight: 500;
     color: #4b5563;
     background-color: transparent;
-    border: none;
+    border: 1px solid transparent;
     cursor: pointer;
-    border-radius: 8px;
+    border-radius: 12px;
     transition: all 0.3s;
     flex-shrink: 0;
+    scroll-snap-align: start;
 }body.event-page .evt-tab-button.evt-active{
     font-weight: bold;
     color: #4f46e5;
     background-color: #f3f4f6;
+    border-color: #e5e7eb;
 }body.event-page .evt-view-toggle-calendar{
     padding: 1.5rem 0;
     background-color: white;
@@ -703,7 +712,9 @@ body.event-page h1, body.event-page h2, body.event-page h3, body.event-page h4, 
     }
 
     
-}@media (max-width: 768px){body.event-page .evts-container{
+}@media (max-width: 768px){body.event-page .evt-tabs-navigation{
+        top: 57px;
+    }body.event-page .evts-container{
         grid-template-columns: 1fr;
     }body.event-page .mobile-dropdown{
         top: 70px;
@@ -727,16 +738,47 @@ body.event-page h1, body.event-page h2, body.event-page h3, body.event-page h4, 
     }body.event-page .evt-hero-content{
         padding: 0 1rem;
     }body.event-page .evt-tabs-navigation .evt-container{
-        padding: 10px 0;
-        
+        padding: 6px 0;
+    }body.event-page .evt-tabs-scroll{
+        margin: 0 calc(-1 * var(--tk-mobile-gutter, 16px));
+        padding: 0 20px;
+        scroll-padding-inline: 20px;
+        touch-action: pan-x pinch-zoom;
     }body.event-page .evt-tab-buttons{
-        padding: 0 16px 8px 16px;
-        
-        gap: 15px;
-        
-        -webkit-overflow-scrolling: touch;
+        gap: 12px;
+    }body.event-page .evt-tab-button{
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        min-width: 136px;
+        justify-content: center;
+        display: inline-flex;
+        align-items: center;
+        border-radius: 14px;
+        background: #fff;
+        border-color: #e5e7eb;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }body.event-page .evt-tab-button.evt-active{
+        background-color: #f5f3ff;
+        border-color: #ddd6fe;
+    }body.event-page .evt-view-toggle-calendar-top{
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        gap: 10px;
+        padding-bottom: 0;
+    }body.event-page .evt-view-toggle{
+        order: 1;
+    }body.event-page .evt-calendar-info{
+        order: 2;
+        width: 100%;
+    }body.event-page .evt-calendar-info .evt-text-sm{
+        display: block;
+        font-size: 0.9rem;
+        line-height: 1.4;
+        text-align: left;
     }body.event-page .evt-mini-calendar{
-        overflow: visible !important;
+        overflow-x: auto !important;
+        overflow-y: hidden;
         padding: 0;
         display: block;
     }body.event-page .evt-calendar-month-nav{
@@ -744,14 +786,16 @@ body.event-page h1, body.event-page h2, body.event-page h3, body.event-page h4, 
         padding: 10px;
         background: #fff;
         border-bottom: 1px solid #f3f4f6;
+    }body.event-page .evt-calendar-navigation{
+        width: max-content;
+        min-width: 760px;
+        margin: 0 auto;
     }body.event-page .evt-calendar-days{
         display: grid;
         grid-template-columns: repeat(7, minmax(100px, 1fr));
         width: 100%;
-        overflow-x: auto !important;
         padding: 10px 16px;
-        -webkit-overflow-scrolling: touch;
-        min-width: 0 !important;
+        min-width: 760px;
     }body.event-page .evt-details-modal{
         padding: 20px;
         align-items: center;
@@ -802,4 +846,3 @@ body.event-page h1, body.event-page h2, body.event-page h3, body.event-page h4, 
         grid-template-columns: 1fr;
     }
 }
-
