@@ -50,11 +50,23 @@ class AdministratorController
             return redirect()->route('admin.home');
         }
 
+        // Prevent direct access to admin login without gate
+        $expiresAt = session('admin_gate_expires_at');
+        if (!$expiresAt || $expiresAt < time()) {
+            return redirect()->route('landpage');
+        }
+
         return view('administrator.admin-login');
     }
 
     public function login(Request $request)
     {
+        // Block direct POST to login without gate
+        $expiresAt = $request->session()->get('admin_gate_expires_at');
+        if (!$expiresAt || $expiresAt < time()) {
+            return redirect()->route('landpage');
+        }
+
         $request->validate([
             'username' => 'required',
             'password' => 'required',
@@ -85,6 +97,17 @@ class AdministratorController
         return back()->withErrors([
             'username' => 'Invalid credentials.',
         ])->onlyInput('username');
+    }
+
+    /**
+     * Keyboard gate: allow opening admin for a short time window.
+     */
+    public function adminGate(Request $request)
+    {
+        // Allow access to admin login for the next 15 seconds
+        $request->session()->put('admin_gate_expires_at', time() + 15);
+
+        return response()->json(['ok' => true]);
     }
 
     public function dashboard(Request $request)
