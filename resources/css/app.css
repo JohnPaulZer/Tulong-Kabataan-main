@@ -157,6 +157,29 @@ body.profile-inkind-page .prof-main {
     background: transparent;
 }
 
+body.login-page,
+body.register-page {
+    position: relative;
+    isolation: isolate;
+    min-height: 100vh;
+    min-height: 100dvh;
+    background-color: #9bd5ed;
+    background-image: none !important;
+}
+
+body.login-page::before,
+body.register-page::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-color: #9bd5ed;
+    background-image: var(--auth-bg, url('/img/backlogin.png'));
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
 .tk-react-icon {
     display: inline-flex;
     width: 1em;
