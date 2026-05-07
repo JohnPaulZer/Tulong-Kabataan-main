@@ -492,8 +492,9 @@
         padding-right: var(--tk-mobile-gutter);
     }
 
-    body.inkind-modal-page .form-container {
-        width: min(calc(100% - (2 * var(--tk-mobile-gutter))), 680px);
+    body.inkind-modal-page .tk-container {
+        padding-left: var(--tk-mobile-gutter);
+        padding-right: var(--tk-mobile-gutter);
     }
 
     body.profile-page .prof-main,

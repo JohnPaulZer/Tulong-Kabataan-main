@@ -36,10 +36,13 @@ body.inkind-page h1, body.inkind-page h2, body.inkind-page h3, body.inkind-page 
     width: 100%;
 }body.inkind-page .hero-section{
     position: relative;
-    min-height: 600px;
+    min-height: clamp(420px, 56vw, 580px);
     display: flex;
-    align-items: stretch;
+    align-items: center;
     justify-content: center;
+    overflow: hidden;
+    padding-top: clamp(4.5rem, 8vw, 7rem);
+    padding-bottom: clamp(4rem, 7vw, 6rem);
 }body.inkind-page .image-container{
     position: absolute;
     inset: 0;
@@ -47,67 +50,121 @@ body.inkind-page h1, body.inkind-page h2, body.inkind-page h3, body.inkind-page 
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: top;
+    object-position: center;
 }body.inkind-page .overlay{
     position: absolute;
     inset: 0;
-    background-color: rgba(93, 80, 156, 0.7);
+    background: linear-gradient(180deg, rgba(37, 31, 89, 0.62), rgba(74, 63, 153, 0.78));
 }body.inkind-page .content{
-    position: absolute;
-    inset: 0;
+    position: relative;
     z-index: 20;
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
 }body.inkind-page .text-container{
-    max-width: 40rem;
+    width: min(100%, 900px);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 340px;
     text-align: center;
-    padding-left: var(--page-gutter);
-    padding-right: var(--page-gutter);
 }body.inkind-page .title{
-    font-size: clamp(28px, 6vw, 55px);
+    max-width: 18ch;
+    margin: 0 0 1rem;
+    font-size: clamp(2.4rem, 4.6vw, 4rem);
+    line-height: 1.05;
     color: #fff;
-    font-weight: bold;
+    font-weight: 800;
+    text-wrap: balance;
 }body.inkind-page .description{
-    font-size: clamp(15px, 2.5vw, 20px);
-    color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 2rem;
+    max-width: 66ch;
+    margin: 0 auto 2.25rem;
+    font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.94);
 }body.inkind-page .button-group{
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
     justify-content: center;
+    width: 100%;
+}body.inkind-page .button-group form{
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    width: min(100%, 460px);
+    margin: 0 auto;
 }body.inkind-page .donate-btn, body.inkind-page .learn-btn{
-    padding: .75rem 1.5rem;
-    font-size: 15px;
-    font-weight: 1000;
-    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1 1 0;
+    min-width: 210px;
+    min-height: 54px;
+    padding: 0 1.9rem;
+    font-size: 1rem;
+    font-weight: 800;
+    border-radius: 14px;
     cursor: pointer;
-    transition: background-color .3s;
+    transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease, border-color .2s ease;
+    box-sizing: border-box;
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
 }body.inkind-page .donate-btn{
     background: #fff;
     color: #4f46e5;
     border: none;
-    margin-bottom: 10px;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.16);
 }body.inkind-page .donate-btn:hover{
     background: #f3f4f6;
+    transform: translateY(-2px);
 }body.inkind-page .learn-btn{
     border: 2px solid #fff;
     color: #fff;
-    background: transparent;
+    background: rgba(255, 255, 255, .06);
 }body.inkind-page .learn-btn:hover{
-    background: rgba(255, 255, 255, .1);
+    background: rgba(255, 255, 255, .14);
+    transform: translateY(-2px);
 }@media (max-width: 700px){body.inkind-page .hero-section{
-        min-height: 520px;
+        min-height: 440px;
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+    }body.inkind-page .text-container{
+        width: min(100%, 390px);
+    }body.inkind-page .title{
+        max-width: 15.5ch;
+        margin-bottom: .85rem;
+        font-size: clamp(1.9rem, 7.6vw, 2.35rem);
+        line-height: 1.08;
+    }body.inkind-page .description{
+        max-width: 36ch;
+        margin-bottom: 1.85rem;
+        font-size: .98rem;
+        line-height: 1.55;
+    }body.inkind-page .button-group,
+    body.inkind-page .button-group form{
+        width: 100%;
+    }body.inkind-page .button-group form{
+        flex-direction: column;
+        width: min(100%, 340px);
+        gap: .85rem;
+    }body.inkind-page .donate-btn,
+    body.inkind-page .learn-btn{
+        width: 100%;
+        min-width: 0;
+        min-height: 48px;
+        padding: 0 1.25rem;
+        border-radius: 12px;
+        font-size: .92rem;
     }
 }body.inkind-page .impact-statistics{
-    padding: 3rem 0;
-    background: #fff;
+    padding: clamp(2.5rem, 6vw, 4rem) 0;
+    background: #f8fafc;
 }body.inkind-page .container{
     width: 100%;
     padding: 0 1rem;
@@ -116,23 +173,26 @@ body.inkind-page h1, body.inkind-page h2, body.inkind-page h3, body.inkind-page 
 }body.inkind-page .grid{
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    gap: 2rem;
+    gap: clamp(1rem, 2.5vw, 1.5rem);
+    align-items: stretch;
 }body.inkind-page .stat-card{
     display: flex;
     align-items: center;
-    background: #f9fafb;
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, .1), 0 10px 10px -5px rgba(0, 0, 0, .04);
+    gap: 1rem;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: clamp(1.1rem, 2vw, 1.5rem);
+    box-shadow: 0 18px 45px rgba(15, 23, 42, .08);
 }body.inkind-page .icon-container{
-    width: 4rem;
-    height: 4rem;
+    width: clamp(3.1rem, 5vw, 4rem);
+    height: clamp(3.1rem, 5vw, 4rem);
     display: flex;
     justify-content: center;
     align-items: center;
     background: #e0f2fe;
     border-radius: 50%;
-    margin-right: 1rem;
+    flex: 0 0 auto;
 }body.inkind-page .icon{
     font-size: 2rem;
     color: #0369a1;
@@ -140,53 +200,64 @@ body.inkind-page h1, body.inkind-page h2, body.inkind-page h3, body.inkind-page 
     flex: 1;
 }body.inkind-page .stat-number{
     font-size: clamp(22px, 4vw, 32px);
-    font-weight: bold;
+    font-weight: 800;
+    line-height: 1;
     color: #1f2937;
 }body.inkind-page .stat-description{
     color: #4b5563;
     font-size: clamp(13px, 2.4vw, 16px);
-    margin-top: .5rem;
+    font-weight: 500;
+    margin-top: .35rem;
 }@media (max-width: 1000px){body.inkind-page .grid{
         grid-template-columns: 1fr 1fr;
         gap: 1.25rem;
     }
 }@media (max-width: 640px){body.inkind-page .grid{
         grid-template-columns: 1fr;
+        gap: 1rem;
+    }body.inkind-page .impact-statistics{
+        padding: 2rem 0;
+    }body.inkind-page .stat-card{
+        border-radius: 16px;
+        padding: 1.1rem;
     }body.inkind-page .container{
         padding-left: 0;
         padding-right: 0;
     }
 }body.inkind-page .donation-categories-v2{
-    padding: 3rem 0;
+    padding: clamp(3rem, 7vw, 5rem) 0;
     background: #fff;
 }body.inkind-page .section-header{
     text-align: center;
-    margin-bottom: 2rem;
+    max-width: 760px;
+    margin: 0 auto clamp(1.75rem, 4vw, 2.75rem);
 }body.inkind-page .section-title{
     font-size: clamp(22px, 4.6vw, 32px);
-    font-weight: bold;
+    font-weight: 800;
     margin-bottom: .7rem;
     color: #1a1a1a;
 }body.inkind-page .section-description{
     font-size: clamp(14px, 2.5vw, 17px);
     color: #444;
-    margin-bottom: 2.5rem;
+    max-width: 58ch;
+    margin: 0 auto;
+    line-height: 1.7;
 }body.inkind-page .category-grid-v2{
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
+    gap: clamp(1rem, 2.5vw, 1.5rem);
 }body.inkind-page .category-card-v2{
     background: #fff;
     border-radius: 18px;
-    box-shadow: 0 2px 12px 0 rgba(44, 37, 57, .07);
-    padding: 1.5rem;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, .07);
+    padding: clamp(1.25rem, 2vw, 1.6rem);
     display: flex;
     flex-direction: column;
     min-height: 290px;
     transition: box-shadow .2s, transform .2s;
-    border: 1px solid #f0f0f0;
+    border: 1px solid #e5e7eb;
 }body.inkind-page .category-card-v2:hover{
-    box-shadow: 0 8px 32px 0 rgba(44, 37, 57, .13);
+    box-shadow: 0 24px 55px rgba(15, 23, 42, .11);
     transform: translateY(-2px);
 }body.inkind-page .icon-circle{
     width: 44px;
@@ -277,33 +348,33 @@ body.inkind-page h1, body.inkind-page h2, body.inkind-page h3, body.inkind-page 
     }
 }@media (max-width:700px){body.inkind-page .category-grid-v2{
         grid-template-columns: 1fr;
+        gap: 1rem;
     }body.inkind-page .category-card-v2{
         min-height: 0;
+        padding: 1.2rem;
     }
 }body.inkind-page .centered-header{
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 180px;
+    min-height: 0;
     text-align: center;
 }body.inkind-page .centered-header .section-title{
     margin-bottom: 1.1rem;
 }body.inkind-page .centered-header .section-description{
     margin-bottom: 0;
 }@media (max-width: 700px){body.inkind-page .donation-categories-v2{
-        padding-top: 1.2rem;
-        padding-bottom: 1.2rem;
+        padding-top: 2.5rem;
+        padding-bottom: 2.5rem;
     }body.inkind-page .centered-header{
-        min-height: 80px;
-        margin-bottom: 0.7rem;
+        margin-bottom: 1.5rem;
     }body.inkind-page .centered-header .section-title{
-        font-size: 1.3rem;
-        margin-bottom: 0.5rem;
+        font-size: 1.55rem;
+        margin-bottom: 0.65rem;
     }body.inkind-page .centered-header .section-description{
-        font-size: 0.98rem;
-        margin-bottom: 0.2rem;
-        margin-top: 0.2rem;
+        font-size: 0.95rem;
+        line-height: 1.6;
     }
 }
 
