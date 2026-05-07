@@ -8,7 +8,7 @@
     <title>Events | Tulong Kabataan</title>
     <link rel="icon" href="img/log2.png" type="image/png" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" />
-    @vite('resources/css/app.css')
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body class="event-page">

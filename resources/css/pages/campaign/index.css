@@ -735,3 +735,293 @@ body.campaign-page .campaigns-section *, body.campaign-page .campaigns-section *
         justify-content: center;
     }
 }
+
+/* ── Visual Enhancement Layer ───────────────────────────── */
+@keyframes campaign-float{
+    0%,100%{ transform: translateY(0) rotate(0deg); }
+    50%{ transform: translateY(-16px) rotate(5deg); }
+}
+@keyframes campaign-fade-up{
+    from{ opacity: 0; transform: translateY(22px); }
+    to{ opacity: 1; transform: translateY(0); }
+}
+body.campaign-page{
+    background:
+        radial-gradient(circle at 8% 10%, rgba(79, 70, 229, 0.08), transparent 30%),
+        radial-gradient(circle at 92% 26%, rgba(99, 102, 241, 0.07), transparent 32%),
+        #f8fafc;
+}
+body.campaign-page .campaigns-section{
+    position: relative;
+    overflow: hidden;
+    padding: 0 0 56px;
+    background:
+        linear-gradient(180deg, rgba(238, 242, 255, 0.72), rgba(248, 250, 252, 1) 420px),
+        radial-gradient(circle at 14% 14%, rgba(79, 70, 229, 0.16), transparent 28%),
+        radial-gradient(circle at 86% 8%, rgba(129, 140, 248, 0.14), transparent 30%);
+}
+body.campaign-page .campaigns-section::before{
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url('/img/doodle.svg') top 42px right -120px / 620px auto no-repeat;
+    opacity: 0.06;
+    pointer-events: none;
+}
+body.campaign-page .campaigns-section::after{
+    content: "";
+    position: absolute;
+    width: 210px;
+    height: 210px;
+    left: -72px;
+    top: 88px;
+    border-radius: 999px;
+    background: radial-gradient(circle, rgba(79, 70, 229, 0.2), transparent 70%);
+    animation: campaign-float 9s ease-in-out infinite;
+    pointer-events: none;
+}
+body.campaign-page .tk-section-header{
+    position: relative;
+    margin-top: 32px;
+    padding: clamp(28px, 4vw, 44px);
+    border: 1px solid rgba(199, 210, 254, 0.65);
+    border-radius: 24px;
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(238, 242, 255, 0.78)),
+        url('/img/bg2.jpg') center / cover no-repeat;
+    box-shadow: 0 24px 50px rgba(79, 70, 229, 0.13);
+    backdrop-filter: blur(16px);
+    overflow: hidden;
+    animation: campaign-fade-up 0.55s ease both;
+}
+body.campaign-page .tk-section-header::before{
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.86), rgba(238,242,255,0.74));
+    z-index: 0;
+}
+body.campaign-page .tk-section-header::after{
+    content: "";
+    position: absolute;
+    right: -44px;
+    bottom: -54px;
+    width: 190px;
+    height: 190px;
+    border-radius: 999px;
+    background: radial-gradient(circle, rgba(79, 70, 229, 0.22), transparent 68%);
+    animation: campaign-float 8s ease-in-out infinite 0.4s;
+    z-index: 0;
+}
+body.campaign-page .tk-section-header > *{
+    position: relative;
+    z-index: 1;
+}
+body.campaign-page .section-title{
+    font-size: clamp(32px, 5vw, 48px);
+    color: #0f172a;
+}
+body.campaign-page .section-desc{
+    max-width: 58ch;
+    color: #475569;
+    font-size: clamp(16px, 2vw, 18px);
+}
+body.campaign-page .btn.create-campaign{
+    background: linear-gradient(135deg, #4f46e5, #818cf8);
+    border-radius: 14px;
+    box-shadow: 0 12px 24px rgba(79, 70, 229, 0.24);
+}
+body.campaign-page .btn.create-campaign:hover,
+body.campaign-page .btn.create-campaign:focus{
+    background: linear-gradient(135deg, #4338ca, #4f46e5);
+}
+body.campaign-page .tk-featured-program{
+    position: relative;
+    z-index: 1;
+}
+body.campaign-page .tk-featured-card{
+    position: relative;
+    border: 1px solid rgba(226, 232, 240, 0.78);
+    background: linear-gradient(135deg, #ffffff, #f8faff);
+    box-shadow: 0 28px 60px rgba(15, 23, 42, 0.1);
+    isolation: isolate;
+}
+body.campaign-page .tk-featured-card::before{
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background:
+        linear-gradient(90deg, rgba(79, 70, 229, 0.16), transparent 40%),
+        radial-gradient(circle at 92% 72%, rgba(129, 140, 248, 0.18), transparent 30%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: 0;
+}
+body.campaign-page .tk-featured-card > *{
+    position: relative;
+    z-index: 1;
+}
+body.campaign-page .tk-featured-card:hover{
+    transform: translateY(-4px);
+}
+body.campaign-page .tk-featured-card:hover::before{
+    opacity: 1;
+}
+body.campaign-page .featured-img{
+    height: clamp(260px, 33vw, 430px);
+    object-fit: cover;
+    filter: saturate(1.08) contrast(1.03);
+}
+body.campaign-page .featured-badge{
+    background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+    box-shadow: 0 8px 18px rgba(79, 70, 229, 0.1);
+}
+body.campaign-page .tk-campaigns-main{
+    position: relative;
+    z-index: 1;
+    border-color: rgba(226, 232, 240, 0.82);
+    box-shadow: 0 24px 50px rgba(15, 23, 42, 0.08);
+}
+body.campaign-page .tk-campaigns-grid{
+    background:
+        radial-gradient(circle at 10% 0%, rgba(79, 70, 229, 0.04), transparent 30%),
+        #fcfcff;
+}
+body.campaign-page .tk-campaign-card{
+    position: relative;
+    border-color: rgba(226, 232, 240, 0.9);
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.06);
+    animation: campaign-fade-up 0.55s ease both;
+}
+body.campaign-page .tk-campaign-card::after{
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.08), transparent 42%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+body.campaign-page .tk-campaign-card:hover::after{
+    opacity: 1;
+}
+body.campaign-page .campaign-img-wrap::after{
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 45%, rgba(15, 23, 42, 0.36));
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+body.campaign-page .tk-campaign-card:hover .campaign-img-wrap::after{
+    opacity: 1;
+}
+@media (max-width: 767px){
+    body.campaign-page .campaigns-section{
+        padding-bottom: 32px;
+    }
+    body.campaign-page .tk-section-header{
+        align-items: flex-start;
+        border-radius: 18px;
+        padding: 24px 18px;
+    }
+    body.campaign-page .campaigns-section::after{
+        display: none;
+    }
+}
+
+body.campaign-page {
+    background: #f8fafc;
+}
+
+body.campaign-page .campaigns-section {
+    background: #f8fafc;
+}
+
+body.campaign-page .campaigns-section::before,
+body.campaign-page .campaigns-section::after,
+body.campaign-page .tk-section-header::before,
+body.campaign-page .tk-section-header::after,
+body.campaign-page .tk-featured-card::before,
+body.campaign-page .tk-campaign-card::after,
+body.campaign-page .campaign-img-wrap::after {
+    display: none;
+}
+
+body.campaign-page .tk-section-header {
+    border-color: #e5e7eb;
+    background: #fff;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+    backdrop-filter: none;
+    animation: none;
+}
+
+body.campaign-page .section-title {
+    color: #111827;
+}
+
+body.campaign-page .section-desc {
+    color: #4b5563;
+}
+
+body.campaign-page .btn.create-campaign {
+    background: #4f46e5;
+    border-radius: 12px;
+    box-shadow: none;
+}
+
+body.campaign-page .btn.create-campaign:hover,
+body.campaign-page .btn.create-campaign:focus {
+    background: #4338ca;
+}
+
+body.campaign-page .tk-featured-card {
+    border-color: #e5e7eb;
+    background: #fff;
+    box-shadow: 0 14px 34px rgba(15, 23, 42, 0.07);
+}
+
+body.campaign-page .tk-featured-card:hover {
+    transform: translateY(-2px);
+}
+
+body.campaign-page .featured-img {
+    filter: none;
+}
+
+body.campaign-page .featured-badge {
+    background: #eef2ff;
+    box-shadow: none;
+}
+
+body.campaign-page .tk-campaigns-main {
+    border-color: #e5e7eb;
+    box-shadow: 0 14px 34px rgba(15, 23, 42, 0.06);
+}
+
+body.campaign-page .tk-campaigns-grid {
+    background: #fff;
+}
+
+body.campaign-page .tk-campaign-card {
+    border-color: #e5e7eb;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+    animation: none;
+}
+
+body.campaign-page .tk-campaign-card:hover {
+    transform: translateY(-2px);
+    border-color: #d1d5db;
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
+}
+
+body.campaign-page .tk-campaign-card:hover .campaign-img {
+    transform: scale(1.03);
+}
+
+body.campaign-page .progress-bar {
+    background: #4f46e5;
+}

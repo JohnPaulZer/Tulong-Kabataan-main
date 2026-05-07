@@ -7,6 +7,7 @@
     <title>Tulong Kabataan | {{ isset($dnc) ? 'Edit DNC Record' : 'Add DNC Record' }}</title>
     <link rel="icon" href="{{ asset('img/log2.png') }}" type="image/png" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" />
+    @vite('resources/js/app.js')
     <style>
         :root {
             --primary: #3b82f6;

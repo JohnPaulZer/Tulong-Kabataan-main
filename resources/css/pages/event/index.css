@@ -846,3 +846,330 @@ body.event-page h1, body.event-page h2, body.event-page h3, body.event-page h4, 
         grid-template-columns: 1fr;
     }
 }
+
+/* ── Visual Enhancement Layer ───────────────────────────── */
+@keyframes event-float{
+    0%,100%{ transform: translateY(0) rotate(0deg); }
+    50%{ transform: translateY(-18px) rotate(6deg); }
+}
+@keyframes event-float-alt{
+    0%,100%{ transform: translateY(0) rotate(0deg); }
+    50%{ transform: translateY(14px) rotate(-5deg); }
+}
+@keyframes event-fade-up{
+    from{ opacity: 0; transform: translateY(24px); }
+    to{ opacity: 1; transform: translateY(0); }
+}
+body.event-page{
+    background:
+        radial-gradient(circle at 10% 14%, rgba(79, 70, 229, 0.08), transparent 30%),
+        radial-gradient(circle at 90% 32%, rgba(99, 102, 241, 0.07), transparent 32%),
+        #f8fafc;
+}
+body.event-page .evt-hero-section{
+    min-height: clamp(360px, 44vw, 520px);
+    margin-top: 0;
+    isolation: isolate;
+}
+body.event-page .evt-hero-section::before{
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    background: url('/img/doodle.svg') center / 640px auto no-repeat;
+    opacity: 0.065;
+    pointer-events: none;
+}
+body.event-page .evt-hero-section::after{
+    content: "";
+    position: absolute;
+    right: -70px;
+    top: 52px;
+    z-index: 3;
+    width: 230px;
+    height: 230px;
+    border-radius: 999px;
+    background: radial-gradient(circle, rgba(255,255,255,0.32), transparent 70%);
+    animation: event-float 8s ease-in-out infinite;
+    pointer-events: none;
+}
+body.event-page .evt-hero-image img{
+    transform: scale(1.04);
+    filter: saturate(1.08) contrast(1.05);
+}
+body.event-page .evt-overlay{
+    background:
+        linear-gradient(135deg, rgba(15, 23, 42, 0.76), rgba(79, 70, 229, 0.68)),
+        radial-gradient(circle at 20% 28%, rgba(129, 140, 248, 0.42), transparent 34%);
+}
+body.event-page .evt-text-container{
+    position: relative;
+    animation: event-fade-up 0.65s ease both;
+}
+body.event-page .evt-text-container::before{
+    content: "Volunteer Opportunities";
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 18px;
+    padding: 8px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.26);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 700;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+    backdrop-filter: blur(14px);
+}
+body.event-page .evt-text-container h1{
+    font-size: clamp(2.15rem, 5vw, 3.75rem);
+    line-height: 1.08;
+    margin-bottom: 1rem;
+    text-wrap: balance;
+}
+body.event-page .evt-text-container p{
+    max-width: 58ch;
+    margin: 0 auto;
+    color: rgba(255, 255, 255, 0.94);
+}
+body.event-page .evt-tabs-navigation{
+    background: rgba(255, 255, 255, 0.9);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.84);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.07);
+    backdrop-filter: blur(16px);
+}
+body.event-page .evt-tab-button{
+    background: #fff;
+    border-color: #e2e8f0;
+    font-weight: 600;
+}
+body.event-page .evt-tab-button:hover{
+    color: #4f46e5;
+    border-color: #c7d2fe;
+    background: #f8faff;
+    transform: translateY(-1px);
+}
+body.event-page .evt-tab-button.evt-active{
+    background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+    border-color: #c7d2fe;
+    box-shadow: 0 8px 18px rgba(79, 70, 229, 0.12);
+}
+body.event-page .evt-view-toggle-calendar{
+    background:
+        radial-gradient(circle at 10% 0%, rgba(79, 70, 229, 0.05), transparent 34%),
+        #ffffff;
+}
+body.event-page .evt-mini-calendar{
+    border-color: rgba(226, 232, 240, 0.9);
+    background: linear-gradient(135deg, #ffffff, #f8faff);
+    box-shadow: 0 18px 38px rgba(15, 23, 42, 0.07);
+}
+body.event-page .evt-calendar-nav-button,
+body.event-page .evt-view-toggle-button{
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+body.event-page .evt-calendar-nav-button:hover,
+body.event-page .evt-view-toggle-button:hover{
+    transform: translateY(-1px);
+    border-color: #c7d2fe;
+    box-shadow: 0 6px 14px rgba(79, 70, 229, 0.12);
+}
+body.event-page .evt-view-toggle-button.evt-active{
+    background: linear-gradient(135deg, #4f46e5, #818cf8);
+    border-color: transparent;
+    box-shadow: 0 8px 18px rgba(79, 70, 229, 0.24);
+}
+body.event-page .evt-events-grid{
+    position: relative;
+    background:
+        radial-gradient(circle at 8% 6%, rgba(79, 70, 229, 0.06), transparent 30%),
+        radial-gradient(circle at 92% 100%, rgba(99, 102, 241, 0.05), transparent 34%),
+        #f8fafc;
+}
+body.event-page .evt-events-grid::before{
+    content: "";
+    position: absolute;
+    left: -52px;
+    top: 28px;
+    width: 160px;
+    height: 160px;
+    border-radius: 999px;
+    background: radial-gradient(circle, rgba(79, 70, 229, 0.1), transparent 70%);
+    animation: event-float-alt 9s ease-in-out infinite;
+    pointer-events: none;
+}
+body.event-page .evt-event-card{
+    position: relative;
+    border: 1px solid rgba(226, 232, 240, 0.88);
+    border-radius: 18px;
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.07);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    animation: event-fade-up 0.55s ease both;
+}
+body.event-page .evt-event-card:hover{
+    transform: translateY(-6px);
+    border-color: #c7d2fe;
+    box-shadow: 0 24px 48px rgba(15, 23, 42, 0.12);
+}
+body.event-page .evt-card-image{
+    position: relative;
+    overflow: hidden;
+}
+body.event-page .evt-card-image::after{
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 42%, rgba(15, 23, 42, 0.36));
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+body.event-page .evt-event-card:hover .evt-card-image::after{
+    opacity: 1;
+}
+body.event-page .evt-card-image img{
+    transition: transform 0.5s ease;
+}
+body.event-page .evt-event-card:hover .evt-card-image img{
+    transform: scale(1.06);
+}
+body.event-page .evt-card-content{
+    background: linear-gradient(135deg, #ffffff, #f8faff);
+}
+body.event-page .evt-card-details{
+    padding: 12px;
+    border: 1px solid #eef2ff;
+    border-radius: 12px;
+    background: #f8faff;
+}
+body.event-page #btn-register{
+    background: linear-gradient(135deg, #4f46e5, #818cf8);
+    box-shadow: 0 8px 18px rgba(79, 70, 229, 0.24);
+}
+body.event-page #btn-register:hover{
+    background: linear-gradient(135deg, #4338ca, #4f46e5);
+    transform: translateY(-1px);
+}
+@media (max-width: 768px){
+    body.event-page .evt-hero-section{
+        padding-top: 100px;
+        padding-bottom: 70px;
+    }
+    body.event-page .evt-hero-section::after{
+        display: none;
+    }
+    body.event-page .evt-text-container::before{
+        font-size: 12px;
+        padding: 6px 14px;
+    }
+}
+
+body.event-page {
+    background: #f8fafc;
+}
+
+body.event-page .evt-hero-section::before,
+body.event-page .evt-hero-section::after,
+body.event-page .evt-events-grid::before,
+body.event-page .evt-card-image::after {
+    display: none;
+}
+
+body.event-page .evt-hero-section {
+    min-height: clamp(340px, 40vw, 480px);
+}
+
+body.event-page .evt-hero-image img {
+    transform: none;
+    filter: none;
+}
+
+body.event-page .evt-overlay {
+    background: rgba(15, 23, 42, 0.68);
+}
+
+body.event-page .evt-text-container {
+    animation: none;
+}
+
+body.event-page .evt-text-container::before {
+    border-color: rgba(255, 255, 255, 0.28);
+    background: rgba(255, 255, 255, 0.12);
+    font-weight: 600;
+    box-shadow: none;
+    backdrop-filter: none;
+}
+
+body.event-page .evt-tabs-navigation {
+    background: #fff;
+    border-bottom-color: #e5e7eb;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+    backdrop-filter: none;
+}
+
+body.event-page .evt-tab-button:hover {
+    transform: none;
+}
+
+body.event-page .evt-tab-button.evt-active {
+    background: #eef2ff;
+    box-shadow: none;
+}
+
+body.event-page .evt-view-toggle-calendar,
+body.event-page .evt-events-grid {
+    background: #f8fafc;
+}
+
+body.event-page .evt-mini-calendar {
+    border-color: #e5e7eb;
+    background: #fff;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+}
+
+body.event-page .evt-calendar-nav-button:hover,
+body.event-page .evt-view-toggle-button:hover {
+    transform: none;
+    border-color: #d1d5db;
+    box-shadow: none;
+}
+
+body.event-page .evt-view-toggle-button.evt-active {
+    background: #4f46e5;
+    box-shadow: none;
+}
+
+body.event-page .evt-event-card {
+    border-color: #e5e7eb;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+    animation: none;
+}
+
+body.event-page .evt-event-card:hover {
+    transform: translateY(-2px);
+    border-color: #d1d5db;
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
+}
+
+body.event-page .evt-event-card:hover .evt-card-image img {
+    transform: scale(1.03);
+}
+
+body.event-page .evt-card-content {
+    background: #fff;
+}
+
+body.event-page .evt-card-details {
+    border-color: #e5e7eb;
+    background: #f9fafb;
+}
+
+body.event-page #btn-register {
+    background: #4f46e5;
+    box-shadow: none;
+}
+
+body.event-page #btn-register:hover {
+    background: #4338ca;
+    transform: none;
+}

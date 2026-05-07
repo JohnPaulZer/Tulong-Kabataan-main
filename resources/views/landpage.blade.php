@@ -7,22 +7,27 @@
     <title>Tulong Kabataan</title>
     <link rel="icon" href="{{ asset('img/log2.png') }}" type="image/png" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" />
-    @vite('resources/css/app.css')
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="m-0 overflow-x-hidden bg-gray-50 font-body text-slate-900 antialiased">
+<body class="land-page m-0 overflow-x-hidden bg-gray-50 font-body text-slate-900 antialiased">
     @include('administrator.partials.loading-screen')
     @include('partials.main-header')
 
     <main id="main-content" class="overflow-x-hidden">
-        <section class="relative isolate flex min-h-[calc(100svh-60px)] items-start overflow-hidden md:min-h-[700px] md:items-center" aria-labelledby="homepage-hero-title">
-            <div class="absolute inset-0 -z-10 overflow-hidden">
+        <section class="tk-land-hero relative isolate flex min-h-[calc(100svh-60px)] items-start overflow-hidden md:min-h-[700px] md:items-center" aria-labelledby="homepage-hero-title">
+            <div class="tk-land-hero-bg absolute inset-0 -z-10 overflow-hidden">
                 <img class="h-full w-full object-cover" src="{{ asset('img/bg1.jpg') }}"
                     alt="Community volunteers preparing relief support" decoding="async" fetchpriority="high" />
-                <div class="absolute inset-0 bg-white/80"></div>
+                <div class="tk-land-overlay absolute inset-0 bg-white/80"></div>
+            </div>
+            <div class="tk-land-shapes" aria-hidden="true">
+                <span class="tk-land-shape"></span>
+                <span class="tk-land-shape"></span>
+                <span class="tk-land-shape"></span>
             </div>
 
-            <div class="relative z-10 mx-auto flex w-full max-w-[900px] flex-col items-center justify-center gap-8 px-4 pb-8 pt-16 text-center sm:px-6 sm:pt-20 md:px-8 md:py-24">
+            <div class="tk-land-hero-content relative z-10 mx-auto flex w-full max-w-[900px] flex-col items-center justify-center gap-8 px-4 pb-8 pt-16 text-center sm:px-6 sm:pt-20 md:px-8 md:py-24">
                 <div class="max-w-[700px]">
                     <h1 class="font-heading text-[clamp(30px,9vw,40px)] font-bold leading-[1.12] text-gray-900 md:mb-6"
                         id="homepage-hero-title">Make a Difference Today</h1>
@@ -57,7 +62,7 @@
                             {{ $homepageStats['active_volunteers'] }}</div>
                         <div class="text-sm text-gray-600 md:text-base">Active Volunteers</div>
                     </div>
-                    <div class="col-span-2 flex min-h-[124px] w-full rounded-lg bg-white/90 px-3 py-4 text-center shadow-[0_4px_24px_rgba(0,0,0,0.07)] transition hover:-translate-y-1 hover:shadow-[0_16px_32px_rgba(15,23,42,0.12)] md:col-span-1 md:min-h-40 md:px-4 md:py-6">
+                    <div class="tk-land-stat col-span-2 flex min-h-[124px] w-full rounded-lg bg-white/90 px-3 py-4 text-center shadow-[0_4px_24px_rgba(0,0,0,0.07)] transition hover:-translate-y-1 hover:shadow-[0_16px_32px_rgba(15,23,42,0.12)] md:col-span-1 md:min-h-40 md:px-4 md:py-6">
                         <div class="flex w-full flex-col items-center justify-center">
                             <div class="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-indigo-100 text-2xl text-indigo-600 md:mb-4"
                                 aria-hidden="true"><i class="ri-heart-line"></i></div>
@@ -70,7 +75,7 @@
             </div>
         </section>
 
-        <section class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8" aria-labelledby="impact-title">
+        <section class="tk-land-impact mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8" aria-labelledby="impact-title">
             <div class="mx-auto mb-10 max-w-3xl text-center md:mb-16">
                 <h2 class="font-heading text-[clamp(28px,8vw,40px)] font-bold leading-tight text-slate-800"
                     id="impact-title">Our Impact in Disaster Relief</h2>
@@ -81,7 +86,7 @@
             </div>
 
             <div class="flex flex-wrap items-start justify-center gap-10">
-                <div class="flex max-w-[600px] flex-1 basis-[600px] items-center justify-center md:pt-12">
+                <div class="tk-land-image-card flex max-w-[600px] flex-1 basis-[600px] items-center justify-center md:pt-12">
                     <img class="h-auto w-full rounded-lg object-cover shadow-[0_4px_24px_rgba(0,0,0,0.07)]"
                         src="{{ asset('img/diss.jpg') }}" alt="Volunteers distributing disaster relief supplies"
                         loading="lazy" decoding="async">
@@ -131,7 +136,7 @@
                     </div>
                 </div>
 
-                <div class="basis-full rounded-lg bg-indigo-800 p-5 text-center text-white md:p-8">
+                <div class="tk-land-cta basis-full rounded-lg bg-indigo-800 p-5 text-center text-white md:p-8">
                     <h3 class="font-heading text-2xl font-bold">Ready to Make a Difference?</h3>
                     <p class="mt-3 leading-relaxed">Join our emergency response network and help communities when they need it most.</p>
                     <div class="mx-auto mt-5 grid max-w-[420px] gap-2.5 sm:flex sm:max-w-none sm:justify-center sm:gap-4">
@@ -148,7 +153,7 @@
             </div>
         </section>
 
-        <section class="bg-white py-12 md:py-16" aria-labelledby="featured-campaigns-title">
+        <section class="tk-land-section-soft bg-white py-12 md:py-16" aria-labelledby="featured-campaigns-title">
             <div class="mx-auto mb-8 flex max-w-7xl flex-col items-start justify-between gap-3 px-4 sm:px-6 md:flex-row md:items-center lg:px-8">
                 <div>
                     <h2 class="font-heading text-3xl font-bold text-slate-800" id="featured-campaigns-title">Featured Campaigns</h2>
@@ -240,7 +245,7 @@
             </div>
         </section>
 
-        <section class="bg-white px-4 py-8 sm:px-6 md:py-16" aria-labelledby="trust-title">
+        <section class="tk-land-section-soft bg-white px-4 py-8 sm:px-6 md:py-16" aria-labelledby="trust-title">
             <div class="mx-auto mb-4 max-w-2xl text-center md:mb-10">
                 <h2 class="font-heading text-3xl font-bold text-slate-800" id="trust-title">Your Trust & Security Matter</h2>
                 <p class="mx-auto mt-3 max-w-xl text-[15px] leading-relaxed text-gray-600 md:text-base">
