@@ -6,12 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register | Tulong Kabataan</title>
     <link rel="icon" href="{{ asset('img/log2.png') }}" type="image/png">
+    <link rel="preload" as="image" href="{{ asset('img/backlogin.png') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body
-    class="relative m-0 flex h-screen w-screen items-center justify-center overflow-hidden bg-[url('/img/backlogin.png')] bg-cover bg-center bg-fixed font-body text-gray-800">
+    class="register-page relative m-0 flex h-screen w-screen items-center justify-center overflow-hidden bg-[url('/img/backlogin.png')] bg-cover bg-center bg-fixed font-body text-gray-800"
+    style="--auth-bg: url('{{ asset('img/backlogin.png') }}');">
     <div class="fixed inset-0 bg-white/40 backdrop-blur-[1px]" aria-hidden="true"></div>
 
     <div
