@@ -73,6 +73,7 @@
                     </div>
                 </div>
             </div>
+            @include('partials.wave-divider')
         </section>
 
         <section class="tk-land-impact mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8" aria-labelledby="impact-title">
@@ -321,4 +322,3 @@
 </body>
 
 </html>
-

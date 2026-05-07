@@ -29,6 +29,7 @@
                 </p>
             </div>
         </div>
+        @include('partials.wave-divider', ['surface' => 'white'])
     </section>
 
     <section class="evt-tabs-navigation">

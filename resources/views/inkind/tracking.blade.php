@@ -68,29 +68,62 @@
 
         /* --- 3. PAGE HEADER --- */
         .tracking-header {
+            position: relative;
+            display: grid;
+            place-items: center;
+            isolation: isolate;
+            overflow: hidden;
             text-align: center;
-            background: linear-gradient(135deg, rgba(237, 233, 254, 1), rgba(224, 231, 255, 0.7)),
-                url('{{ asset('img/inkind.png') }}');
+            background:
+                linear-gradient(180deg, rgba(15, 23, 42, 0.72), rgba(49, 46, 129, 0.66)),
+                url('{{ asset('img/bg1.jpg') }}');
             background-size: cover;
             background-position: center;
-            padding: clamp(80px, 15vh, 150px) 0;
+            min-height: clamp(340px, 40vw, 480px);
+            padding: clamp(96px, 12vw, 132px) 0 clamp(72px, 8vw, 100px);
             margin-bottom: 3rem;
-            border-bottom: 1px solid rgba(79, 70, 229, 0.1);
+        }
+
+        .tracking-header .container {
+            position: relative;
+            z-index: 2;
         }
 
         .tracking-title {
             font-size: clamp(1.8rem, 5vw, 3.5rem);
             font-weight: 700;
             margin: 0 0 1rem;
-            color: #1e293b;
+            color: #fff;
             line-height: 1.2;
         }
 
         .tracking-desc {
             font-size: clamp(1rem, 2vw, 1.15rem);
-            color: #475569;
+            color: rgba(255, 255, 255, 0.9);
             max-width: 700px;
             margin: 0 auto;
+        }
+
+        .hero-back-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 44px;
+            margin-top: 1.5rem;
+            padding: 0 1.25rem;
+            border: 1px solid rgba(255, 255, 255, 0.38);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-weight: 700;
+            text-decoration: none;
+            transition: background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .hero-back-link:hover {
+            border-color: rgba(255, 255, 255, 0.64);
+            background: rgba(255, 255, 255, 0.16);
         }
 
         /* --- 4. RELIEF OPERATIONS SLIDER --- */
@@ -569,7 +602,11 @@
                 Transparency is key. See exactly where in-kind donations are being distributed and track the remaining
                 items needed to reach our campaign goals.
             </p>
+            <a href="{{ route('inkind.page') }}" class="hero-back-link">
+                <i class="ri-arrow-left-line" aria-hidden="true"></i> Back to In-Kind Donations
+            </a>
         </div>
+        @include('partials.wave-divider')
     </header>
 
     <main class="container">
@@ -909,4 +946,3 @@
 </body>
 
 </html>
-

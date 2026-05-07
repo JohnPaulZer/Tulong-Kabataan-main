@@ -15,18 +15,18 @@
 
     <!-- Hero Banner -->
     <section class="hero-banner">
-        <div class="hero-shapes">
-            <span class="shape shape-1"></span>
-            <span class="shape shape-2"></span>
-            <span class="shape shape-3"></span>
-            <span class="shape shape-4"></span>
-            <span class="shape shape-5"></span>
+        <div class="hero-media" aria-hidden="true">
+            <img src="{{ asset('img/bg1.jpg') }}" alt="" class="hero-image">
+            <div class="hero-overlay"></div>
         </div>
         <div class="hero-content">
-            <span class="hero-badge"><i class="ri-hand-heart-line"></i> In-Kind Donation</span>
-            <h1>Make a Difference Today</h1>
-            <p>Your donated items can change lives. Join hundreds of generous donors supporting communities in need through Tulong Kabataan.</p>
+            <h1>Donate Your Items</h1>
+            <p>Share usable goods with communities that need them. Complete the form below and choose your preferred drop-off location.</p>
+            <a href="{{ route('inkind.page') }}" class="hero-back-link">
+                <i class="ri-arrow-left-line" aria-hidden="true"></i> Back to In-Kind Donations
+            </a>
         </div>
+        @include('partials.wave-divider')
     </section>
 
     <!-- Donation Form -->
