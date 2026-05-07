@@ -1,0 +1,61 @@
+{
+    "$schema": "https://openapi.vercel.sh/vercel.json",
+    "version": 2,
+    "framework": null,
+    "buildCommand": "npm run build",
+    "functions": {
+        "api/index.php": {
+            "runtime": "vercel-php@0.6.2"
+        }
+    },
+    "routes": [
+        {
+            "src": "/build/(.*)",
+            "dest": "/public/build/$1"
+        },
+        {
+            "src": "/img/(.*)",
+            "dest": "/public/img/$1"
+        },
+        {
+            "src": "/js/(.*)",
+            "dest": "/public/js/$1"
+        },
+        {
+            "src": "/favicon.ico",
+            "dest": "/public/favicon.ico"
+        },
+        {
+            "src": "/robots.txt",
+            "dest": "/public/robots.txt"
+        },
+        {
+            "src": "/storage/(.*)",
+            "dest": "/public/storage/$1"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/api/index.php"
+        }
+    ],
+    "env": {
+        "APP_ENV": "production",
+        "APP_DEBUG": "false",
+        "LOG_CHANNEL": "stderr",
+        "LOG_STACK": "stderr",
+        "LOG_LEVEL": "warning",
+        "CACHE_STORE": "array",
+        "CACHE_DRIVER": "array",
+        "SESSION_DRIVER": "cookie",
+        "SESSION_ENCRYPT": "true",
+        "SESSION_SECURE_COOKIE": "true",
+        "QUEUE_CONNECTION": "sync",
+        "LARAVEL_STORAGE_PATH": "/tmp/storage",
+        "VIEW_COMPILED_PATH": "/tmp/storage/framework/views",
+        "APP_CONFIG_CACHE": "/tmp/storage/framework/cache/config.php",
+        "APP_EVENTS_CACHE": "/tmp/storage/framework/cache/events.php",
+        "APP_PACKAGES_CACHE": "/tmp/storage/framework/cache/packages.php",
+        "APP_ROUTES_CACHE": "/tmp/storage/framework/cache/routes.php",
+        "APP_SERVICES_CACHE": "/tmp/storage/framework/cache/services.php"
+    }
+}
