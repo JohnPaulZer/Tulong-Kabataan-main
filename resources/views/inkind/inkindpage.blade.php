@@ -32,8 +32,7 @@
                         <form action="{{ route('inkindmodal') }}" method="POST">
                             @csrf
                             <button type="submit" id="openModalBtn" class="donate-btn">Donate Items Now</button>
-                            <a href="{{ route('inkind.tracking') }}" class="learn-btn" type="button">Donation
-                                Impact</a>
+                            <a href="{{ route('inkind.tracking') }}" class="learn-btn" type="button">Donation Impact</a>
                         </form>
                     </div>
                 </div>

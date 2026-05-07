@@ -1,348 +1,1018 @@
 ﻿/* Scoped in-kind modal page styles */
-body.inkind-modal-page h1, body.inkind-modal-page h2, body.inkind-modal-page h3, body.inkind-modal-page h4, body.inkind-modal-page h5, body.inkind-modal-page h6, body.inkind-modal-page .heading-font, body.inkind-modal-page .section-title, body.inkind-modal-page .featured-title, body.inkind-modal-page .campaign-title, body.inkind-modal-page .btn, body.inkind-modal-page button, body.inkind-modal-page .raised, body.inkind-modal-page .campaign-count, body.inkind-modal-page .featured-badge, body.inkind-modal-page .pagination-number{
+
+/* ── Keyframes ──────────────────────────────────────────── */
+@keyframes inkind-float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-18px) rotate(6deg); }
+}
+
+@keyframes inkind-float-alt {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(14px) rotate(-5deg); }
+}
+
+@keyframes inkind-pulse {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.08); }
+}
+
+@keyframes inkind-fade-up {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes inkind-slide-in {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Variables & Base ───────────────────────────────────── */
+body.inkind-modal-page {
+    --brand: var(--primary, #4f46e5);
+    --brand-700: var(--primary-700, #4338ca);
+    --ink-900: #0f172a;
+    --ink-800: #1e293b;
+    --ink-500: #64748b;
+    --muted: #94a3b8;
+    --line: #e2e8f0;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --ring: 0 0 0 4px rgba(79, 70, 229, 0.15);
+    background-color: var(--bg);
+    background-image:
+        radial-gradient(ellipse at 10% 20%, rgba(79, 70, 229, 0.04) 0%, transparent 50%),
+        radial-gradient(ellipse at 90% 80%, rgba(99, 102, 241, 0.04) 0%, transparent 50%);
+    overflow-x: hidden;
+}
+
+body.inkind-modal-page *,
+body.inkind-modal-page *::before,
+body.inkind-modal-page *::after {
+    box-sizing: border-box;
+}
+
+body.inkind-modal-page h1, body.inkind-modal-page h2, body.inkind-modal-page h3,
+body.inkind-modal-page h4, body.inkind-modal-page .heading-font,
+body.inkind-modal-page .btn, body.inkind-modal-page button {
     font-family: var(--font-heading);
     letter-spacing: -0.01em;
-}body.inkind-modal-page p, body.inkind-modal-page a, body.inkind-modal-page li, body.inkind-modal-page span, body.inkind-modal-page input, body.inkind-modal-page select, body.inkind-modal-page textarea, body.inkind-modal-page label, body.inkind-modal-page .body-font, body.inkind-modal-page .section-desc, body.inkind-modal-page .featured-desc, body.inkind-modal-page .filters-label, body.inkind-modal-page .goal, body.inkind-modal-page .pagination-info{
+}
+
+body.inkind-modal-page p, body.inkind-modal-page a, body.inkind-modal-page li,
+body.inkind-modal-page span, body.inkind-modal-page input,
+body.inkind-modal-page select, body.inkind-modal-page textarea,
+body.inkind-modal-page label {
     font-family: var(--font-body);
     font-weight: 400;
     text-decoration: none;
-}body.inkind-modal-page .hero-banner{
-    
-    background: url('/img/bg1.jpg') center/cover no-repeat; 
-    
+}
+
+/* ── Hero Banner ────────────────────────────────────────── */
+body.inkind-modal-page .hero-banner {
     position: relative;
-    color: white;
+    display: grid;
+    place-items: center;
+    min-height: clamp(320px, 42vw, 460px);
+    padding: clamp(96px, 12vw, 140px) 1rem clamp(70px, 8vw, 110px);
+    color: #fff;
     text-align: center;
-    padding: 9rem 1rem;
-    
-    
-    background-color: #4f46e5;      
-}body.inkind-modal-page .hero-banner::after{
+    overflow: hidden;
+    background:
+        linear-gradient(135deg, rgba(15, 23, 42, 0.78), rgba(79, 70, 229, 0.65)),
+        url('/img/bg1.jpg') center / cover no-repeat;
+    background-color: var(--brand);
+}
+
+body.inkind-modal-page .hero-banner::before {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 80px;
+    background: var(--bg);
+    clip-path: ellipse(55% 100% at 50% 100%);
+    z-index: 2;
+}
+
+body.inkind-modal-page .hero-banner::after {
     content: "";
     position: absolute;
     inset: 0;
-    
-    background: rgba(79, 70, 229, 0.6); 
-}body.inkind-modal-page .hero-banner .hero-content{
-    position: relative;
+    background:
+        linear-gradient(180deg, rgba(15, 23, 42, 0.06), rgba(15, 23, 42, 0.36)),
+        url('/img/doodle.svg') center / 600px auto no-repeat;
+    opacity: 0.07;
+    pointer-events: none;
+}
+
+/* ── Hero Floating Shapes ──────────────────────────────── */
+body.inkind-modal-page .hero-shapes {
+    position: absolute;
+    inset: 0;
     z-index: 1;
-    max-width: 700px;
-    margin: 0 auto;
-}body.inkind-modal-page .hero-banner h1{
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
-    color: white;
-}body.inkind-modal-page .hero-banner p{
-    font-size: 1.1rem;
-    opacity: 0.95;
-    color: white;
-}body.inkind-modal-page .form-container{
-    max-width: 720px;
-    margin: -3rem auto 2rem auto;
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-    padding: 2rem;
-    position: relative;
-    z-index: 2;
-}body.inkind-modal-page .form-header{
-    text-align: center;
-    margin-bottom: 1rem;
-}body.inkind-modal-page .form-header h2{
-    font-size: 1.8rem;
-    font-weight: 700;
-    margin-bottom: 0.4rem;
-    color: #222;
-}body.inkind-modal-page .form-header p{
-    font-size: 1rem;
-    color: #555;
-    margin-bottom: 1rem;
-}body.inkind-modal-page .add-item-btn{
-    background: linear-gradient(135deg, #4f46e5, #6366f1);
-    color: white;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 600;
-    margin: 0 auto;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+body.inkind-modal-page .hero-shapes .shape {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.12;
+}
+
+body.inkind-modal-page .shape-1 {
+    width: 280px;
+    height: 280px;
+    background: radial-gradient(circle, rgba(255,255,255,0.3), transparent 70%);
+    top: -60px;
+    right: -40px;
+    animation: inkind-float 8s ease-in-out infinite;
+}
+
+body.inkind-modal-page .shape-2 {
+    width: 180px;
+    height: 180px;
+    background: radial-gradient(circle, rgba(199,210,254,0.5), transparent 70%);
+    bottom: 40px;
+    left: -30px;
+    animation: inkind-float-alt 10s ease-in-out infinite;
+}
+
+body.inkind-modal-page .shape-3 {
+    width: 100px;
+    height: 100px;
+    background: rgba(255,255,255,0.15);
+    top: 30%;
+    left: 15%;
+    animation: inkind-pulse 6s ease-in-out infinite;
+}
+
+body.inkind-modal-page .shape-4 {
+    width: 60px;
+    height: 60px;
+    background: rgba(199,210,254,0.25);
+    top: 20%;
+    right: 20%;
+    animation: inkind-float 7s ease-in-out infinite 1s;
+}
+
+body.inkind-modal-page .shape-5 {
+    width: 40px;
+    height: 40px;
+    background: rgba(255,255,255,0.2);
+    bottom: 30%;
+    right: 10%;
+    border-radius: 8px;
+    transform: rotate(45deg);
+    animation: inkind-float-alt 9s ease-in-out infinite 0.5s;
+}
+
+/* ── Hero Badge ────────────────────────────────────────── */
+body.inkind-modal-page .hero-badge {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    transition: all 0.3s ease;
-    box-shadow: 0 3px 10px rgba(79, 70, 229, 0.3);
-}body.inkind-modal-page .add-item-btn:hover{
-    background: linear-gradient(135deg, #4338ca, #4f46e5);
-    transform: translateY(-1px);
-    box-shadow: 0 5px 14px rgba(79, 70, 229, 0.4);
-}body.inkind-modal-page .form-card{
-    background: #fafafa;
-    border-radius: 14px;
-    padding: 1.25rem;
-    box-shadow: 0 2px 6px rgba(44, 37, 57, 0.05);
-    margin-bottom: 1.25rem;
-}body.inkind-modal-page .donation-form{
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}body.inkind-modal-page .form-row{
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-bottom: 1rem; 
-}body.inkind-modal-page .form-group{
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 1rem; 
-}body.inkind-modal-page .input-field, body.inkind-modal-page textarea, body.inkind-modal-page select{
-    width: 100%;
-    padding: 0.8rem 1rem;
-    border: 1px solid #E5E7EB;
-    border-radius: 10px;
-    font-size: 1rem;
-    background: #fff;
-    box-sizing: border-box;
-    font-family: inherit;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    margin-top: 0.2rem;
-}body.inkind-modal-page .input-field:focus, body.inkind-modal-page textarea:focus, body.inkind-modal-page select:focus{
-    outline: none;
-    border-color: #6366F1;
-    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
-}body.inkind-modal-page .form-group label{
-    margin-bottom: 0.4rem;
+    gap: 8px;
+    padding: 8px 20px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 999px;
+    font-size: 14px;
     font-weight: 600;
-    font-size: 0.9rem;
-    color: #374151;
-}body.inkind-modal-page .input-note{
-    font-size: 0.75rem;
-    color: #6b7280;
-    margin-top: 0.2rem;
-    font-style: italic;
-}body.inkind-modal-page textarea{
-    min-height: 90px;
-    resize: vertical;
-}body.inkind-modal-page .item-row{
-    margin-bottom: 1.25rem;
-    border: 2px solid #e5e7eb;
-    border-radius: 14px;
-    padding: 1.25rem;
-    background: #ffffff;
+    color: #fff;
+    margin-bottom: 20px;
+    animation: inkind-fade-up 0.6s ease-out both;
+}
+
+body.inkind-modal-page .hero-badge i {
+    font-size: 16px;
+}
+
+body.inkind-modal-page .hero-banner .hero-content {
+    position: relative;
+    z-index: 3;
+    width: min(100%, 720px);
+}
+
+body.inkind-modal-page .hero-banner h1 {
+    font-size: clamp(2.2rem, 5.5vw, 3.5rem);
+    line-height: 1.08;
+    margin: 0 0 0.85rem;
+    color: #fff;
+    text-wrap: balance;
+    animation: inkind-fade-up 0.6s ease-out 0.15s both;
+}
+
+body.inkind-modal-page .hero-banner p {
+    max-width: 52ch;
+    margin: 0 auto;
+    font-size: clamp(1rem, 2.2vw, 1.18rem);
+    line-height: 1.65;
+    color: #fff;
+    opacity: 0.92;
+    animation: inkind-fade-up 0.6s ease-out 0.3s both;
+}
+
+/* ── Container ──────────────────────────────────────────── */
+body.inkind-modal-page .tk-container {
+    position: relative;
+    max-width: 820px;
+    margin: -20px auto 0;
+    padding: 0 24px 80px;
+    z-index: 3;
+}
+
+/* ── Page Head ──────────────────────────────────────────── */
+body.inkind-modal-page .tk-page-head {
+    position: relative;
+    margin-bottom: 24px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.08), 0 4px 8px -2px rgba(0, 0, 0, 0.04);
+    padding: 32px;
+    overflow: hidden;
+    animation: inkind-slide-in 0.5s ease-out both;
+}
+
+body.inkind-modal-page .tk-page-head::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--brand), #818cf8, var(--brand));
+    background-size: 200% 100%;
+}
+
+body.inkind-modal-page .tk-page-head-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+    border-radius: 12px;
+    margin-bottom: 16px;
+}
+
+body.inkind-modal-page .tk-page-head-icon i {
+    font-size: 22px;
+    color: var(--brand);
+}
+
+body.inkind-modal-page .tk-title {
+    font-family: var(--font-heading);
+    font-size: 28px;
+    margin: 0 0 8px;
+    color: var(--ink-900);
+    font-weight: 700;
+}
+
+body.inkind-modal-page .tk-sub {
+    color: var(--ink-500);
+    margin: 0 0 20px;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+/* ── Progress Bar ──────────────────────────────────────── */
+body.inkind-modal-page .tk-progress-bar {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 16px 0 0;
+    border-top: 1px solid #f1f5f9;
+}
+
+body.inkind-modal-page .tk-progress-step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+body.inkind-modal-page .tk-progress-step .step-num {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #f1f5f9;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 700;
     transition: all 0.3s ease;
-}body.inkind-modal-page .item-row:hover{
+}
+
+body.inkind-modal-page .tk-progress-step .step-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    transition: color 0.3s ease;
+}
+
+body.inkind-modal-page .tk-progress-step.active .step-num {
+    background: var(--brand);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+}
+
+body.inkind-modal-page .tk-progress-step.active .step-label {
+    color: var(--brand);
+}
+
+body.inkind-modal-page .tk-progress-line {
+    flex: 1;
+    height: 2px;
+    background: #e2e8f0;
+    margin: 0 10px;
+    border-radius: 2px;
+}
+
+/* ── Form ───────────────────────────────────────────────── */
+body.inkind-modal-page .donation-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* ── Section Cards ──────────────────────────────────────── */
+body.inkind-modal-page .tk-section {
+    position: relative;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    padding: 28px;
+    margin-top: 24px;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    animation: inkind-slide-in 0.5s ease-out both;
+}
+
+body.inkind-modal-page .tk-section:nth-child(2) { animation-delay: 0.08s; }
+body.inkind-modal-page .tk-section:nth-child(3) { animation-delay: 0.16s; }
+body.inkind-modal-page .tk-section:nth-child(4) { animation-delay: 0.24s; }
+body.inkind-modal-page .tk-section:nth-child(5) { animation-delay: 0.32s; }
+
+body.inkind-modal-page .tk-section:hover {
+    box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.08), 0 4px 8px -2px rgba(0, 0, 0, 0.04);
+}
+
+body.inkind-modal-page .tk-section::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 24px;
+    right: 24px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(79, 70, 229, 0.12), transparent);
+}
+
+body.inkind-modal-page .tk-sec-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 16px;
+}
+
+body.inkind-modal-page .tk-sec-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--ink-900);
+}
+
+body.inkind-modal-page .tk-sec-title i {
+    color: var(--brand);
+    background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 17px;
+    box-shadow: 0 2px 4px rgba(79, 70, 229, 0.1);
+}
+
+/* ── Grid Layout ────────────────────────────────────────── */
+body.inkind-modal-page .tk-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+@media (min-width: 640px) {
+    body.inkind-modal-page .tk-grid-2 {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* ── Field ──────────────────────────────────────────────── */
+body.inkind-modal-page .tk-field {
+    margin-top: 12px;
+}
+
+body.inkind-modal-page .tk-field + .tk-field {
+    margin-top: 16px;
+}
+
+body.inkind-modal-page .tk-grid-2 .tk-field {
+    min-width: 0;
+}
+
+body.inkind-modal-page .tk-label {
+    display: block;
+    font-weight: 600;
+    margin: 0 0 8px;
+    color: var(--ink-800);
+    font-size: 14px;
+}
+
+body.inkind-modal-page .tk-req {
+    color: #ef4444;
+}
+
+body.inkind-modal-page .tk-input {
+    width: 100%;
+    display: block;
+    background: #fff;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 15px;
+    outline: none;
+    transition: all 0.25s ease;
+    color: var(--ink-900);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    box-sizing: border-box;
+    min-height: 48px;
+    line-height: 1.4;
+}
+
+body.inkind-modal-page .tk-input:hover {
     border-color: #c7d2fe;
+    background: #fefefe;
+}
+
+body.inkind-modal-page .tk-input:focus {
+    border-color: var(--brand);
+    box-shadow: var(--ring);
+    background: #fff;
+}
+
+body.inkind-modal-page .tk-textarea {
+    min-height: 100px;
+    resize: vertical;
+    line-height: 1.6;
+    padding-top: 14px;
+    padding-bottom: 14px;
+}
+
+body.inkind-modal-page .tk-help {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 8px;
+    display: block;
+}
+
+body.inkind-modal-page select.tk-input {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 32px;
+}
+
+/* ── Item Row ───────────────────────────────────────────── */
+body.inkind-modal-page .item-row {
+    position: relative;
+    margin-bottom: 16px;
+    border: 1.5px solid var(--line);
+    border-radius: 12px;
+    padding: 20px;
+    background: linear-gradient(135deg, #fafbff, #f8fafc);
+    transition: all 0.3s ease;
+}
+
+body.inkind-modal-page .item-row:last-child {
+    margin-bottom: 0;
+}
+
+body.inkind-modal-page .item-row:hover {
+    border-color: #c7d2fe;
+    box-shadow: 0 6px 16px rgba(79, 70, 229, 0.08);
     transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-}body.inkind-modal-page .item-header{
+}
+
+body.inkind-modal-page .item-row::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, var(--brand), #818cf8);
+    border-radius: 4px 0 0 4px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+body.inkind-modal-page .item-row:hover::before {
+    opacity: 1;
+}
+
+body.inkind-modal-page .item-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid #f3f4f6;
-}body.inkind-modal-page .item-header h3{
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+body.inkind-modal-page .item-header h4 {
     margin: 0;
-    color: #374151;
-    font-size: 1.1rem;
+    color: var(--brand);
+    font-size: 15px;
     font-weight: 700;
-    background: linear-gradient(135deg, #4f46e5, #6366f1);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}body.inkind-modal-page .remove-item-btn{
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 6px;
+}
+
+body.inkind-modal-page .remove-item-btn {
+    background: #fff;
+    color: #ef4444;
+    border: 1px solid #fecaca;
+    padding: 6px 14px;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    transition: all 0.3s ease;
-}body.inkind-modal-page .remove-item-btn:hover{
-    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    transition: all 0.2s ease;
+}
+
+body.inkind-modal-page .remove-item-btn:hover {
+    background: #fef2f2;
+    border-color: #ef4444;
     transform: translateY(-1px);
-}body.inkind-modal-page .location-availability{
-    background: linear-gradient(135deg, #eef4ff, #dbeafe);
-    border-radius: 14px;
-    padding: 1.25rem;
-    margin-top: 0.5rem;
+}
+
+/* ── Add Item Button ────────────────────────────────────── */
+body.inkind-modal-page .tk-btn-add {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 18px;
+    background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+    color: var(--brand);
+    border: 1px solid #c7d2fe;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+body.inkind-modal-page .tk-btn-add:hover {
+    background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+    border-color: var(--brand);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+}
+
+/* ── Availability Box ───────────────────────────────────── */
+body.inkind-modal-page .tk-availability {
+    background: linear-gradient(135deg, #f0f4ff, #f8fafc);
     border: 1px solid #dbeafe;
-}body.inkind-modal-page .location-title{
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-top: 16px;
+}
+
+body.inkind-modal-page .tk-availability-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     font-weight: 700;
-    color: #2563eb;
-    font-size: 1rem;
-    margin-bottom: 0.6rem;
-    display: block;
-}body.inkind-modal-page .location-availability ul{
+    color: var(--ink-800);
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+body.inkind-modal-page .tk-availability-title i {
+    color: var(--brand);
+    font-size: 16px;
+}
+
+body.inkind-modal-page .tk-availability-list {
     list-style: none;
     padding: 0;
     margin: 0;
-}body.inkind-modal-page .location-availability li{
-    font-size: 0.9rem;
-    color: #1e40af;
-    margin-bottom: 0.4rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.2rem 0;
-}body.inkind-modal-page .dot.blue{
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #2563eb;
-    flex-shrink: 0;
-}body.inkind-modal-page .checkbox-section{
-    margin-top: 1.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-    background: #f8fafc;
-    padding: 1.25rem;
-    border-radius: 10px;
-    border: 1px solid #e2e8f0;
-}body.inkind-modal-page .checkbox-section div{
+}
+
+body.inkind-modal-page .tk-availability-list li {
     display: flex;
     align-items: flex-start;
-    gap: 0.6rem;
-}body.inkind-modal-page .checkbox-section input[type="checkbox"]{
-    margin-top: 0.2rem;
-    transform: scale(1.1);
-    accent-color: #4f46e5;
-}body.inkind-modal-page .checkbox-section label{
-    font-size: 0.9rem;
-    color: #374151;
-    line-height: 1.4;
-    font-weight: 500;
-}body.inkind-modal-page .submit-button{
+    gap: 8px;
+    font-size: 14px;
+    color: var(--ink-500);
+    padding: 5px 0;
+    line-height: 1.5;
+}
+
+body.inkind-modal-page .tk-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--brand);
+    flex-shrink: 0;
+    margin-top: 6px;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+}
+
+/* ── Checkboxes ─────────────────────────────────────────── */
+body.inkind-modal-page .tk-checks {
     display: flex;
-    justify-content: center;
-    margin-top: 1.5rem;
-}body.inkind-modal-page .submit-button button{
-    padding: 0.9rem 2.5rem;
-    background: linear-gradient(135deg, #4F46E5, #6366F1);
-    color: #fff;
-    font-weight: 700;
-    font-size: 1rem;
-    border-radius: 12px;
-    border: none;
+    flex-direction: column;
+    gap: 14px;
+}
+
+body.inkind-modal-page .tk-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
     cursor: pointer;
+    padding: 12px 16px;
+    border: 1px solid #f1f5f9;
+    border-radius: 10px;
+    background: #fafbfc;
+    transition: all 0.2s ease;
+}
+
+body.inkind-modal-page .tk-check:hover {
+    border-color: #c7d2fe;
+    background: #f8f9ff;
+}
+
+body.inkind-modal-page .tk-check input[type="checkbox"] {
+    margin-top: 2px;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--brand);
+    flex-shrink: 0;
+}
+
+body.inkind-modal-page .tk-check span {
+    font-size: 14px;
+    color: var(--ink-800);
+    line-height: 1.5;
+    font-weight: 500;
+}
+
+/* ── Step Container & Transitions ───────────────────────── */
+body.inkind-modal-page .tk-step {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+body.inkind-modal-page .tk-step-active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+body.inkind-modal-page .tk-step[data-step="1"] {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ── Step Navigation ───────────────────────────────────── */
+body.inkind-modal-page .tk-step-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+}
+
+/* ── Buttons ───────────────────────────────────────────── */
+body.inkind-modal-page .tk-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    padding: 14px 28px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 15px;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
-}body.inkind-modal-page .submit-button button:hover{
-    background: linear-gradient(135deg, #4338CA, #4F46E5);
+    white-space: nowrap;
+}
+
+body.inkind-modal-page .tk-btn.primary {
+    background: linear-gradient(135deg, var(--brand), #818cf8);
+    color: #fff;
+    box-shadow: 0 6px 16px -2px rgba(79, 70, 229, 0.35);
+}
+
+body.inkind-modal-page .tk-btn.primary:hover {
+    background: linear-gradient(135deg, var(--brand-700), var(--brand));
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5);
-}@media (max-width: 1023px){body.inkind-modal-page .form-container{
-        width: min(94vw, 720px);
-        padding: 1.5rem 1.25rem;
-    }body.inkind-modal-page .form-row{
-        gap: 0.8rem;
-    }body.inkind-modal-page .hero-banner h1{
-        font-size: 2rem;
-    }body.inkind-modal-page .hero-banner p{
-        font-size: 1rem;
-    }body.inkind-modal-page .item-row{
-        padding: 1rem;
+    box-shadow: 0 10px 24px -4px rgba(79, 70, 229, 0.4);
+}
+
+body.inkind-modal-page .tk-btn.primary:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 8px -2px rgba(79, 70, 229, 0.3);
+}
+
+body.inkind-modal-page .tk-btn.outline {
+    background: #fff;
+    color: var(--ink-800);
+    border: 1.5px solid var(--line);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+body.inkind-modal-page .tk-btn.outline:hover {
+    border-color: #c7d2fe;
+    color: var(--brand);
+    background: #fafaff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* ── Progress Step States ──────────────────────────────── */
+body.inkind-modal-page .tk-progress-step {
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+body.inkind-modal-page .tk-progress-step:hover {
+    opacity: 0.8;
+}
+
+body.inkind-modal-page .tk-progress-step.completed .step-num {
+    background: #10b981;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+    font-size: 0;
+}
+
+body.inkind-modal-page .tk-progress-step.completed .step-num::after {
+    content: "\2713";
+    font-size: 14px;
+    font-weight: 700;
+}
+
+body.inkind-modal-page .tk-progress-step.completed .step-label {
+    color: #10b981;
+}
+
+body.inkind-modal-page .tk-progress-line.filled {
+    background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+/* ── Input Error State ─────────────────────────────────── */
+body.inkind-modal-page .tk-input-error {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12) !important;
+    animation: inkind-shake 0.4s ease;
+}
+
+@keyframes inkind-shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+}
+
+/* ── Info Card (logged-in donor) ───────────────────────── */
+body.inkind-modal-page .tk-info-card {
+    background: linear-gradient(135deg, #f8faff, #f1f5f9);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 4px 0;
+    overflow: hidden;
+}
+
+body.inkind-modal-page .tk-info-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+body.inkind-modal-page .tk-info-row:last-child {
+    border-bottom: none;
+}
+
+body.inkind-modal-page .tk-info-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 120px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-500);
+}
+
+body.inkind-modal-page .tk-info-label i {
+    font-size: 16px;
+    color: var(--brand);
+}
+
+body.inkind-modal-page .tk-info-value {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink-900);
+}
+
+/* ── Review Summary (Step 4) ───────────────────────────── */
+body.inkind-modal-page .tk-review-summary {
+    background: linear-gradient(135deg, #f8faff, #f0f4ff);
+    border: 1px solid #dbeafe;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+body.inkind-modal-page .tk-review-group {
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+body.inkind-modal-page .tk-review-group:last-child {
+    padding-bottom: 0;
+    margin-bottom: 0;
+    border-bottom: none;
+}
+
+body.inkind-modal-page .tk-review-heading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--brand);
+    margin: 0 0 8px;
+}
+
+body.inkind-modal-page .tk-review-heading i {
+    font-size: 16px;
+}
+
+body.inkind-modal-page .tk-review-group p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--ink-800);
+    line-height: 1.5;
+}
+
+body.inkind-modal-page .tk-review-group ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+body.inkind-modal-page .tk-review-group li {
+    font-size: 14px;
+    color: var(--ink-800);
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 8px;
+    line-height: 1.4;
+}
+
+body.inkind-modal-page .tk-review-group li strong {
+    color: var(--ink-900);
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 767px) {
+    body.inkind-modal-page .tk-container {
+        padding: 0 16px 60px;
+        margin-top: -10px;
     }
-}@media (max-width: 767px){body.inkind-modal-page, body.inkind-modal-page{
-        font-size: 15px;
-        width: 100%;
-        max-width: 100%;
-        overflow-x: hidden;
-    }body.inkind-modal-page .hero-banner{
-        padding: calc(72px + 1.5rem) 1rem 2rem;
-        min-height: 200px;
-        text-align: center;
-    }body.inkind-modal-page .hero-banner .hero-content{
-        padding: 70px 0.25rem;
-    }body.inkind-modal-page .hero-banner h1{
-        font-size: 1.6rem;
-        margin-bottom: 0.4rem;
-    }body.inkind-modal-page .hero-banner p{
-        font-size: 0.9rem;
-    }body.inkind-modal-page .form-container{
-        width: min(94vw, 680px);
-        margin: 1rem auto 1rem;
-        padding: 1rem 0.9rem;
-        border-radius: 10px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    }body.inkind-modal-page .form-header h2{
-        font-size: 1.3rem;
-    }body.inkind-modal-page .form-header p{
-        font-size: 0.9rem;
-        margin-bottom: 0.8rem;
-    }body.inkind-modal-page .add-item-btn{
-        width: 100%;
-        justify-content: center;
-        padding: 10px 16px;
-        font-size: 14px;
-    }body.inkind-modal-page .form-row{
-        display: flex;
-        flex-direction: column;
-        gap: 0.6rem;
-        margin-bottom: 0.8rem;
-    }body.inkind-modal-page .form-group{
-        flex: 1 1 100%;
-    }body.inkind-modal-page .input-field, body.inkind-modal-page textarea, body.inkind-modal-page select{
-        font-size: 16px;
-        padding: 0.75rem 0.8rem;
-    }body.inkind-modal-page .item-row{
-        padding: 0.9rem;
-        margin-bottom: 0.9rem;
-    }body.inkind-modal-page .item-header{
+
+    body.inkind-modal-page .hero-banner {
+        min-height: 280px;
+        padding: calc(72px + 1.25rem) 1rem 4rem;
+    }
+
+    body.inkind-modal-page .hero-banner::before {
+        height: 50px;
+    }
+
+    body.inkind-modal-page .hero-banner h1 {
+        font-size: clamp(1.8rem, 8vw, 2.4rem);
+    }
+
+    body.inkind-modal-page .hero-banner p {
+        font-size: 0.95rem;
+    }
+
+    body.inkind-modal-page .hero-badge {
+        font-size: 12px;
+        padding: 6px 14px;
+    }
+
+    body.inkind-modal-page .tk-page-head {
+        padding: 24px 20px;
+    }
+
+    body.inkind-modal-page .tk-title {
+        font-size: 22px;
+    }
+
+    body.inkind-modal-page .tk-progress-bar {
+        overflow-x: auto;
+        gap: 0;
+        padding-bottom: 4px;
+    }
+
+    body.inkind-modal-page .tk-progress-step .step-label {
+        font-size: 11px;
+    }
+
+    body.inkind-modal-page .tk-section {
+        padding: 20px 16px;
+    }
+
+    body.inkind-modal-page .tk-sec-head {
         flex-direction: column;
         align-items: flex-start;
-        gap: 0.8rem;
-    }body.inkind-modal-page .item-header h3{
-        font-size: 1rem;
-    }body.inkind-modal-page .remove-item-btn{
+        gap: 12px;
+    }
+
+    body.inkind-modal-page .tk-btn-add {
         width: 100%;
         justify-content: center;
-        padding: 8px;
-    }body.inkind-modal-page .location-availability{
-        padding: 0.9rem;
-        margin-top: 0.7rem;
-        border-radius: 10px;
-    }body.inkind-modal-page .location-title{
-        font-size: 0.9rem;
-    }body.inkind-modal-page .location-availability li{
-        font-size: 0.85rem;
-        line-height: 1.3;
-    }body.inkind-modal-page .checkbox-section{
-        gap: 0.6rem;
-        padding: 0.9rem;
-    }body.inkind-modal-page .checkbox-section label{
-        line-height: 1.3;
-        font-size: 0.85rem;
-    }body.inkind-modal-page .submit-button{
-        margin-top: 1.25rem;
-    }body.inkind-modal-page .submit-button button{
+    }
+
+    body.inkind-modal-page .item-row {
+        padding: 16px;
+    }
+
+    body.inkind-modal-page .item-row:hover {
+        transform: none;
+    }
+
+    body.inkind-modal-page .tk-step-nav {
+        flex-direction: column-reverse;
+        gap: 12px;
+    }
+
+    body.inkind-modal-page .tk-step-nav .tk-btn {
         width: 100%;
-        padding: 0.9rem;
-        font-size: 16px;
-        border-radius: 10px;
-    }body.inkind-modal-page select.input-field{
-    white-space: nowrap;      
-    overflow: hidden;         
-    text-overflow: ellipsis;  
-    padding-right: 30px;      
-}body.inkind-modal-page #dropoff_id{
-    max-width: 100%;
-}
-}@media (max-width: 360px){body.inkind-modal-page .hero-banner h1{
-        font-size: 1.4rem;
-    }body.inkind-modal-page .form-header h2{
-        font-size: 1.2rem;
-    }body.inkind-modal-page .submit-button button{
-        padding: 0.8rem;
-    }body.inkind-modal-page .item-row{
-        padding: 0.7rem;
+        justify-content: center;
+    }
+
+    body.inkind-modal-page .tk-info-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        padding: 12px 16px;
+    }
+
+    body.inkind-modal-page .tk-info-label {
+        min-width: 0;
+    }
+
+    body.inkind-modal-page .tk-review-summary {
+        padding: 16px;
+    }
+
+    body.inkind-modal-page .shape-1,
+    body.inkind-modal-page .shape-2 {
+        display: none;
     }
 }
 
+/* ── Hide bottom nav when virtual keyboard is open ─────── */
+body.inkind-modal-page .mobile-bottom-nav {
+    transition: transform 0.3s ease, opacity 0.25s ease;
+}
+
+body.inkind-modal-page.keyboard-open .mobile-bottom-nav {
+    transform: translateY(100%);
+    opacity: 0;
+    pointer-events: none;
+}
