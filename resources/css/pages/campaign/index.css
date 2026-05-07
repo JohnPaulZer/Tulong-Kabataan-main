@@ -13,7 +13,7 @@ body.campaign-page .campaigns-section *, body.campaign-page .campaigns-section *
 }body.campaign-page .campaigns-section{
     background: #f8fafc;
     padding: 2px 0;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 0;
 }body.campaign-page .tk-container{
     max-width: 1200px;
     margin: 0 auto;
@@ -938,7 +938,8 @@ body.campaign-page {
 }
 
 body.campaign-page .campaigns-section {
-    background: #f8fafc;
+    background: transparent;
+    border-bottom: 0;
 }
 
 body.campaign-page .campaigns-section::before,

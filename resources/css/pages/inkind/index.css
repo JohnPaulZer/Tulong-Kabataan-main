@@ -51,10 +51,13 @@ body.inkind-page h1, body.inkind-page h2, body.inkind-page h3, body.inkind-page 
     height: 100%;
     object-fit: cover;
     object-position: center;
+    filter: saturate(.95) contrast(1.02);
 }body.inkind-page .overlay{
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, rgba(37, 31, 89, 0.62), rgba(74, 63, 153, 0.78));
+    background:
+        linear-gradient(180deg, rgba(15, 23, 42, 0.68), rgba(17, 24, 39, 0.58)),
+        linear-gradient(90deg, rgba(49, 46, 129, 0.34), rgba(15, 23, 42, 0.12));
 }body.inkind-page .content{
     position: relative;
     z-index: 20;
@@ -63,26 +66,28 @@ body.inkind-page h1, body.inkind-page h2, body.inkind-page h3, body.inkind-page 
     justify-content: center;
     width: 100%;
 }body.inkind-page .text-container{
-    width: min(100%, 900px);
+    width: min(100%, 760px);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
 }body.inkind-page .title{
-    max-width: 18ch;
-    margin: 0 0 1rem;
-    font-size: clamp(2.4rem, 4.6vw, 4rem);
-    line-height: 1.05;
+    max-width: 24ch;
+    margin: 0 0 .95rem;
+    font-family: var(--font-body);
+    font-size: clamp(2.1rem, 3.7vw, 3.15rem);
+    line-height: 1.12;
     color: #fff;
-    font-weight: 800;
+    font-weight: 700;
+    letter-spacing: 0;
     text-wrap: balance;
 }body.inkind-page .description{
-    max-width: 66ch;
-    margin: 0 auto 2.25rem;
-    font-size: clamp(1.05rem, 1.6vw, 1.25rem);
-    line-height: 1.7;
-    color: rgba(255, 255, 255, 0.94);
+    max-width: 58ch;
+    margin: 0 auto 2rem;
+    font-size: clamp(1rem, 1.35vw, 1.12rem);
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.9);
 }body.inkind-page .button-group{
     display: flex;
     gap: 1rem;
@@ -91,45 +96,47 @@ body.inkind-page h1, body.inkind-page h2, body.inkind-page h3, body.inkind-page 
     width: 100%;
 }body.inkind-page .button-group form{
     display: flex;
-    gap: 1rem;
+    gap: .8rem;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    width: min(100%, 460px);
+    width: min(100%, 420px);
     margin: 0 auto;
 }body.inkind-page .donate-btn, body.inkind-page .learn-btn{
     display: inline-flex;
     align-items: center;
     justify-content: center;
     flex: 1 1 0;
-    min-width: 210px;
-    min-height: 54px;
-    padding: 0 1.9rem;
-    font-size: 1rem;
-    font-weight: 800;
-    border-radius: 14px;
+    min-width: 190px;
+    min-height: 48px;
+    padding: 0 1.5rem;
+    font-family: var(--font-body);
+    font-size: .95rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    border-radius: 10px;
     cursor: pointer;
-    transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease, border-color .2s ease;
+    transition: background-color .18s ease, border-color .18s ease, color .18s ease, box-shadow .18s ease;
     box-sizing: border-box;
     line-height: 1.2;
     text-align: center;
     text-decoration: none;
     white-space: nowrap;
 }body.inkind-page .donate-btn{
-    background: #fff;
-    color: #4f46e5;
-    border: none;
-    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.16);
-}body.inkind-page .donate-btn:hover{
-    background: #f3f4f6;
-    transform: translateY(-2px);
-}body.inkind-page .learn-btn{
-    border: 2px solid #fff;
+    background: #4f46e5;
     color: #fff;
-    background: rgba(255, 255, 255, .06);
+    border: 1px solid #4f46e5;
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.18);
+}body.inkind-page .donate-btn:hover{
+    background: #4338ca;
+    border-color: #4338ca;
+}body.inkind-page .learn-btn{
+    border: 1px solid rgba(255, 255, 255, .72);
+    color: #fff;
+    background: rgba(255, 255, 255, .08);
 }body.inkind-page .learn-btn:hover{
-    background: rgba(255, 255, 255, .14);
-    transform: translateY(-2px);
+    background: rgba(255, 255, 255, .16);
+    border-color: #fff;
 }@media (max-width: 700px){body.inkind-page .hero-section{
         min-height: 440px;
         padding-top: 3rem;
@@ -137,10 +144,10 @@ body.inkind-page h1, body.inkind-page h2, body.inkind-page h3, body.inkind-page 
     }body.inkind-page .text-container{
         width: min(100%, 390px);
     }body.inkind-page .title{
-        max-width: 15.5ch;
+        max-width: 18ch;
         margin-bottom: .85rem;
-        font-size: clamp(1.9rem, 7.6vw, 2.35rem);
-        line-height: 1.08;
+        font-size: clamp(1.9rem, 7.2vw, 2.3rem);
+        line-height: 1.12;
     }body.inkind-page .description{
         max-width: 36ch;
         margin-bottom: 1.85rem;
@@ -159,12 +166,12 @@ body.inkind-page h1, body.inkind-page h2, body.inkind-page h3, body.inkind-page 
         min-width: 0;
         min-height: 48px;
         padding: 0 1.25rem;
-        border-radius: 12px;
+        border-radius: 10px;
         font-size: .92rem;
     }
 }body.inkind-page .impact-statistics{
     padding: clamp(2.5rem, 6vw, 4rem) 0;
-    background: #f8fafc;
+    background: transparent;
 }body.inkind-page .container{
     width: 100%;
     padding: 0 1rem;
@@ -226,7 +233,7 @@ body.inkind-page h1, body.inkind-page h2, body.inkind-page h3, body.inkind-page 
     }
 }body.inkind-page .donation-categories-v2{
     padding: clamp(3rem, 7vw, 5rem) 0;
-    background: #fff;
+    background: transparent;
 }body.inkind-page .section-header{
     text-align: center;
     max-width: 760px;
@@ -377,4 +384,3 @@ body.inkind-page h1, body.inkind-page h2, body.inkind-page h3, body.inkind-page 
         line-height: 1.6;
     }
 }
-

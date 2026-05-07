@@ -1369,6 +1369,52 @@
         })();
     </script>
 
+    {{-- Hide header on downward scroll, reveal on upward scroll --}}
+    <script>
+        (function() {
+            const header = document.querySelector('.header');
+            if (!header) return;
+
+            let lastScrollY = Math.max(window.scrollY, 0);
+            let ticking = false;
+            const scrollBuffer = 14;
+            const topBuffer = 24;
+
+            function headerMenuOpen() {
+                return Boolean(document.querySelector('.user-dropdown.show, .notif-dropdown.show, .notifications-modal.show'));
+            }
+
+            function setHeaderVisibility() {
+                const currentScrollY = Math.max(window.scrollY, 0);
+                const scrollDifference = currentScrollY - lastScrollY;
+
+                if (currentScrollY <= topBuffer || headerMenuOpen()) {
+                    header.classList.remove('is-hidden');
+                } else if (scrollDifference > scrollBuffer) {
+                    header.classList.add('is-hidden');
+                } else if (scrollDifference < -scrollBuffer) {
+                    header.classList.remove('is-hidden');
+                }
+
+                if (Math.abs(scrollDifference) > scrollBuffer) {
+                    lastScrollY = currentScrollY;
+                }
+
+                ticking = false;
+            }
+
+            window.addEventListener('scroll', () => {
+                if (ticking) return;
+                ticking = true;
+                window.requestAnimationFrame(setHeaderVisibility);
+            }, { passive: true });
+
+            header.addEventListener('focusin', () => {
+                header.classList.remove('is-hidden');
+            });
+        })();
+    </script>
+
 </header>
 
 

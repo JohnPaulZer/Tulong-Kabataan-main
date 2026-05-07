@@ -25,9 +25,9 @@
             </div>
             <div class="content">
                 <div class="text-container">
-                    <h1 class="title">Make a Difference with In-Kind Donations</h1>
-                    <p class="description">Your donated items can change lives. Contribute clothing, food, supplies, and
-                        more to help those in need in your community.</p>
+                    <h1 class="title">In-Kind Donations That Make a Difference</h1>
+                    <p class="description">Contribute clothing, food, supplies, and more. Your donated items can help
+                        those in need in your community.</p>
                     <div class="button-group">
                         <form action="{{ route('inkindmodal') }}" method="POST">
                             @csrf
@@ -37,6 +37,7 @@
                     </div>
                 </div>
             </div>
+            @include('partials.wave-divider')
         </section>
 
         <section class="impact-statistics">
@@ -235,4 +236,3 @@
 </body>
 
 </html>
-

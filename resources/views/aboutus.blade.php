@@ -19,14 +19,15 @@
 
     <main class="about-main">
         <!-- Header -->
-        <header class="page-header">
-            <div class="container">
+        <header class="page-header relative overflow-hidden">
+            <div class="container relative z-10">
                 <h1>About us</h1>
                 <p>We are Tulong Kabataan, a youth-led organization dedicated to empowering young Filipinos through
                     education, advocacy, and community service. Our mission is to provide support, resources, and
                     opportunities for the next generation to become proactive leaders and changemakers in their
                     communities.</p>
             </div>
+            @include('partials.wave-divider')
         </header>
 
         <!-- Our Story / Introduction -->
@@ -276,4 +277,3 @@
 </body>
 
 </html>
-

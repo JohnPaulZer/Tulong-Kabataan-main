@@ -24,8 +24,10 @@
 
         /* ==================== FOOTER STYLES ==================== */
         .footer {
+            position: relative;
             background: var(--footer-bg);
             color: #fff;
+            margin-top: 94px;
             padding: 60px 0 30px 0;
             font-family: 'Inter', sans-serif;
         }
@@ -172,6 +174,12 @@
                 flex-wrap: wrap;
                 justify-content: center;
                 gap: 16px;
+            }
+        }
+
+        @media (max-width: 850px) {
+            .footer {
+                margin-top: 47px;
             }
         }
 
@@ -506,6 +514,7 @@
 
     <!-- Main Footer -->
     <footer class="footer">
+        @include('partials.footer-wave-divider')
         <div class="footer-container">
             <div class="footer-top">
                 <div class="footer-content-left">
