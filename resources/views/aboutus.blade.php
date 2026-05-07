@@ -4,325 +4,20 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Accomplishment Report | Tulong Kabataan</title>
+    <title>About Us | Tulong Kabataan</title>
     <link rel="icon" href="{{ asset('img/log2.png') }}" type="image/png" />
     <!-- Remixicon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" />
-    @vite('resources/css/app.css')
-    <style>
-        /* * GLOBAL VARIABLES & RESET */
-        :root {
-            --primary-color: #003366;
-            /* Deep Navy Blue */
-            --primary-dark: #002244;
-            /* Darker Navy */
-            --secondary-color: #4a90e2;
-            /* Bright Light Blue */
-            --text-dark: #1e293b;
-            /* Slate 800 */
-            --text-light: #64748b;
-            /* Slate 500 */
-            --white: #ffffff;
-            --bg-light: #f8fafc;
-            /* Very pale blue-gray */
-            --transition: all 0.3s ease;
-            --font-heading: 'Merriweather', serif;
-            --font-body: 'Inter', sans-serif;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: var(--font-body);
-            color: var(--text-dark);
-            line-height: 1.6;
-            background-color: var(--bg-light);
-            overflow-x: hidden;
-        }
-
-        /* Utility Classes */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .section-padding {
-            padding: 80px 0;
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        h1,
-        h2,
-        h3,
-        h4 {
-            font-family: var(--font-heading);
-            color: var(--primary-color);
-            font-weight: 700;
-        }
-
-        p {
-            color: var(--text-light);
-            margin-bottom: 20px;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 12px 30px;
-            background-color: var(--secondary-color);
-            color: var(--white);
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: var(--transition);
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn:hover {
-            background-color: var(--primary-color);
-            transform: translateY(-2px);
-        }
-
-        /* * HERO SECTION */
-        .page-header {
-            background: linear-gradient(rgba(0, 51, 102, 0.9), rgba(0, 51, 102, 0.8)), url('https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=2670&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
-            padding: 100px 0 60px;
-            text-align: center;
-            color: var(--white);
-        }
-
-        .page-header h1 {
-            color: var(--white);
-            font-size: 3rem;
-            margin-bottom: 10px;
-        }
-
-        .page-header p {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 1.2rem;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* * OUR STORY / INTRO SECTION */
-        .intro-section {
-            display: flex;
-            align-items: center;
-            gap: 50px;
-            flex-wrap: wrap;
-        }
-
-        .intro-image {
-            flex: 1;
-            min-width: 300px;
-            position: relative;
-        }
-
-        .intro-image img {
-            width: 100%;
-            border-radius: 20px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-
-        .intro-image::before {
-            content: '';
-            position: absolute;
-            top: -20px;
-            left: -20px;
-            width: 100px;
-            height: 100px;
-            background-color: var(--secondary-color);
-            z-index: -1;
-            border-radius: 50%;
-            opacity: 0.3;
-        }
-
-        .intro-content {
-            flex: 1;
-            min-width: 300px;
-        }
-
-        .section-subtitle {
-            color: var(--secondary-color);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        .intro-content h2 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            line-height: 1.2;
-            color: var(--primary-color);
-        }
-
-        /* * ACCOMPLISHMENT REPORT GRID */
-        .report-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
-        }
-
-        .report-card {
-            background: var(--white);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            transition: var(--transition);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .report-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.1);
-        }
-
-        .report-image {
-            width: 100%;
-            height: 220px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .report-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-
-        .report-card:hover .report-image img {
-            transform: scale(1.05);
-        }
-
-        .report-content {
-            padding: 25px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .report-date {
-            font-size: 0.85rem;
-            color: var(--secondary-color);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        .report-content h3 {
-            font-size: 1.4rem;
-            margin-bottom: 12px;
-            color: var(--primary-color);
-            line-height: 1.3;
-        }
-
-        .report-content p {
-            font-size: 0.95rem;
-            margin-bottom: 20px;
-            color: var(--text-light);
-        }
-
-        .report-footer {
-            margin-top: auto;
-            padding-top: 15px;
-            border-top: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .report-tag {
-            background: #eef2f7;
-            color: var(--primary-color);
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        /* * SIMPLE CTA SECTION */
-        .simple-cta {
-            background-color: var(--white);
-            border-top: 1px solid #e2e8f0;
-            padding: 60px 0;
-            text-align: center;
-        }
-
-        .simple-cta h2 {
-            margin-bottom: 15px;
-            font-size: 2rem;
-        }
-
-        .simple-cta p {
-            max-width: 500px;
-            margin: 0 auto 30px;
-        }
-
-
-
-        /* * ANIMATIONS */
-        .reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s ease;
-        }
-
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* * RESPONSIVE */
-        @media (max-width: 768px) {
-            .page-header h1 {
-                font-size: 2.2rem;
-            }
-
-            .report-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .intro-section {
-                flex-direction: column;
-            }
-
-            .intro-image,
-            .intro-content {
-                width: 100%;
-            }
-
-            .intro-content h2 {
-                font-size: 2rem;
-            }
-        }
-    </style>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body>
+<body class="about-page">
     @include('administrator.partials.loading-screen')
 
     <!-- Navigation & Header -->
     @include('partials.main-header')
 
-    <main>
+    <main class="about-main">
         <!-- Header -->
         <header class="page-header">
             <div class="container">
@@ -335,48 +30,75 @@
         </header>
 
         <!-- Our Story / Introduction -->
-        <section id="our-story" class="section-padding container">
+        <section id="our-story" class="about-story-section section-padding container">
             <div class="intro-section reveal">
-                <div class="intro-image">
-                    <img src="{{ asset('img/diss.jpg') }}" alt="Youth volunteers working together">
-                </div>
                 <div class="intro-content">
-                    <span class="section-subtitle">Who We Are</span>
-                    <h2>Driving Change in Our Communities</h2>
+                    <span class="section-subtitle">How It Started</span>
+                    <h2>Our Dream is Youth-Led Community Transformation</h2>
                     <p>Tulong Kabataan started as a small initiative by a group of passionate students wanting to bridge
                         the gap in local education and resource distribution. Today, we have grown into a nationwide
                         network.</p>
                     <p>We believe that the youth are not just the leaders of tomorrow, but the partners of today. Our
                         programs focus on leadership development, disaster response, and educational assistance.</p>
+                </div>
 
-                    <div style="margin-top: 20px;">
-                        <div style="display: flex; gap: 15px; margin-bottom: 10px;">
-                            <i class="ri-check-double-line"
-                                style="color: var(--secondary-color); font-size: 1.2rem;"></i>
+                <div class="intro-side">
+                    <div class="intro-image">
+                        <img src="{{ asset('img/diss.jpg') }}" alt="Youth volunteers working together">
+                    </div>
+                    <div class="about-story-stats">
+                        <div class="about-story-stat">
+                            <strong>{{ $impactReports->count() }}</strong>
+                            <span>Impact Reports</span>
+                        </div>
+                        <div class="about-story-stat">
+                            <strong>{{ $endedEvents->count() }}</strong>
+                            <span>Events Completed</span>
+                        </div>
+                        <div class="about-story-stat">
+                            <strong>{{ $endedCampaigns->count() }}</strong>
+                            <span>Campaigns Completed</span>
+                        </div>
+                        <div class="about-story-stat">
+                            <strong>100%</strong>
+                            <span>Community Focused</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="about-support-content reveal">
+                <div class="about-support-copy">
+                    <span class="section-subtitle">What Guides Us</span>
+                    <h2>Built on trust, service, and youth action</h2>
+                </div>
+                <div class="about-support-details">
+                    <div class="about-values-list">
+                        <div class="about-value-item">
+                            <i class="ri-check-double-line" aria-hidden="true"></i>
                             <span>Community-driven initiatives</span>
                         </div>
-                        <div style="display: flex; gap: 15px; margin-bottom: 10px;">
-                            <i class="ri-check-double-line"
-                                style="color: var(--secondary-color); font-size: 1.2rem;"></i>
+                        <div class="about-value-item">
+                            <i class="ri-check-double-line" aria-hidden="true"></i>
                             <span>Transparent and accountable</span>
                         </div>
-                        <div style="display: flex; gap: 15px;">
-                            <i class="ri-check-double-line"
-                                style="color: var(--secondary-color); font-size: 1.2rem;"></i>
+                        <div class="about-value-item">
+                            <i class="ri-check-double-line" aria-hidden="true"></i>
                             <span>Inclusive volunteer network</span>
                         </div>
                     </div>
+                    <p class="about-story-note">Every initiative is built with local partners, youth volunteers, and transparent reporting so supporters can see where their help creates change.</p>
                 </div>
             </div>
         </section>
 
         <!-- Accomplishment Reports Grid -->
-        <section class="section-padding container">
+        <section class="about-reports-section section-padding container">
 
-            <div class="text-center reveal" style="margin-bottom: 40px;">
-                <span style="color: var(--secondary-color); font-weight: 700; letter-spacing: 1px;">2024
-                    HIGHLIGHTS</span>
+            <div class="about-section-heading text-center reveal">
+                <span class="section-subtitle">2024 Highlights</span>
                 <h2>Making A Difference Together</h2>
+                <p>Explore the reports, events, and campaigns that reflect how youth volunteers and donors continue to serve communities with purpose.</p>
             </div>
 
             <div class="report-grid">
@@ -509,7 +231,20 @@
             </div>
         </section>
 
-        <!-- Simple CTA Section -->
+        <section class="about-cta container">
+            <div class="about-cta-card reveal">
+                <h2>Be part of the next story of change</h2>
+                <p>Your time, skills, and support can help us reach more young people and families in need.</p>
+                <div class="about-cta-actions">
+                    <a href="{{ route('campaignpage') }}" class="about-cta-btn primary">
+                        <i class="ri-heart-add-line" aria-hidden="true"></i> Support a Campaign
+                    </a>
+                    <a href="{{ route('event.page') }}" class="about-cta-btn secondary">
+                        <i class="ri-group-line" aria-hidden="true"></i> Join an Event
+                    </a>
+                </div>
+            </div>
+        </section>
 
     </main>
 

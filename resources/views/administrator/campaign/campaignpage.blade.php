@@ -15,6 +15,7 @@
         rel="stylesheet">
     <!-- Charts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+    @vite('resources/js/app.js')
 
     <style>
         :root {
