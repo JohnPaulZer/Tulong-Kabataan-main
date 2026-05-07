@@ -848,7 +848,14 @@ body.reloading{
         transition: none;
     }
 }@media (max-width: 1023px){.header{
-        --tk-header-hide-offset: 78px;
+        opacity: 1;
+        transform: none !important;
+        transition: none;
+        will-change: auto;
+    }.header.is-hidden{
+        opacity: 1;
+        transform: none !important;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
     }body:has(.header .mobile-bottom-nav):not(:has(.footer)){
         padding-bottom: calc(88px + env(safe-area-inset-bottom));
     }body:has(.header .mobile-bottom-nav) .footer{

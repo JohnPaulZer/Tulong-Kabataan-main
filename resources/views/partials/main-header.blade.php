@@ -1379,6 +1379,7 @@
             let ticking = false;
             const scrollBuffer = 14;
             const topBuffer = 24;
+            const desktopQuery = window.matchMedia('(min-width: 1024px)');
 
             function headerMenuOpen() {
                 return Boolean(document.querySelector('.user-dropdown.show, .notif-dropdown.show, .notifications-modal.show'));
@@ -1388,7 +1389,9 @@
                 const currentScrollY = Math.max(window.scrollY, 0);
                 const scrollDifference = currentScrollY - lastScrollY;
 
-                if (currentScrollY <= topBuffer || headerMenuOpen()) {
+                if (!desktopQuery.matches) {
+                    header.classList.remove('is-hidden');
+                } else if (currentScrollY <= topBuffer || headerMenuOpen()) {
                     header.classList.remove('is-hidden');
                 } else if (scrollDifference > scrollBuffer) {
                     header.classList.add('is-hidden');
@@ -1411,6 +1414,11 @@
 
             header.addEventListener('focusin', () => {
                 header.classList.remove('is-hidden');
+            });
+
+            desktopQuery.addEventListener('change', () => {
+                header.classList.remove('is-hidden');
+                lastScrollY = Math.max(window.scrollY, 0);
             });
         })();
     </script>
