@@ -321,7 +321,7 @@
                 <div class="user-dropdown" id="userDropdown">
                     <a href="{{ route('profile') }}">Profile</a>
                     <a href="{{ route('inkind.tracking') }}">Your impact</a>
-                    <form method="POST" action="{{ route('logout') }}">
+                    <form method="POST" action="{{ route('logout') }}" data-logout-confirm>
                         @csrf
                         <button type="submit" class="dropdown-logout">Sign out</button>
                     </form>
@@ -1520,6 +1520,10 @@
     </script>
 
 </header>
+
+@auth
+    @include('partials.logout-confirm-modal')
+@endauth
 
 
 {{-- Notification Modal --}}

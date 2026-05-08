@@ -6,10 +6,12 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Verify Email | Tulong Kabataan</title>
     <link rel="icon" href="{{ asset('img/log2.png') }}" type="image/png">
+    <link rel="preload" as="image" href="{{ asset('img/backlogin.png') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="relative flex min-h-screen items-center justify-center overflow-hidden bg-[url('/img/backlogin.png')] bg-cover bg-center bg-no-repeat px-4 py-8 font-body text-slate-950">
+<body class="verify-email-page relative flex min-h-screen items-center justify-center overflow-hidden bg-[url('/img/backlogin.png')] bg-cover bg-center bg-no-repeat px-4 py-8 font-body text-slate-950"
+    style="--auth-bg: url('{{ asset('img/backlogin.png') }}');">
     @include('administrator.partials.loading-screen')
 
     <div class="absolute inset-0 bg-slate-950/25 backdrop-blur-[1px]"></div>
@@ -45,7 +47,7 @@
                 </button>
             </form>
 
-            <form method="POST" action="{{ route('logout') }}">
+            <form method="POST" action="{{ route('logout') }}" data-logout-confirm>
                 @csrf
                 <button type="submit" class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-5 py-3 font-heading text-sm font-semibold text-slate-600 transition hover:border-indigo-300 hover:text-indigo-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2">
                     <i class="ri-logout-box-r-line"></i>
@@ -54,6 +56,8 @@
             </form>
         </div>
     </main>
+
+    @include('partials.logout-confirm-modal')
 
     <script>
         // Check if user has verified their email every 2 seconds
