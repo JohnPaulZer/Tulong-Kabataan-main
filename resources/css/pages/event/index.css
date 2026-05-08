@@ -96,10 +96,9 @@ body.event-page h1, body.event-page h2, body.event-page h3, body.event-page h4, 
 }body.event-page .evt-tabs-navigation{
     background: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    position: sticky;
-    top: 88px;
-    z-index: 40;
-    transition: top 0.3s ease;
+    position: relative;
+    top: auto;
+    z-index: 1;
     border-top: 1px solid #eef2f7;
 }body.event-page .evt-tabs-navigation .evt-container{
     padding-top: 0.5rem;
@@ -713,7 +712,7 @@ body.event-page h1, body.event-page h2, body.event-page h3, body.event-page h4, 
 
     
 }@media (max-width: 768px){body.event-page .evt-tabs-navigation{
-        top: 57px;
+        top: auto;
     }body.event-page .evts-container{
         grid-template-columns: 1fr;
     }body.event-page .mobile-dropdown{
