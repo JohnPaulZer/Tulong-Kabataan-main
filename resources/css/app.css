@@ -169,7 +169,8 @@ body.profile-inkind-page .prof-main {
 }
 
 body.login-page,
-body.register-page {
+body.register-page,
+body.verify-email-page {
     position: relative;
     isolation: isolate;
     min-height: 100vh;
@@ -179,7 +180,8 @@ body.register-page {
 }
 
 body.login-page::before,
-body.register-page::before {
+body.register-page::before,
+body.verify-email-page::before {
     content: "";
     position: fixed;
     inset: 0;
@@ -950,4 +952,20 @@ body.profile-inkind-page .ikd-filter-btn {
     body.profile-inkind-page .ikd-page-title {
         font-size: 1.4rem;
     }
+}
+
+/* Hide visual scrollbars globally while keeping scroll behavior available. */
+html,
+body,
+* {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+*::-webkit-scrollbar {
+    width: 0 !important;
+    height: 0 !important;
+    display: none !important;
 }
