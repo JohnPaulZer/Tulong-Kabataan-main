@@ -23,7 +23,6 @@
     @include('administrator.partials.loading-screen')
 
     <div class="usedash-flex">
-        <!-- Sidebar -->
         @include('profile.partials.main-sidebar')
 
         <main class="prof-main">
@@ -594,4 +593,3 @@
 </body>
 
 </html>
-

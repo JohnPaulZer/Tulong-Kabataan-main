@@ -21,7 +21,6 @@
     @include('administrator.partials.loading-screen')
 
     <div class="prof-flex">
-        <!-- Sidebar -->
         @include('profile.partials.main-sidebar')
 
         <!-- Main -->
@@ -509,4 +508,3 @@
 </body>
 
 </html>
-

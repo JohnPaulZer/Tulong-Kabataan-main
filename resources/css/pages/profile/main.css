@@ -21,6 +21,7 @@ body.profile-page{
     --space-3: 12px;
     --space-4: 16px;
     --x: 16px;
+    --profile-shell-header-offset: 90px;
     
 }body.profile-page *, body.profile-page *::before, body.profile-page *::after{
     box-sizing: border-box;
@@ -51,14 +52,14 @@ body.profile-page{
     width: 256px;
     background: var(--white);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    height: calc(100vh - 70px);
-    height: calc(100dvh - 70px);
+    height: calc(100vh - var(--profile-shell-header-offset));
+    height: calc(100dvh - var(--profile-shell-header-offset));
     
     position: fixed;
-    top: 70px;
+    top: var(--profile-shell-header-offset);
     left: 0;
     overflow-y: auto;
-    transition: width 0.25s ease;
+    transition: width 0.25s ease, top 0.52s cubic-bezier(0.22, 1, 0.36, 1), height 0.52s cubic-bezier(0.22, 1, 0.36, 1);
     z-index: 10;
 }body.profile-page .prof-sidebar nav{
     margin-top: 48px;
@@ -560,4 +561,3 @@ body.profile-page{
         padding-top: 90px;
     }
 }
-

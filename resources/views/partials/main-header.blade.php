@@ -333,7 +333,9 @@
     </div>
 
     @php
-        $mobileNavItems = [
+        $isProfileMobileNav = request()->routeIs('profile', 'profile.dash', 'profile.event', 'profile.inkind');
+
+        $publicMobileNavItems = [
             [
                 'route' => 'landpage',
                 'label' => 'Home',
@@ -365,9 +367,40 @@
                 'active' => request()->routeIs('about.us'),
             ],
         ];
+
+        $profileMobileNavItems = [
+            [
+                'route' => 'profile',
+                'label' => 'Profile',
+                'icon' => 'ri-user-line',
+                'active' => request()->routeIs('profile'),
+            ],
+            [
+                'route' => 'profile.dash',
+                'label' => 'Campaign',
+                'icon' => 'ri-dashboard-line',
+                'active' => request()->routeIs('profile.dash'),
+            ],
+            [
+                'route' => 'profile.event',
+                'label' => 'Events',
+                'icon' => 'ri-calendar-check-line',
+                'active' => request()->routeIs('profile.event'),
+            ],
+            [
+                'route' => 'profile.inkind',
+                'label' => 'In-Kind',
+                'icon' => 'ri-gift-line',
+                'active' => request()->routeIs('profile.inkind'),
+            ],
+        ];
+
+        $mobileNavItems = $isProfileMobileNav ? $profileMobileNavItems : $publicMobileNavItems;
+        $mobileMenuItems = $publicMobileNavItems;
     @endphp
 
-    <nav class="mobile-bottom-nav" aria-label="Mobile navigation">
+    <nav class="mobile-bottom-nav {{ $isProfileMobileNav ? 'mobile-bottom-nav--profile' : '' }}"
+        aria-label="{{ $isProfileMobileNav ? 'Profile navigation' : 'Mobile navigation' }}">
         @foreach ($mobileNavItems as $item)
             <a href="{{ route($item['route']) }}"
                 class="mobile-bottom-nav__item {{ $item['active'] ? 'is-active' : '' }}"
@@ -376,6 +409,27 @@
                 <span class="mobile-bottom-nav__label">{{ $item['label'] }}</span>
             </a>
         @endforeach
+
+        @if ($isProfileMobileNav)
+            <div class="mobile-bottom-nav__menu">
+                <button type="button" class="mobile-bottom-nav__item mobile-bottom-nav__menu-button"
+                    id="mobileProfileMenuBtn" aria-label="Open site menu" aria-haspopup="menu" aria-expanded="false"
+                    aria-controls="mobileProfileMenu">
+                    <i class="ri-menu-3-line" aria-hidden="true"></i>
+                    <span class="mobile-bottom-nav__label">Menu</span>
+                </button>
+
+                <div class="mobile-bottom-nav__menu-panel" id="mobileProfileMenu" role="menu" aria-hidden="true">
+                    @foreach ($mobileMenuItems as $item)
+                        <a href="{{ route($item['route']) }}" class="mobile-bottom-nav__menu-link"
+                            role="menuitem">
+                            <i class="{{ $item['icon'] }}" aria-hidden="true"></i>
+                            <span>{{ $item['label'] }}</span>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+        @endif
     </nav>
 
     @auth
@@ -1364,6 +1418,48 @@
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
                     closeAll();
+                }
+            });
+        })();
+    </script>
+
+    {{-- Profile mobile bottom menu --}}
+    <script>
+        (function() {
+            const menu = document.querySelector('.mobile-bottom-nav__menu');
+            const button = document.getElementById('mobileProfileMenuBtn');
+            const panel = document.getElementById('mobileProfileMenu');
+
+            if (!menu || !button || !panel) {
+                return;
+            }
+
+            function setOpen(open) {
+                menu.classList.toggle('is-open', open);
+                button.setAttribute('aria-expanded', open ? 'true' : 'false');
+                panel.setAttribute('aria-hidden', open ? 'false' : 'true');
+            }
+
+            button.addEventListener('click', function(event) {
+                event.stopPropagation();
+                setOpen(!menu.classList.contains('is-open'));
+            });
+
+            panel.addEventListener('click', function(event) {
+                if (event.target.closest('a')) {
+                    setOpen(false);
+                }
+            });
+
+            document.addEventListener('click', function(event) {
+                if (!menu.contains(event.target)) {
+                    setOpen(false);
+                }
+            });
+
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    setOpen(false);
                 }
             });
         })();

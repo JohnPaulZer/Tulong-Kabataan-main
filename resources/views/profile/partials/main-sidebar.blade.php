@@ -1,6 +1,44 @@
 <style>
+    body.profile-page,
+    body.profile-dashboard-page,
+    body.profile-events-page,
+    body.profile-inkind-page {
+        --profile-sidebar-w: 256px;
+        --profile-shell-header-offset: 90px;
+    }
+
+    @media (min-width: 1024px) {
+        body.profile-page:has(.header.is-hidden),
+        body.profile-dashboard-page:has(.header.is-hidden),
+        body.profile-events-page:has(.header.is-hidden),
+        body.profile-inkind-page:has(.header.is-hidden) {
+            --profile-shell-header-offset: 0px;
+        }
+    }
+
+    @media (max-width: 1023px) {
+        body.profile-page,
+        body.profile-dashboard-page,
+        body.profile-events-page,
+        body.profile-inkind-page {
+            --profile-shell-header-offset: 64px;
+        }
+    }
+
+    @media (max-width: 767px) {
+        body.profile-page,
+        body.profile-dashboard-page,
+        body.profile-events-page,
+        body.profile-inkind-page {
+            --profile-shell-header-offset: 58px;
+        }
+    }
+
     /* --- LAYOUT WRAPPER --- */
-    .prof-flex {
+    .prof-flex,
+    .usedash-flex,
+    .usereve-prof-flex,
+    .ikd-prof-flex {
         display: flex;
         width: 100%;
         box-sizing: border-box;
@@ -8,16 +46,16 @@
 
     /* --- SIDEBAR (Desktop Default) --- */
     .prof-sidebar {
-        width: 256px;
+        width: var(--profile-sidebar-w);
         background: var(--white);
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        height: calc(100vh - 70px);
-        height: calc(100dvh - 70px);
+        height: calc(100vh - var(--profile-shell-header-offset));
+        height: calc(100dvh - var(--profile-shell-header-offset));
         position: fixed;
-        top: 70px;
+        top: var(--profile-shell-header-offset);
         left: 0;
         overflow-y: auto;
-        transition: width 0.25s ease;
+        transition: width 0.25s ease, top 0.52s cubic-bezier(0.22, 1, 0.36, 1), height 0.52s cubic-bezier(0.22, 1, 0.36, 1);
         z-index: 10;
     }
 
@@ -64,89 +102,24 @@
     /* --- MAIN CONTENT (Desktop Default) --- */
     .prof-main {
         /* Matches the desktop sidebar width */
-        margin-left: 256px; 
-        padding: 24px;
-        padding-top: 32px; /* Extra top space usually looks better */
+        margin-left: var(--profile-sidebar-w); 
+        padding: var(--profile-page-pad-y, 32px) var(--profile-page-pad-x, 36px) 42px;
         flex: 1;
-        width: calc(100% - 256px); /* Explicit width calculation */
+        width: calc(100% - var(--profile-sidebar-w)); /* Explicit width calculation */
         box-sizing: border-box;
         transition: margin-left 0.25s ease, width 0.25s ease;
     }
 
-    /* --- TABLET & MOBILE (Max-width: 768px) --- */
-    @media (max-width: 768px) {
-        /* Sidebar shrinks to icon-only */
+    /* --- TABLET & MOBILE --- */
+    @media (max-width: 1023px) {
         .prof-sidebar {
-            width: 64px;
-            border-right: 1px solid var(--gray-200);
-        }
-
-        .prof-sidebar nav {
-            margin-top: 50px;
-        }
-
-        .prof-sidebar a {
-            gap: 0;
-            justify-content: center;
-            padding: 12px;
-            margin: 6px;
-            border-radius: 12px;
-        }
-
-        .prof-sidebar a i:first-child {
-            margin: 0;
-        }
-
-        .prof-sidebar a .link-text,
-        .prof-sidebar a .caret {
             display: none;
         }
 
-        /* Sidebar Expansion on Hover/Click */
-        .prof-sidebar:hover,
-        .prof-sidebar.open {
-            width: 256px;
-        }
-
-        .prof-sidebar:hover a,
-        .prof-sidebar.open a {
-            justify-content: flex-start;
-            gap: 12px;
-            padding: 12px 24px;
-            margin: 4px 16px;
-        }
-
-        .prof-sidebar:hover a .link-text,
-        .prof-sidebar.open a .link-text,
-        .prof-sidebar:hover a .caret,
-        .prof-sidebar.open a .caret {
-            display: inline;
-        }
-
-        /* --- MAIN CONTENT UPDATE FOR TABLET/MOBILE --- */
         .prof-main {
-            /* Matches the shrunken sidebar width */
-            margin-left: 64px; 
-            width: calc(100% - 64px);
-            padding: 16px;
-        }
-    }
-
-    /* --- LOWER DEVICES / SMALL MOBILE (Max-width: 480px) --- */
-    @media (max-width: 480px) {
-        .prof-main {
-            /* Keep margin 64px, but reduce padding to give content room */
-            padding: 12px;
-            padding-top: 16px;
-        }
-        
-        /* Optional: If sidebar icons feel too big on tiny screens */
-        .prof-sidebar {
-            width: 60px;
-        }
-        .prof-main {
-            margin-left: 60px;
-            width: calc(100% - 60px);
+            margin-left: 0;
+            width: 100%;
+            padding: var(--profile-page-pad-y, 22px) var(--profile-page-pad-x, 16px) calc(104px + env(safe-area-inset-bottom));
         }
     }
 </style>
@@ -180,4 +153,3 @@
         </a>
     </nav>
 </aside>
-
