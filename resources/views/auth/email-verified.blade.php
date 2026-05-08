@@ -8,9 +8,11 @@
     <link rel="icon" href="{{ asset('img/log2.png') }}" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="preload" as="image" href="{{ asset('img/backlogin.png') }}">
 </head>
 
-<body class="relative flex min-h-screen items-center justify-center overflow-hidden bg-[url('/img/backlogin.png')] bg-cover bg-center bg-no-repeat px-4 py-8 font-body text-slate-950">
+<body class="email-verified-page relative flex min-h-screen items-center justify-center overflow-hidden bg-[url('/img/backlogin.png')] bg-cover bg-center bg-no-repeat px-4 py-8 font-body text-slate-950"
+    style="--auth-bg: url('{{ asset('img/backlogin.png') }}');">
     <div class="absolute inset-0 bg-slate-950/25 backdrop-blur-[1px]"></div>
     <div class="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-white/40 to-transparent"></div>
 
@@ -33,4 +35,3 @@
 </body>
 
 </html>
-

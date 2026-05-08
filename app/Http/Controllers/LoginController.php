@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
 use App\Models\Campaign;
 use App\Models\EventRegistration;
@@ -296,14 +297,27 @@ class LoginController
             'status'       => 'unverified',
         ]);
 
-        // Trigger email verification
-        event(new Registered($user));
-
         // Log the user in temporarily to access verification page
         Auth::login($user);
 
+        try {
+            event(new Registered($user));
+        } catch (\Throwable $e) {
+            Log::error('Email verification send failed after registration.', [
+                'user_id' => $user->getKey(),
+                'email' => $user->email,
+                'error' => $e->getMessage(),
+            ]);
+
+            return redirect()
+                ->route('verification.notice')
+                ->with('mail_error', 'We could not send the verification email. Please check the mail settings and try Resend Verification Email.');
+        }
+
         // Redirect to verification notice page instead of login
-        return redirect()->route('verification.notice');
+        return redirect()
+            ->route('verification.notice')
+            ->with('message', 'Verification email sent. Please check your inbox or spam folder.');
     }
 
     //VERIFCATION NOTICE
@@ -347,7 +361,17 @@ class LoginController
     //VERICATION RESEND
     public function resendVerification(Request $request)
     {
-        $request->user()->sendEmailVerificationNotification();
+        try {
+            $request->user()->sendEmailVerificationNotification();
+        } catch (\Throwable $e) {
+            Log::error('Email verification resend failed.', [
+                'user_id' => $request->user()?->getKey(),
+                'email' => $request->user()?->email,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->with('mail_error', 'Verification email was not sent because the mail server rejected the current credentials.');
+        }
 
         return back()->with('message', 'Verification link sent!');
     }
