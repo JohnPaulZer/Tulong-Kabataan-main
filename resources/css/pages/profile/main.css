@@ -21,7 +21,6 @@ body.profile-page{
     --space-3: 12px;
     --space-4: 16px;
     --x: 16px;
-    --profile-shell-header-offset: 90px;
     
 }body.profile-page *, body.profile-page *::before, body.profile-page *::after{
     box-sizing: border-box;
@@ -48,45 +47,6 @@ body.profile-page{
     text-decoration: none;
 }body.profile-page .prof-flex{
     display: flex;
-}body.profile-page .prof-sidebar{
-    width: 256px;
-    background: var(--white);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    height: calc(100vh - var(--profile-shell-header-offset));
-    height: calc(100dvh - var(--profile-shell-header-offset));
-    
-    position: fixed;
-    top: var(--profile-shell-header-offset);
-    left: 0;
-    overflow-y: auto;
-    transition: width 0.25s ease, top 0.52s cubic-bezier(0.22, 1, 0.36, 1), height 0.52s cubic-bezier(0.22, 1, 0.36, 1);
-    z-index: 10;
-}body.profile-page .prof-sidebar nav{
-    margin-top: 48px;
-}body.profile-page .prof-sidebar a{
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 24px;
-    text-decoration: none;
-    color: var(--gray-600);
-    border-radius: 8px;
-    margin: 4px 16px;
-    transition: background 0.15s ease, color 0.15s ease, padding 0.2s ease;
-    white-space: nowrap;
-}body.profile-page .prof-sidebar a i{
-    font-size: 18px;
-}body.profile-page .prof-sidebar a .caret{
-    margin-left: auto;
-    font-size: 18px;
-    opacity: 0.7;
-}body.profile-page .prof-sidebar a.active{
-    background: rgba(59, 130, 246, 0.1);
-    border-right: 4px solid var(--primary);
-    color: var(--primary);
-}body.profile-page .prof-sidebar a:hover{
-    background: var(--gray-50);
-    color: var(--primary);
 }body.profile-page .prof-main{
     margin-left: 256px;
     padding: 24px;
@@ -478,33 +438,9 @@ body.profile-page{
     to {
         transform: rotate(360deg);
     }
-}@media (max-width: 768px){body.profile-page .prof-sidebar{
-        width: 64px;
-        border-right: 1px solid var(--gray-200);
-    }body.profile-page .prof-sidebar nav{
-        margin-top: 50px;
-    }body.profile-page .prof-sidebar a{
-        gap: 0;
-        justify-content: center;
-        padding: 12px;
-        margin: 6px;
-        border-radius: 12px;
-    }body.profile-page .prof-sidebar a i:first-child{
-        margin: 0;
-    }body.profile-page .prof-sidebar a .link-text, body.profile-page .prof-sidebar a .caret{
-        display: none;
-    }body.profile-page .prof-main{
+}@media (max-width: 768px){body.profile-page .prof-main{
         margin-left: 64px;
         padding: 16px;
-    }body.profile-page .prof-sidebar:hover, body.profile-page .prof-sidebar.open{
-        width: 256px;
-    }body.profile-page .prof-sidebar:hover a, body.profile-page .prof-sidebar.open a{
-        justify-content: flex-start;
-        gap: 12px;
-        padding: 12px 24px;
-        margin: 4px 16px;
-    }body.profile-page .prof-sidebar:hover a .link-text, body.profile-page .prof-sidebar.open a .link-text, body.profile-page .prof-sidebar:hover a .caret, body.profile-page .prof-sidebar.open a .caret{
-        display: inline;
     }
 
     

@@ -171,8 +171,9 @@
     }
   }
   </style>
+  @include('administrator.partials.admin-theme')
 </head>
-<body>
+<body class="admin-dnc-show-page">
 
   <!-- Main Content -->
   <div class="container">
@@ -300,4 +301,3 @@ function downloadPDF() {
 
 </body>
 </html>
-

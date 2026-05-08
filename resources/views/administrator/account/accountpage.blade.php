@@ -11,9 +11,10 @@
     <!-- Charts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @include('administrator.partials.admin-theme')
 </head>
 
-<body class="admin-account-page">
+<body class="admin-page admin-account-page">
     @include('administrator.partials.loading-screen')
     @include('partials.universalmodal')
 
@@ -47,7 +48,7 @@
 
         <div class="container">
             <section class="page-header">
-                <h2>Account Verification</h2>
+                <h1>Account Verification</h1>
                 <p>Review and manage user account decision requests</p>
             </section>
 
@@ -1442,4 +1443,3 @@
 </body>
 
 </html>
-

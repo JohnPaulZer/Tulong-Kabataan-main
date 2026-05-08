@@ -1093,9 +1093,10 @@
             font-size: 14px;
         }
     </style>
+    @include('administrator.partials.admin-theme')
 </head>
 
-<body>
+<body class="admin-page admin-campaign-page">
     @include('administrator.partials.loading-screen')
     @include('partials.universalmodal')
 
@@ -1128,6 +1129,10 @@
     <!-- Main -->
     <main id="mainContent" class="main" role="main">
         <div style="max-width:1200px; margin:0 auto;">
+            <section class="page-header admin-page-heading">
+                <h1>Campaign Management</h1>
+                <p>Monitor campaign activity, donations, and manual funding requests.</p>
+            </section>
 
             <!-- Top Controls -->
         
@@ -2067,4 +2072,3 @@
 </body>
 
 </html>
-

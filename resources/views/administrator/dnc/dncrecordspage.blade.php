@@ -741,9 +741,10 @@
         }
     </style>
 
+    @include('administrator.partials.admin-theme')
 </head>
 
-<body>
+<body class="admin-page admin-dnc-page">
 
     @include('administrator.partials.loading-screen')
     <!-- Header -->
@@ -1215,4 +1216,3 @@
 </body>
 
 </html>
-
