@@ -134,6 +134,15 @@ body.reloading{
     border-radius: 999px;
     padding: 8px 12px;
     cursor: pointer;
+}.header .user-avatar{
+    width: 32px;
+    height: 32px;
+    flex: 0 0 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    overflow: hidden;
 }.header .user-dropdown{
     position: absolute;
     right: 0;
@@ -977,6 +986,9 @@ body.reloading{
     }.header .user-avatar{
         width: 26px;
         height: 26px;
+        min-width: 26px;
+        flex: 0 0 26px;
+        aspect-ratio: 1 / 1;
     }.header .icon-btn{
         width: 36px;
         height: 36px;
