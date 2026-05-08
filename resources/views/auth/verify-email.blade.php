@@ -30,6 +30,12 @@
             </div>
         @endif
 
+        @if (session('mail_error'))
+            <div class="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-800">
+                {{ session('mail_error') }}
+            </div>
+        @endif
+
         <p class="mb-7 text-base leading-relaxed text-slate-600 sm:text-lg">
             Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn't receive the email, we will gladly send you another.
         </p>

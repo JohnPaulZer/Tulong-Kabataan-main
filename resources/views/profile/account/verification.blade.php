@@ -11,7 +11,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="overflow-x-hidden bg-gray-100 font-body text-gray-700">
+<body class="verification-page overflow-x-hidden font-body text-slate-700">
     @include('partials.main-header')
 
     @if ($errors->any())
@@ -44,11 +44,7 @@
                         class="verification-d-flex verification-align-items-center verification-gap-2 verification-mb-2 verification-flex-wrap">
                         <button type="button" class="verification-btn verification-btn-back" id="pageBackBtn"
                             aria-label="Go back">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M15 19l-7-7 7-7" />
-                            </svg>
+                            <i class="ri-arrow-left-line" aria-hidden="true"></i>
                             <span class="verification-ms-1 verification-d-none verification-d-sm-inline">Back</span>
                         </button>
                     </div>
@@ -58,7 +54,10 @@
                 </div>
 
                 <!-- RIGHT: Security badge -->
-                <span class="verification-badge verification-text-bg-light verification-ms-3">Secure • Encrypted</span>
+                <span class="verification-badge verification-text-bg-light verification-ms-3">
+                    <i class="ri-lock-line" aria-hidden="true"></i>
+                    Secure - Encrypted
+                </span>
             </div>
 
             <div class="verification-card-body verification-p-4 verification-p-md-5">
@@ -73,7 +72,7 @@
                 {{-- Show admin reupload message --}}
                 @if ($vr && $vr->status === 'reupload')
                     <div class="verification-alert verification-alert-warning verification-mb-4">
-                        <strong>⚠️ Reupload Required</strong><br>
+                        <strong>Reupload Required</strong><br>
                         {{ $vr->review_notes ?? 'Please reupload the requested documents.' }}
                     </div>
                 @endif
@@ -94,7 +93,8 @@
                         <section class="verification-step verification-show" id="step-1">
                             <h2
                                 class="verification-h6 verification-text-uppercase verification-text-muted verification-mb-3">
-                                Upload ID</h2>
+                                Government ID</h2>
+                            <p class="verification-step-copy">Upload a clear photo of your valid ID. Add the back side only when required.</p>
                             <div class="verification-row verification-g-3 verification-g-md-4">
 
                                 <!-- ID Type -->
@@ -103,7 +103,7 @@
                                         Type</label>
                                     <select name="id_type" id="id_type" class="verification-form-select"
                                         @if ($vr && $vr->status === 'reupload') disabled @endif>
-                                        <option value="">-- Select --</option>
+                                        <option value="">Select ID type</option>
                                         <option value="philid" @if (old('id_type', $vr->id_type ?? '') === 'philid') selected @endif>PhilSys
                                             National ID</option>
                                         <option value="drivers_license"
@@ -157,7 +157,8 @@
                         <section class="verification-step" id="step-2">
                             <h2
                                 class="verification-h6 verification-text-uppercase verification-text-muted verification-mb-3">
-                                Facial Photo</h2>
+                                Face Photo</h2>
+                            <p class="verification-step-copy">Take a front-facing photo with good lighting.</p>
                             <div class="verification-col-12 verification-col-md-8">
                                 <label for="face_photo" class="verification-form-label verification-required">Take a
                                     face-only photo</label>
@@ -179,7 +180,8 @@
                         <section class="verification-step" id="step-3">
                             <h2
                                 class="verification-h6 verification-text-uppercase verification-text-muted verification-mb-3">
-                                Selfie Holding ID</h2>
+                                Selfie with ID</h2>
+                            <p class="verification-step-copy">Hold the ID beside your face so both are readable in one photo.</p>
                             <div class="verification-col-12 verification-col-md-8">
                                 <label for="selfie" class="verification-form-label verification-required">Upload
                                     selfie while holding your ID</label>
@@ -202,7 +204,8 @@
                         <section class="verification-step" id="step-4">
                             <h2
                                 class="verification-h6 verification-text-uppercase verification-text-muted verification-mb-3">
-                                ID & Personal Details</h2>
+                                Personal Details</h2>
+                            <p class="verification-step-copy">Enter the details exactly as shown on your ID.</p>
                             <div class="verification-row verification-g-3 verification-g-md-4">
                                 <!-- ID Number -->
                                 <div class="verification-col-12 verification-col-md-6">
@@ -256,7 +259,7 @@
                                         class="verification-form-label verification-required">Sex</label>
                                     <select name="sex" id="sex" class="verification-form-select"
                                         @if ($vr && $vr->status === 'reupload') disabled @else required @endif>
-                                        <option value="">-- Select --</option>
+                                        <option value="">Select sex</option>
                                         <option value="M" @if (old('sex', $vr->sex ?? '') === 'M') selected @endif>Male
                                         </option>
                                         <option value="F" @if (old('sex', $vr->sex ?? '') === 'F') selected @endif>
@@ -312,17 +315,17 @@
         if (!reuploadMode || reuploadFields.includes("id_front") || reuploadFields.includes("id_back"))
             activeSteps.push({
                 id: 1,
-                label: "Add ID"
+                label: "ID"
             });
         if (!reuploadMode || reuploadFields.includes("face_photo"))
             activeSteps.push({
                 id: 2,
-                label: "Facial Photo"
+                label: "Face"
             });
         if (!reuploadMode || reuploadFields.includes("selfie"))
             activeSteps.push({
                 id: 3,
-                label: "Selfie w/ ID"
+                label: "Selfie"
             });
         if (!reuploadMode)
             activeSteps.push({
@@ -437,7 +440,7 @@
                 message = 'PhilSys ID must be 12 or 16 digits.';
             } else if (idType?.value === 'drivers_license') {
                 regex = /^[A-Za-z]\d{2}-?\d{2}-?\d{6}$/;
-                message = "Driver’s License must look like E12-23-000386 or E1223000386.";
+                message = "Driver's License must look like E12-23-000386 or E1223000386.";
             }
             if (!regex || raw === '') {
                 clearError(idNumber);
@@ -603,4 +606,3 @@
 </body>
 
 </html>
-
