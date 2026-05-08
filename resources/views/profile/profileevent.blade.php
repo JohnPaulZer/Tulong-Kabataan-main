@@ -18,7 +18,6 @@
     @include('administrator.partials.loading-screen')
 
     <div class="usereve-prof-flex">
-        <!-- Sidebar -->
         @include('profile.partials.main-sidebar')
 
         <!-- Main -->
@@ -581,4 +580,3 @@
 </body>
 
 </html>
-

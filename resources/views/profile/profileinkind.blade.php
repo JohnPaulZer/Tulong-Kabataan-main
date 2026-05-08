@@ -22,7 +22,6 @@
     @include('partials.main-header')
 
     <div class="ikd-prof-flex">
-        <!-- Sidebar -->
         @include('profile.partials.main-sidebar')
 
         <main class="prof-main">
@@ -604,4 +603,3 @@
 </body>
 
 </html>
-
