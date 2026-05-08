@@ -234,9 +234,10 @@
             opacity: 1;
         }
     </style>
+    @include('administrator.partials.admin-theme')
 </head>
 
-<body>
+<body class="admin-dnc-form-page">
     @if (session('error'))
         <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
@@ -669,4 +670,3 @@
 
 
 </html>
-

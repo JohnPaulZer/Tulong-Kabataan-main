@@ -296,9 +296,10 @@
             }
         }
     </style>
+    @include('administrator.partials.admin-theme')
 </head>
 
-<body>
+<body class="admin-event-form-page">
 
     @include('administrator.partials.loading-screen')
 
@@ -691,4 +692,3 @@
 </body>
 
 </html>
-

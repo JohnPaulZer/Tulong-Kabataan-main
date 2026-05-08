@@ -14,9 +14,10 @@
             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCxE6u2I1N_uFuYp8hZH2OSh_VEPo1N85M&libraries=places&callback=initAutocomplete"
             async defer></script>
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @include('administrator.partials.admin-theme')
     </head>
 
-    <body class="admin-inkind-page">
+    <body class="admin-page admin-inkind-page">
 
         @include('partials.universalmodal')
         <!-- Header --> 
@@ -47,6 +48,10 @@
         <!-- Overlay (mobile) -->
         <div id="sidebarOverlay" class="overlay" aria-hidden="true"></div>
         <main class="main">
+            <section class="page-header admin-page-heading">
+                <h1>In-Kind Donations</h1>
+                <p>Track donated goods, drop-off locations, and distribution reports.</p>
+            </section>
 
             <!-- In-Kind Donation Statistics -->
             <section class="stats-grid">
@@ -2758,4 +2763,3 @@
     </body>
 
     </html>
-

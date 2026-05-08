@@ -13,9 +13,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @include('administrator.partials.admin-theme')
 </head>
 
-<body class="admin-event-page">
+<body class="admin-page admin-event-page">
     @include('administrator.partials.loading-screen')
     @include('partials.universalmodal')
     @include('administrator.event.partials.eventmodal')
@@ -52,7 +53,10 @@
 
             <!-- Topbar -->
             <div class="topbar">
-
+                <section class="page-header admin-page-heading">
+                    <h1>Events</h1>
+                    <p>Manage event listings, attendance, and volunteer participation.</p>
+                </section>
                 <div style="display:flex;gap:8px;align-items:center">
                     <form action="{{ route('createevent') }}" method="GET">
                         <button class="create-btn"><i class="ri-add-line"></i> Create Event</button>
@@ -1910,4 +1914,3 @@
 </body>
 
 </html>
-

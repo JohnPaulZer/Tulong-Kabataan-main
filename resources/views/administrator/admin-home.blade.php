@@ -1156,9 +1156,10 @@
             }
         }
     </style>
+    @include('administrator.partials.admin-theme')
 </head>
 
-<body>
+<body class="admin-page admin-directory-page">
 
     @include('administrator.partials.loading-screen')
 
@@ -1964,4 +1965,3 @@
 </body>
 
 </html>
-
