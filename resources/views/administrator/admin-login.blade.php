@@ -445,10 +445,201 @@
         .animate-swipe-up {
             animation: swipeUp 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
         }
+
+        /* Admin-login-only polish. Public login/register pages are not loaded here. */
+        :root {
+            --admin-login-bg: #f6f8fb;
+            --admin-login-surface: #ffffff;
+            --admin-login-text: #0f172a;
+            --admin-login-muted: #64748b;
+            --admin-login-line: #dbe3ee;
+            --admin-login-blue: #2563eb;
+            --admin-login-blue-dark: #1d4ed8;
+            --admin-login-blue-soft: #eff6ff;
+            --admin-login-red: #dc2626;
+            --admin-login-red-soft: #fef2f2;
+            --admin-login-radius: 8px;
+        }
+
+        body.admin-login-page {
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow: auto;
+            padding: 24px;
+            background:
+                linear-gradient(135deg, rgba(37, 99, 235, 0.08), transparent 34%),
+                linear-gradient(180deg, #f9fbff 0%, var(--admin-login-bg) 100%);
+            color: var(--admin-login-text);
+        }
+
+        body.admin-login-page::before {
+            content: "";
+            position: fixed;
+            inset: 0 auto 0 0;
+            width: min(36vw, 440px);
+            background: linear-gradient(180deg, #111827 0%, #10213f 58%, #0b1730 100%);
+            clip-path: polygon(0 0, 88% 0, 100% 100%, 0 100%);
+            pointer-events: none;
+        }
+
+        body.admin-login-page .bg-pattern {
+            display: none;
+        }
+
+        body.admin-login-page .dashboard-preview {
+            background: var(--admin-login-bg);
+        }
+
+        body.admin-login-page .login-container {
+            max-width: 460px;
+            padding: 0;
+        }
+
+        body.admin-login-page .login-card {
+            position: relative;
+            overflow: hidden;
+            padding: clamp(28px, 4vw, 36px);
+            border: 1px solid var(--admin-login-line);
+            border-radius: var(--admin-login-radius);
+            background: rgba(255, 255, 255, 0.96);
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.14);
+        }
+
+        body.admin-login-page .login-card::before {
+            content: "";
+            position: absolute;
+            inset: 0 0 auto;
+            height: 4px;
+            background: linear-gradient(90deg, var(--admin-login-blue), #059669);
+        }
+
+        body.admin-login-page .login-header {
+            margin-bottom: 28px;
+            text-align: left;
+        }
+
+        body.admin-login-page .logo-wrapper {
+            justify-content: flex-start;
+            margin-bottom: 18px;
+        }
+
+        body.admin-login-page .logo-wrapper img {
+            height: 68px;
+        }
+
+        body.admin-login-page .login-header p {
+            margin: 0;
+            color: var(--admin-login-text);
+            font-size: 22px;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        body.admin-login-page .login-header p::after {
+            content: "Secure dashboard access";
+            display: block;
+            margin-top: 8px;
+            color: var(--admin-login-muted);
+            font-family: "Inter", sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        body.admin-login-page .login-form {
+            gap: 18px;
+        }
+
+        body.admin-login-page .input-group label {
+            margin: 0 0 8px;
+            color: #334155;
+            font-size: 13px;
+            font-weight: 750;
+        }
+
+        body.admin-login-page .input-wrapper input {
+            min-height: 46px;
+            padding-top: 0;
+            padding-bottom: 0;
+            border: 1px solid #cbd5e1;
+            border-radius: var(--admin-login-radius);
+            background: #fff;
+            color: var(--admin-login-text);
+            font-size: 14px;
+        }
+
+        body.admin-login-page .input-wrapper input:hover {
+            border-color: #94a3b8;
+        }
+
+        body.admin-login-page .input-wrapper input:focus {
+            border-color: var(--admin-login-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.13);
+        }
+
+        body.admin-login-page .input-icon-left svg,
+        body.admin-login-page .toggle-password svg {
+            color: #64748b;
+        }
+
+        body.admin-login-page .toggle-password svg:hover,
+        body.admin-login-page .toggle-password svg.active-icon {
+            color: var(--admin-login-blue);
+        }
+
+        body.admin-login-page .error-msg {
+            margin-bottom: 18px;
+            border: 1px solid #fecaca;
+            border-radius: var(--admin-login-radius);
+            background: var(--admin-login-red-soft);
+            color: var(--admin-login-red);
+            font-weight: 650;
+        }
+
+        body.admin-login-page .btn-primary {
+            min-height: 46px;
+            margin-top: 4px;
+            border-radius: var(--admin-login-radius);
+            background: var(--admin-login-blue);
+            font-family: "Inter", sans-serif;
+            font-size: 14px;
+            font-weight: 800;
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.2);
+        }
+
+        body.admin-login-page .btn-primary:hover {
+            background: var(--admin-login-blue-dark);
+            transform: translateY(-1px);
+        }
+
+        body.admin-login-page .btn-primary:focus {
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.24);
+        }
+
+        body.admin-login-page .footer-copy {
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        @media (max-width: 760px) {
+            body.admin-login-page {
+                align-items: flex-start;
+                padding: 18px;
+            }
+
+            body.admin-login-page::before {
+                width: 100%;
+                height: 160px;
+                clip-path: none;
+            }
+
+            body.admin-login-page .login-container {
+                margin-top: 40px;
+            }
+        }
     </style>
 </head>
 
-<body>
+<body class="admin-login-page">
 
     <div class="bg-pattern"></div>
 
