@@ -1177,7 +1177,7 @@
             </div>
 
             <button class="notif" aria-label="Notifications">
-
+                <i class="ri-notification-3-line"></i>
             </button>
         </div>
     </header>

@@ -139,10 +139,12 @@
     }
 
     body.admin-page .notif::before {
-        content: "\ef14";
-        font-family: "remixicon";
-        font-size: 24px;
-        line-height: 1;
+        content: none !important;
+    }
+
+    body.admin-page .notif i {
+        font-size: 22px !important;
+        line-height: 1 !important;
     }
 
     body.admin-page .notif::after {
