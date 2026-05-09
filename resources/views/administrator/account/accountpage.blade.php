@@ -28,8 +28,7 @@
                 <h1 class="brand">ADMINISTRATOR</h1>
             </div>
 
-            <div class="logo-word"><img src="{{ asset('img/log.png') }}" alt=""
-                    style="width: 120px; height: 60px; margin-top: 8px;">
+            <div class="logo-word"><img src="{{ asset('img/log.png') }}" alt="">
             </div>
 
             <button class="notif" aria-label="Notifications">
@@ -44,7 +43,7 @@
     <!-- Overlay (mobile) -->
     <div id="sidebarOverlay" class="overlay" aria-hidden="true"></div>
 
-    <main class="main">
+    <main id="mainContent" class="main">
 
         <div class="container">
             <section class="page-header">
@@ -105,25 +104,29 @@
             </section>
 
 
-            <section class="card" aria-labelledby="requests-heading">
+            <section class="card verification-requests" aria-labelledby="requests-heading">
                 <div class="card-header">
                     <div>
-                        <h3 id="requests-heading" style="margin:0;font-size:16px;font-weight:600;color:#111827">
+                        <h3 id="requests-heading">
                             Account Verification Requests
                         </h3>
+                        <p>Review submitted identity details and documents.</p>
                     </div>
                     <div class="filter-buttons" role="tablist">
                         <button class="filter-btn {{ $status === 'pending' ? 'active' : '' }}" data-status="pending"
-                            data-active="true">
+                            data-active="true" type="button">
                             Pending
                         </button>
-                        <button class="filter-btn {{ $status === 'approved' ? 'active' : '' }}" data-status="approved">
+                        <button class="filter-btn {{ $status === 'approved' ? 'active' : '' }}" data-status="approved"
+                            type="button">
                             Approved
                         </button>
-                        <button class="filter-btn {{ $status === 'rejected' ? 'active' : '' }}" data-status="rejected">
+                        <button class="filter-btn {{ $status === 'rejected' ? 'active' : '' }}" data-status="rejected"
+                            type="button">
                             Rejected
                         </button>
-                        <button class="filter-btn {{ $status === 'reupload' ? 'active' : '' }}" data-status="reupload">
+                        <button class="filter-btn {{ $status === 'reupload' ? 'active' : '' }}" data-status="reupload"
+                            type="button">
                             Reupload
                         </button>
                     </div>
@@ -144,7 +147,7 @@
                     {{ $req->status === 'pending' ? '#f59e0b' : ($req->status === 'approved' ? '#16a34a' : ($req->status === 'rejected' ? '#ef4444' : '#3b82f6')) }}">
 
                                 {{-- Compact Summary Row --}}
-                                <div class="summary-row"
+                                <div class="summary-row" role="button" tabindex="0" aria-expanded="false"
                                     style="display:flex;justify-content:space-between;align-items:center;cursor:pointer">
                                     <div style="display:flex;align-items:center;gap:10px">
                                         @php
@@ -225,8 +228,8 @@
                                                         {{ basename($req->id_front_path) }}</div>
                                                 </div>
                                                 <button type="button" class="btn-outline view-btn"
-                                                    data-img="{{ asset('storage/' . $req->id_front_path) }}
-                                                    "data-type="ID Front">
+                                                    data-img="{{ asset('storage/' . $req->id_front_path) }}"
+                                                    data-type="ID Front">
                                                     View
                                                 </button>
                                             </div>
@@ -351,27 +354,30 @@
                                                 <div id="actionButtons" style="display:flex;gap:10px;flex-wrap:wrap">
                                                     <button type="submit" name="action" value="approved"
                                                         class="btn-approve" id="btnApprove">
-                                                        </i> Approve
+                                                        <i class="ri-check-line" aria-hidden="true"></i> Approve
                                                     </button>
                                                     <button type="submit" name="action" value="rejected"
                                                         class="btn-reject" id="btnReject">
-                                                        </i> Reject
+                                                        <i class="ri-close-line" aria-hidden="true"></i> Reject
                                                     </button>
                                                     <button type="button" id="btnShowReupload"
                                                         class="btn-info btn-show-reupload">
+                                                        <i class="ri-upload-cloud-2-line" aria-hidden="true"></i>
                                                         Request Reupload
                                                     </button>
                                                     <button type="submit" name="action" value="request_reupload"
                                                         id="btnSubmitReupload" class="btn-info" style="display:none;"
                                                         disabled>
-                                                        </i> Confirm Reupload
+                                                        <i class="ri-send-plane-line" aria-hidden="true"></i> Confirm
+                                                        Reupload
                                                     </button>
                                                     <button type="button" id="btnCancelReupload" class="btn-reject"
                                                         style="display:none;">
-                                                        </i> Cancel
+                                                        <i class="ri-arrow-go-back-line" aria-hidden="true"></i> Cancel
                                                     </button>
                                                     <button type="button" class="btn-details btn-view-details">
-                                                        </i> View Details
+                                                        <i class="ri-layout-right-line" aria-hidden="true"></i> View
+                                                        Details
                                                     </button>
                                                 </div>
 
@@ -381,7 +387,7 @@
                                 </div>
                             </div>
                         @empty
-                            <p>No applications found.</p>
+                            <p class="empty-state">No applications found.</p>
                         @endforelse
                     </div>
 
@@ -391,7 +397,9 @@
             <!-- Details View Modal -->
             <div id="detailsModal" class="proof-modal" style="display:none;">
                 <div class="proof-modal-content">
-                    <button id="closeDetailsModal" class="proof-modal-close">&times;</button>
+                    <button id="closeDetailsModal" class="proof-modal-close" aria-label="Close details">
+                        &times;
+                    </button>
 
                     <div class="proof-modal-header">
                         <h2 class="proof-modal-title">Account Verification Details</h2>
@@ -454,10 +462,12 @@
                                     </div>
 
                                     <!-- Carousel Controls -->
-                                    <button class="carousel-btn carousel-prev" id="carouselPrev">
+                                    <button class="carousel-btn carousel-prev" id="carouselPrev"
+                                        aria-label="Previous document">
                                         <i class="ri-arrow-left-s-line"></i>
                                     </button>
-                                    <button class="carousel-btn carousel-next" id="carouselNext">
+                                    <button class="carousel-btn carousel-next" id="carouselNext"
+                                        aria-label="Next document">
                                         <i class="ri-arrow-right-s-line"></i>
                                     </button>
 
@@ -481,7 +491,7 @@
             </div>
 
             <div id="imageOverlay" class="image-overlay" style="display: none;">
-                <button class="overlay-close">&times;</button>
+                <button class="overlay-close" aria-label="Close full-size preview">&times;</button>
                 <div class="overlay-image-container">
                     <img id="overlayImage" src="" alt="">
                     <div class="overlay-caption" id="overlayCaption"></div>
@@ -489,17 +499,16 @@
             </div>
 
             <!-- Keep the original image modal for viewing individual images -->
-            <div id="imageModal" class="modal-backdrop"
-                style="display:none;align-items:center;justify-content:center;">
-                <div class="modal" style="max-width:800px;width:95%;padding:0">
-                    <div
-                        style="display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:1px solid #eee">
-                        <h3 style="margin:0;font-size:16px">Document Preview</h3>
-                        <button id="closeImageModal"
-                            style="background:none;border:none;font-size:20px;cursor:pointer">&times;</button>
+            <div id="imageModal" class="modal-backdrop document-preview" style="display:none;">
+                <div class="modal document-preview__dialog">
+                    <div class="document-preview__header">
+                        <h3>Document Preview</h3>
+                        <button id="closeImageModal" class="document-preview__close" aria-label="Close preview">
+                            &times;
+                        </button>
                     </div>
-                    <div style="padding:10px;text-align:center;max-height:80vh;overflow:auto">
-                        <img id="modalImage" src="" style="max-width:100%;border-radius:8px" />
+                    <div class="document-preview__body">
+                        <img id="modalImage" src="" alt="Selected verification document" />
                     </div>
                 </div>
             </div>
@@ -781,7 +790,7 @@
 
                 // Show message if no items
                 if (!hasVisibleItems) {
-                    accountList.innerHTML = '<p>No applications found.</p>';
+                    accountList.innerHTML = '<p class="empty-state">No applications found.</p>';
                 }
 
                 // Rebind all actions after filtering
@@ -882,7 +891,7 @@
 
                 // Show message if no items
                 if (!hasVisibleItems) {
-                    accountList.innerHTML = '<p>No applications found.</p>';
+                    accountList.innerHTML = '<p class="empty-state">No applications found.</p>';
                 }
 
                 // Rebind all actions after filtering
@@ -1010,7 +1019,7 @@
             function bindAllActions() {
                 // Toggle expandable details
                 document.querySelectorAll(".summary-row").forEach(row => {
-                    row.addEventListener("click", (e) => {
+                    function toggleDetails(e) {
                         // Don't toggle if clicking on buttons
                         if (e.target.closest('button')) return;
 
@@ -1018,9 +1027,22 @@
                         const icon = row.querySelector("i");
                         if (details) {
                             details.classList.toggle("hidden");
-                            if (icon) icon.classList.toggle("ri-arrow-up-s-line");
+                            const isOpen = !details.classList.contains("hidden");
+                            row.setAttribute("aria-expanded", isOpen ? "true" : "false");
+                            if (icon) {
+                                icon.classList.toggle("ri-arrow-up-s-line", isOpen);
+                                icon.classList.toggle("ri-arrow-down-s-line", !isOpen);
+                            }
                             isUserInteracting = true;
                             clearInteractionAfterDelay();
+                        }
+                    }
+
+                    row.addEventListener("click", toggleDetails);
+                    row.addEventListener("keydown", (e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            toggleDetails(e);
                         }
                     });
                 });

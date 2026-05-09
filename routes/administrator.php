@@ -77,7 +77,6 @@ Route::prefix('administrator')->group(function () {
     //==================================================================================================================
 
     //===================================================Event ROUTE  =========================================================
-    Route::get('/create-event', [AdministratorController::class, 'createevent'])->name('createevent');
     Route::post('/submit-event', [AdministratorController::class, 'submitevent'])->name('submitevent');
 
     Route::get('/event', [AdministratorController::class, 'eventview'])->name('adminevent.page');

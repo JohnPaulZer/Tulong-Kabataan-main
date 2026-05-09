@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
     <!-- Charts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCxE6u2I1N_uFuYp8hZH2OSh_VEPo1N85M&libraries=places">
+    </script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @include('administrator.partials.admin-theme')
@@ -47,6 +49,249 @@
     <!-- Overlay (mobile) -->
     <div id="sidebarOverlay" class="overlay" aria-hidden="true"></div>
 
+    @php
+        $oldRoles = old('roles', [['name' => '', 'description' => '']]);
+        if (!is_array($oldRoles) || count($oldRoles) === 0) {
+            $oldRoles = [['name' => '', 'description' => '']];
+        }
+    @endphp
+
+    <div id="createEventModal" class="event-create-modal" aria-hidden="true" hidden>
+        <button type="button" class="event-create-modal__backdrop" data-create-event-close
+            aria-label="Close create event modal"></button>
+
+        <section class="event-create-modal__dialog" role="dialog" aria-modal="true"
+            aria-labelledby="createEventModalTitle">
+            <header class="event-create-modal__header">
+                <div>
+                    <p class="event-create-modal__eyebrow">Administrator</p>
+                    <h2 id="createEventModalTitle">Create Event</h2>
+                    <p>Add event details one step at a time.</p>
+                </div>
+                <button type="button" class="event-create-modal__close" data-create-event-close
+                    aria-label="Close create event modal">
+                    <i class="ri-close-line"></i>
+                </button>
+            </header>
+
+            <form id="createEventStepperForm" action="{{ route('submitevent') }}" method="POST"
+                enctype="multipart/form-data" class="event-stepper-form">
+                @csrf
+
+                @if ($errors->any())
+                    <div class="event-create-errors">
+                        <strong>Please review the highlighted fields.</strong>
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <nav class="event-stepper" aria-label="Create event steps">
+                    <button type="button" class="event-stepper__item is-active" data-step-trigger="0"
+                        aria-current="step">
+                        <span class="event-stepper__circle">1</span>
+                        <span class="event-stepper__label">Basic Info</span>
+                    </button>
+                    <button type="button" class="event-stepper__item" data-step-trigger="1">
+                        <span class="event-stepper__circle">2</span>
+                        <span class="event-stepper__label">Schedule</span>
+                    </button>
+                    <button type="button" class="event-stepper__item" data-step-trigger="2">
+                        <span class="event-stepper__circle">3</span>
+                        <span class="event-stepper__label">Roles</span>
+                    </button>
+                    <button type="button" class="event-stepper__item" data-step-trigger="3">
+                        <span class="event-stepper__circle">4</span>
+                        <span class="event-stepper__label">Contact</span>
+                    </button>
+                </nav>
+
+                <div class="event-stepper__body">
+                    <section class="event-step is-active" data-step="0">
+                        <div class="event-step__heading">
+                            <h3>Basic Information</h3>
+                            <p>Name the event and add the main description.</p>
+                        </div>
+
+                        <div class="event-form-grid event-form-grid--single">
+                            <div class="event-field">
+                                <label for="create_event_title">Event Title <span>*</span></label>
+                                <input type="text" id="create_event_title" name="title"
+                                    value="{{ old('title') }}" placeholder="e.g., Typhoon Relief Operation" required>
+                            </div>
+
+                            <div class="event-field">
+                                <label for="create_event_description">Event Description <span>*</span></label>
+                                <textarea id="create_event_description" name="description" rows="4"
+                                    placeholder="Describe the purpose, activities, and goals." required>{{ old('description') }}</textarea>
+                            </div>
+
+                            <div class="event-field">
+                                <label for="create_event_photo">Cover Photo</label>
+                                <input type="file" id="create_event_photo" name="photo"
+                                    accept="image/png, image/jpeg">
+                                <small>Accepted: JPG or PNG. Max size: 5MB.</small>
+                            </div>
+
+                            <div class="event-photo-preview" id="createEventPhotoPreview" hidden>
+                                <div class="event-photo-preview__image">
+                                    <img id="createEventPhotoPreviewImage" alt="Cover photo preview">
+                                </div>
+                                <div class="event-photo-preview__details">
+                                    <strong id="createEventPhotoPreviewName">Selected cover photo</strong>
+                                    <span id="createEventPhotoPreviewMeta"></span>
+                                    <button type="button" id="createEventRemovePhoto">Remove photo</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="event-step" data-step="1" hidden>
+                        <div class="event-step__heading">
+                            <h3>Schedule & Location</h3>
+                            <p>Set the date range, registration deadline, and map location.</p>
+                        </div>
+
+                        <div class="event-form-grid">
+                            <div class="event-field">
+                                <label for="create_event_start">Start Date & Time <span>*</span></label>
+                                <input type="datetime-local" id="create_event_start" name="start_date"
+                                    value="{{ old('start_date') }}" required>
+                            </div>
+                            <div class="event-field">
+                                <label for="create_event_end">End Date & Time <span>*</span></label>
+                                <input type="datetime-local" id="create_event_end" name="end_date"
+                                    value="{{ old('end_date') }}" required>
+                            </div>
+                            <div class="event-field">
+                                <label for="create_event_deadline">Registration Deadline <span>*</span></label>
+                                <input type="datetime-local" id="create_event_deadline" name="deadline"
+                                    value="{{ old('deadline') }}" required>
+                                <small>Volunteers cannot register after this date.</small>
+                            </div>
+                        </div>
+
+                        <div class="event-field event-location-field">
+                            <label for="create_event_location_search">Event Location <span>*</span></label>
+                            <div class="event-location-search">
+                                <i class="ri-search-line"></i>
+                                <input type="text" id="create_event_location_search"
+                                    placeholder="Search for a venue, barangay, or landmark">
+                                <button type="button" id="createEventSearchBtn">Find</button>
+                            </div>
+
+                            <div id="createEventMap" class="event-create-map">
+                                <div id="createEventMapLoading" class="event-create-map__loading">
+                                    <i class="ri-loader-4-line"></i>
+                                    <span>Loading map...</span>
+                                </div>
+                            </div>
+
+                            <div class="event-selected-location">
+                                <i class="ri-map-pin-line"></i>
+                                <div>
+                                    <strong>Selected Location</strong>
+                                    <span id="createEventSelectedLocation">
+                                        {{ old('location', 'No location selected') }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <input type="hidden" id="create_event_location" name="location"
+                                value="{{ old('location') }}" required>
+                            <input type="hidden" id="create_event_lat" name="lat" value="{{ old('lat') }}"
+                                required>
+                            <input type="hidden" id="create_event_lng" name="lng" value="{{ old('lng') }}"
+                                required>
+                        </div>
+                    </section>
+
+                    <section class="event-step" data-step="2" hidden>
+                        <div class="event-step__heading">
+                            <h3>Volunteer Roles</h3>
+                            <p>Add the roles volunteers can choose from.</p>
+                        </div>
+
+                        <div id="createEventRolesContainer" class="event-roles-list">
+                            @foreach ($oldRoles as $index => $role)
+                                <div class="event-role-item">
+                                    <div class="event-role-item__header">
+                                        <h4>Role #{{ $index + 1 }}</h4>
+                                        @if ($index > 0)
+                                            <button type="button" class="event-role-remove">Remove</button>
+                                        @endif
+                                    </div>
+                                    <div class="event-form-grid">
+                                        <div class="event-field">
+                                            <label>Role Name <span>*</span></label>
+                                            <input type="text" name="roles[{{ $index }}][name]"
+                                                value="{{ $role['name'] ?? '' }}" placeholder="e.g., Medical Team"
+                                                required>
+                                        </div>
+                                        <div class="event-field">
+                                            <label>Description <span>*</span></label>
+                                            <textarea name="roles[{{ $index }}][description]" rows="2" placeholder="Responsibilities" required>{{ $role['description'] ?? '' }}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <button type="button" class="event-add-role" id="createEventAddRole">
+                            <i class="ri-add-line"></i>
+                            Add Another Role
+                        </button>
+                    </section>
+
+                    <section class="event-step" data-step="3" hidden>
+                        <div class="event-step__heading">
+                            <h3>Coordinator Details</h3>
+                            <p>Add the person volunteers can contact about this event.</p>
+                        </div>
+
+                        <div class="event-form-grid">
+                            <div class="event-field">
+                                <label for="create_event_coordinator_name">Full Name <span>*</span></label>
+                                <input type="text" id="create_event_coordinator_name" name="coordinator_name"
+                                    value="{{ old('coordinator_name') }}" placeholder="Juan Dela Cruz" required>
+                            </div>
+                            <div class="event-field">
+                                <label for="create_event_coordinator_email">Email Address <span>*</span></label>
+                                <input type="email" id="create_event_coordinator_email" name="coordinator_email"
+                                    value="{{ old('coordinator_email') }}" placeholder="juan@example.com" required>
+                            </div>
+                            <div class="event-field">
+                                <label for="create_event_coordinator_phone">Phone Number <span>*</span></label>
+                                <input type="text" id="create_event_coordinator_phone" name="coordinator_phone"
+                                    value="{{ old('coordinator_phone') }}" placeholder="0912 345 6789" required>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <footer class="event-stepper__footer">
+                    <button type="button" class="event-stepper__secondary" id="createEventPrevStep">
+                        Previous
+                    </button>
+                    <div>
+                        <button type="button" class="event-stepper__secondary" data-create-event-close>
+                            Cancel
+                        </button>
+                        <button type="button" class="event-stepper__primary" id="createEventNextStep">
+                            Next
+                        </button>
+                        <button type="submit" class="event-stepper__primary" id="createEventSubmit" hidden>
+                            Create Event
+                        </button>
+                    </div>
+                </footer>
+            </form>
+        </section>
+    </div>
+
     <!-- Main -->
     <main class="main" role="main">
         <div class="content">
@@ -58,9 +303,9 @@
                     <p>Manage event listings, attendance, and volunteer participation.</p>
                 </section>
                 <div style="display:flex;gap:8px;align-items:center">
-                    <form action="{{ route('createevent') }}" method="GET">
-                        <button class="create-btn"><i class="ri-add-line"></i> Create Event</button>
-                    </form>
+                    <button type="button" class="create-btn" id="openCreateEventModal">
+                        <i class="ri-add-line"></i> Create Event
+                    </button>
                 </div>
             </div>
 
@@ -352,6 +597,403 @@
                 });
             </script>
 
+
+            {{-- CREATE EVENT MODAL STEPPER --}}
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    const modal = document.getElementById('createEventModal');
+                    const openBtn = document.getElementById('openCreateEventModal');
+                    const closeBtns = document.querySelectorAll('[data-create-event-close]');
+                    const form = document.getElementById('createEventStepperForm');
+                    const steps = Array.from(document.querySelectorAll('.event-step'));
+                    const stepButtons = Array.from(document.querySelectorAll('[data-step-trigger]'));
+                    const prevBtn = document.getElementById('createEventPrevStep');
+                    const nextBtn = document.getElementById('createEventNextStep');
+                    const submitBtn = document.getElementById('createEventSubmit');
+                    const rolesContainer = document.getElementById('createEventRolesContainer');
+                    const addRoleBtn = document.getElementById('createEventAddRole');
+                    const photoInput = document.getElementById('create_event_photo');
+                    const photoPreview = document.getElementById('createEventPhotoPreview');
+                    const photoPreviewImage = document.getElementById('createEventPhotoPreviewImage');
+                    const photoPreviewName = document.getElementById('createEventPhotoPreviewName');
+                    const photoPreviewMeta = document.getElementById('createEventPhotoPreviewMeta');
+                    const removePhotoBtn = document.getElementById('createEventRemovePhoto');
+                    let currentStep = 0;
+                    let photoPreviewUrl = null;
+                    let eventMap;
+                    let eventMarker;
+                    let eventGeocoder;
+                    let eventAutocomplete;
+                    let mapInitialized = false;
+
+                    function setStep(index, options = {}) {
+                        const nextStep = Math.max(0, Math.min(index, steps.length - 1));
+                        const direction = nextStep >= currentStep ? 'forward' : 'backward';
+                        currentStep = nextStep;
+
+                        if (form) {
+                            form.dataset.direction = direction;
+                            form.dataset.motion = options.skipAnimation ? 'none' : 'slide';
+                        }
+
+                        steps.forEach((step, stepIndex) => {
+                            const active = stepIndex === currentStep;
+                            step.hidden = !active;
+                            step.classList.toggle('is-active', active);
+                        });
+
+                        stepButtons.forEach((button, buttonIndex) => {
+                            const active = buttonIndex === currentStep;
+                            const complete = buttonIndex < currentStep;
+                            button.classList.toggle('is-active', active);
+                            button.classList.toggle('is-complete', complete);
+                            button.setAttribute('aria-current', active ? 'step' : 'false');
+                        });
+
+                        prevBtn.hidden = currentStep === 0;
+                        nextBtn.hidden = currentStep === steps.length - 1;
+                        submitBtn.hidden = currentStep !== steps.length - 1;
+
+                        if (currentStep === 1) {
+                            window.setTimeout(initCreateEventMap, 80);
+                        }
+                    }
+
+                    function validateStep(index = currentStep) {
+                        const step = steps[index];
+                        const fields = Array.from(step.querySelectorAll('input:not([type="hidden"]), textarea, select'));
+
+                        for (const field of fields) {
+                            if (!field.checkValidity()) {
+                                field.reportValidity();
+                                return false;
+                            }
+                        }
+
+                        if (index === 1) {
+                            const location = document.getElementById('create_event_location');
+                            const search = document.getElementById('create_event_location_search');
+                            if (!location.value.trim()) {
+                                search.setCustomValidity('Select a location from the map or search results.');
+                                search.reportValidity();
+                                search.addEventListener('input', () => search.setCustomValidity(''), {
+                                    once: true
+                                });
+                                return false;
+                            }
+                        }
+
+                        return true;
+                    }
+
+                    function openModal() {
+                        modal.hidden = false;
+                        modal.setAttribute('aria-hidden', 'false');
+                        document.body.style.overflow = 'hidden';
+                        setStep(currentStep, {
+                            skipAnimation: true
+                        });
+                        window.setTimeout(() => {
+                            document.getElementById('create_event_title')?.focus();
+                        }, 80);
+                    }
+
+                    function closeModal() {
+                        modal.hidden = true;
+                        modal.setAttribute('aria-hidden', 'true');
+                        document.body.style.overflow = '';
+                        openBtn?.focus();
+                    }
+
+                    function formatFileSize(bytes) {
+                        if (!bytes) return '0 KB';
+                        if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+                        return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+                    }
+
+                    function clearPhotoPreview() {
+                        if (photoPreviewUrl) {
+                            URL.revokeObjectURL(photoPreviewUrl);
+                            photoPreviewUrl = null;
+                        }
+
+                        if (photoPreview) {
+                            photoPreview.hidden = true;
+                        }
+
+                        if (photoPreviewImage) {
+                            photoPreviewImage.removeAttribute('src');
+                        }
+
+                        if (photoPreviewName) {
+                            photoPreviewName.textContent = 'Selected cover photo';
+                        }
+
+                        if (photoPreviewMeta) {
+                            photoPreviewMeta.textContent = '';
+                        }
+                    }
+
+                    function updatePhotoPreview() {
+                        const file = photoInput?.files?.[0];
+                        clearPhotoPreview();
+
+                        if (!file || !file.type.startsWith('image/')) {
+                            return;
+                        }
+
+                        photoPreviewUrl = URL.createObjectURL(file);
+                        photoPreviewImage.src = photoPreviewUrl;
+                        photoPreviewName.textContent = file.name;
+                        photoPreviewMeta.textContent = formatFileSize(file.size);
+                        photoPreview.hidden = false;
+                    }
+
+                    function placeCreateEventMarker(location) {
+                        if (!eventMap) return;
+                        if (eventMarker) {
+                            eventMarker.setMap(null);
+                        }
+
+                        eventMarker = new google.maps.Marker({
+                            position: location,
+                            map: eventMap,
+                            draggable: true
+                        });
+
+                        eventMarker.addListener('dragend', () => {
+                            reverseGeocodeCreateEvent(eventMarker.getPosition());
+                        });
+                    }
+
+                    function updateCreateEventLocation(address, latLng) {
+                        document.getElementById('createEventSelectedLocation').textContent = address;
+                        document.getElementById('create_event_location').value = address;
+                        document.getElementById('create_event_lat').value = latLng.lat();
+                        document.getElementById('create_event_lng').value = latLng.lng();
+                        document.getElementById('create_event_location_search').setCustomValidity('');
+                    }
+
+                    function reverseGeocodeCreateEvent(latLng) {
+                        if (!eventGeocoder) return;
+                        eventGeocoder.geocode({
+                            location: latLng
+                        }, (results, status) => {
+                            if (status === 'OK' && results[0]) {
+                                updateCreateEventLocation(results[0].formatted_address, latLng);
+                            }
+                        });
+                    }
+
+                    function geocodeCreateEventAddress(address) {
+                        if (!eventGeocoder || !address) return;
+                        eventGeocoder.geocode({
+                            address
+                        }, (results, status) => {
+                            if (status === 'OK' && results[0]) {
+                                const location = results[0].geometry.location;
+                                eventMap.setCenter(location);
+                                eventMap.setZoom(17);
+                                placeCreateEventMarker(location);
+                                updateCreateEventLocation(results[0].formatted_address, location);
+                            }
+                        });
+                    }
+
+                    function initCreateEventMap() {
+                        if (mapInitialized || typeof google === 'undefined') return;
+                        mapInitialized = true;
+
+                        const mapElement = document.getElementById('createEventMap');
+                        const loadingElement = document.getElementById('createEventMapLoading');
+                        const latField = document.getElementById('create_event_lat');
+                        const lngField = document.getElementById('create_event_lng');
+                        const oldLat = Number(latField.value);
+                        const oldLng = Number(lngField.value);
+                        const hasOldCoords = Number.isFinite(oldLat) && Number.isFinite(oldLng) && latField.value &&
+                            lngField.value;
+                        const defaultLocation = hasOldCoords ? {
+                            lat: oldLat,
+                            lng: oldLng
+                        } : {
+                            lat: 12.8797,
+                            lng: 121.7740
+                        };
+
+                        if (loadingElement) {
+                            loadingElement.style.display = 'none';
+                        }
+
+                        eventMap = new google.maps.Map(mapElement, {
+                            center: defaultLocation,
+                            zoom: hasOldCoords ? 16 : 6,
+                            mapTypeControl: false,
+                            streetViewControl: false,
+                            fullscreenControl: true
+                        });
+
+                        eventGeocoder = new google.maps.Geocoder();
+
+                        if (hasOldCoords) {
+                            placeCreateEventMarker(defaultLocation);
+                        } else if (navigator.geolocation) {
+                            navigator.geolocation.getCurrentPosition(
+                                (position) => {
+                                    const userLocation = {
+                                        lat: position.coords.latitude,
+                                        lng: position.coords.longitude
+                                    };
+                                    eventMap.setCenter(userLocation);
+                                    eventMap.setZoom(14);
+                                    placeCreateEventMarker(userLocation);
+                                    reverseGeocodeCreateEvent(userLocation);
+                                },
+                                () => {},
+                                {
+                                    timeout: 5000,
+                                    maximumAge: 600000,
+                                    enableHighAccuracy: true
+                                }
+                            );
+                        }
+
+                        eventMap.addListener('click', (event) => {
+                            placeCreateEventMarker(event.latLng);
+                            reverseGeocodeCreateEvent(event.latLng);
+                        });
+
+                        const searchInput = document.getElementById('create_event_location_search');
+                        eventAutocomplete = new google.maps.places.Autocomplete(searchInput, {
+                            componentRestrictions: {
+                                country: 'ph'
+                            },
+                            fields: ['formatted_address', 'geometry']
+                        });
+
+                        eventAutocomplete.addListener('place_changed', () => {
+                            const place = eventAutocomplete.getPlace();
+                            if (place.geometry) {
+                                eventMap.setCenter(place.geometry.location);
+                                eventMap.setZoom(17);
+                                placeCreateEventMarker(place.geometry.location);
+                                updateCreateEventLocation(place.formatted_address, place.geometry.location);
+                            }
+                        });
+
+                        document.getElementById('createEventSearchBtn')?.addEventListener('click', () => {
+                            geocodeCreateEventAddress(searchInput.value.trim());
+                        });
+                    }
+
+                    function reindexRoles() {
+                        rolesContainer.querySelectorAll('.event-role-item').forEach((role, index) => {
+                            role.querySelector('h4').textContent = `Role #${index + 1}`;
+                            const name = role.querySelector('input');
+                            const description = role.querySelector('textarea');
+                            if (name) name.name = `roles[${index}][name]`;
+                            if (description) description.name = `roles[${index}][description]`;
+
+                            const remove = role.querySelector('.event-role-remove');
+                            if (remove) {
+                                remove.hidden = index === 0;
+                            }
+                        });
+                    }
+
+                    function addRole() {
+                        const index = rolesContainer.querySelectorAll('.event-role-item').length;
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'event-role-item';
+                        wrapper.innerHTML = `
+                            <div class="event-role-item__header">
+                                <h4>Role #${index + 1}</h4>
+                                <button type="button" class="event-role-remove">Remove</button>
+                            </div>
+                            <div class="event-form-grid">
+                                <div class="event-field">
+                                    <label>Role Name <span>*</span></label>
+                                    <input type="text" name="roles[${index}][name]" placeholder="e.g., Logistics" required>
+                                </div>
+                                <div class="event-field">
+                                    <label>Description <span>*</span></label>
+                                    <textarea name="roles[${index}][description]" rows="2" placeholder="Responsibilities" required></textarea>
+                                </div>
+                            </div>
+                        `;
+                        rolesContainer.appendChild(wrapper);
+                        reindexRoles();
+                    }
+
+                    openBtn?.addEventListener('click', openModal);
+                    closeBtns.forEach((button) => button.addEventListener('click', closeModal));
+
+                    nextBtn?.addEventListener('click', () => {
+                        if (validateStep()) {
+                            setStep(currentStep + 1);
+                        }
+                    });
+
+                    prevBtn?.addEventListener('click', () => setStep(currentStep - 1));
+
+                    stepButtons.forEach((button) => {
+                        button.addEventListener('click', () => {
+                            const target = Number(button.dataset.stepTrigger);
+                            if (target <= currentStep) {
+                                setStep(target);
+                                return;
+                            }
+
+                            if (validateStep()) {
+                                setStep(Math.min(target, currentStep + 1));
+                            }
+                        });
+                    });
+
+                    photoInput?.addEventListener('change', updatePhotoPreview);
+                    removePhotoBtn?.addEventListener('click', () => {
+                        if (photoInput) {
+                            photoInput.value = '';
+                        }
+                        clearPhotoPreview();
+                        photoInput?.focus();
+                    });
+
+                    addRoleBtn?.addEventListener('click', addRole);
+                    rolesContainer?.addEventListener('click', (event) => {
+                        if (event.target.closest('.event-role-remove')) {
+                            event.target.closest('.event-role-item')?.remove();
+                            reindexRoles();
+                        }
+                    });
+
+                    form?.addEventListener('submit', (event) => {
+                        for (let index = 0; index < steps.length; index++) {
+                            setStep(index, {
+                                skipAnimation: true
+                            });
+                            if (!validateStep(index)) {
+                                event.preventDefault();
+                                return;
+                            }
+                        }
+                    });
+
+                    document.addEventListener('keydown', (event) => {
+                        if (event.key === 'Escape' && !modal.hidden) {
+                            closeModal();
+                        }
+                    });
+
+                    reindexRoles();
+                    setStep(0, {
+                        skipAnimation: true
+                    });
+
+                    @if ($errors->any())
+                        openModal();
+                    @endif
+                });
+            </script>
 
 
             <!-- Manage events -->

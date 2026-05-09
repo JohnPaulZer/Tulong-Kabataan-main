@@ -947,11 +947,6 @@ class AdministratorController
 
     /*========================================Event Controller ========================================*/
 
-    public function createevent()
-    {
-        return view('administrator.event.event-create');
-    }
-
     public function submitevent(Request $request)
     {
 
