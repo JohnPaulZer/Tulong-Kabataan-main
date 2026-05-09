@@ -773,6 +773,8 @@
     <!-- Overlay (mobile) -->
     <div id="sidebarOverlay" class="overlay" aria-hidden="true"></div>
 
+    @include('administrator.dnc.partials.create-dnc-modal')
+
     <main class="main">
         <div class="container">
             <!-- Page Header -->
@@ -780,6 +782,13 @@
                 <h1>DNC Records</h1>
                 <p class="muted">Damage, Needs, and Capabilities assessment records</p>
             </section>
+            <div id="dncSearchEmpty" hidden>
+                @include('administrator.partials.empty-state', [
+                    'icon' => 'ri-search-line',
+                    'title' => 'No Matching Records',
+                    'message' => 'No DNC records match your current search.',
+                ])
+            </div>
 
             <!-- Filters and Search -->
             <section class="search-panel card">
@@ -793,12 +802,10 @@
 
 
 
-                        <form action="{{ route('dnc.add') }}" method="GET">
-                            <button class="btn primary">
-                                <i class="ri-add-line icon-left"></i>
-                                Add Record
-                            </button>
-                        </form>
+                        <button type="button" class="btn primary" id="openCreateDncModal">
+                            <i class="ri-add-line icon-left"></i>
+                            Add Record
+                        </button>
                     </div>
                 </div>
             </section>
@@ -806,7 +813,7 @@
 
             <!-- Records Grid -->
             <section id="recordsGrid" class="grid cards-grid">
-                @foreach ($records as $record)
+                @forelse ($records as $record)
                     <article class="record card">
                         <div class="record-head">
                             <div class="record-left">
@@ -880,7 +887,13 @@
                             </form>
                         </div>
                     </article>
-                @endforeach
+                @empty
+                    @include('administrator.partials.empty-state', [
+                        'icon' => 'ri-file-list-3-line',
+                        'title' => 'No DNC Records Yet',
+                        'message' => 'There are no damage, needs, and capacities records to display at the moment.',
+                    ])
+                @endforelse
             </section>
 
             <!-- Overlay -->
@@ -898,6 +911,7 @@
 
 
             <!-- Pagination -->
+            @if ($records->total() > 0)
             <section class="pagination-row">
                 <div class="muted">
                     Showing <strong>{{ $records->firstItem() }}</strong>
@@ -912,6 +926,7 @@
                     <button class="btn outline">Next</button>
                 </div>
             </section>
+            @endif
         </div>
     </main>
 
@@ -1107,9 +1122,11 @@
                 const cardsContainer = document.getElementById('recordsGrid');
                 if (!input || !cardsContainer) return;
                 const cards = Array.from(cardsContainer.querySelectorAll('.record'));
+                const emptyState = document.getElementById('dncSearchEmpty');
 
                 input.addEventListener('input', function() {
                     const q = this.value.trim().toLowerCase();
+                    let visibleCount = 0;
                     cards.forEach(card => {
                         const title = (card.querySelector('h3')?.textContent || '')
                             .toLowerCase();
@@ -1117,10 +1134,15 @@
                             .toLowerCase();
                         if (!q || title.includes(q) || location.includes(q)) {
                             card.style.display = '';
+                            visibleCount++;
                         } else {
                             card.style.display = 'none';
                         }
                     });
+
+                    if (emptyState) {
+                        emptyState.hidden = !q || cards.length === 0 || visibleCount > 0;
+                    }
                 });
             })();
 

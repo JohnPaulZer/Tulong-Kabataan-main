@@ -925,6 +925,64 @@
         font-weight: 800 !important;
     }
 
+    body.admin-page .admin-empty-state {
+        grid-column: 1 / -1;
+        width: 100%;
+        min-height: 220px;
+        padding: 46px 24px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        background: transparent;
+        border: 0;
+        box-shadow: none;
+        color: #5f6b7a;
+    }
+
+    body.admin-page .admin-empty-state__icon {
+        margin-bottom: 18px;
+        color: #aeb6c2;
+        font-size: 58px;
+        line-height: 1;
+    }
+
+    body.admin-page .admin-empty-state h3 {
+        margin: 0 0 10px;
+        color: #0f172a;
+        font-size: 22px;
+        font-weight: 800;
+        line-height: 1.25;
+    }
+
+    body.admin-page .admin-empty-state p {
+        max-width: 430px;
+        margin: 0;
+        color: #64748b;
+        font-size: 15px;
+        line-height: 1.6;
+    }
+
+    body.admin-page .admin-empty-state--compact {
+        min-height: 150px;
+        padding: 30px 18px;
+    }
+
+    body.admin-page .admin-empty-state--compact .admin-empty-state__icon {
+        margin-bottom: 12px;
+        font-size: 42px;
+    }
+
+    body.admin-page .admin-empty-state--compact h3 {
+        font-size: 17px;
+    }
+
+    body.admin-page .admin-empty-state--table {
+        min-height: 190px;
+        padding: 34px 18px;
+    }
+
     body.admin-page .modal-content {
         border: 1px solid var(--admin-line) !important;
         border-radius: 16px !important;

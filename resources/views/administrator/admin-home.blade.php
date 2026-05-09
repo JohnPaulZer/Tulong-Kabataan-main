@@ -1400,14 +1400,11 @@
                             </div>
                         </article>
                     @empty
-                        <!-- Empty State -->
-                        <div class="empty-state">
-                            <div class="empty-state-icon">
-                                <i class="ri-calendar-event-line"></i>
-                            </div>
-                            <h3>No Past Events Yet</h3>
-                            <p>There are no completed events to display at the moment.</p>
-                        </div>
+                        @include('administrator.partials.empty-state', [
+                            'icon' => 'ri-calendar-event-line',
+                            'title' => 'No Past Events Yet',
+                            'message' => 'There are no completed events to display at the moment.',
+                        ])
                     @endforelse
                 </section>
 
@@ -1425,7 +1422,7 @@
 
 
                 <section class="accomplishments-grid">
-                    @foreach ($impactReports as $report)
+                    @forelse ($impactReports as $report)
                         <article class="accomplishment-card">
                             <div class="accomplishment-card__image">
                                 @if ($report->photos && count($report->photos) > 0)
@@ -1571,11 +1568,12 @@
                                         </div>
                                     </div>
                                 @else
-                                    <!-- No Donations State -->
-                                    <div class="no-data-state">
-                                        <i class="ri-file-list-line"></i>
-                                        <p>No donation data available for this report</p>
-                                    </div>
+                                    @include('administrator.partials.empty-state', [
+                                        'icon' => 'ri-file-list-line',
+                                        'title' => 'No Donation Data',
+                                        'message' => 'No donation data is available for this report.',
+                                        'class' => 'admin-empty-state--compact',
+                                    ])
                                     <div class="report-date">
                                         <i class="ri-calendar-line"></i>
                                         <span>{{ $report->report_date->format('F j, Y') }}</span>
@@ -1583,7 +1581,13 @@
                                 @endif
                             </div>
                         </article>
-                    @endforeach
+                    @empty
+                        @include('administrator.partials.empty-state', [
+                            'icon' => 'ri-heart-line',
+                            'title' => 'No Donation Impact Yet',
+                            'message' => 'There are no impact reports to display at the moment.',
+                        ])
+                    @endforelse
                 </section>
 
             </div>
@@ -1772,14 +1776,11 @@
                             </div>
                         </article>
                     @empty
-                        <!-- Empty State for Campaigns -->
-                        <div class="empty-state">
-                            <div class="empty-state-icon">
-                                <i class="ri-megaphone-line"></i>
-                            </div>
-                            <h3>No Completed Campaigns</h3>
-                            <p>There are no completed campaigns to display at the moment.</p>
-                        </div>
+                        @include('administrator.partials.empty-state', [
+                            'icon' => 'ri-megaphone-line',
+                            'title' => 'No Completed Campaigns',
+                            'message' => 'There are no completed campaigns to display at the moment.',
+                        ])
                     @endforelse
                 </section>
 

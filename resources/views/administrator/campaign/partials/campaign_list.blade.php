@@ -71,7 +71,7 @@
 
 
 
-@foreach ($campaigns as $campaign)
+@forelse ($campaigns as $campaign)
     <div
         style="background:white;border:1px solid #e5e7eb;border-radius:12px;padding:20px;margin-bottom:20px;box-shadow:0 1px 2px rgba(0,0,0,0.05);">
         <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:8px;">
@@ -141,7 +141,12 @@
             <h4 style="font-size:16px;font-weight:700;margin-bottom:10px;">Manual Donation Requests</h4>
 
             @if ($campaign->manualRequests->isEmpty())
-                <p style="color:#6b7280;">No manual donation requests found.</p>
+                @include('administrator.partials.empty-state', [
+                    'icon' => 'ri-file-list-line',
+                    'title' => 'No Manual Requests Yet',
+                    'message' => 'No manual donation requests have been submitted for this campaign.',
+                    'class' => 'admin-empty-state--compact',
+                ])
             @else
                 <div style="overflow-x:auto;">
                     <table
@@ -237,5 +242,10 @@
             @endif
         </div>
     </div>
-@endforeach
-
+@empty
+    @include('administrator.partials.empty-state', [
+        'icon' => 'ri-megaphone-line',
+        'title' => 'No Campaigns Yet',
+        'message' => 'There are no campaigns to display at the moment.',
+    ])
+@endforelse

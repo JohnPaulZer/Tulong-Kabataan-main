@@ -387,7 +387,11 @@
                                 </div>
                             </div>
                         @empty
-                            <p class="empty-state">No applications found.</p>
+                            @include('administrator.partials.empty-state', [
+                                'icon' => 'ri-shield-user-line',
+                                'title' => 'No Applications Found',
+                                'message' => 'There are no account verification requests to display at the moment.',
+                            ])
                         @endforelse
                     </div>
 
@@ -790,7 +794,15 @@
 
                 // Show message if no items
                 if (!hasVisibleItems) {
-                    accountList.innerHTML = '<p class="empty-state">No applications found.</p>';
+                    accountList.innerHTML = `
+                        <div class="admin-empty-state">
+                            <div class="admin-empty-state__icon" aria-hidden="true">
+                                <i class="ri-shield-user-line"></i>
+                            </div>
+                            <h3>No Applications Found</h3>
+                            <p>There are no account verification requests to display at the moment.</p>
+                        </div>
+                    `;
                 }
 
                 // Rebind all actions after filtering
@@ -891,7 +903,15 @@
 
                 // Show message if no items
                 if (!hasVisibleItems) {
-                    accountList.innerHTML = '<p class="empty-state">No applications found.</p>';
+                    accountList.innerHTML = `
+                        <div class="admin-empty-state">
+                            <div class="admin-empty-state__icon" aria-hidden="true">
+                                <i class="ri-search-line"></i>
+                            </div>
+                            <h3>No Matching Applications</h3>
+                            <p>No verification requests match the current filter or search.</p>
+                        </div>
+                    `;
                 }
 
                 // Rebind all actions after filtering
@@ -1249,9 +1269,12 @@
                         } else {
                             // No images message
                             carouselSlides.innerHTML = `
-                            <div class="no-images">
-                                <i class="ri-image-line"></i>
-                                <p>No documents available</p>
+                            <div class="admin-empty-state admin-empty-state--compact">
+                                <div class="admin-empty-state__icon" aria-hidden="true">
+                                    <i class="ri-image-line"></i>
+                                </div>
+                                <h3>No Documents Available</h3>
+                                <p>There are no uploaded documents to preview.</p>
                             </div>
                         `;
                             thumbnailGallery.style.display = 'none';
