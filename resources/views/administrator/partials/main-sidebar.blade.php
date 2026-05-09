@@ -16,7 +16,7 @@
             'label' => 'Events',
             'route' => 'adminevent.page',
             'icon' => 'ri-calendar-event-line',
-            'active' => ['adminevent.page', 'createevent', 'events.*', 'admin.volunteer.*'],
+            'active' => ['adminevent.page', 'events.*', 'admin.volunteer.*'],
         ],
         [
             'label' => 'Account Verification',
