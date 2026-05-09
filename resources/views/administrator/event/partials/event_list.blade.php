@@ -1,6 +1,6 @@
   <!-- Events MANAGEMENT list -->
   <section id="eventsList" class="events-list">
-      @foreach ($events as $event)
+      @forelse ($events as $event)
           <article class="event-item" id="event-{{ $event->event_id }}">
               <div class="event-top">
                   <div class="event-left">
@@ -147,11 +147,21 @@
                               </div>
                           </div>
                       @empty
-                          <p class="muted">No participants yet for this event.</p>
+                          @include('administrator.partials.empty-state', [
+                              'icon' => 'ri-group-line',
+                              'title' => 'No Participants Yet',
+                              'message' => 'No volunteers have registered for this event yet.',
+                              'class' => 'admin-empty-state--compact',
+                          ])
                       @endforelse
                   </div>
               </div>
           </article>
-      @endforeach
+      @empty
+          @include('administrator.partials.empty-state', [
+              'icon' => 'ri-calendar-event-line',
+              'title' => 'No Events Yet',
+              'message' => 'There are no events to display at the moment.',
+          ])
+      @endforelse
   </section>
-

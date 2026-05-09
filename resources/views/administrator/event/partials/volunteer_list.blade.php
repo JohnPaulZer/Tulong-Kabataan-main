@@ -61,7 +61,11 @@
             </article>
         @endforeach
     @else
-        <p style="color:var(--muted);font-size:14px;">No volunteer data available.</p>
+        @include('administrator.partials.empty-state', [
+            'icon' => 'ri-team-line',
+            'title' => 'No Volunteer Data Yet',
+            'message' => 'Volunteer participation will appear here once users register for events.',
+        ])
     @endif
 </section>
 
@@ -159,4 +163,3 @@
         });
     });
 </script>
-

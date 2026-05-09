@@ -99,7 +99,6 @@ Route::prefix('administrator')->group(function () {
     //====================================== DNC ROUTE  =========================================================
 
     Route::get('/dncrecords', [AdministratorController::class, 'dncview'])->name('dnc.view');
-    Route::get('/add-dncrecords', [AdministratorController::class, 'dncadd'])->name('dnc.add');
     Route::post('/submit-dncrecords', [AdministratorController::class, 'dncstore'])->name('dnc.submit');
     Route::get('/dnc/{id}', [AdministratorController::class, 'show'])->name('dnc.show');
 

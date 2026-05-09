@@ -146,17 +146,21 @@
         </div>
     @endforeach
 @else
-    <div id="no-donations" style="padding: 50px; text-align: center;">
-        <i class="ri-inbox-line" style="font-size: 48px; color: #d1d5db; margin-bottom: 15px;"></i>
-        <h4 style="color: #6b7280; margin-bottom: 10px;">No Available Donations</h4>
-        <p style="color: #9ca3af; font-size: 14px;">
-            No received donations found. All donations must be marked as "Received" to be included.
-        </p>
+    <div id="no-donations">
+        @include('administrator.partials.empty-state', [
+            'icon' => 'ri-inbox-line',
+            'title' => 'No Available Donations',
+            'message' => 'No received donations found. Donations must be marked as received before they can be included.',
+            'class' => 'admin-empty-state--compact',
+        ])
     </div>
 @endif
 
-<div id="search-no-results" style="display: none; padding: 40px; text-align: center; color: #6b7280;">
-    <i class="ri-search-line" style="font-size: 32px; margin-bottom: 12px;"></i>
-    <p>No donations match your search criteria.</p>
+<div id="search-no-results" style="display: none;">
+    @include('administrator.partials.empty-state', [
+        'icon' => 'ri-search-line',
+        'title' => 'No Matching Donations',
+        'message' => 'No donations match your search criteria.',
+        'class' => 'admin-empty-state--compact',
+    ])
 </div>
-

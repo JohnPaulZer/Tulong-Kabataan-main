@@ -157,7 +157,11 @@
                                 <p class="muted xsmall">Available: {{ $dropoff->schedule_datetime }}</p>
                             </article>
                         @empty
-                            <p class="no-locations">No drop-off locations available.</p>
+                            @include('administrator.partials.empty-state', [
+                                'icon' => 'ri-map-pin-line',
+                                'title' => 'No Drop-Off Locations Yet',
+                                'message' => 'Add a delivery location so donors know where to bring in-kind donations.',
+                            ])
                         @endforelse
                     </div>
 
@@ -350,7 +354,7 @@
                     </thead>
 
                     <tbody id="donations-body">
-                        @foreach ($donations as $donation)
+                        @forelse ($donations as $donation)
                             <tr id="donation-row-{{ $donation->inkind_id }}">
 
                                 <td>
@@ -436,7 +440,18 @@
                                     </button>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="9">
+                                    @include('administrator.partials.empty-state', [
+                                        'icon' => 'ri-gift-line',
+                                        'title' => 'No Donations Yet',
+                                        'message' => 'There are no in-kind donations to display at the moment.',
+                                        'class' => 'admin-empty-state--table',
+                                    ])
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -739,9 +754,14 @@
                 if (donations.length === 0) {
                     tbody.innerHTML = `
             <tr>
-                <td colspan="9" style="text-align: center; padding: 40px; color: #6b7280;">
-                    <i class="ri-information-line" style="font-size: 36px; margin-bottom: 15px;"></i>
-                    <p>No donations found</p>
+                <td colspan="9">
+                    <div class="admin-empty-state admin-empty-state--table">
+                        <div class="admin-empty-state__icon" aria-hidden="true">
+                            <i class="ri-search-line"></i>
+                        </div>
+                        <h3>No Donations Found</h3>
+                        <p>No in-kind donations match the current search or filter.</p>
+                    </div>
                 </td>
             </tr>
         `;
@@ -887,6 +907,11 @@
 
                 const start = ((pagination.current_page - 1) * pagination.per_page) + 1;
                 const end = Math.min(pagination.current_page * pagination.per_page, pagination.total);
+
+                if (pagination.total === 0) {
+                    showingElement.textContent = 'No donations to display';
+                    return;
+                }
 
                 showingElement.textContent = `Showing ${start} to ${end} of ${pagination.total} donations`;
             }

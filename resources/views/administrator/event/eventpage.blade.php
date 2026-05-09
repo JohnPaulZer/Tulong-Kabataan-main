@@ -363,6 +363,13 @@
                         </div>
                     </section>
                     @include('administrator.event.partials.event_list')
+                    <div id="eventFilterEmpty" hidden>
+                        @include('administrator.partials.empty-state', [
+                            'icon' => 'ri-calendar-event-line',
+                            'title' => 'No Events Found',
+                            'message' => 'There are no events to display for this status.',
+                        ])
+                    </div>
 
                 </main>
             </section>
@@ -428,6 +435,9 @@
                     // Filter function
                     function filterEvents() {
                         const events = document.querySelectorAll('.event-item');
+                        const emptyState = document.getElementById('eventFilterEmpty');
+                        let visibleCount = 0;
+
                         events.forEach(event => {
                             const statusText = event.querySelector('.status-badge')?.textContent?.toLowerCase() ||
                                 '';
@@ -439,7 +449,15 @@
 
                             event.style.display = (currentFilter === 'all' || status === currentFilter) ?
                                 '' : 'none';
+
+                            if (event.style.display !== 'none') {
+                                visibleCount++;
+                            }
                         });
+
+                        if (emptyState) {
+                            emptyState.hidden = events.length === 0 || visibleCount > 0;
+                        }
                     }
 
                     // Button clicks

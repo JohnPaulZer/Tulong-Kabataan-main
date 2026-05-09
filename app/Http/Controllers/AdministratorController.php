@@ -1212,12 +1212,6 @@ class AdministratorController
         return view('administrator.dnc.dncrecordspage', compact('records'));
     }
 
-    public function dncadd()
-    {
-        return view('administrator.dnc.adddnc');
-    }
-
-
     public function dncstore(Request $request)
     {
         try {
@@ -1279,6 +1273,8 @@ class AdministratorController
 
             return redirect()->route('dnc.view')
                 ->with('success', 'DNC record added successfully!');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            throw $e;
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
@@ -1356,6 +1352,8 @@ class AdministratorController
             $dnc->update($validated);
 
             return redirect()->route('dnc.view')->with('success', 'DNC record updated successfully!');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            throw $e;
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
