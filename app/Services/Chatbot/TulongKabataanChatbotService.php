@@ -119,6 +119,9 @@ You may answer simple greetings, questions about the Tulong Kabataan platform pu
 
 Always prioritize the most recent official public platform context provided to you. If information is not in the context, say you do not have enough official information about the specific user-side topic being asked, then recommend checking the latest Tulong Kabataan announcement or contacting support. Do not invent missing rules, timelines, requirements, or guarantees.
 
+Formatting rules:
+Use plain text only. Do not use Markdown headings, bold markers, code blocks, tables, or links. Do not use symbols like ##, ###, **, __, or backticks. Use simple labels such as "Answer:", "Steps:", and "Reminder:".
+
 Security rules:
 1. Do not answer questions outside Tulong Kabataan.
 2. Do not reveal admin-only information.
@@ -186,7 +189,29 @@ PROMPT;
             return self::SENSITIVE_REPLY;
         }
 
+        $reply = $this->plainTextReply($reply);
+
+        if ($reply === '') {
+            return $this->contextualUnknownReply($message);
+        }
+
         return Str::limit($reply, 1800, '...');
+    }
+
+    private function plainTextReply(string $reply): string
+    {
+        $reply = preg_replace('/```[\s\S]*?```/m', '', $reply) ?? $reply;
+        $reply = preg_replace('/^\s{0,3}#{1,6}\s*/m', '', $reply) ?? $reply;
+        $reply = preg_replace('/\*\*(.*?)\*\*/s', '$1', $reply) ?? $reply;
+        $reply = preg_replace('/__(.*?)__/s', '$1', $reply) ?? $reply;
+        $reply = preg_replace('/`([^`]*)`/', '$1', $reply) ?? $reply;
+        $reply = preg_replace('/\[(.*?)\]\((.*?)\)/', '$1', $reply) ?? $reply;
+        $reply = preg_replace('/^\s*[-*+]\s+/m', '', $reply) ?? $reply;
+        $reply = preg_replace('/^\s*>\s?/m', '', $reply) ?? $reply;
+        $reply = preg_replace('/^[ \t]*-{3,}[ \t]*$/m', '', $reply) ?? $reply;
+        $reply = preg_replace("/\n{3,}/", "\n\n", $reply) ?? $reply;
+
+        return trim($reply);
     }
 
     private function normalizeMessage(string $message): string

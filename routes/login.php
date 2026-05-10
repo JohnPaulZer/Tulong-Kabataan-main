@@ -4,6 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 // ================================================LOGIN ROUTE=====================================================
 Route::get('/', [LoginController::class, 'landingpage'])->name('landpage');
+Route::view('/privacy-policy', 'legal.privacy-policy')->name('privacy.policy');
+Route::view('/terms-of-service', 'legal.terms-of-service')->name('terms.service');
+Route::view('/cookie-policy', 'legal.cookie-policy')->name('cookie.policy');
+Route::view('/contact-us', 'legal.contact-us')->name('contact.us');
+Route::view('/sitemap', 'legal.sitemap')->name('sitemap');
 Route::get('/login', [LoginController::class, 'loginpage'])->name('login.page');
 Route::post('/loginaccount', [LoginController::class, 'loginaccount'])->name('login.account');
 Route::get('auth/google', [LoginController::class, 'redirect'])->name('google-auth');

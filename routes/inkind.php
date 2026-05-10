@@ -14,6 +14,7 @@ Route::match(['get', 'post'], '/inkindmodal', [InkindController::class, 'inkindm
 Route::post('/inkind-donate', [InkindController::class, 'inkindsubmit'])->name('inkind.donate');
 
 Route::get('/my-donations', [InkindController::class, 'myDonations'])
+    ->middleware('auth')
     ->name('donations.track');
 Route::get('/stats', [InkindController::class, 'getStats']);
 
