@@ -12,6 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
             __DIR__ . '/../routes/campaign.php',
             __DIR__ . '/../routes/event.php',
             __DIR__ . '/../routes/inkind.php',
+            __DIR__ . '/../routes/chatbot.php',
             __DIR__ . '/../routes/administrator.php',
 
         ],

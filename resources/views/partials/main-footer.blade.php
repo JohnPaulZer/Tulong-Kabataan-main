@@ -739,9 +739,13 @@
         </div>
     </div>
 
-    <button type="button" class="back-to-top-btn" id="backToTopBtn" aria-label="Back to top">
-        <i class="ri-arrow-up-line" aria-hidden="true"></i>
-    </button>
+    <div class="tk-floating-actions" aria-label="Floating page actions">
+        <button type="button" class="back-to-top-btn" id="backToTopBtn" aria-label="Back to top">
+            <i class="ri-arrow-up-line" aria-hidden="true"></i>
+        </button>
+
+        @include('partials.chatbot')
+    </div>
 
     <script>
         // Modal Logic
