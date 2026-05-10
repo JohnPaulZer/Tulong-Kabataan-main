@@ -18,6 +18,7 @@
 @import './pages/campaign/create.css';
 @import './pages/landpage.css';
 @import './pages/aboutus.css';
+@import './pages/info-page.css';
 
 /* Event pages */
 @import './pages/event/index.css';

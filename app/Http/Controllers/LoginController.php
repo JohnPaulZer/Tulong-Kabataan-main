@@ -351,11 +351,17 @@ class LoginController
     public function checkVerificationStatus(Request $request)
     {
         if (!Auth::check()) {
-            return response()->json(['verified' => false]);
+            return response()->json(['verified' => false, 'status' => '']);
         }
 
         $user = Auth::user();
-        return response()->json(['verified' => $user->hasVerifiedEmail()]);
+        $status = strtolower(optional($user->identityStatus)->status ?? '');
+
+        return response()->json([
+            'verified' => $user->hasVerifiedEmail(),
+            'status' => $status,
+            'updated_at' => optional($user->identityStatus)->updated_at,
+        ]);
     }
 
     //VERICATION RESEND
