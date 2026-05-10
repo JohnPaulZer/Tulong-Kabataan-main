@@ -220,7 +220,9 @@
         <i class="ri-arrow-up-line" aria-hidden="true"></i>
     </button>
 
-    @include('partials.chatbot')
+    @if (($siteSettings['user.chatbot.enabled'] ?? true))
+        @include('partials.chatbot')
+    @endif
 </div>
 
 <script>

@@ -28,6 +28,8 @@ use Dompdf\Options;
 use App\Notifications\ManualDonationStatusNotification;
 use App\Notifications\DonationDistributedNotification;
 use App\Models\ImpactReport;
+use App\Models\SiteSetting;
+use App\Models\User;
 
 
 class AdministratorController
@@ -1359,5 +1361,182 @@ class AdministratorController
                 ->withInput()
                 ->with('error', 'An error occurred while updating the record: ' . $e->getMessage());
         }
+    }
+
+    /*========================================================================================================*/
+
+    /* ===================================== SETTINGS: User-side management ==================================== */
+
+    public function settingsPage(Request $request)
+    {
+        if (!$request->session()->has('admin_logged_in')) {
+            return redirect()->route('admin.login');
+        }
+
+        $settings = SiteSetting::all_keyed();
+
+        // Prepare user-account stats for the Users tab header
+        $userStats = [
+            'total'      => User::count(),
+            'active'     => User::where('status', 'active')->count(),
+            'suspended'  => User::where('status', 'suspended')->count(),
+            'unverified' => User::whereNull('email_verified_at')->count(),
+        ];
+
+        return $this->noCacheView('administrator.settings.settingspage', compact('settings', 'userStats'));
+    }
+
+    public function updateSettings(Request $request)
+    {
+        if (!$request->session()->has('admin_logged_in')) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 401);
+        }
+
+        $data = $request->validate([
+            'announcement_enabled' => 'nullable|boolean',
+            'announcement_title'   => 'nullable|string|max:120',
+            'announcement_message' => 'nullable|string|max:500',
+            'announcement_variant' => 'nullable|in:info,success,warning,danger',
+
+            'registration_enabled' => 'nullable|boolean',
+            'google_login_enabled' => 'nullable|boolean',
+            'chatbot_enabled'      => 'nullable|boolean',
+            'campaigns_public'     => 'nullable|boolean',
+            'events_public'        => 'nullable|boolean',
+            'inkind_public'        => 'nullable|boolean',
+
+            'maintenance_enabled'  => 'nullable|boolean',
+            'maintenance_message'  => 'nullable|string|max:500',
+        ]);
+
+        SiteSetting::setMany([
+            'site.announcement.enabled'  => (bool) ($data['announcement_enabled'] ?? false),
+            'site.announcement.title'    => $data['announcement_title'] ?? '',
+            'site.announcement.message'  => $data['announcement_message'] ?? '',
+            'site.announcement.variant'  => $data['announcement_variant'] ?? 'info',
+
+            'user.registration.enabled'  => (bool) ($data['registration_enabled'] ?? false),
+            'user.google_login.enabled'  => (bool) ($data['google_login_enabled'] ?? false),
+            'user.chatbot.enabled'       => (bool) ($data['chatbot_enabled'] ?? false),
+            'user.campaigns.public'      => (bool) ($data['campaigns_public'] ?? false),
+            'user.events.public'         => (bool) ($data['events_public'] ?? false),
+            'user.inkind.public'         => (bool) ($data['inkind_public'] ?? false),
+
+            'site.maintenance.enabled'   => (bool) ($data['maintenance_enabled'] ?? false),
+            'site.maintenance.message'   => $data['maintenance_message'] ?? '',
+        ]);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success'  => true,
+                'message'  => 'Settings saved successfully.',
+                'settings' => SiteSetting::all_keyed(),
+            ]);
+        }
+
+        return back()->with('success', 'Settings saved successfully.');
+    }
+
+    public function listUsers(Request $request)
+    {
+        if (!$request->session()->has('admin_logged_in')) {
+            return response()->json(['success' => false], 401);
+        }
+
+        $query = User::query();
+
+        if ($search = trim((string) $request->get('search', ''))) {
+            $query->where(function ($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone_number', 'like', "%{$search}%");
+            });
+        }
+
+        $status = $request->get('status', 'all');
+        switch ($status) {
+            case 'active':
+                $query->where('status', 'active')->whereNotNull('email_verified_at');
+                break;
+            case 'suspended':
+                $query->where('status', 'suspended');
+                break;
+            case 'unverified':
+                $query->whereNull('email_verified_at');
+                break;
+            case 'all':
+            default:
+                break;
+        }
+
+        $users = $query->orderBy('created_at', 'desc')->paginate(10);
+
+        $html = view('administrator.settings.partials.user_list', compact('users'))->render();
+
+        return response()->json([
+            'success' => true,
+            'html'    => $html,
+            'stats'   => [
+                'total'      => User::count(),
+                'active'     => User::where('status', 'active')->count(),
+                'suspended'  => User::where('status', 'suspended')->count(),
+                'unverified' => User::whereNull('email_verified_at')->count(),
+            ],
+            'pagination' => [
+                'current_page' => $users->currentPage(),
+                'last_page'    => $users->lastPage(),
+                'total'        => $users->total(),
+            ],
+        ]);
+    }
+
+    public function suspendUser(Request $request, $id)
+    {
+        if (!$request->session()->has('admin_logged_in')) {
+            return response()->json(['success' => false], 401);
+        }
+
+        $user = User::findOrFail($id);
+        $user->status = 'suspended';
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'User account suspended.',
+            'status'  => $user->status,
+        ]);
+    }
+
+    public function activateUser(Request $request, $id)
+    {
+        if (!$request->session()->has('admin_logged_in')) {
+            return response()->json(['success' => false], 401);
+        }
+
+        $user = User::findOrFail($id);
+        $user->status = 'active';
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'User account activated.',
+            'status'  => $user->status,
+        ]);
+    }
+
+    public function deleteUser(Request $request, $id)
+    {
+        if (!$request->session()->has('admin_logged_in')) {
+            return response()->json(['success' => false], 401);
+        }
+
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'User account deleted.',
+        ]);
     }
 }

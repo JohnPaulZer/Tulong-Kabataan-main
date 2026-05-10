@@ -13,6 +13,7 @@
 <body class="land-page m-0 overflow-x-hidden bg-gray-50 font-body text-slate-900 antialiased">
     @include('administrator.partials.loading-screen')
     @include('partials.main-header')
+    @include('partials.site-announcement')
 
     <main id="main-content" class="overflow-x-hidden">
         <section class="tk-land-hero relative isolate flex min-h-[calc(100svh-60px)] items-start overflow-hidden md:min-h-[700px] md:items-center" aria-labelledby="homepage-hero-title">

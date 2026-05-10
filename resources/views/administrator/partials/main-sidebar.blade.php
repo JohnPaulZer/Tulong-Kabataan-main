@@ -36,6 +36,12 @@
             'icon' => 'ri-database-2-line',
             'active' => ['dnc.*'],
         ],
+        [
+            'label' => 'Settings',
+            'route' => 'admin.settings',
+            'icon' => 'ri-settings-3-line',
+            'active' => ['admin.settings', 'admin.settings.*'],
+        ],
     ];
 @endphp
 

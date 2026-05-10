@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
 use App\Models\Campaign;
 use App\Models\EventRegistration;
+use App\Models\SiteSetting;
 
 class LoginController
 {
@@ -97,6 +98,14 @@ class LoginController
             $request->session()->regenerate();
             $user = Auth::user();
 
+            // Block suspended accounts
+            if (($user->status ?? 'active') === 'suspended') {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+                return back()->with('error', 'This account has been suspended. Please contact support.');
+            }
+
             // If not verified, keep them logged in but force them to the notice page
             if (!$user->hasVerifiedEmail()) {
                 return redirect()
@@ -114,12 +123,20 @@ class LoginController
 
     public function redirect()
     {
+        if (!SiteSetting::isTrue('user.google_login.enabled')) {
+            return redirect()->route('login.page')
+                ->with('error', 'Google sign-in is currently disabled.');
+        }
 
         return Socialite::driver('google')->redirect();
     }
 
     public function callbackGoogle()
     {
+        if (!SiteSetting::isTrue('user.google_login.enabled')) {
+            return redirect()->route('login.page')
+                ->with('error', 'Google sign-in is currently disabled.');
+        }
         try {
             //  Get Google user data
             $googleUser = Socialite::driver('google')->user();
@@ -171,6 +188,11 @@ class LoginController
             }
 
             // Log the user in
+            if (($user->status ?? 'active') === 'suspended') {
+                return redirect()->route('login.page')
+                    ->with('error', 'This account has been suspended. Please contact support.');
+            }
+
             Auth::login($user);
             request()->session()->regenerate();
             return redirect()->route('landpage');
@@ -259,6 +281,11 @@ class LoginController
     //   ===============================================REGISTER CONTROLLER PART==========================================
     public function registerpage()
     {
+        if (!SiteSetting::isTrue('user.registration.enabled')) {
+            return redirect()->route('login.page')
+                ->with('error', 'New account registration is currently disabled.');
+        }
+
         return view('login.registerpage');
     }
 
@@ -277,6 +304,10 @@ class LoginController
 
     public function registeraccount(Request $request)
     {
+        if (!SiteSetting::isTrue('user.registration.enabled')) {
+            return back()->with('error', 'New account registration is currently disabled.');
+        }
+
         $request->validate([
             'first_name'   => 'required|string|max:100',
             'last_name'    => 'required|string|max:100',

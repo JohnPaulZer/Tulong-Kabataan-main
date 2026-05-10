@@ -6,7 +6,9 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Console\ServeCommand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use App\Models\SiteSetting;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,6 +29,16 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(12)->by(
                 optional($request->user())->getAuthIdentifier() ?: $request->ip()
             );
+        });
+
+        // Expose site settings to every view as $siteSettings
+        View::composer('*', function ($view) {
+            try {
+                $view->with('siteSettings', SiteSetting::all_keyed());
+            } catch (\Throwable $e) {
+                // Before migrations run, fall back silently.
+                $view->with('siteSettings', []);
+            }
         });
 
         if (PHP_OS_FAMILY !== 'Windows') {
