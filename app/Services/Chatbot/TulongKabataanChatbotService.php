@@ -2,6 +2,7 @@
 
 namespace App\Services\Chatbot;
 
+use App\Models\SiteSetting;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -254,7 +255,7 @@ PROMPT;
 
     private function isClearlyOutOfScope(string $message): bool
     {
-        $allowed = '/\b(tulong|kabataan|platform|account|register|registration|login|log in|sign in|logout|password|email|verify|verification|profile|dashboard|campaign|donat\w*|gcash|request|application|status|notification|event|volunteer\w*|join|participate|role|in-kind|inkind|item|drop.?off|announcement|support|contact|error|form|submit|track|tracking|navigate|page|faq|help|requirement|valid id|id photo|proof|upload|anonymous|reminder|certificate|receipt|refund|scholarship|approval|review)\b/i';
+        $allowed = '/\b(tulong|kabataan|platform|account|register|registration|login|log in|sign in|logout|password|email|verify|verification|profile|dashboard|campaign|donat\w*|gcash|request|application|status|notification|event|volunteer\w*|join|participate|role|in-kind|inkind|item|drop.?off|announcement|support|contact|error|form|submit|track|tracking|navigate|page|faq|help|requirement|valid id|id photo|proof|upload|anonymous|reminder|certificate|receipt|refund|scholarship|approval|review|suspend\w*|ban\w*|block\w*|maintenance|site down|website down|chatbot|google)\b/i';
 
         if (preg_match($allowed, $message)) {
             return false;
@@ -334,7 +335,111 @@ PROMPT;
             return $this->assistantOverviewReply();
         }
 
+        // Admin-settings driven questions (suspended accounts, registration off, maintenance, etc.)
+        if ($reply = $this->settingsIntentReply($normalized)) {
+            return $reply;
+        }
+
         // Everything else (including short/one-word questions) goes to the LLM
+        return null;
+    }
+
+    /**
+     * Fast answers for questions driven by admin Settings: account status,
+     * feature flags (registration, Google login, chatbot), and maintenance mode.
+     */
+    private function settingsIntentReply(string $normalized): ?string
+    {
+        // Suspended / banned account
+        if (Str::contains($normalized, [
+            'suspended', 'suspend account', 'suspend my account',
+            'banned', 'blocked account', 'account blocked',
+            'why can\'t i log in', 'why cant i log in', 'why cant i login', 'why can\'t i login',
+            'locked out', 'account locked',
+        ])) {
+            return "Answer:\nIf your account is suspended, you cannot sign in with email and password, and you also cannot sign in with Google. The platform will show a message asking you to contact support.\n\nSteps:\n1. Check the message on the login page after a failed sign-in.\n2. Email tulongkabataan.bicol@gmail.com or message Facebook @tulongkabataanbicol to ask about the status.\n3. Wait for support to review and respond.\n\nReminder:\nOnly an administrator can lift a suspension. The chatbot cannot change account status.";
+        }
+
+        // Registration disabled
+        if (Str::contains($normalized, [
+            'registration closed', 'registration disabled', 'registration off',
+            'cant register', 'can\'t register', 'unable to register',
+            'signup disabled', 'sign up disabled', 'signup closed',
+            'is registration open', 'is registration available',
+        ])) {
+            $enabled = SiteSetting::isTrue('user.registration.enabled');
+            if ($enabled) {
+                return "Answer:\nNew account registration is currently open. Go to the Register page and fill in first name, last name, email, phone number, birthday, and password.\n\nReminder:\nYou will need to verify your email before your account is fully active.";
+            }
+            return "Answer:\nNew account registration is currently turned off by the administrator. The Sign Up page is disabled and new accounts cannot be created until it is re-opened.\n\nReminder:\nYou can still sign in with an existing account. To ask when registration will reopen, contact tulongkabataan.bicol@gmail.com or Facebook @tulongkabataanbicol.";
+        }
+
+        // Google login disabled
+        if (Str::contains($normalized, [
+            'google login', 'google sign in', 'sign in with google',
+            'login with google', 'log in with google',
+            'google button not working', 'google not working',
+        ])) {
+            $enabled = SiteSetting::isTrue('user.google_login.enabled');
+            if ($enabled) {
+                return "Answer:\nGoogle sign-in is available. On the login page, choose the Google option and continue with your Google account.\n\nReminder:\nIf your Tulong Kabataan account is suspended, Google sign-in will also be blocked.";
+            }
+            return "Answer:\nGoogle sign-in is currently turned off by the administrator. Please use email and password on the login page instead.\n\nReminder:\nIf you signed up with Google before and do not have a password, use the password reset option on the login page to set one.";
+        }
+
+        // Chatbot missing / disabled
+        if (Str::contains($normalized, [
+            'chatbot gone', 'chatbot missing', 'chatbot disabled',
+            'where is the chatbot', 'no chatbot', 'chat button gone',
+            'chat assistant gone',
+        ])) {
+            $enabled = SiteSetting::isTrue('user.chatbot.enabled');
+            if ($enabled) {
+                return "Answer:\nThe chatbot is currently available. You should see a floating chat button on the user-side pages.\n\nReminder:\nIf it is not visible, try refreshing the page.";
+            }
+            return "Answer:\nThe chatbot has been turned off by the administrator, so the floating chat button is hidden on the user side right now.";
+        }
+
+        // Maintenance mode
+        if (Str::contains($normalized, [
+            'maintenance', 'site down', 'site is down', 'website down',
+            'platform down', 'under maintenance', 'is the site working',
+            'why is the site down',
+        ])) {
+            $enabled = SiteSetting::isTrue('site.maintenance.enabled');
+            if ($enabled) {
+                $message = trim((string) SiteSetting::get('site.maintenance.message', ''));
+                $msgLine = $message !== '' ? ("\n\nCurrent notice:\n" . $message) : '';
+                return "Answer:\nMaintenance mode is turned on. The user-side pages show a maintenance notice until the administrator turns it off.{$msgLine}\n\nReminder:\nYour account and submitted records are safe. Please check back later.";
+            }
+            return "Answer:\nMaintenance mode is not currently on. The user side should be working normally. If a page is not loading, try refreshing your browser.";
+        }
+
+        // Delete my account
+        if (Str::contains($normalized, [
+            'delete my account', 'delete account', 'remove my account',
+            'close my account', 'deactivate account', 'deactivate my account',
+        ])) {
+            return "Answer:\nAccount deletion is handled by the administrator through the admin Settings.\n\nSteps:\n1. Email tulongkabataan.bicol@gmail.com with your request.\n2. Include the email address registered to the account.\n3. Wait for confirmation from support.\n\nReminder:\nDeleting an account is permanent. Activity linked to your account may still appear in platform records as anonymous.";
+        }
+
+        // Announcement / banner
+        if (Str::contains($normalized, [
+            'announcement', 'banner', 'notice at the top', 'top banner',
+            'what is this banner', 'what\'s this banner',
+        ])) {
+            if (SiteSetting::isTrue('site.announcement.enabled')) {
+                $title = trim((string) SiteSetting::get('site.announcement.title', ''));
+                $msg = trim((string) SiteSetting::get('site.announcement.message', ''));
+                if ($title === '' && $msg === '') {
+                    return "Answer:\nThere is an announcement banner enabled on the landing page, but it has no content yet.";
+                }
+                $body = $title !== '' ? ($title . (($msg !== '') ? (' — ' . $msg) : '')) : $msg;
+                return "Answer:\nYes, an official announcement banner is currently shown at the top of the landing page.\n\nCurrent announcement:\n{$body}\n\nReminder:\nThe announcement is managed by the administrator and may change at any time.";
+            }
+            return "Answer:\nThere is no announcement banner being shown right now. Announcements are managed by the administrator and only appear when there is active news to share.";
+        }
+
         return null;
     }
 
@@ -442,6 +547,10 @@ PROMPT;
 
         if (Str::contains($message, ['support', 'contact', 'help', 'email', 'facebook'])) {
             return "Answer:\nYou can contact Tulong Kabataan through the public support channels.\n\nSteps:\n1. Email tulongkabataan.bicol@gmail.com for general support.\n2. Message Facebook @tulongkabataanbicol for faster response.\n3. For urgent relief coordination, use the emergency relief contact shown on the site.";
+        }
+
+        if ($reply = $this->settingsIntentReply($message)) {
+            return $reply;
         }
 
         return $this->contextualUnknownReply($message);
