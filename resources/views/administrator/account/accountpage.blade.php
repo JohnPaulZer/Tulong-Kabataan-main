@@ -54,7 +54,7 @@
             <section class="stats-grid" aria-hidden="false">
 
                 <!-- 🟦 Total Accounts -->
-                <div class="stat-card" style="border-left-color:#3b82f6">
+                <div class="stat-card stat-card--all">
                     <div style="display:flex;align-items:center;justify-content:space-between">
                         <div class="icon-wrap" style="background:#eff6ff;border-radius:10px">
                             <i class="ri-group-line" style="color:#2563eb;font-size:20px"></i>
@@ -66,7 +66,7 @@
                 </div>
 
                 <!-- 🟨 Pending Verification -->
-                <div class="stat-card" style="border-left-color:#f59e0b">
+                <div class="stat-card stat-card--pending">
                     <div style="display:flex;align-items:center;justify-content:space-between">
                         <div class="icon-wrap" style="background:#fffbeb;border-radius:10px">
                             <i class="ri-time-line" style="color:#f59e0b;font-size:20px"></i>
@@ -78,7 +78,7 @@
                 </div>
 
                 <!-- 🟩 Approved Accounts -->
-                <div class="stat-card" style="border-left-color:#16a34a">
+                <div class="stat-card stat-card--approved">
                     <div style="display:flex;align-items:center;justify-content:space-between">
                         <div class="icon-wrap" style="background:#dcfce7;border-radius:10px">
                             <i class="ri-checkbox-circle-line" style="color:#16a34a;font-size:20px"></i>
@@ -90,7 +90,7 @@
                 </div>
 
                 <!-- 🟥 Rejected Accounts -->
-                <div class="stat-card" style="border-left-color:#ef4444">
+                <div class="stat-card stat-card--rejected">
                     <div style="display:flex;align-items:center;justify-content:space-between">
                         <div class="icon-wrap" style="background:#fee2e2;border-radius:10px">
                             <i class="ri-close-circle-line" style="color:#ef4444;font-size:20px"></i>
@@ -142,9 +142,7 @@
 
                     <div class="account-list" id="accountList">
                         @forelse($requests as $req)
-                            <div class="account-item" data-status="{{ $req->status }}"
-                                style="border-left:5px solid
-                    {{ $req->status === 'pending' ? '#f59e0b' : ($req->status === 'approved' ? '#16a34a' : ($req->status === 'rejected' ? '#ef4444' : '#3b82f6')) }}">
+                            <div class="account-item" data-status="{{ $req->status }}">
 
                                 {{-- Compact Summary Row --}}
                                 <div class="summary-row" role="button" tabindex="0" aria-expanded="false"

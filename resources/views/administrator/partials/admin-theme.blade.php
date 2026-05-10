@@ -2417,4 +2417,40 @@
             width: 100% !important;
         }
     }
+
+    /* Remove the decorative vertical accent strips from admin screens. */
+    body.admin-page .side-link::before,
+    body.admin-page .side-link:hover::before,
+    body.admin-page .side-link.active::before {
+        display: none !important;
+        content: none !important;
+        height: 0 !important;
+    }
+
+    body.admin-page .side-link:hover,
+    body.admin-page .side-link.active {
+        background: rgba(255, 255, 255, 0.1) !important;
+        border-color: rgba(226, 232, 240, 0.16) !important;
+        box-shadow: none !important;
+        transform: none !important;
+    }
+
+    body.admin-page .side-link.active {
+        background: rgba(37, 99, 235, 0.18) !important;
+    }
+
+    body.admin-account-page .account-item,
+    body.admin-page .stat-card,
+    body.admin-page .metric-card,
+    body.admin-page .summary-card,
+    body.admin-page .card.stat,
+    body.admin-campaign-page .cards-grid > .card {
+        border-left-width: 1px !important;
+        border-left-color: var(--admin-line) !important;
+    }
+
+    body.admin-dnc-show-page h2 {
+        border-left-color: transparent !important;
+        border-radius: var(--admin-radius) !important;
+    }
 </style>

@@ -79,28 +79,27 @@ body.admin-page.admin-account-page .stat-card {
     min-height: 118px !important;
     padding: 18px !important;
     border: 1px solid var(--account-border) !important;
-    border-left: 3px solid var(--stat-color) !important;
     border-radius: var(--account-radius) !important;
     background: var(--account-card) !important;
     box-shadow: none !important;
 }
 
-body.admin-page.admin-account-page .stat-card[style*="#3b82f6"] {
+body.admin-page.admin-account-page .stat-card--all {
     --stat-color: var(--account-blue);
     --stat-soft: var(--account-blue-soft);
 }
 
-body.admin-page.admin-account-page .stat-card[style*="#f59e0b"] {
+body.admin-page.admin-account-page .stat-card--pending {
     --stat-color: var(--account-amber);
     --stat-soft: var(--account-amber-soft);
 }
 
-body.admin-page.admin-account-page .stat-card[style*="#16a34a"] {
+body.admin-page.admin-account-page .stat-card--approved {
     --stat-color: var(--account-green);
     --stat-soft: var(--account-green-soft);
 }
 
-body.admin-page.admin-account-page .stat-card[style*="#ef4444"] {
+body.admin-page.admin-account-page .stat-card--rejected {
     --stat-color: var(--account-red);
     --stat-soft: var(--account-red-soft);
 }
@@ -272,7 +271,6 @@ body.admin-page.admin-account-page .account-item {
     padding: 0 !important;
     overflow: hidden;
     border: 1px solid var(--account-border) !important;
-    border-left: 3px solid var(--request-color) !important;
     border-radius: var(--account-radius) !important;
     background: var(--account-card) !important;
     box-shadow: none !important;
@@ -657,16 +655,49 @@ body.admin-page.admin-account-page .btn-outline {
     color: #334155 !important;
 }
 
-body.admin-page.admin-account-page .btn-reject:hover,
-body.admin-page.admin-account-page .btn-info:hover,
+body.admin-page.admin-account-page .account-actions button i,
+body.admin-page.admin-account-page .documents button i {
+    color: inherit !important;
+}
+
+body.admin-page.admin-account-page .btn-approve:hover {
+    border-color: #047857 !important;
+    background: #047857 !important;
+    color: #ffffff !important;
+}
+
+body.admin-page.admin-account-page .btn-reject:hover {
+    border-color: var(--account-red) !important;
+    background: var(--account-red) !important;
+    color: #ffffff !important;
+}
+
+body.admin-page.admin-account-page .btn-info:hover {
+    border-color: var(--account-blue-dark) !important;
+    background: var(--account-blue-dark) !important;
+    color: #ffffff !important;
+}
+
 body.admin-page.admin-account-page .btn-details:hover,
 body.admin-page.admin-account-page .btn-outline:hover {
+    border-color: #94a3b8 !important;
     background: var(--account-muted-bg) !important;
+    color: #0f172a !important;
 }
 
 body.admin-page.admin-account-page button:disabled {
-    opacity: 0.55 !important;
+    border-color: #cbd5e1 !important;
+    background: #f8fafc !important;
+    color: #64748b !important;
+    opacity: 1 !important;
     cursor: not-allowed !important;
+}
+
+body.admin-page.admin-account-page button:disabled:hover {
+    border-color: #cbd5e1 !important;
+    background: #f8fafc !important;
+    color: #64748b !important;
+    transform: none !important;
 }
 
 body.admin-page.admin-account-page .empty-state,
