@@ -105,6 +105,16 @@ Route::prefix('administrator')->group(function () {
     Route::delete('/dnc/{id}', [AdministratorController::class, 'destroy'])->name('dnc.destroy');
     Route::get('/dnc/{id}/edit', [AdministratorController::class, 'dncedit'])->name('dnc.edit');
     Route::put('/dnc/{id}', [AdministratorController::class, 'dncupdate'])->name('dnc.update');
+
+    //====================================== SETTINGS (User-side management) =====================================
+    Route::get('/settings', [AdministratorController::class, 'settingsPage'])->name('admin.settings');
+    Route::post('/settings/update', [AdministratorController::class, 'updateSettings'])->name('admin.settings.update');
+
+    // User account management from settings
+    Route::get('/settings/users', [AdministratorController::class, 'listUsers'])->name('admin.settings.users');
+    Route::post('/settings/users/{id}/suspend', [AdministratorController::class, 'suspendUser'])->name('admin.settings.users.suspend');
+    Route::post('/settings/users/{id}/activate', [AdministratorController::class, 'activateUser'])->name('admin.settings.users.activate');
+    Route::delete('/settings/users/{id}', [AdministratorController::class, 'deleteUser'])->name('admin.settings.users.delete');
 });
 
 
