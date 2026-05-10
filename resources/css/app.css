@@ -1089,8 +1089,10 @@ body.verification-page {
     --verify-muted: #64748b;
     min-height: 100vh;
     color: #334155;
-    background: #f8fafc !important;
-    background-image: none !important;
+    background-color: var(--tk-diagonal-grid-bg) !important;
+    background-image: var(--tk-diagonal-grid-pattern) !important;
+    background-size: 40px 40px !important;
+    background-attachment: fixed !important;
 }
 
 body.verification-page .verification-page-wrap {
@@ -1543,4 +1545,42 @@ body::-webkit-scrollbar,
     width: 0 !important;
     height: 0 !important;
     display: none !important;
+}
+
+/* Remove the decorative vertical accent strips shown on several layouts. */
+body.profile-page .prof-sidebar a,
+body.profile-dashboard-page .prof-sidebar a,
+body.profile-events-page .prof-sidebar a,
+body.profile-inkind-page .prof-sidebar a {
+    border-right: 0 !important;
+}
+
+body.profile-page .prof-sidebar a.active,
+body.profile-dashboard-page .prof-sidebar a.active,
+body.profile-events-page .prof-sidebar a.active,
+body.profile-inkind-page .prof-sidebar a.active {
+    background: #eff6ff;
+    box-shadow: inset 0 0 0 1px #bfdbfe;
+}
+
+body.verification-page .verification-step h2,
+body.about-page .about-story-note,
+body.event-page .evt-details-modal-section h3,
+body.campaign-page .evt-details-modal-section h3,
+body.campaign-create-page .tk-preview {
+    border-left-width: 0 !important;
+    padding-left: 0 !important;
+}
+
+body.campaign-create-page .tk-preview {
+    border-left-width: 1px !important;
+}
+
+body.verification-page .verification-alert-danger,
+body.verification-page .verification-alert-success,
+body.verification-page .verification-alert-warning,
+.verification-alert-danger,
+.verification-alert-success,
+.verification-alert-warning {
+    border-left-width: 1px !important;
 }
