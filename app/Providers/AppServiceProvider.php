@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use App\Models\SiteSetting;
+use App\Observers\ChatbotKnowledgeObserver;
+use App\Services\Chatbot\TulongKabataanKnowledgeService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -40,6 +42,15 @@ class AppServiceProvider extends ServiceProvider
                 $view->with('siteSettings', []);
             }
         });
+
+        // Keep chatbot knowledge fresh: whenever any watched user-side model is
+        // created/updated/deleted, the cached snapshot is invalidated and the next
+        // chat call will rebuild it with the latest data.
+        foreach (TulongKabataanKnowledgeService::WATCHED_MODELS as $modelClass) {
+            if (class_exists($modelClass)) {
+                $modelClass::observe(ChatbotKnowledgeObserver::class);
+            }
+        }
 
         if (PHP_OS_FAMILY !== 'Windows') {
             return;
