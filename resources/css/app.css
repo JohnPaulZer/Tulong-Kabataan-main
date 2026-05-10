@@ -4,6 +4,7 @@
 /* Layout */
 @import './layout/main-header.css';
 @import './layout/back-to-top.css';
+@import './components/chatbot.css';
 
 /* Profile pages */
 @import './pages/profile/dashboard.css';
