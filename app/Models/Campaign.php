@@ -50,7 +50,38 @@ class Campaign extends Model
      */
     public function getCampaignIdAttribute()
     {
-        return $this->attributes['_id'] ?? $this->getKey();
+        return (string) ($this->attributes['_id'] ?? $this->getKey());
+    }
+
+    public function adjustDonationStats(float $amountDelta = 0, int $donorDelta = 0): bool
+    {
+        $currentAmount = (float) ($this->current_amount ?? 0);
+        $donorCount = (int) ($this->donor_count ?? 0);
+
+        $this->current_amount = max(0, $currentAmount + $amountDelta);
+        $this->donor_count = max(0, $donorCount + $donorDelta);
+
+        return $this->save();
+    }
+
+    public function setTargetAmountAttribute($value): void
+    {
+        $this->attributes['target_amount'] = is_numeric($value) ? (float) $value : 0.0;
+    }
+
+    public function setCurrentAmountAttribute($value): void
+    {
+        $this->attributes['current_amount'] = is_numeric($value) ? (float) $value : 0.0;
+    }
+
+    public function setDonorCountAttribute($value): void
+    {
+        $this->attributes['donor_count'] = is_numeric($value) ? (int) $value : 0;
+    }
+
+    public function setViewsAttribute($value): void
+    {
+        $this->attributes['views'] = is_numeric($value) ? (int) $value : 0;
     }
 
     public function organizer()

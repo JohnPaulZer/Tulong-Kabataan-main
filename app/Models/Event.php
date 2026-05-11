@@ -34,7 +34,7 @@ class Event extends Model
 
     public function getEventIdAttribute()
     {
-        return $this->attributes['_id'] ?? $this->getKey();
+        return (string) ($this->attributes['_id'] ?? $this->getKey());
     }
 
     public function volunteerRoles()

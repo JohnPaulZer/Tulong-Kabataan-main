@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use App\Models\IdentityStatus;
-use Illuminate\Support\Facades\DB;
 use App\Models\Campaign;
 use App\Models\Donation;
 use App\Models\ManualDonationRequest;
@@ -343,7 +342,9 @@ class ProfileController
             ])->withInput();
         }
 
-        DB::beginTransaction();
+        $uploadedVerificationFiles = array_filter([$frontPath, $backPath, $facePath, $selfiePath]);
+        $vr = null;
+
         try {
             $vr = VerificationRequest::create([
                 'user_id'        => $userId,
@@ -369,10 +370,15 @@ class ProfileController
                 ['user_id' => $userId],
                 ['status'  => 'pending']
             );
-
-            DB::commit();
         } catch (\Throwable $e) {
-            DB::rollBack();
+            if ($vr && $vr->exists) {
+                $vr->delete();
+            }
+
+            foreach ($uploadedVerificationFiles as $uploadedFile) {
+                $this->storage->delete($uploadedFile);
+            }
+
             return back()->withErrors([
                 'server' => 'Failed to save verification. ' . $e->getMessage()
             ])->withInput();
@@ -479,6 +485,13 @@ class ProfileController
         $userId = $user->user_id; // ✅ works because your User model PK is user_id
 
         $campaignsQuery = Campaign::where('user_id', $userId);
+        $campaignIds = Campaign::where('user_id', $userId)
+            ->get(['_id'])
+            ->map(fn ($campaign) => $campaign->campaign_id)
+            ->all();
+        $totalDonations = Donation::whereIn('campaign_id', $campaignIds)
+            ->get(['amount'])
+            ->sum(fn ($donation) => (float) $donation->amount);
 
         return response()->json([
             'success' => true,
@@ -486,9 +499,7 @@ class ProfileController
                 'campaigns_created' => $campaignsQuery->count(),
                 'active_campaigns'  => (clone $campaignsQuery)->where('status', 'active')->count(),
                 'ended_campaigns'   => (clone $campaignsQuery)->where('status', 'ended')->count(),
-                'total_donations'   => Donation::whereIn('campaign_id',
-                    Campaign::where('user_id', $userId)->pluck('_id')
-                )->sum('amount'),
+                'total_donations'   => $totalDonations,
             ]
         ]);
     }
@@ -507,7 +518,9 @@ class ProfileController
         if ($campaignId && $campaignId !== "all") {
             $campaignQuery->where('_id', $campaignId);
         }
-        $campaignIds = $campaignQuery->pluck('_id')->toArray();
+        $campaignIds = $campaignQuery->get(['_id'])
+            ->map(fn ($campaign) => $campaign->campaign_id)
+            ->all();
 
         // Fetch donations and group by date in PHP (MongoDB-compatible)
         $rawDonations = Donation::whereIn('campaign_id', $campaignIds)
@@ -517,7 +530,7 @@ class ProfileController
         $donations = $rawDonations->groupBy(function ($d) {
             return $d->created_at->format('Y-m-d');
         })->map(function ($group) {
-            return $group->sum('amount');
+            return $group->sum(fn ($donation) => (float) $donation->amount);
         });
 
         $labels = [];
@@ -527,7 +540,7 @@ class ProfileController
         foreach ($period as $date) {
             $day = $date->format('Y-m-d');
             $labels[] = $date->format('M d');
-            $data[]   = $donations[$day] ?? 0;
+            $data[]   = (float) ($donations[$day] ?? 0);
         }
 
         return response()->json([
@@ -554,7 +567,9 @@ class ProfileController
         // MongoDB doesn't support withSum natively — compute in PHP
         $campaigns = $query->get(['_id', 'title']);
         $campaigns->each(function ($campaign) {
-            $campaign->total_donations = Donation::where('campaign_id', $campaign->_id)->sum('amount');
+            $campaign->total_donations = Donation::where('campaign_id', $campaign->campaign_id)
+                ->get(['amount'])
+                ->sum(fn ($donation) => (float) $donation->amount);
         });
 
         $campaigns = $campaigns->sortByDesc('total_donations')->take(5)->values();
@@ -573,12 +588,14 @@ class ProfileController
 
         // Total donations by this logged-in user
         $total = Donation::where('user_id', $user->user_id)
-            ->sum('amount');
+            ->get(['amount'])
+            ->sum(fn ($donation) => (float) $donation->amount);
 
         // Donations this month
         $thisMonth = Donation::where('user_id', $user->user_id)
             ->whereMonth('created_at', now()->month)
-            ->sum('amount');
+            ->get(['amount'])
+            ->sum(fn ($donation) => (float) $donation->amount);
 
         // Recent 5 donations with campaign info
         $recent = Donation::with('campaign')
@@ -624,7 +641,10 @@ class ProfileController
     {
         $user = Auth::user();
 
-        $campaignIds = Campaign::where('user_id', $user->user_id)->pluck('_id');
+        $campaignIds = Campaign::where('user_id', $user->user_id)
+            ->get(['_id'])
+            ->map(fn ($campaign) => $campaign->campaign_id)
+            ->all();
 
         $donations = Donation::with('campaign')
             ->whereIn('campaign_id', $campaignIds)
@@ -659,7 +679,7 @@ class ProfileController
         }
 
         $campaign = $donation->campaign;
-        $campaign->decrement('current_amount', $donation->amount);
+        $campaign->adjustDonationStats(-((float) $donation->amount), 0);
 
         $donation->delete();
 
@@ -681,14 +701,14 @@ class ProfileController
         $validated = $request->validate([
             'amount' => 'required|numeric|min:1',
             'reference_number' => 'nullable|string|max:100',
-            'proof_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'proof_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         $proofPath = null;
         if ($request->hasFile('proof_image')) {
             try {
                 $proofPath = $this->storage->upload($request->file('proof_image'), 'manual_donation_proofs',
-                    ['max_kb' => 2048, 'mimes' => ['image/jpeg', 'image/png']]);
+                    ['max_kb' => 2048, 'mimes' => ['image/jpeg', 'image/png', 'image/webp']]);
             } catch (R2StorageException $e) {
                 return $request->ajax()
                     ? response()->json(['success' => false, 'error' => $e->getMessage()], 422)
@@ -731,7 +751,7 @@ class ProfileController
         $data = [
             'donations' => $donations,
             'campaign' => $campaign,
-            'totalRaised' => $donations->sum('amount')
+            'totalRaised' => $donations->sum(fn ($donation) => (float) $donation->amount)
         ];
 
         // Configure DomPDF options
@@ -764,7 +784,7 @@ class ProfileController
         $request->validate([
             'campaign_id' => 'required|string',
             'message' => 'required|string|max:1000',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
         ]);
 
         $campaign = Campaign::findOrFail($request->campaign_id);

@@ -223,11 +223,11 @@
                                     <td style="padding:10px 14px;" id="action-cell-{{ $req->request_id }}">
                                         @if ($req->status === 'pending')
                                             <button class="btn btn-approve"
-                                                onclick="showConfirmModal('{{ route('admin.manual.requests.approve', $req->request_id) }}', {{ $req->request_id }}, 'approved')">
+                                                onclick='showConfirmModal(@json(route('admin.manual.requests.approve', $req->request_id)), @json((string) $req->request_id), "approved")'>
                                                 Approve
                                             </button>
                                             <button class="btn btn-reject"
-                                                onclick="showConfirmModal('{{ route('admin.manual.requests.reject', $req->request_id) }}', {{ $req->request_id }}, 'rejected')">
+                                                onclick='showConfirmModal(@json(route('admin.manual.requests.reject', $req->request_id)), @json((string) $req->request_id), "rejected")'>
                                                 Reject
                                             </button>
                                         @else

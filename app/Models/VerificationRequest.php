@@ -44,7 +44,7 @@ class VerificationRequest extends Model
 
     public function getRequestIdAttribute()
     {
-        return $this->attributes['_id'] ?? $this->getKey();
+        return (string) ($this->attributes['_id'] ?? $this->getKey());
     }
 
     public function user()

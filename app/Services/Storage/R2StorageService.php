@@ -6,7 +6,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use RuntimeException;
+use Symfony\Component\Process\Process;
 
 /**
  * Centralized Cloudflare R2 storage service.
@@ -47,20 +47,23 @@ class R2StorageService
 
         $this->validate($file, $options);
 
+        $preparedFile = $this->prepareFileForUpload($file, $options);
         $folder   = $this->resolveFolder($folderKey, $options['prefix'] ?? null);
-        $filename = $this->generateFilename($file);
+        $filename = $this->generateFilename($file, $preparedFile['extension']);
         $key      = trim($folder, '/') . '/' . $filename;
+        $stream   = null;
 
         try {
             $disk    = $this->disk();
-            $stream  = fopen($file->getRealPath(), 'r');
+            $stream  = fopen($preparedFile['path'], 'r');
+            if ($stream === false) {
+                throw new \RuntimeException('Unable to read prepared upload file.');
+            }
+
             $success = $disk->put($key, $stream, [
                 'visibility'  => $options['visibility'] ?? 'public',
-                'ContentType' => $file->getMimeType(),
+                'ContentType' => $preparedFile['mime'],
             ]);
-            if (is_resource($stream)) {
-                fclose($stream);
-            }
         } catch (\Throwable $e) {
             Log::error('[R2] Upload failed', [
                 'folder'  => $folder,
@@ -68,6 +71,14 @@ class R2StorageService
                 'message' => $e->getMessage(),
             ]);
             throw new R2StorageException('Failed to upload file to storage. Please try again.', 0, $e);
+        } finally {
+            if (is_resource($stream)) {
+                fclose($stream);
+            }
+
+            if ($preparedFile['temporary']) {
+                @unlink($preparedFile['path']);
+            }
         }
 
         if ($success === false) {
@@ -140,7 +151,7 @@ class R2StorageService
             return $key;
         }
 
-        $publicBase = rtrim((string) config('r2.public_url'), '/');
+        $publicBase = $this->publicBaseUrl();
         if ($publicBase !== '') {
             return $publicBase . '/' . ltrim($key, '/');
         }
@@ -197,6 +208,115 @@ class R2StorageService
         return Storage::disk(config('r2.disk', 'r2'));
     }
 
+    protected function prepareFileForUpload(UploadedFile $file, array $options): array
+    {
+        if (! $this->shouldConvertImageToWebp($file, $options)) {
+            $path = $file->getRealPath();
+            if (! $path) {
+                throw new R2StorageException('Uploaded file could not be read.');
+            }
+
+            return [
+                'path'      => $path,
+                'mime'      => $file->getMimeType(),
+                'extension' => strtolower($file->getClientOriginalExtension() ?: $file->extension() ?: 'bin'),
+                'temporary' => false,
+            ];
+        }
+
+        return [
+            'path'      => $this->convertImageToWebp($file, $options),
+            'mime'      => 'image/webp',
+            'extension' => 'webp',
+            'temporary' => true,
+        ];
+    }
+
+    protected function shouldConvertImageToWebp(UploadedFile $file, array $options): bool
+    {
+        if (($options['convert_to_webp'] ?? true) === false) {
+            return false;
+        }
+
+        $enabled = filter_var(config('r2.webp.enabled', true), FILTER_VALIDATE_BOOLEAN);
+        if (! $enabled) {
+            return false;
+        }
+
+        $mime = $file->getMimeType();
+
+        return is_string($mime) && Str::startsWith($mime, 'image/');
+    }
+
+    protected function convertImageToWebp(UploadedFile $file, array $options): string
+    {
+        $inputPath = $file->getRealPath();
+        if (! $inputPath || ! is_file($inputPath)) {
+            throw new R2StorageException('Uploaded image could not be read for WebP conversion.');
+        }
+
+        $script = (string) config('r2.webp.script');
+        if ($script === '' || ! is_file($script)) {
+            throw new R2StorageException('WebP converter script is missing.');
+        }
+
+        $outputPath = tempnam(sys_get_temp_dir(), 'tk_webp_');
+        if ($outputPath === false) {
+            throw new R2StorageException('Unable to create a temporary WebP file.');
+        }
+
+        $process = new Process([
+            (string) config('r2.webp.node_binary', 'node'),
+            $script,
+            $inputPath,
+            $outputPath,
+            json_encode($this->webpConversionOptions($options), JSON_THROW_ON_ERROR),
+        ]);
+        $process->setTimeout((int) config('r2.webp.timeout', 60));
+        $process->run();
+
+        if (! $process->isSuccessful()) {
+            @unlink($outputPath);
+            Log::error('[R2] WebP conversion failed', [
+                'file' => $file->getClientOriginalName(),
+                'mime' => $file->getMimeType(),
+                'error' => trim($process->getErrorOutput() ?: $process->getOutput()),
+            ]);
+            throw new R2StorageException('Failed to convert image to WebP. Please try another image.');
+        }
+
+        $convertedBytes = filesize($outputPath);
+        if ($convertedBytes === false || $convertedBytes <= 0) {
+            @unlink($outputPath);
+            throw new R2StorageException('WebP conversion produced an empty file.');
+        }
+
+        $maxKb = $options['max_kb'] ?? (int) config('r2.validation.max_size_kb', 7168);
+        if ($maxKb > 0 && $convertedBytes > ($maxKb * 1024)) {
+            @unlink($outputPath);
+            throw new R2StorageException("Converted WebP file is too large. Maximum allowed size is {$maxKb} KB.");
+        }
+
+        return $outputPath;
+    }
+
+    protected function webpConversionOptions(array $options): array
+    {
+        $conversionOptions = [
+            'maxWidth' => max(1, (int) config('r2.webp.max_width', 2048)),
+            'maxHeight' => max(1, (int) config('r2.webp.max_height', 2048)),
+            'maxQuality' => (float) config('r2.webp.max_quality', 0.82),
+            'minQuality' => (float) config('r2.webp.min_quality', 0.45),
+        ];
+
+        $maxKb = $options['max_kb'] ?? (int) config('r2.validation.max_size_kb', 7168);
+        if ($maxKb > 0) {
+            $conversionOptions['targetBytes'] = $maxKb * 1024;
+        }
+
+        return $conversionOptions;
+    }
+
     protected function validate(UploadedFile $file, array $options): void
     {
         $maxKb = $options['max_kb'] ?? (int) config('r2.validation.max_size_kb', 7168);
@@ -228,9 +348,9 @@ class R2StorageService
         return $base;
     }
 
-    protected function generateFilename(UploadedFile $file): string
+    protected function generateFilename(UploadedFile $file, ?string $extension = null): string
     {
-        $ext = strtolower($file->getClientOriginalExtension() ?: $file->extension() ?: 'bin');
+        $ext = strtolower($extension ?: $file->getClientOriginalExtension() ?: $file->extension() ?: 'bin');
         return Str::ulid()->toBase32() . '_' . Str::random(6) . '.' . preg_replace('/[^a-z0-9]/', '', $ext);
     }
 
@@ -243,13 +363,45 @@ class R2StorageService
             return $keyOrUrl;
         }
 
-        $publicBase = rtrim((string) config('r2.public_url'), '/');
-        if ($publicBase !== '' && Str::startsWith($keyOrUrl, $publicBase)) {
-            return ltrim(Str::after($keyOrUrl, $publicBase), '/');
+        foreach (array_filter([$this->rawPublicBaseUrl(), $this->publicBaseUrl()]) as $publicBase) {
+            if (Str::startsWith($keyOrUrl, $publicBase)) {
+                return ltrim(Str::after($keyOrUrl, $publicBase), '/');
+            }
         }
 
         // Fallback: strip scheme+host so the remaining path acts as a key.
         $parsed = parse_url($keyOrUrl);
         return isset($parsed['path']) ? ltrim($parsed['path'], '/') : $keyOrUrl;
+    }
+
+    protected function publicBaseUrl(): string
+    {
+        $publicBase = $this->rawPublicBaseUrl();
+        if ($publicBase === '') {
+            return '';
+        }
+
+        $bucket = trim((string) config('r2.bucket'), '/');
+        if ($bucket === '') {
+            return $publicBase;
+        }
+
+        $path = trim((string) parse_url($publicBase, PHP_URL_PATH), '/');
+        if ($path === $bucket) {
+            $scheme = parse_url($publicBase, PHP_URL_SCHEME);
+            $host = parse_url($publicBase, PHP_URL_HOST);
+            $port = parse_url($publicBase, PHP_URL_PORT);
+
+            if ($scheme && $host) {
+                return $scheme . '://' . $host . ($port ? ':' . $port : '');
+            }
+        }
+
+        return $publicBase;
+    }
+
+    protected function rawPublicBaseUrl(): string
+    {
+        return rtrim((string) config('r2.public_url'), '/');
     }
 }

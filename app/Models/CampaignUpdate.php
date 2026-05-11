@@ -27,7 +27,7 @@ class CampaignUpdate extends Model
 
     public function getUpdateIdAttribute()
     {
-        return $this->attributes['_id'] ?? $this->getKey();
+        return (string) ($this->attributes['_id'] ?? $this->getKey());
     }
 
     public function campaign()

@@ -92,6 +92,6 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function getUserIdAttribute()
     {
-        return $this->attributes['_id'] ?? $this->getKey();
+        return (string) ($this->attributes['_id'] ?? $this->getKey());
     }
 }

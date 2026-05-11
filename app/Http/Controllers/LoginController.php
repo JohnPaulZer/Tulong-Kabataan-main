@@ -39,7 +39,9 @@ class LoginController
     public function landingpage()
     {
         $homepageStats = [
-            'total_donations' => $this->formatCompactNumber(Campaign::sum('current_amount')),
+            'total_donations' => $this->formatCompactNumber(
+                Campaign::get(['current_amount'])->sum(fn ($campaign) => (float) $campaign->current_amount)
+            ),
             'active_volunteers' => $this->formatCompactNumber(EventRegistration::count()),
             'successful_campaigns' => $this->formatCompactNumber(
                 Campaign::whereIn('status', ['ended', 'completed'])->count()
@@ -56,7 +58,7 @@ class LoginController
 
         // Compute donations_count in PHP for MongoDB compatibility
         $featuredCampaigns->each(function ($campaign) {
-            $campaign->donations_count = Donation::where('campaign_id', $campaign->_id)->count();
+            $campaign->donations_count = Donation::where('campaign_id', $campaign->campaign_id)->count();
         });
 
         return $this->noCacheView('landpage', compact('homepageStats', 'featuredCampaigns'));

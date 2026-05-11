@@ -264,7 +264,7 @@
                     @php
                         $userCampaigns = $user->campaigns;
                         $activeCampaigns = $userCampaigns->where('status', 'active')->count();
-                        $totalRaised = $userCampaigns->sum('current_amount');
+                        $totalRaised = $userCampaigns->sum(fn ($campaign) => (float) $campaign->current_amount);
                     @endphp
 
                     <p><strong>Active Campaigns:</strong> {{ $activeCampaigns }}</p>

@@ -36,7 +36,7 @@ class EventRegistration extends Model
 
     public function getRegistrationIdAttribute()
     {
-        return $this->attributes['_id'] ?? $this->getKey();
+        return (string) ($this->attributes['_id'] ?? $this->getKey());
     }
 
     public function user(): BelongsTo

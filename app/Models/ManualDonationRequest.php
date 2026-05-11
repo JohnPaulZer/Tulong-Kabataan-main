@@ -30,7 +30,12 @@ class ManualDonationRequest extends Model
 
     public function getRequestIdAttribute()
     {
-        return $this->attributes['_id'] ?? $this->getKey();
+        return (string) ($this->attributes['_id'] ?? $this->getKey());
+    }
+
+    public function setAmountAttribute($value): void
+    {
+        $this->attributes['amount'] = is_numeric($value) ? (float) $value : 0.0;
     }
 
     public function campaign()

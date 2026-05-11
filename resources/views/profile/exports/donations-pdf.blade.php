@@ -338,7 +338,7 @@
     </table>
 
     <div class="total">
-        Total Raised: ₱{{ number_format($donations->sum('amount'), 2) }}
+        Total Raised: ₱{{ number_format($donations->sum(fn ($donation) => (float) $donation->amount), 2) }}
     </div>
 
     <!-- Verification Notes -->
@@ -354,4 +354,3 @@
 </body>
 
 </html>
-

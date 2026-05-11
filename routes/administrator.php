@@ -26,6 +26,8 @@ Route::prefix('administrator')->group(function () {
     Route::post('/decision', [AdministratorController::class, 'decision'])->name('decision');
     Route::get('/accounts/stats', [AdministratorController::class, 'getAccountStats'])
         ->name('accounts.stats');
+    Route::get('/accounts/{request}/documents/{field}', [AdministratorController::class, 'verificationDocument'])
+        ->name('accounts.verification-document');
     //===================================================================================================================
 
     //===========================================CAMPAIGN ROUTE==========================================================

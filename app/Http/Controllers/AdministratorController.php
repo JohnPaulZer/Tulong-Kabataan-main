@@ -19,8 +19,10 @@ use App\Models\Campaign;
 use App\Models\ManualDonationRequest;
 use App\Models\Donation;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 use App\Models\AdminAccount;
 use App\Notifications\VerificationDecisionNotification;
 use Dompdf\Dompdf;
@@ -214,6 +216,93 @@ class AdministratorController
         ]);
     }
 
+    public function verificationDocument(Request $request, string $id, string $field)
+    {
+        if (!$request->session()->has('admin_logged_in')) {
+            abort(403);
+        }
+
+        $fieldMap = [
+            'id_front' => 'id_front_path',
+            'id_back' => 'id_back_path',
+            'face_photo' => 'face_photo_path',
+            'selfie' => 'selfie_path',
+        ];
+
+        if (! isset($fieldMap[$field])) {
+            abort(404);
+        }
+
+        $verification = VerificationRequest::findOrFail($id);
+        $fileKey = $verification->{$fieldMap[$field]} ?? null;
+
+        if (empty($fileKey)) {
+            abort(404);
+        }
+
+        return $this->verificationDocumentResponse($fileKey);
+    }
+
+    protected function verificationDocumentResponse(string $fileKey)
+    {
+        if (Str::startsWith($fileKey, ['http://', 'https://'])) {
+            return redirect()->away($fileKey);
+        }
+
+        $contents = $this->storage->get($fileKey);
+        if ($contents !== null) {
+            return response($contents, 200, $this->verificationDocumentHeaders($fileKey));
+        }
+
+        foreach ($this->localVerificationDocumentPaths($fileKey) as $path) {
+            if (File::isFile($path)) {
+                return response()->file($path, $this->verificationDocumentHeaders($fileKey, File::mimeType($path) ?: null));
+            }
+        }
+
+        abort(404);
+    }
+
+    protected function localVerificationDocumentPaths(string $fileKey): array
+    {
+        $normalized = ltrim(str_replace('\\', '/', $fileKey), '/');
+        $withoutStoragePrefix = Str::startsWith($normalized, 'storage/')
+            ? Str::after($normalized, 'storage/')
+            : $normalized;
+
+        return array_values(array_unique([
+            storage_path('app/public/' . $withoutStoragePrefix),
+            storage_path('app/' . $normalized),
+            public_path($normalized),
+            public_path('storage/' . $withoutStoragePrefix),
+        ]));
+    }
+
+    protected function verificationDocumentHeaders(string $fileKey, ?string $mime = null): array
+    {
+        $path = parse_url($fileKey, PHP_URL_PATH) ?: $fileKey;
+        $filename = str_replace('"', '', basename($path));
+
+        return [
+            'Content-Type' => $mime ?: $this->mimeTypeFromPath($fileKey),
+            'Content-Disposition' => 'inline; filename="' . $filename . '"',
+            'Cache-Control' => 'no-store, no-cache, must-revalidate',
+            'Pragma' => 'no-cache',
+        ];
+    }
+
+    protected function mimeTypeFromPath(string $fileKey): string
+    {
+        return match (strtolower(pathinfo(parse_url($fileKey, PHP_URL_PATH) ?: $fileKey, PATHINFO_EXTENSION))) {
+            'jpg', 'jpeg' => 'image/jpeg',
+            'png' => 'image/png',
+            'webp' => 'image/webp',
+            'gif' => 'image/gif',
+            'pdf' => 'application/pdf',
+            default => 'application/octet-stream',
+        };
+    }
+
 
     public function decision(Request $r)
     {
@@ -291,15 +380,18 @@ class AdministratorController
     {
         // Existing stats
         $totalActiveCampaigns = Campaign::where('status', 'active')->count();
-        $totalFundsRaised = Campaign::sum('current_amount');
+        $totalFundsRaised = Campaign::get(['current_amount'])
+            ->sum(fn ($campaign) => (float) $campaign->current_amount);
 
         // New stats for Today's Donations card
         $todayDonations = Donation::whereDate('created_at', today())
-            ->sum('amount');
+            ->get(['amount'])
+            ->sum(fn ($donation) => (float) $donation->amount);
 
         // Get yesterday's donations for comparison
         $yesterdayDonations = Donation::whereDate('created_at', today()->subDay())
-            ->sum('amount');
+            ->get(['amount'])
+            ->sum(fn ($donation) => (float) $donation->amount);
 
         // Calculate percentage change for donations
         $donationChange = 0;
@@ -348,7 +440,8 @@ class AdministratorController
             // Sum donations for each month in current year
             $monthlyData[] = Donation::whereYear('created_at', $currentYear)
                 ->whereMonth('created_at', $month)
-                ->sum('amount');
+                ->get(['amount'])
+                ->sum(fn ($donation) => (float) $donation->amount);
         }
 
         return response()->json([
@@ -449,8 +542,9 @@ class AdministratorController
         ]);
 
         $campaign = Campaign::find($request->campaign_id);
-        $campaign->increment('current_amount', $request->amount);
-        $campaign->increment('donor_count');
+        if ($campaign) {
+            $campaign->adjustDonationStats((float) $request->amount, 1);
+        }
 
         $request->update([
             'status' => 'approved',
@@ -513,8 +607,10 @@ class AdministratorController
         $approvedRequests = $campaign->manualRequests->where('status', 'approved')->count();
         $pendingRequests = $campaign->manualRequests->where('status', 'pending')->count();
         $rejectedRequests = $campaign->manualRequests->where('status', 'rejected')->count();
-        $totalAmount = $campaign->manualRequests->sum('amount');
-        $approvedAmount = $campaign->manualRequests->where('status', 'approved')->sum('amount');
+        $totalAmount = $campaign->manualRequests->sum(fn ($request) => (float) $request->amount);
+        $approvedAmount = $campaign->manualRequests
+            ->where('status', 'approved')
+            ->sum(fn ($request) => (float) $request->amount);
 
         $data = [
             'campaign' => $campaign,
@@ -783,7 +879,7 @@ class AdministratorController
             'description' => 'required|string',
             'selected_donations' => 'required|array',
             'selected_donations.*' => 'string',
-            'photos.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
+            'photos.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048'
         ]);
 
         try {
@@ -972,7 +1068,7 @@ class AdministratorController
         $request->validate([
             'title'               => 'required|string|max:255',
             'description'         => 'required|string',
-            'photo'               => 'nullable|image|mimes:jpg,jpeg,png|max:5120', // 5MB
+            'photo'               => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120', // 5MB
             'start_date'          => 'required|date',
             'end_date'            => 'required|date|after_or_equal:start_date',
             'location'            => 'required|string|max:255',
@@ -991,7 +1087,7 @@ class AdministratorController
         try {
             $photoPath = $request->hasFile('photo')
                 ? $this->storage->upload($request->file('photo'), 'event_photos',
-                    ['max_kb' => 5120, 'mimes' => ['image/jpeg', 'image/png']])
+                    ['max_kb' => 5120, 'mimes' => ['image/jpeg', 'image/png', 'image/webp']])
                 : null;
         } catch (R2StorageException $e) {
             return back()->withInput()->with('error', $e->getMessage());
