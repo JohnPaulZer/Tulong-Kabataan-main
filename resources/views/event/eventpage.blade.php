@@ -1099,6 +1099,7 @@
                 }));
 
                 // If validation passes, submit the form
+                window.TKLoadingModal?.show();
                 form.submit();
             });
 

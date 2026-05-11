@@ -77,12 +77,10 @@
 
                 confirmBtn.disabled = true;
                 pendingLogoutForm.dataset.logoutConfirmed = 'true';
-
-                try {
-                    sessionStorage.setItem('tkLoadingMode', 'brand');
-                } catch (error) {
-                    // Navigation should still continue if storage is blocked.
-                }
+                document.body.classList.remove('logout-confirm-open');
+                modal.classList.remove('is-open');
+                modal.setAttribute('aria-hidden', 'true');
+                window.TKLoadingModal?.show();
 
                 HTMLFormElement.prototype.submit.call(pendingLogoutForm);
             });
