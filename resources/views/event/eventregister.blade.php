@@ -1,557 +1,327 @@
-<style>
-    /* ======================================
-       THEME VARIABLES
-       ====================================== */
-    :root {
-        --evt-primary: #4f46e5;
-        --evt-primary-hover: #4338ca;
-        --evt-primary-soft: rgba(79, 70, 229, 0.1);
-        --evt-text-main: #1f2937;
-        --evt-text-muted: #6b7280;
-        --evt-bg-input: #f9fafb;
-        --evt-border: #d1d5db;
-        --evt-radius: 12px;
-        --evt-radius-sm: 8px;
+@php
+    $eventImage = !empty($event->photo) ? asset('storage/' . $event->photo) : asset('img/bg2.jpg');
+    $eventImageFallback = asset('img/bg2.jpg');
+    $startDate = \Carbon\Carbon::parse($event->start_date);
+    $endDate = \Carbon\Carbon::parse($event->end_date);
+    $deadline = $event->deadline ? \Carbon\Carbon::parse($event->deadline) : null;
+    $now = \Carbon\Carbon::now();
+    $rolesForForm = isset($roles) ? $roles : $event->volunteerRoles;
+    $participantCount = \App\Models\EventRegistration::where('event_id', $event->event_id)
+        ->where('status', 'registered')
+        ->count();
+
+    if ($deadline && $now->greaterThan($deadline) && $now->lessThan($startDate)) {
+        $statusLabel = 'Closed Event';
+        $statusClasses = 'bg-slate-100 text-slate-700 ring-slate-200';
+    } elseif ($now->between($startDate, $endDate)) {
+        $statusLabel = 'Ongoing Event';
+        $statusClasses = 'bg-amber-100 text-amber-800 ring-amber-200';
+    } elseif ($now->greaterThan($endDate)) {
+        $statusLabel = 'Ended Event';
+        $statusClasses = 'bg-red-100 text-red-700 ring-red-200';
+    } else {
+        $statusLabel = 'Upcoming Event';
+        $statusClasses = 'bg-lime-100 text-lime-800 ring-lime-200';
     }
+@endphp
 
-    /* ======================================
-       MODAL CONTAINER
-       ====================================== */
-    .event-modal-backdrop {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.65);
-        backdrop-filter: blur(4px);
-        z-index: 5000;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
-        box-sizing: border-box;
-    }
-
-    .event-modal {
-        background: #ffffff;
-        width: 100%;
-        max-width: 800px;
-        height: 90vh;
-        max-height: 800px;
-        border-radius: var(--evt-radius);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        font-family: 'Merriweather', serif;
-    }
-
-    /* ======================================
-       1. HEADER (FIXED TOP)
-       ====================================== */
-    .event-modal-header {
-        background: var(--evt-primary);
-        color: #fff;
-        padding: 20px 30px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-shrink: 0;
-    }
-
-    .event-modal-header h2 {
-        margin: 0;
-        font-size: 1.4rem;
-        font-weight: 600;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 80%;
-    }
-
-    .event-modal-close {
-        background: transparent;
-        border: none;
-        color: white;
-        font-size: 2rem;
-        cursor: pointer;
-        line-height: 1;
-        transition: transform 0.2s;
-    }
-
-    .event-modal-close:hover {
-        transform: scale(1.1);
-    }
-
-    /* ======================================
-       2. BODY (SCROLLABLE AREA)
-       ====================================== */
-    .event-modal-body {
-        padding: 25px;
-        overflow-y: auto;
-        flex-grow: 1;
-        scrollbar-width: thin;
-        scrollbar-color: var(--evt-border) transparent;
-    }
-
-    .event-modal-body::-webkit-scrollbar {
-        width: 8px;
-    }
-
-    .event-modal-body::-webkit-scrollbar-thumb {
-        background-color: #cbd5e1;
-        border-radius: 4px;
-    }
-
-    /* ======================================
-       EVENT DETAILS SECTION
-       ====================================== */
-    .event-details-card {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        padding-bottom: 25px;
-        border-bottom: 1px solid #e5e7eb;
-        margin-bottom: 25px;
-    }
-
-    .event-img-wrapper {
-        flex: 1 1 100%;
-        min-height: 200px;
-        max-height: 300px;
-        border-radius: var(--evt-radius-sm);
-        overflow: hidden;
-        border: 1px solid #e5e7eb;
-    }
-
-    @media (min-width: 600px) {
-        .event-img-wrapper {
-            flex: 0 0 280px;
-            height: auto;
-        }
-    }
-
-    .event-img-wrapper img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-    }
-
-    .event-info-wrapper {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        min-width: 0;
-    }
-
-    .event-info-wrapper h3 {
-        margin: 0 0 10px 0;
-        color: var(--evt-primary);
-        font-size: 1.5rem;
-        font-weight: 700;
-        line-height: 1.2;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-        word-break: break-word;
-    }
-
-    .event-meta {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        color: var(--evt-text-muted);
-        font-size: 0.95rem;
-        margin-bottom: 15px;
-    }
-
-    .event-meta span {
-        display: flex;
-        align-items: flex-start;
-        gap: 8px;
-    }
-
-    .event-meta i {
-        color: var(--evt-primary);
-        margin-top: 3px;
-    }
-
-    .event-desc {
-        font-size: 0.95rem;
-        line-height: 1.6;
-        color: var(--evt-text-main);
-        margin: 0;
-        overflow-wrap: break-word;
-    }
-
-    /* ======================================
-       FORM STYLES
-       ====================================== */
-    .form-section-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: var(--evt-text-main);
-        margin-bottom: 15px;
-        display: block;
-        border-left: 4px solid var(--evt-primary);
-        padding-left: 10px;
-    }
-
-    .form-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 15px;
-        margin-bottom: 25px;
-    }
-
-    @media (min-width: 600px) {
-        .form-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-
-    .form-group {
-        display: flex;
-        flex-direction: column;
-        min-width: 0;
-    }
-
-    .form-group label {
-        font-size: 0.85rem;
-        font-weight: 500;
-        margin-bottom: 6px;
-        color: var(--evt-text-main);
-    }
-
-    .form-control {
-        width: 100%;
-        padding: 10px 12px;
-        border: 1px solid var(--evt-border);
-        border-radius: var(--evt-radius-sm);
-        font-size: 0.95rem;
-        background-color: var(--evt-bg-input);
-        color: var(--evt-text-main);
-        transition: all 0.2s ease;
-        box-sizing: border-box;
-    }
-
-    .form-control:focus {
-        outline: none;
-        border-color: var(--evt-primary);
-        box-shadow: 0 0 0 3px var(--evt-primary-soft);
-        background-color: #fff;
-    }
-
-    .form-control[readonly] {
-        background-color: #f3f4f6;
-        cursor: not-allowed;
-        color: black;
-    }
-
-    /* ======================================
-       REMINDER TOGGLE SECTION
-       ====================================== */
-    .reminder-box {
-        background: #f8fafc;
-        border: 1px dashed #cbd5e1;
-        border-radius: var(--evt-radius-sm);
-        padding: 15px;
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-        margin-top: 20px;
-    }
-
-    @media (min-width: 500px) {
-        .reminder-box {
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-        }
-    }
-
-    .toggle-wrapper {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        cursor: pointer;
-    }
-
-    .switch {
-        position: relative;
-        display: inline-block;
-        width: 48px;
-        height: 26px;
-        flex-shrink: 0;
-    }
-
-    .switch input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-    }
-
-    .slider {
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: #ccc;
-        transition: .4s;
-        border-radius: 34px;
-    }
-
-    .slider:before {
-        position: absolute;
-        content: "";
-        height: 20px;
-        width: 20px;
-        left: 3px;
-        bottom: 3px;
-        background-color: white;
-        transition: .4s;
-        border-radius: 50%;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
-
-    input:checked+.slider {
-        background-color: var(--evt-primary);
-    }
-
-    input:checked+.slider:before {
-        transform: translateX(22px);
-    }
-
-    /* ======================================
-       3. FOOTER (ACTIONS)
-       ====================================== */
-    .event-modal-footer {
-        padding: 15px 25px;
-        border-top: 1px solid #e5e7eb;
-        background: #fff;
-        display: flex;
-        flex-direction: column-reverse;
-        gap: 10px;
-        flex-shrink: 0;
-        z-index: 10;
-    }
-
-    @media (min-width: 400px) {
-        .event-modal-footer {
-            flex-direction: row;
-            justify-content: flex-end;
-        }
-    }
-
-    .btn {
-        padding: 12px 24px;
-        border-radius: var(--evt-radius-sm);
-        font-weight: 600;
-        font-size: 0.95rem;
-        cursor: pointer;
-        transition: all 0.2s;
-        border: none;
-        font-family: inherit;
-        text-align: center;
-    }
-
-    .btn-cancel {
-        background-color: #f3f4f6;
-        color: #4b5563;
-    }
-
-    .btn-cancel:hover {
-        background-color: #e5e7eb;
-        color: #1f2937;
-    }
-
-    .btn-submit {
-        background-color: var(--evt-primary);
-        color: white;
-        box-shadow: 0 4px 6px var(--evt-primary-soft);
-    }
-
-    .btn-submit:hover {
-        background-color: var(--evt-primary-hover);
-        transform: translateY(-1px);
-    }
-</style>
-
-<div class="event-modal-backdrop">
-
-    <div class="event-modal">
-
-        <div class="event-modal-header">
-            <h2>Event Registration</h2>
-            <button class="event-modal-close">&times;</button>
-        </div>
-
-        <form action="/submit-registration" method="POST"
-            style="display: flex; flex-direction: column; height: 100%; overflow: hidden;">
+<div class="event-modal-backdrop fixed inset-0 z-[5000] flex items-center justify-center bg-slate-950/60 p-3 backdrop-blur-sm sm:p-5"
+    role="presentation">
+    <section
+        class="event-modal flex max-h-[92vh] w-full max-w-[760px] flex-col overflow-hidden rounded-xl border border-slate-300 bg-white shadow-[0_24px_70px_rgba(15,23,42,0.28)]"
+        role="dialog" aria-modal="true" aria-labelledby="event-registration-title">
+        <form action="/submit-registration" method="POST" class="event-registration-form flex min-h-0 flex-1 flex-col overflow-hidden">
             @csrf
             <input type="hidden" name="event_id" value="{{ $event->event_id }}">
 
-            <div class="event-modal-body">
+            <div class="event-modal-body min-h-0 flex-1 overflow-y-auto bg-white">
+                <header class="relative min-h-[220px] overflow-hidden bg-slate-900 sm:min-h-[260px]">
+                    <img class="absolute inset-0 h-full w-full object-cover" src="{{ $eventImage }}"
+                        alt="{{ $event->title }}"
+                        onerror="this.onerror=null; this.src='{{ $eventImageFallback }}'; this.classList.add('object-contain', 'p-10', 'bg-slate-100');">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/82 via-slate-950/30 to-slate-950/10"></div>
 
-                {{-- Event Details Card --}}
-                <div class="event-details-card">
-                    <div class="event-img-wrapper">
-                        <img src="{{ asset('storage/' . $event->photo) }}" alt="{{ $event->title }}">
+                    <button type="button"
+                        class="event-modal-close absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center border border-slate-300 bg-white/95 text-xl text-slate-700 shadow-sm transition hover:bg-white hover:text-slate-950 focus:outline-none focus:ring-4 focus:ring-white/40"
+                        aria-label="Close event registration">
+                        <i class="ri-close-line" aria-hidden="true"></i>
+                    </button>
+
+                    <div class="absolute bottom-5 left-5 right-5">
+                        <span
+                            class="inline-flex items-center rounded-sm px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide ring-1 {{ $statusClasses }}">
+                            {{ $statusLabel }}
+                        </span>
+                        <h2 id="event-registration-title"
+                            class="m-0 mt-3 max-w-[680px] text-2xl font-extrabold leading-tight text-white drop-shadow sm:text-3xl">
+                            {{ $event->title }}
+                        </h2>
                     </div>
-                    <div class="event-info-wrapper">
-                        <h3>{{ $event->title }}</h3>
-                        <div class="event-meta">
-                            <span>
-                                <i class="ri-calendar-line"></i>
-                                <div>
-                                    {{ \Carbon\Carbon::parse($event->start_date)->format('M d, Y • h:i A') }}
-                                    - {{ \Carbon\Carbon::parse($event->end_date)->format('h:i A') }}
+                </header>
+
+                <div class="space-y-5 px-5 py-5 sm:px-7">
+                    <section class="border border-slate-300 bg-white p-4" aria-label="Event information">
+                        <div class="grid gap-x-6 gap-y-5 sm:grid-cols-2">
+                            <div class="flex gap-3">
+                                <span class="mt-0.5 text-indigo-600">
+                                    <i class="ri-calendar-event-line" aria-hidden="true"></i>
+                                </span>
+                                <div class="min-w-0">
+                                    <p class="m-0 text-[10px] font-extrabold uppercase tracking-wide text-slate-500">
+                                        Date &amp; Time
+                                    </p>
+                                    <p class="m-0 mt-1 text-sm font-semibold leading-5 text-slate-900">
+                                        {{ $startDate->format('M d, Y') }} &bull;
+                                        {{ $startDate->format('h:i A') }} - {{ $endDate->format('h:i A') }}
+                                    </p>
                                 </div>
-                            </span>
-                            <span>
-                                <i class="ri-map-pin-line"></i> {{ $event->location }}
-                            </span>
-                            @if ($event->lat && $event->lng)
+                            </div>
+
+                            <div class="flex gap-3">
+                                <span class="mt-0.5 text-indigo-600">
+                                    <i class="ri-timer-line" aria-hidden="true"></i>
+                                </span>
+                                <div class="min-w-0">
+                                    <p class="m-0 text-[10px] font-extrabold uppercase tracking-wide text-slate-500">
+                                        Registration Deadline
+                                    </p>
+                                    <p class="m-0 mt-1 text-sm font-semibold leading-5 text-slate-900">
+                                        {{ $deadline ? $deadline->format('M d, Y') : 'No deadline set' }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-3 sm:border-t sm:border-slate-200 sm:pt-5">
+                                <span class="mt-0.5 text-indigo-600">
+                                    <i class="ri-map-pin-line" aria-hidden="true"></i>
+                                </span>
+                                <div class="min-w-0">
+                                    <p class="m-0 text-[10px] font-extrabold uppercase tracking-wide text-slate-500">
+                                        Location
+                                    </p>
+                                    <p class="m-0 mt-1 text-sm font-semibold leading-5 text-slate-900">
+                                        {{ $event->location }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-3 sm:border-t sm:border-slate-200 sm:pt-5">
+                                <span class="mt-0.5 text-indigo-600">
+                                    <i class="ri-team-line" aria-hidden="true"></i>
+                                </span>
+                                <div class="min-w-0">
+                                    <p class="m-0 text-[10px] font-extrabold uppercase tracking-wide text-slate-500">
+                                        Participants
+                                    </p>
+                                    <p class="m-0 mt-1 text-sm font-semibold leading-5 text-slate-900">
+                                        {{ number_format($participantCount) }} registered
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section aria-label="Event description">
+                        <p class="m-0 text-sm leading-6 text-slate-600">
+                            {{ Str::limit($event->description, 240) }}
+                        </p>
+                    </section>
+
+                    <section aria-label="Event venue">
+                        <h3 class="mb-2 text-[11px] font-extrabold uppercase tracking-wide text-slate-700">
+                            Event Venue
+                        </h3>
+
+                        @if (!is_null($event->lat) && !is_null($event->lng))
+                            <div
+                                class="overflow-hidden border border-slate-300 bg-white [&_.tk-map-shell]:!h-[132px] [&_.tk-map-shell]:!min-h-[132px] [&_.tk-map-shell]:!rounded-none [&_.tk-map-shell]:!border-0 sm:[&_.tk-map-shell]:!h-[150px] sm:[&_.tk-map-shell]:!min-h-[150px]">
                                 <div data-tk-map-static data-lat="{{ $event->lat }}" data-lng="{{ $event->lng }}"
                                     data-title="{{ $event->title }}" data-description="{{ $event->location }}"
-                                    data-height="220px" style="width:100%; margin-top:10px;"></div>
-                            @endif
+                                    data-height="150px"></div>
+                            </div>
+                        @else
+                            <div
+                                class="flex min-h-32 items-center gap-3 border border-dashed border-slate-300 bg-slate-50 px-4 py-5 text-sm text-slate-500">
+                                <i class="ri-map-pin-line text-xl text-indigo-500" aria-hidden="true"></i>
+                                <span>Map location is not available for this event yet.</span>
+                            </div>
+                        @endif
+                    </section>
+
+                    <section class="border border-slate-200 bg-slate-50 p-4" aria-label="Registration information">
+                        <h3 class="mb-4 text-[11px] font-extrabold uppercase tracking-wide text-slate-700">
+                            Registration Information
+                        </h3>
+
+                        <div class="grid gap-4 sm:grid-cols-2">
+                            <div class="flex min-w-0 flex-col gap-1.5">
+                                <label for="event_first_name" class="text-xs font-semibold text-slate-700">First Name</label>
+                                <input id="event_first_name" type="text"
+                                    class="form-control min-h-10 border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
+                                    name="first_name" value="{{ auth()->user()->first_name ?? '' }}" readonly>
+                            </div>
+
+                            <div class="flex min-w-0 flex-col gap-1.5">
+                                @php
+                                    $lastNameValue = auth()->user()->last_name ?? '';
+                                    $lastNameReadonly = !empty($lastNameValue);
+                                @endphp
+                                <label for="event_last_name" class="text-xs font-semibold text-slate-700">
+                                    Last Name
+                                    @if (!$lastNameReadonly)
+                                        <span class="text-red-600">*</span>
+                                    @endif
+                                </label>
+                                <input id="event_last_name" type="text"
+                                    class="form-control min-h-10 border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
+                                    name="last_name" value="{{ $lastNameValue }}"
+                                    @if ($lastNameReadonly) readonly
+                                    @else
+                                        required
+                                        placeholder="Enter your last name" @endif>
+                            </div>
+
+                            <div class="flex min-w-0 flex-col gap-1.5">
+                                <label for="event_email" class="text-xs font-semibold text-slate-700">Email</label>
+                                <input id="event_email" type="email"
+                                    class="form-control min-h-10 border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
+                                    name="email" value="{{ auth()->user()->email ?? '' }}" readonly>
+                            </div>
+
+                            <div class="flex min-w-0 flex-col gap-1.5">
+                                @php
+                                    $phoneValue = auth()->user()->phone_number ?? '';
+                                    $isReadonly = !empty($phoneValue);
+                                @endphp
+                                <label for="event_phone" class="text-xs font-semibold text-slate-700">
+                                    Phone
+                                    @if (!$isReadonly)
+                                        <span class="text-red-600">*</span>
+                                    @endif
+                                </label>
+                                <input id="event_phone" type="tel"
+                                    class="form-control min-h-10 border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
+                                    name="phone" value="{{ $phoneValue }}" {{ $isReadonly ? 'readonly' : '' }}
+                                    {{ !$isReadonly ? 'required' : '' }}
+                                    placeholder="{{ $isReadonly ? '' : 'Enter your phone number' }}">
+                            </div>
+
+                            @php
+                                $userBirthdate = auth()->user()->birthday ?? null;
+                                $calculatedAge = null;
+                                if ($userBirthdate) {
+                                    try {
+                                        $calculatedAge = \Carbon\Carbon::parse($userBirthdate)->age;
+                                    } catch (\Exception $e) {
+                                        $calculatedAge = '';
+                                    }
+                                }
+                                $ageReadonly = !empty($calculatedAge);
+                            @endphp
+                            <div class="flex min-w-0 flex-col gap-1.5">
+                                <label for="event_age" class="text-xs font-semibold text-slate-700">
+                                    Age
+                                    @if (!$ageReadonly)
+                                        <span class="text-red-600">*</span>
+                                    @endif
+                                </label>
+                                <input id="event_age" type="number"
+                                    class="form-control min-h-10 border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
+                                    name="age" value="{{ $calculatedAge }}"
+                                    @if ($ageReadonly) readonly
+                                    @else
+                                        required
+                                        placeholder="Enter your age"
+                                        min="1"
+                                        max="120" @endif>
+                            </div>
+
+                            <div class="flex min-w-0 flex-col gap-1.5">
+                                <label for="event_messenger" class="text-xs font-semibold text-slate-700">
+                                    Messenger Link <span class="text-red-600">*</span>
+                                </label>
+                                <input id="event_messenger" type="url"
+                                    class="form-control min-h-10 border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
+                                    name="messenger_link" placeholder="https://m.me/yourprofile" required>
+                            </div>
+
+                            <div class="flex min-w-0 flex-col gap-1.5">
+                                <label for="event_sex" class="text-xs font-semibold text-slate-700">
+                                    Sex <span class="text-red-600">*</span>
+                                </label>
+                                <select id="event_sex"
+                                    class="form-control min-h-10 border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
+                                    name="sex" required>
+                                    <option value="">Select sex</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                </select>
+                            </div>
+
+                            <div class="flex min-w-0 flex-col gap-1.5">
+                                <label for="event_role" class="text-xs font-semibold text-slate-700">
+                                    Volunteer Role <span class="text-red-600">*</span>
+                                </label>
+                                <select id="event_role"
+                                    class="form-control min-h-10 border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
+                                    name="vroles_id" required>
+                                    <option value="">Select a role</option>
+                                    @foreach ($rolesForForm as $role)
+                                        <option value="{{ $role->vroles_id }}"
+                                            title="{{ $role->name }}{{ $role->description ? ' - ' . $role->description : '' }}">
+                                            {{ $role->name }}{{ $role->description ? ' - ' . Str::limit($role->description, 80) : '' }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="flex min-w-0 flex-col gap-1.5 sm:col-span-2">
+                                <label for="event_address" class="text-xs font-semibold text-slate-700">
+                                    Address <span class="text-red-600">*</span>
+                                </label>
+                                <input id="event_address" type="text"
+                                    class="form-control min-h-10 border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
+                                    name="address" placeholder="Enter your complete address" required>
+                            </div>
                         </div>
-                        <p class="event-desc">{{ Str::limit($event->description, 150) }}</p>
-                    </div>
-                </div>
 
-                {{-- Personal Information --}}
-                <span class="form-section-title">Your Information</span>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>First Name</label>
-                        <input type="text" class="form-control" name="first_name"
-                            value="{{ auth()->user()->first_name ?? '' }}" readonly>
-                    </div>
-                    <div class="form-group">
-                        @php
-                            $lastNameValue = auth()->user()->last_name ?? '';
-                            $lastNameReadonly = !empty($lastNameValue);
-                        @endphp
-                        <label>Last Name @if (!$lastNameReadonly)
-                                <span style="color:red">*</span>
-                            @endif
-                        </label>
-                        <input type="text" class="form-control" name="last_name" value="{{ $lastNameValue }}"
-                            @if ($lastNameReadonly) readonly
-                @else
-                    required
-                    placeholder="Enter your last name" @endif>
-                    </div>
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" class="form-control" name="email"
-                            value="{{ auth()->user()->email ?? '' }}" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>Phone</label>
-                        @php
-                            $phoneValue = auth()->user()->phone_number ?? '';
-                            $isReadonly = !empty($phoneValue);
-                        @endphp
-                        <input type="tel" class="form-control" name="phone" value="{{ $phoneValue }}"
-                            {{ $isReadonly ? 'readonly' : '' }} {{ !$isReadonly ? 'required' : '' }}
-                            placeholder="{{ $isReadonly ? '' : 'Enter your phone number' }}">
-                    </div>
+                        <div class="mt-4 flex flex-col gap-3 border border-indigo-100 bg-white p-3 sm:flex-row sm:items-center sm:justify-between">
+                            <label class="flex cursor-pointer items-center gap-3 text-sm font-semibold text-slate-700" for="remind_me">
+                                <span class="relative inline-flex h-7 w-12 shrink-0 items-center rounded-full bg-slate-300 transition has-[:checked]:bg-indigo-600">
+                                    <input type="checkbox" id="remind_me" name="remind_me" value="1"
+                                        class="peer sr-only">
+                                    <span
+                                        class="ml-1 h-5 w-5 rounded-full bg-white shadow transition peer-checked:translate-x-5"></span>
+                                </span>
+                                <span>Remind me before event</span>
+                            </label>
 
-                    @php
-                        $userBirthdate = auth()->user()->birthday ?? null;
-                        $calculatedAge = null;
-                        if ($userBirthdate) {
-                            try {
-                                $calculatedAge = \Carbon\Carbon::parse($userBirthdate)->age;
-                            } catch (\Exception $e) {
-                                $calculatedAge = '';
-                            }
-                        }
-                        $ageReadonly = !empty($calculatedAge);
-                    @endphp
-                    <div class="form-group">
-                        <label>Age @if (!$ageReadonly)
-                                <span style="color:red">*</span>
-                            @endif
-                        </label>
-                        <input type="number" class="form-control" name="age" value="{{ $calculatedAge }}"
-                            @if ($ageReadonly) readonly
-            @else
-                required
-                placeholder="Enter your age"
-                min="1"
-                max="120" @endif>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Messenger Link <span style="color:red">*</span></label>
-                        <input type="url" class="form-control" name="messenger_link"
-                            placeholder="https://m.me/yourprofile" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Sex <span style="color:red">*</span></label>
-                        <select class="form-control" name="sex" required>
-                            <option value="">-- Select --</option>
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group" style="grid-column: 1 / -1;">
-                        <label>Address <span style="color:red">*</span></label>
-                        <input type="text" class="form-control" name="address" required>
-                    </div>
-                </div>
-
-                {{-- Role Selection --}}
-                <span class="form-section-title">Volunteer Role</span>
-                <div class="form-group" style="margin-bottom: 25px;">
-                    <label>Choose a role for this event</label>
-                    {{-- Ensure the select itself is 100% width --}}
-                    <select class="form-control" name="vroles_id" required style="width: 100%; max-width: 100%;">
-                        <option value="">-- Select a role --</option>
-                        @foreach ($event->volunteerRoles as $role)
-                            {{-- Keep the full text in the title for hovering --}}
-                            <option value="{{ $role->vroles_id }}" title="{{ $role->name }} - {{ $role->description }}">
-                                {{-- REDUCED LIMIT: Changed 65 to 45 to force the menu width to be smaller --}}
-                                {{ Str::limit($role->name . ' - ' . $role->description, 45) }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                {{-- Reminder Section --}}
-                <div class="reminder-box">
-                    <label class="toggle-wrapper">
-                        <div class="switch">
-                            <input type="checkbox" id="remind_me" name="remind_me" value="1">
-                            <span class="slider"></span>
+                            <select id="reminder_minutes" name="reminder_minutes"
+                                class="form-control min-h-10 border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 sm:w-56">
+                                <option value="">Select reminder time</option>
+                                <option value="1">1 minute before</option>
+                                <option value="15">15 minutes before</option>
+                                <option value="30">30 minutes before</option>
+                                <option value="60">1 hour before</option>
+                                <option value="1440">24 hours before</option>
+                            </select>
                         </div>
-                        <span style="font-weight: 500; color: #4b5563;">Remind me before event</span>
-                    </label>
-
-                    <select id="reminder_minutes" name="reminder_minutes" class="form-control" style="width: auto;">
-                        <option value="">-- Select Time --</option>
-                        <option value="1">1 minutes before</option>
-                        <option value="15">15 minutes before</option>
-                        <option value="30">30 minutes before</option>
-                        <option value="60">1 hour before</option>
-                        <option value="1440">24 hours before</option>
-                    </select>
+                    </section>
                 </div>
             </div>
 
-            <div class="event-modal-footer">
-                <button type="button" class="btn btn-cancel">Cancel</button>
-                <button type="submit" class="btn btn-submit">Confirm Registration</button>
-            </div>
+            <footer
+                class="event-modal-footer flex shrink-0 flex-col gap-2 border-t border-slate-300 bg-white px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-7">
+                <button type="button"
+                    class="btn btn-cancel inline-flex min-h-11 items-center justify-center border border-slate-400 bg-white px-7 text-sm font-semibold text-slate-700 transition hover:border-slate-500 hover:bg-slate-50 hover:text-slate-950 focus:outline-none focus:ring-4 focus:ring-slate-100">
+                    Cancel
+                </button>
+                <button type="submit"
+                    class="btn btn-submit register-btn inline-flex min-h-11 items-center justify-center gap-2 bg-indigo-600 px-7 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-100 disabled:cursor-wait disabled:opacity-75">
+                    <i class="ri-arrow-right-line" aria-hidden="true"></i>
+                    Register Now
+                </button>
+            </footer>
         </form>
-    </div>
+    </section>
 </div>

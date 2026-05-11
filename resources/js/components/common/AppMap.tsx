@@ -65,6 +65,38 @@ function MapViewSync({ center, zoom }: { center: Coordinate; zoom: number }) {
     return null;
 }
 
+function MapResizeWatcher() {
+    const map = useMap();
+
+    useEffect(() => {
+        const invalidate = () => {
+            window.setTimeout(() => map.invalidateSize(), 80);
+        };
+        const container = map.getContainer();
+        const observedElement = container.parentElement ?? container;
+        const resizeObserver =
+            typeof ResizeObserver !== 'undefined'
+                ? new ResizeObserver(() => {
+                      invalidate();
+                  })
+                : null;
+
+        resizeObserver?.observe(observedElement);
+        window.addEventListener('resize', invalidate);
+        window.addEventListener('tk:event-modal-opened', invalidate);
+
+        invalidate();
+
+        return () => {
+            resizeObserver?.disconnect();
+            window.removeEventListener('resize', invalidate);
+            window.removeEventListener('tk:event-modal-opened', invalidate);
+        };
+    }, [map]);
+
+    return null;
+}
+
 export function AppMap({
     center,
     zoom = mapConfig.defaultZoom,
@@ -98,6 +130,7 @@ export function AppMap({
             >
                 <TileLayer attribution={mapConfig.tileAttribution} url={mapConfig.tileUrl} />
                 <MapViewSync center={resolvedCenter} zoom={zoom} />
+                <MapResizeWatcher />
                 <MapClickHandler enabled={clickToSelect && !readOnly} onSelectLocation={onSelectLocation} />
                 {validMarkers.map((marker) => (
                     <MapMarker

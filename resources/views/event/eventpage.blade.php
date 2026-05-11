@@ -216,6 +216,166 @@
         /* Data from backend */
         const calendarEventsAll = @json($calendarEvents);
 
+        // ==================== MODAL LIFECYCLE HELPERS ====================
+        let eventModalScrollState = null;
+
+        function getEventModalContainer() {
+            return document.getElementById('modal-container');
+        }
+
+        function lockEventPageScroll() {
+            if (eventModalScrollState) return;
+
+            const body = document.body;
+            const html = document.documentElement;
+            const scrollY = window.scrollY || html.scrollTop || 0;
+            const scrollbarWidth = window.innerWidth - html.clientWidth;
+
+            eventModalScrollState = {
+                scrollY,
+                bodyOverflow: body.style.overflow,
+                bodyPosition: body.style.position,
+                bodyTop: body.style.top,
+                bodyWidth: body.style.width,
+                bodyPaddingRight: body.style.paddingRight,
+                htmlOverflow: html.style.overflow,
+            };
+
+            body.classList.add('event-modal-open');
+            body.style.overflow = 'hidden';
+            body.style.position = 'fixed';
+            body.style.top = `-${scrollY}px`;
+            body.style.width = '100%';
+            if (scrollbarWidth > 0) {
+                body.style.paddingRight = `${scrollbarWidth}px`;
+            }
+            html.style.overflow = 'hidden';
+        }
+
+        function unlockEventPageScroll() {
+            if (!eventModalScrollState) return;
+
+            const body = document.body;
+            const html = document.documentElement;
+            const restoreY = eventModalScrollState.scrollY || 0;
+
+            body.classList.remove('event-modal-open');
+            body.style.overflow = eventModalScrollState.bodyOverflow;
+            body.style.position = eventModalScrollState.bodyPosition;
+            body.style.top = eventModalScrollState.bodyTop;
+            body.style.width = eventModalScrollState.bodyWidth;
+            body.style.paddingRight = eventModalScrollState.bodyPaddingRight;
+            html.style.overflow = eventModalScrollState.htmlOverflow;
+            eventModalScrollState = null;
+
+            window.scrollTo(0, restoreY);
+        }
+
+        function closeRegistrationModal() {
+            const container = getEventModalContainer();
+            if (container) {
+                container.innerHTML = '';
+            }
+            syncEventModalState();
+        }
+
+        function refreshEventModalMaps(container) {
+            if (!container) return;
+
+            window.TKLeafletMaps?.mountDeclarativeStaticMaps(container);
+            [80, 220, 420].forEach((delay) => {
+                window.setTimeout(() => {
+                    window.dispatchEvent(new Event('tk:event-modal-opened'));
+                    window.dispatchEvent(new Event('resize'));
+                }, delay);
+            });
+        }
+
+        function initializeRegistrationModalControls(container) {
+            const backdrop = container?.querySelector('.event-modal-backdrop');
+            if (!backdrop || backdrop.dataset.ready === 'true') return;
+
+            backdrop.dataset.ready = 'true';
+
+            const dialog = backdrop.querySelector('.event-modal');
+            if (dialog) {
+                dialog.setAttribute('tabindex', '-1');
+                window.setTimeout(() => dialog.focus({
+                    preventScroll: true
+                }), 50);
+            }
+
+            backdrop.querySelectorAll('.event-modal-close, .btn-cancel').forEach((button) => {
+                button.addEventListener('click', closeRegistrationModal);
+            });
+
+            backdrop.addEventListener('click', (event) => {
+                if (event.target === backdrop) {
+                    closeRegistrationModal();
+                }
+            });
+
+            const form = backdrop.querySelector('form[action="/submit-registration"]');
+            form?.addEventListener('submit', (event) => {
+                window.setTimeout(() => {
+                    if (event.defaultPrevented) return;
+
+                    const submitButton = form.querySelector('.btn-submit');
+                    if (!submitButton) return;
+
+                    submitButton.disabled = true;
+                    submitButton.classList.add('is-loading');
+                    submitButton.innerHTML = '<span class="spinner"></span> Confirming...';
+                }, 0);
+            });
+        }
+
+        function syncEventModalState() {
+            const container = getEventModalContainer();
+            const hasOpenModal = Boolean(container?.querySelector('.event-modal-backdrop, .evt-details-modal'));
+
+            if (hasOpenModal) {
+                lockEventPageScroll();
+                initializeRegistrationModalControls(container);
+                refreshEventModalMaps(container);
+            } else {
+                unlockEventPageScroll();
+            }
+        }
+
+        function handleEventModalKeydown(event) {
+            if (event.key !== 'Escape') return;
+
+            const container = getEventModalContainer();
+            if (container?.querySelector('.event-modal-backdrop')) {
+                closeRegistrationModal();
+                return;
+            }
+
+            if (container?.querySelector('.evt-details-modal')) {
+                closeEventModal();
+            }
+        }
+
+        function initializeEventModalLifecycle() {
+            const container = getEventModalContainer();
+            if (!container || container.dataset.lifecycleReady === 'true') return;
+
+            container.dataset.lifecycleReady = 'true';
+            document.addEventListener('keydown', handleEventModalKeydown);
+
+            const observer = new MutationObserver(() => {
+                syncEventModalState();
+            });
+
+            observer.observe(container, {
+                childList: true,
+                subtree: false
+            });
+
+            syncEventModalState();
+        }
+
 
         // ==================== CALENDAR UTILITY FUNCTIONS ====================
         /**
@@ -1194,6 +1354,7 @@
                         .then(data => {
                             const container = document.getElementById('modal-container');
                             container.innerHTML = data;
+                            syncEventModalState();
 
                             button.disabled = false;
                             button.classList.remove('loading');
@@ -1205,7 +1366,7 @@
                             [closeBtn, cancelBtn].forEach(btn => {
                                 if (btn) btn.addEventListener('click', () => {
                                     // Clear container content to hide the modal
-                                    container.innerHTML = '';
+                                    closeRegistrationModal();
                                 });
                             });
                         })
@@ -1255,12 +1416,14 @@
             </div>
         </div>
     `;
+            syncEventModalState();
 
             // Load modal content
             fetch(`/event-modal/${eventId}`)
                 .then(response => response.text())
                 .then(html => {
                     modalContainer.innerHTML = html;
+                    syncEventModalState();
 
                     // Re-attach event listeners after modal content is loaded
                     attachModalEventListeners();
@@ -1280,6 +1443,7 @@
                     </div>
                 </div>
             `;
+                    syncEventModalState();
                 });
         }
 
@@ -1289,6 +1453,7 @@
         function closeEventModal() {
             const modalContainer = document.getElementById('modal-container');
             modalContainer.innerHTML = '';
+            syncEventModalState();
         }
 
         /**
@@ -1458,6 +1623,9 @@
          * Initialize all functionality when DOM is loaded
          */
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize modal lifecycle handling
+            initializeEventModalLifecycle();
+
             // Initialize modal form validation
             setupModalFormValidation();
 
@@ -1983,6 +2151,7 @@
                     .then(data => {
                         const container = document.getElementById('modal-container');
                         container.innerHTML = data;
+                        syncEventModalState();
 
                         // Update registration tracking
                         userRegisteredEvents.add(eventId);
@@ -2010,7 +2179,7 @@
                         if (closeBtn || cancelBtn) {
                             [closeBtn, cancelBtn].forEach(btn => {
                                 if (btn) btn.addEventListener('click', () => {
-                                    container.innerHTML = '';
+                                    closeRegistrationModal();
                                 });
                             });
                         }
