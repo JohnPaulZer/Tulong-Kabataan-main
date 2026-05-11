@@ -60,10 +60,10 @@ class CampaignController
             'recurring_days'  => 'nullable|array|required_if:schedule_type,recurring',
             'recurring_days.*' => 'string',
             'recurring_time'  => 'nullable|required_if:schedule_type,recurring|date_format:H:i',
-            'featured_image'  => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'qr_code'         => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'featured_image'  => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+            'qr_code'         => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
             'gcash_number'    => 'required|string|regex:/^09[0-9]{9}$/|max:11',
-            'images.*'        => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'images.*'        => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
 
         ]);
 
@@ -243,7 +243,8 @@ class CampaignController
                 'user_agent'  => $agent,
             ]);
 
-            $campaign->increment('views');
+            $campaign->views = ((int) ($campaign->views ?? 0)) + 1;
+            $campaign->save();
         }
 
         return $this->noCacheView('campaign.campaignview', compact('campaign'));
@@ -262,7 +263,7 @@ class CampaignController
             'campaign_id'      => 'required|string',
             'amount'           => 'required|numeric|min:1',
             'reference_number' => 'required|string|max:100',
-            'proof_image'      => 'required|image|mimes:jpg,jpeg,png|max:2048',
+            'proof_image'      => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
         ];
 
         if (!Auth::check()) {
@@ -280,7 +281,7 @@ class CampaignController
 
         try {
             $proofPath = $this->storage->upload($request->file('proof_image'), 'donation_proofs',
-                ['max_kb' => 2048, 'mimes' => ['image/jpeg', 'image/png']]);
+                ['max_kb' => 2048, 'mimes' => ['image/jpeg', 'image/png', 'image/webp']]);
         } catch (R2StorageException $e) {
             return back()->withInput()->with('error', $e->getMessage());
         }
@@ -314,8 +315,7 @@ class CampaignController
 
         // Update campaign stats
         $campaign = Campaign::findOrFail($validated['campaign_id']);
-        $campaign->increment('donor_count');
-        $campaign->increment('current_amount', $validated['amount']);
+        $campaign->adjustDonationStats((float) $validated['amount'], 1);
         $campaign->organizer->notify(new NewDonationNotification($donation, $campaign));
 
 

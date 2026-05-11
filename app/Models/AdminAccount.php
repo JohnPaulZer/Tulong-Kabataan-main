@@ -28,6 +28,6 @@ class AdminAccount extends Model
 
     public function getAdminIdAttribute()
     {
-        return $this->attributes['_id'] ?? $this->getKey();
+        return (string) ($this->attributes['_id'] ?? $this->getKey());
     }
 }

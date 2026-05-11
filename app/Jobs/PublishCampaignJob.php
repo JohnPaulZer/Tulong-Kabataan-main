@@ -25,7 +25,7 @@ class PublishCampaignJob implements ShouldQueue
 
     public function handle(): void
 {
-    $campaign = Campaign::where('campaign_id', $this->campaignId)->first();
+    $campaign = Campaign::find($this->campaignId);
 
     if (!$campaign || $campaign->status !== 'scheduled') {
         return;

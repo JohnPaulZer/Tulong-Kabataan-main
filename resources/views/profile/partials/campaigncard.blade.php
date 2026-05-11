@@ -107,18 +107,18 @@
 
             {{-- Update Progress Button --}}
             @if ($campaign->status !== 'ended')
-                <button type="button" onclick="openUpdateProgressModal({{ $campaign->campaign_id }})"
+                <button type="button" onclick='openUpdateProgressModal(@json((string) $campaign->campaign_id))'
                     class="btn btn-update">
                     Update Progress
                 </button>
             @endif
 
-            <button type="button" onclick="showCampaignDetails({{ $campaign->campaign_id }})" class="btn btn-view">
+            <button type="button" onclick='showCampaignDetails(@json((string) $campaign->campaign_id))' class="btn btn-view">
                 View Details
             </button>
 
             {{-- PDF Export Button --}}
-            <button type="button" onclick="exportDonationsPDF({{ $campaign->campaign_id }})" class="btn btn-pdf">
+            <button type="button" onclick='exportDonationsPDF(@json((string) $campaign->campaign_id))' class="btn btn-pdf">
                 Export PDF
             </button>
 
@@ -216,7 +216,9 @@
 
         {{-- Request Manual Donation (Modal Trigger) --}}
         <div>
-            <button type="button" onclick="openManualDonationModal({{ $campaign->campaign_id }})"
+            <button type="button"
+                data-campaign-id="{{ $campaign->campaign_id }}"
+                onclick='openManualDonationModal(@json((string) $campaign->campaign_id))'
                 class="manual-donation-btn">
                 Request Manual Donation
             </button>
@@ -766,7 +768,7 @@
 
         document.querySelectorAll('#campaignDetailsContent .manual-donation-btn').forEach(button => {
             button.addEventListener('click', function() {
-                const campaignId = this.getAttribute('onclick').match(/\((\d+)\)/)[1];
+                const campaignId = this.dataset.campaignId;
                 openManualDonationModal(campaignId);
             });
         });
@@ -1626,4 +1628,3 @@
         });
     }
 </script>
-

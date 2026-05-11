@@ -56,4 +56,17 @@ return [
         'document_mimes' => ['application/pdf'],
     ],
 
+    // Image uploads are converted to WebP before they are sent to R2.
+    // The Node bridge uses the imgtowebp package from package.json.
+    'webp' => [
+        'enabled'     => env('R2_CONVERT_IMAGES_TO_WEBP', true),
+        'node_binary' => env('R2_WEBP_NODE_BINARY', 'node'),
+        'script'      => base_path('scripts/convert-image-to-webp.mjs'),
+        'timeout'     => (int) env('R2_WEBP_CONVERSION_TIMEOUT', 60),
+        'max_width'   => (int) env('R2_WEBP_MAX_WIDTH', 2048),
+        'max_height'  => (int) env('R2_WEBP_MAX_HEIGHT', 2048),
+        'max_quality' => (float) env('R2_WEBP_MAX_QUALITY', 0.82),
+        'min_quality' => (float) env('R2_WEBP_MIN_QUALITY', 0.45),
+    ],
+
 ];

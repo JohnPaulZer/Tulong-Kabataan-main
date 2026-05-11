@@ -29,7 +29,7 @@ class DropOffPoint extends Model
 
     public function getDropoffIdAttribute()
     {
-        return $this->attributes['_id'] ?? $this->getKey();
+        return (string) ($this->attributes['_id'] ?? $this->getKey());
     }
 
     public function donations()

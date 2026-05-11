@@ -59,6 +59,6 @@ class DncRecord extends Model
 
     public function getDncIdAttribute()
     {
-        return $this->attributes['_id'] ?? $this->getKey();
+        return (string) ($this->attributes['_id'] ?? $this->getKey());
     }
 }

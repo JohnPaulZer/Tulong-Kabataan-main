@@ -31,7 +31,7 @@ class InKindDonation extends Model
 
     public function getInkindIdAttribute()
     {
-        return $this->attributes['_id'] ?? $this->getKey();
+        return (string) ($this->attributes['_id'] ?? $this->getKey());
     }
 
     public function user()

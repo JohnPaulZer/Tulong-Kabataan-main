@@ -1411,9 +1411,12 @@
             } catch (error) {
                 console.error(error);
                 showToast('Something went wrong. Please try again.', 'error');
+                const retryUrl = JSON.stringify(url);
+                const retryRequestId = JSON.stringify(String(requestId));
+                const retryActionType = JSON.stringify(actionType);
                 actionCell.innerHTML = `
             <button class="btn btn-light"
-                    onclick="showConfirmModal('${url}', ${requestId}, '${actionType}')">
+                    onclick='showConfirmModal(${retryUrl}, ${retryRequestId}, ${retryActionType})'>
                 Retry
             </button>`;
             }

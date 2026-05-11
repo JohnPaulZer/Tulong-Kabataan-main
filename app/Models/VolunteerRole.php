@@ -13,7 +13,7 @@ class VolunteerRole extends Model
 
     public function getVrolesIdAttribute()
     {
-        return $this->attributes['_id'] ?? $this->getKey();
+        return (string) ($this->attributes['_id'] ?? $this->getKey());
     }
 
     public function event()

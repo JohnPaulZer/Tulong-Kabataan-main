@@ -28,7 +28,7 @@ class ImpactReport extends Model
 
     public function getImpactReportIdAttribute()
     {
-        return $this->attributes['_id'] ?? $this->getKey();
+        return (string) ($this->attributes['_id'] ?? $this->getKey());
     }
 
     /**

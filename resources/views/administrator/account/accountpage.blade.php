@@ -226,7 +226,7 @@
                                                         {{ basename($req->id_front_path) }}</div>
                                                 </div>
                                                 <button type="button" class="btn-outline view-btn"
-                                                    data-img="{{ file_url($req->id_front_path) }}"
+                                                    data-img="{{ route('accounts.verification-document', [(string) $req->getKey(), 'id_front']) }}"
                                                     data-type="ID Front">
                                                     View
                                                 </button>
@@ -246,7 +246,7 @@
                                                         {{ basename($req->id_back_path) }}</div>
                                                 </div>
                                                 <button type="button" class="btn-outline view-btn"
-                                                    data-img="{{ file_url($req->id_back_path) }}"
+                                                    data-img="{{ route('accounts.verification-document', [(string) $req->getKey(), 'id_back']) }}"
                                                     data-type="ID Back">
                                                     View
                                                 </button>
@@ -266,7 +266,7 @@
                                                         {{ basename($req->face_photo_path) }}</div>
                                                 </div>
                                                 <button type="button" class="btn-outline view-btn"
-                                                    data-img="{{ file_url($req->face_photo_path) }}"
+                                                    data-img="{{ route('accounts.verification-document', [(string) $req->getKey(), 'face_photo']) }}"
                                                     data-type="Facial Photo">
                                                     View
                                                 </button>
@@ -286,7 +286,7 @@
                                                         {{ basename($req->selfie_path) }}</div>
                                                 </div>
                                                 <button type="button" class="btn-outline view-btn"
-                                                    data-img="{{ file_url($req->selfie_path) }}"
+                                                    data-img="{{ route('accounts.verification-document', [(string) $req->getKey(), 'selfie']) }}"
                                                     data-type="Selfie with ID">
                                                     View
                                                 </button>

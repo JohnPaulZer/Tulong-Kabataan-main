@@ -184,10 +184,10 @@ class TulongKabataanKnowledgeService
             );
         };
 
-        $latestCampaign = Campaign::query()->latest('updated_at')->first(['campaign_id', 'title', 'updated_at']);
+        $latestCampaign = Campaign::query()->latest('updated_at')->first(['_id', 'title', 'updated_at']);
         $addLine('Campaign', $latestCampaign);
 
-        $latestEvent = Event::query()->latest('updated_at')->first(['event_id', 'title', 'updated_at']);
+        $latestEvent = Event::query()->latest('updated_at')->first(['_id', 'title', 'updated_at']);
         $addLine('Event', $latestEvent);
 
         $latestDropOff = DropOffPoint::query()->where('is_active', true)->latest('updated_at')->first(['name', 'updated_at']);
@@ -197,9 +197,9 @@ class TulongKabataanKnowledgeService
         $addLine('Impact report', $latestReport);
 
         $latestUpdate = CampaignUpdate::query()
-            ->with(['campaign:campaign_id,title'])
+            ->with(['campaign:_id,title'])
             ->latest('updated_at')
-            ->first(['update_id', 'campaign_id', 'message', 'updated_at']);
+            ->first(['_id', 'campaign_id', 'message', 'updated_at']);
         if ($latestUpdate) {
             $lines[] = sprintf(
                 '- Campaign update on "%s" (%s): %s',
@@ -228,7 +228,7 @@ class TulongKabataanKnowledgeService
     private function campaignContext(): string
     {
         $campaigns = Campaign::query()
-            ->select(['campaign_id', 'title', 'description', 'target_amount', 'current_amount', 'status', 'starts_at', 'ends_at', 'updated_at'])
+            ->select(['_id', 'title', 'description', 'target_amount', 'current_amount', 'status', 'starts_at', 'ends_at', 'updated_at'])
             ->whereIn('status', ['active', 'scheduled', 'ended', 'completed'])
             ->latest('updated_at')
             ->limit(6)
@@ -265,7 +265,9 @@ class TulongKabataanKnowledgeService
     {
         // MongoDB: no Schema::hasTable check needed (schemaless)
         $activeCampaignIds = Campaign::whereIn('status', ['active', 'scheduled', 'ended', 'completed'])
-            ->pluck('_id');
+            ->get(['_id'])
+            ->map(fn (Campaign $campaign) => $campaign->campaign_id)
+            ->all();
 
         $updates = CampaignUpdate::query()
             ->with(['campaign'])
