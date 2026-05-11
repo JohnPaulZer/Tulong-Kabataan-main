@@ -325,75 +325,18 @@
 
 <script>
     (function() {
-        const AUTH_LOADING_KEY = 'tkLoadingMode';
-        const BRAND_MODE = 'brand';
         const loadingScreen = document.getElementById('loadingScreen');
         const startTime = Date.now();
-        let mode = 'skeleton';
+        const mode = 'skeleton';
         let pageLoaded = document.readyState === 'complete';
-
-        try {
-            mode = sessionStorage.getItem(AUTH_LOADING_KEY) === BRAND_MODE ? BRAND_MODE : 'skeleton';
-            sessionStorage.removeItem(AUTH_LOADING_KEY);
-        } catch (error) {
-            mode = 'skeleton';
-        }
 
         if (loadingScreen) {
             loadingScreen.dataset.mode = mode;
             loadingScreen.style.display = 'flex';
         }
 
-        const minTime = mode === BRAND_MODE ? 1200 : 420;
-        const maxTime = mode === BRAND_MODE ? 8000 : 2600;
-
-        function requestBrandLoader() {
-            try {
-                sessionStorage.setItem(AUTH_LOADING_KEY, BRAND_MODE);
-            } catch (error) {
-                // Storage can be blocked in private modes; navigation should still continue.
-            }
-        }
-
-        function isAuthUrl(rawUrl) {
-            if (!rawUrl) return false;
-
-            try {
-                const url = new URL(rawUrl, window.location.href);
-
-                if (url.origin !== window.location.origin) {
-                    return false;
-                }
-
-                const path = url.pathname.replace(/\/+$/, '');
-                return [
-                    '/loginaccount',
-                    '/registeraccount',
-                    '/logout',
-                    '/auth/google',
-                    '/administrator/login',
-                    '/administrator/logout'
-                ].includes(path);
-            } catch (error) {
-                return false;
-            }
-        }
-
-        function setupAuthLoadingTriggers() {
-            document.addEventListener('submit', function(event) {
-                if (isAuthUrl(event.target?.getAttribute('action'))) {
-                    requestBrandLoader();
-                }
-            }, true);
-
-            document.addEventListener('click', function(event) {
-                const link = event.target.closest?.('a[href]');
-
-                if (link && isAuthUrl(link.getAttribute('href'))) {
-                    requestBrandLoader();
-                }
-            }, true);
-        }
+        const minTime = 420;
+        const maxTime = 2600;
 
         function hideLoader() {
             if (!loadingScreen || loadingScreen.classList.contains('fade-out')) {
@@ -405,7 +348,7 @@
             setTimeout(function() {
                 loadingScreen.style.display = 'none';
                 document.dispatchEvent(new CustomEvent('loadingComplete'));
-            }, mode === BRAND_MODE ? 400 : 280);
+            }, 280);
         }
 
         function tryHideLoader() {
@@ -437,8 +380,6 @@
                 hideLoader();
             }
         });
-
-        document.addEventListener('DOMContentLoaded', setupAuthLoadingTriggers);
 
         setTimeout(function() {
             pageLoaded = true;

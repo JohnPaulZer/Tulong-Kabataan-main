@@ -115,6 +115,117 @@
     }
 }
 
+.tk-loading-modal-open {
+    cursor: wait;
+}
+
+.tk-loading-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 10050;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.18s ease;
+}
+
+.tk-loading-modal.is-active {
+    display: flex;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.tk-loading-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.36);
+    backdrop-filter: blur(2px);
+}
+
+.tk-loading-modal__dialog {
+    position: relative;
+    display: flex;
+    width: min(100%, 360px);
+    min-height: 210px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    border: 1px solid rgba(226, 232, 240, 0.92);
+    border-radius: 12px;
+    background: #f8fafc;
+    box-shadow: 0 24px 70px rgba(15, 23, 42, 0.26);
+}
+
+.tk-loading-modal__logo {
+    width: 180px;
+    height: auto;
+    animation: tk-loading-logo-pulse 2s ease-in-out infinite;
+}
+
+.tk-loading-modal__progress {
+    position: relative;
+    width: min(200px, 72%);
+    height: 3px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(59, 130, 246, 0.16);
+}
+
+.tk-loading-modal__progress::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 30%;
+    height: 100%;
+    border-radius: inherit;
+    background: #3b82f6;
+    animation: tk-loading-progress-move 1.5s ease-in-out infinite;
+}
+
+@keyframes tk-loading-logo-pulse {
+    0%,
+    100% {
+        transform: scale(0.97);
+    }
+
+    50% {
+        transform: scale(1);
+    }
+}
+
+@keyframes tk-loading-progress-move {
+    0% {
+        left: -30%;
+        width: 30%;
+    }
+
+    50% {
+        width: 60%;
+    }
+
+    100% {
+        left: 100%;
+        width: 30%;
+    }
+}
+
+@media (max-width: 480px) {
+    .tk-loading-modal__dialog {
+        width: min(100%, 320px);
+        min-height: 190px;
+        gap: 24px;
+    }
+
+    .tk-loading-modal__logo {
+        width: 155px;
+    }
+}
+
 html,
 body {
     min-height: 100%;

@@ -100,16 +100,6 @@
         
         // Check immediately when page loads
         document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('form[action="{{ route('logout') }}"]').forEach(function(form) {
-                form.addEventListener('submit', function() {
-                    try {
-                        sessionStorage.setItem('tkLoadingMode', 'brand');
-                    } catch (error) {
-                        // Storage can be unavailable in private browsing modes.
-                    }
-                });
-            });
-
             // Check if coming from verification link (has verified session)
             @if(session('verified'))
                 // Show loading immediately
