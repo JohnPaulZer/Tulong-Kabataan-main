@@ -31,6 +31,11 @@
                     <i class="ri-map-pin-line"></i>
                     <span>{{ $event->location }}</span>
                 </div>
+                @if ($event->lat && $event->lng)
+                    <div data-tk-map-static data-lat="{{ $event->lat }}" data-lng="{{ $event->lng }}"
+                        data-title="{{ $event->title }}" data-description="{{ $event->location }}"
+                        data-height="240px" style="width:100%; margin-top:12px;"></div>
+                @endif
                 @if ($event->deadline)
                     <div class="evt-detail-item">
                         <i class="ri-calendar-line"></i>
@@ -117,4 +122,3 @@
         </div>
     </div>
 </div>
-

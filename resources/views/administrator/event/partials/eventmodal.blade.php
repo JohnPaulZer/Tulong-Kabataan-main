@@ -30,6 +30,9 @@
       <p><strong>Deadline:</strong> <span id="modalDeadline"></span></p>
       <p><strong>Location:</strong> <span id="modalLocation"></span></p>
       <p><strong>Coordinates:</strong> <span id="modalCoords"></span></p>
+      <div id="modalEventMapWrap" style="display:none; margin-top:12px;">
+        <div id="modalEventMap" style="height:240px; width:100%; border-radius:10px;"></div>
+      </div>
     </div>
 
     <div style="border-top:1px solid #e5e7eb; padding-top:16px; margin-top:12px;">
@@ -46,4 +49,3 @@
 
   </div>
 </div>
-

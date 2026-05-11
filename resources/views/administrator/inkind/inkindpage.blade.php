@@ -10,9 +10,6 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" />
         <!-- Charts -->
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCxE6u2I1N_uFuYp8hZH2OSh_VEPo1N85M&libraries=places&callback=initAutocomplete"
-            async defer></script>
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         @include('administrator.partials.admin-theme')
     </head>
@@ -1632,79 +1629,94 @@
             });
         </script>
 
-        {{-- ====================CONSOLIDATED GOOGLE MAPS MODULE============================ --}}
+        {{-- ====================CONSOLIDATED LEAFLET MAPS MODULE============================ --}}
         <script>
-            const GoogleMapsManager = {
+            const LeafletMapsManager = {
                 defaultLocation: {
-                    lat: 14.5995,
-                    lng: 120.9842
+                    latitude: 12.8797,
+                    longitude: 121.7740
                 },
-                userLocation: null, // Store user's current location
-                defaultZoom: 12,
+                userLocation: null,
+                defaultZoom: 6,
                 detailZoom: 16,
                 instances: {},
+                currentDirectionsCoordinate: null,
 
                 initMap: function(elementId, options = {}) {
-                    // Set default to user location if available, otherwise use Manila
-                    const defaultCenter = this.userLocation || this.defaultLocation;
+                    if (!window.TKLeafletMaps) return null;
 
-                    const config = {
-                        center: options.center || defaultCenter,
-                        zoom: options.zoom || this.defaultZoom,
-                        mapTypeControl: true,
-                        streetViewControl: true,
-                        fullscreenControl: true,
-                        ...options
-                    };
-
-                    const map = new google.maps.Map(document.getElementById(elementId), config);
-
-                    const marker = new google.maps.Marker({
-                        map: map,
-                        draggable: true,
-                        position: config.center,
-                        title: "Drag me to set location",
-                        icon: {
-                            url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
-                        }
-                    });
+                    const normalizedCenter = window.TKLeafletMaps.normalizeCoordinate(options.center);
+                    const defaultCenter = normalizedCenter || this.userLocation || this.defaultLocation;
+                    const isViewMap = elementId === 'viewMap';
+                    const controller = isViewMap ?
+                        window.TKLeafletMaps.mountStatic({
+                            elementId,
+                            center: defaultCenter,
+                            zoom: options.zoom || this.detailZoom,
+                            height: options.height || '400px',
+                            markers: [{
+                                id: elementId,
+                                coordinate: defaultCenter,
+                                title: options.title || 'Location'
+                            }]
+                        }) :
+                        window.TKLeafletMaps.mountPicker({
+                            elementId,
+                            initialCoordinate: defaultCenter,
+                            latInputId: 'modal_latitude',
+                            lngInputId: 'modal_longitude',
+                            addressInputId: options.addressFieldId || 'modal_address',
+                            searchInputId: options.searchInputId || null,
+                            popupTitle: options.title || 'Drop-off location',
+                            height: options.height || '300px',
+                            debounceSearch: true,
+                            onSelect: ({
+                                coordinate,
+                                address
+                            }) => {
+                                this.updateCoordinateFields(coordinate);
+                                if (options.addressFieldId && address) {
+                                    const addressField = document.getElementById(options.addressFieldId);
+                                    if (addressField) addressField.value = address;
+                                }
+                            }
+                        });
 
                     this.instances[elementId] = {
-                        map,
-                        marker
+                        controller
                     };
-                    return {
-                        map,
-                        marker
-                    };
+                    return this.instances[elementId];
                 },
 
-                updateCoordinates: function(mapInstanceId, lat, lng) {
-                    const instance = this.instances[mapInstanceId];
-                    if (!instance) return;
-
-                    const position = {
-                        lat: parseFloat(lat),
-                        lng: parseFloat(lng)
-                    };
-                    instance.marker.setPosition(position);
-                    instance.map.setCenter(position);
-                    instance.map.setZoom(this.detailZoom);
-
-                    // Update display fields
+                updateCoordinateFields: function(coordinate) {
                     const latField = document.getElementById('modal_latitude');
                     const lngField = document.getElementById('modal_longitude');
                     const latDisplay = document.getElementById('modal_latDisplay');
                     const lngDisplay = document.getElementById('modal_lngDisplay');
 
-                    if (latField) latField.value = lat;
-                    if (lngField) lngField.value = lng;
-                    if (latDisplay) latDisplay.value = parseFloat(lat).toFixed(6);
-                    if (lngDisplay) lngDisplay.value = parseFloat(lng).toFixed(6);
+                    if (latField) latField.value = coordinate.latitude;
+                    if (lngField) lngField.value = coordinate.longitude;
+                    if (latDisplay) latDisplay.value = coordinate.latitude.toFixed(6);
+                    if (lngDisplay) lngDisplay.value = coordinate.longitude.toFixed(6);
+                },
+
+                updateCoordinates: function(mapInstanceId, lat, lng) {
+                    const coordinate = window.TKLeafletMaps?.normalizeCoordinate({
+                        latitude: lat,
+                        longitude: lng
+                    });
+                    if (!coordinate) return;
+
+                    const instance = this.instances[mapInstanceId];
+                    if (instance?.controller?.setCoordinate) {
+                        const addressValue = document.getElementById('modal_address')?.value || '';
+                        instance.controller.setCoordinate(coordinate, addressValue);
+                    }
+
+                    this.updateCoordinateFields(coordinate);
                 },
 
                 clearCoordinates: function() {
-                    // Clear coordinate fields
                     const latField = document.getElementById('modal_latitude');
                     const lngField = document.getElementById('modal_longitude');
                     const latDisplay = document.getElementById('modal_latDisplay');
@@ -1715,139 +1727,101 @@
                     if (latDisplay) latDisplay.value = '';
                     if (lngDisplay) lngDisplay.value = '';
 
-                    // Reset map to user location or default
                     const instance = this.instances['modal_map'];
-                    if (instance) {
-                        const defaultPosition = this.userLocation || this.defaultLocation;
-                        instance.marker.setPosition(defaultPosition);
-                        instance.map.setCenter(defaultPosition);
-                        instance.map.setZoom(this.defaultZoom);
+                    if (instance?.controller?.clearCoordinate) {
+                        const addressField = document.getElementById('modal_address');
+                        const addressValue = addressField?.value || '';
+                        instance.controller.clearCoordinate();
+                        if (addressField && addressValue) addressField.value = addressValue;
                     }
                 },
 
                 reverseGeocode: function(lat, lng, addressFieldId) {
-                    const geocoder = new google.maps.Geocoder();
-                    geocoder.geocode({
-                        location: {
-                            lat,
-                            lng
-                        }
-                    }, (results, status) => {
-                        if (status === 'OK' && results[0]) {
-                            const addressField = document.getElementById(addressFieldId);
-                            if (addressField) addressField.value = results[0].formatted_address;
-                        }
+                    const coordinate = window.TKLeafletMaps?.normalizeCoordinate({
+                        latitude: lat,
+                        longitude: lng
                     });
+                    if (!coordinate) return Promise.resolve(null);
+
+                    return window.TKLeafletMaps.reverseGeocode(coordinate)
+                        .then((address) => {
+                            const addressField = document.getElementById(addressFieldId);
+                            if (address && addressField) addressField.value = address;
+                            return address;
+                        })
+                        .catch(() => null);
                 },
 
                 locateUser: function(mapInstanceId, addressFieldId = null) {
-                    return new Promise((resolve, reject) => {
-                        if (!navigator.geolocation) {
-                            reject(new Error('Geolocation not supported'));
-                            return;
+                    return window.TKLeafletMaps.locateUser().then((detail) => {
+                        this.userLocation = detail.coordinate;
+                        this.updateCoordinates(mapInstanceId, detail.coordinate.latitude, detail.coordinate.longitude);
+                        if (addressFieldId && detail.address) {
+                            const addressField = document.getElementById(addressFieldId);
+                            if (addressField) addressField.value = detail.address;
                         }
-
-                        navigator.geolocation.getCurrentPosition(
-                            (position) => {
-                                const {
-                                    latitude,
-                                    longitude
-                                } = position.coords;
-
-                                // Store user location for future use
-                                this.userLocation = {
-                                    lat: latitude,
-                                    lng: longitude
-                                };
-
-                                this.updateCoordinates(mapInstanceId, latitude, longitude);
-                                if (addressFieldId) this.reverseGeocode(latitude, longitude,
-                                    addressFieldId);
-                                resolve({
-                                    latitude,
-                                    longitude
-                                });
-                            },
-                            (error) => {
-                                console.error('Geolocation error:', error);
-                                reject(new Error(`Unable to get your location: ${error.message}`));
-                            }
-                        );
+                        return detail;
                     });
                 },
 
                 showLocationOnMap: function(lat, lng, title) {
-                    if (!this.instances['viewMap']) {
-                        this.initMap('viewMap', {
-                            center: {
-                                lat: parseFloat(lat),
-                                lng: parseFloat(lng)
-                            },
-                            zoom: this.detailZoom
-                        });
-                    } else {
-                        const instance = this.instances['viewMap'];
-                        const position = {
-                            lat: parseFloat(lat),
-                            lng: parseFloat(lng)
+                    const coordinate = window.TKLeafletMaps?.normalizeCoordinate({
+                        latitude: lat,
+                        longitude: lng
+                    });
+                    if (!coordinate) return;
+
+                    this.currentDirectionsCoordinate = coordinate;
+                    const marker = {
+                        id: 'view-location',
+                        coordinate,
+                        title: title || 'Location Map'
+                    };
+                    const instance = this.instances['viewMap'];
+                    if (instance?.controller?.setMarkers) {
+                        instance.controller.setMarkers([marker], coordinate, this.detailZoom);
+                    } else if (window.TKLeafletMaps) {
+                        this.instances['viewMap'] = {
+                            controller: window.TKLeafletMaps.mountStatic({
+                                elementId: 'viewMap',
+                                center: coordinate,
+                                zoom: this.detailZoom,
+                                height: '400px',
+                                markers: [marker]
+                            })
                         };
-                        instance.marker.setPosition(position);
-                        instance.map.setCenter(position);
                     }
 
                     document.getElementById('mapViewTitle').textContent = title || 'Location Map';
                     document.getElementById('mapViewModal').style.display = 'flex';
+                    setTimeout(() => this.instances['viewMap']?.controller?.invalidate?.(), 120);
                 },
 
-                // Initialize user location on page load
                 initializeUserLocation: function() {
-                    if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(
-                            (position) => {
-                                this.userLocation = {
-                                    lat: position.coords.latitude,
-                                    lng: position.coords.longitude
-                                };
-                                console.log('User location initialized:', this.userLocation);
-                            },
-                            (error) => {
-                                console.warn('Could not get user location:', error.message);
-                            }, {
-                                enableHighAccuracy: true,
-                                timeout: 5000,
-                                maximumAge: 0
-                            }
-                        );
-                    }
+                    window.TKLeafletMaps?.locateUser()
+                        .then((detail) => {
+                            this.userLocation = detail.coordinate;
+                        })
+                        .catch(() => {});
                 }
             };
 
-            // Initialize user location when page loads
-            window.addEventListener('load', () => {
-                GoogleMapsManager.initializeUserLocation();
+            window.addEventListener('DOMContentLoaded', () => {
+                LeafletMapsManager.initializeUserLocation();
             });
 
-            window.GoogleMapsManager = GoogleMapsManager;
+            window.LeafletMapsManager = LeafletMapsManager;
 
-            window.initAutocomplete = function() {
-                // Main map (if exists - from your old form)
-                if (document.getElementById('map')) {
-                    const {
-                        map,
-                        marker
-                    } = GoogleMapsManager.initMap('map');
+            window.closeMapViewModal = function() {
+                document.getElementById('mapViewModal').style.display = 'none';
+            };
 
-                    google.maps.event.addListener(marker, 'dragend', function() {
-                        const pos = marker.getPosition();
-                        GoogleMapsManager.updateCoordinates('map', pos.lat(), pos.lng());
-                        GoogleMapsManager.reverseGeocode(pos.lat(), pos.lng(), 'address');
-                    });
+            window.openDirections = function() {
+                const coordinate = LeafletMapsManager.currentDirectionsCoordinate;
+                if (!coordinate) return;
 
-                    google.maps.event.addListener(map, 'click', function(event) {
-                        GoogleMapsManager.updateCoordinates('map', event.latLng.lat(), event.latLng.lng());
-                        GoogleMapsManager.reverseGeocode(event.latLng.lat(), event.latLng.lng(), 'address');
-                    });
-                }
+                const url = `https://www.openstreetmap.org/directions?to=${coordinate.latitude}%2C${coordinate.longitude}`;
+                window.open(url, '_blank', 'noopener,noreferrer');
             };
         </script>
 
@@ -1931,71 +1905,18 @@
             function initModalMap() {
                 if (modalMapInitialized) return;
 
-                const {
-                    map,
-                    marker
-                } = GoogleMapsManager.initMap('modal_map');
-
-                // Search box autocomplete
-                const searchInput = document.getElementById('modalMapSearchBox');
-                if (searchInput) {
-                    const searchAutocomplete = new google.maps.places.Autocomplete(searchInput, {
-                        types: ['geocode', 'establishment'],
-                        componentRestrictions: {
-                            country: 'ph'
-                        }
-                    });
-
-                    searchAutocomplete.addListener('place_changed', function() {
-                        const place = searchAutocomplete.getPlace();
-                        if (place.geometry) {
-                            GoogleMapsManager.updateCoordinates('modal_map',
-                                place.geometry.location.lat(),
-                                place.geometry.location.lng()
-                            );
-                            document.getElementById('modal_address').value = place.formatted_address || place.name;
-                        }
-                    });
-                }
-
-                // Marker events
-                google.maps.event.addListener(marker, 'dragend', function() {
-                    const pos = marker.getPosition();
-                    GoogleMapsManager.updateCoordinates('modal_map', pos.lat(), pos.lng());
-                    GoogleMapsManager.reverseGeocode(pos.lat(), pos.lng(), 'modal_address');
+                LeafletMapsManager.initMap('modal_map', {
+                    addressFieldId: 'modal_address',
+                    searchInputId: 'modalMapSearchBox',
+                    title: 'Drop-off location',
+                    height: '300px'
                 });
 
-                // Map click
-                google.maps.event.addListener(map, 'click', function(event) {
-                    GoogleMapsManager.updateCoordinates('modal_map', event.latLng.lat(), event.latLng.lng());
-                    GoogleMapsManager.reverseGeocode(event.latLng.lat(), event.latLng.lng(), 'modal_address');
-                });
-
-                // Address autocomplete
                 const addressInput = document.getElementById('modal_address');
                 if (addressInput) {
-                    const addressAutocomplete = new google.maps.places.Autocomplete(addressInput, {
-                        types: ['geocode'],
-                        componentRestrictions: {
-                            country: 'ph'
-                        }
-                    });
-
-                    addressAutocomplete.addListener('place_changed', function() {
-                        const place = addressAutocomplete.getPlace();
-                        if (place.geometry) {
-                            GoogleMapsManager.updateCoordinates('modal_map',
-                                place.geometry.location.lat(),
-                                place.geometry.location.lng()
-                            );
-                        }
-                    });
-
-                    // Monitor address input changes
                     addressInput.addEventListener('input', function() {
-                        // If address is cleared, clear coordinates
                         if (!this.value.trim()) {
-                            GoogleMapsManager.clearCoordinates();
+                            LeafletMapsManager.clearCoordinates();
                         }
                     });
                 }
@@ -2019,19 +1940,9 @@
 
                 // Update map if coordinates exist
                 if (locationData.lat && locationData.lng && locationData.lat !== 'null' && locationData.lng !== 'null') {
-                    GoogleMapsManager.updateCoordinates('modal_map', locationData.lat, locationData.lng);
+                    LeafletMapsManager.updateCoordinates('modal_map', locationData.lat, locationData.lng);
                 } else {
-                    // Reset to user location or default - coordinates will be empty initially
-                    const defaultPosition = GoogleMapsManager.userLocation || GoogleMapsManager.defaultLocation;
-                    const instance = GoogleMapsManager.instances['modal_map'];
-                    if (instance) {
-                        instance.marker.setPosition(defaultPosition);
-                        instance.map.setCenter(defaultPosition);
-                        instance.map.setZoom(GoogleMapsManager.defaultZoom);
-                    }
-
-                    // Clear coordinate fields
-                    GoogleMapsManager.clearCoordinates();
+                    LeafletMapsManager.clearCoordinates();
                 }
 
                 // Update UI
@@ -2041,6 +1952,7 @@
 
                 // Show modal
                 document.getElementById('locationModal').style.display = 'flex';
+                setTimeout(() => LeafletMapsManager.instances['modal_map']?.controller?.invalidate?.(), 120);
             }
 
             function closeLocationModal() {
@@ -2049,7 +1961,7 @@
 
             async function locateUserInModal() {
                 try {
-                    await GoogleMapsManager.locateUser('modal_map', 'modal_address');
+                    await LeafletMapsManager.locateUser('modal_map', 'modal_address');
                     UniversalModalManager.showToast('Location updated successfully!', 'success');
                 } catch (error) {
                     UniversalModalManager.showToast(error.message, 'error');

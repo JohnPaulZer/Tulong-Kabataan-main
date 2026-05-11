@@ -415,6 +415,11 @@
                             <span>
                                 <i class="ri-map-pin-line"></i> {{ $event->location }}
                             </span>
+                            @if ($event->lat && $event->lng)
+                                <div data-tk-map-static data-lat="{{ $event->lat }}" data-lng="{{ $event->lng }}"
+                                    data-title="{{ $event->title }}" data-description="{{ $event->location }}"
+                                    data-height="220px" style="width:100%; margin-top:10px;"></div>
+                            @endif
                         </div>
                         <p class="event-desc">{{ Str::limit($event->description, 150) }}</p>
                     </div>
@@ -550,4 +555,3 @@
         </form>
     </div>
 </div>
-
