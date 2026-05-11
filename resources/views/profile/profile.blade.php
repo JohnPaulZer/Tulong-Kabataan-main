@@ -74,7 +74,7 @@
                             }
 
                             if ($avatar && !Str::startsWith($avatar, 'http')) {
-                                $avatar = asset('storage/' . $avatar);
+                                $avatar = file_url($avatar);
                             }
                         @endphp
 

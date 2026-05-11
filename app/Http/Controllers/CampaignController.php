@@ -15,10 +15,18 @@ use Livewire\Livewire;
 use App\Models\Donation;
 use Illuminate\Support\Str;
 use App\Notifications\NewDonationNotification;
+use App\Services\Storage\R2StorageService;
+use App\Services\Storage\R2StorageException;
 
 
 class CampaignController
 {
+    protected R2StorageService $storage;
+
+    public function __construct(R2StorageService $storage)
+    {
+        $this->storage = $storage;
+    }
 
     protected function noCacheView($view, $data = [])
     {
@@ -59,22 +67,34 @@ class CampaignController
 
         ]);
 
-        // Handle featured image upload
-        $featuredImagePath = $request->hasFile('featured_image')
-            ? $request->file('featured_image')->store('campaigns/featured', 'public')
-            : null;
+        // Upload images to Cloudflare R2. If any upload fails we clean up any
+        // objects we already wrote so R2 never retains orphaned files.
+        $uploadedKeys = [];
+        try {
+            $featuredImagePath = $request->hasFile('featured_image')
+                ? tap($this->storage->upload($request->file('featured_image'), 'campaign_featured',
+                    ['max_kb' => 2048, 'mimes' => config('r2.validation.image_mimes')]),
+                    function ($k) use (&$uploadedKeys) { $uploadedKeys[] = $k; })
+                : null;
 
-        // Handle QR code upload (no validation beyond image)
-        $qrCodePath = $request->hasFile('qr_code')
-            ? $request->file('qr_code')->store('campaigns/qrcodes', 'public')
-            : null;
+            $qrCodePath = $request->hasFile('qr_code')
+                ? tap($this->storage->upload($request->file('qr_code'), 'campaign_qr',
+                    ['max_kb' => 2048, 'mimes' => config('r2.validation.image_mimes')]),
+                    function ($k) use (&$uploadedKeys) { $uploadedKeys[] = $k; })
+                : null;
 
-        // Handle multiple additional images
-        $additionalImages = [];
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                $additionalImages[] = $image->store('campaigns/images', 'public');
+            $additionalImages = [];
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+                    $key = $this->storage->upload($image, 'campaign_images',
+                        ['max_kb' => 2048, 'mimes' => config('r2.validation.image_mimes')]);
+                    $additionalImages[] = $key;
+                    $uploadedKeys[] = $key;
+                }
             }
+        } catch (R2StorageException $e) {
+            foreach ($uploadedKeys as $k) { $this->storage->delete($k); }
+            return back()->withInput()->with('error', $e->getMessage());
         }
 
         // Determine initial status
@@ -239,7 +259,7 @@ class CampaignController
         }
 
         $rules = [
-            'campaign_id'      => 'required|exists:campaigns,campaign_id',
+            'campaign_id'      => 'required|string',
             'amount'           => 'required|numeric|min:1',
             'reference_number' => 'required|string|max:100',
             'proof_image'      => 'required|image|mimes:jpg,jpeg,png|max:2048',
@@ -258,7 +278,12 @@ class CampaignController
             return back()->withInput()->with('error', 'That GCash reference number has already been used.');
         }
 
-        $proofPath = $request->file('proof_image')->store('donation_proofs', 'public');
+        try {
+            $proofPath = $this->storage->upload($request->file('proof_image'), 'donation_proofs',
+                ['max_kb' => 2048, 'mimes' => ['image/jpeg', 'image/png']]);
+        } catch (R2StorageException $e) {
+            return back()->withInput()->with('error', $e->getMessage());
+        }
 
         $isAnonymous = $request->boolean('is_anonymous');
         $donorName = $donorEmail = null;

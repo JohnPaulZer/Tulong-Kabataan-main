@@ -168,7 +168,7 @@
                 @forelse ($featuredCampaigns as $campaign)
                     @php
                         $imageUrl = $campaign->featured_image
-                            ? asset('storage/' . $campaign->featured_image)
+                            ? file_url($campaign->featured_image)
                             : asset('img/camp.jpg');
                         $progress = $campaign->target_amount > 0
                             ? min(100, round(($campaign->current_amount / $campaign->target_amount) * 100))

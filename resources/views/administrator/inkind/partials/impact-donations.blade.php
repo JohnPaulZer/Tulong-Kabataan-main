@@ -66,7 +66,7 @@
                                     $avatar .= (str_contains($avatar, '?') ? '&' : '?') . 'sz=64';
                                 }
                                 if (!Str::startsWith($avatar, 'http')) {
-                                    $avatar = asset('storage/' . $avatar);
+                                    $avatar = file_url($avatar);
                                 }
                             }
                         @endphp

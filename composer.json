@@ -11,7 +11,9 @@
         "laravel/framework": "^12.0",
         "laravel/socialite": "^5.23",
         "laravel/tinker": "^2.10.1",
-        "livewire/livewire": "^3.7"
+        "league/flysystem-aws-s3-v3": "^3.0",
+        "livewire/livewire": "^3.7",
+        "mongodb/laravel-mongodb": "^5.7"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -27,7 +29,10 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "files": [
+            "app/Support/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

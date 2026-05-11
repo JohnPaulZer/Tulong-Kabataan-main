@@ -2,17 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use MongoDB\Laravel\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class CampaignUpdate extends Model
 {
     use HasFactory;
 
-    protected $table = 'campaign_updates';
-    protected $primaryKey = 'update_id';
-    public $incrementing = true;
-    protected $keyType = 'int';
+    protected $connection = 'mongodb';
+    protected $collection = 'campaign_updates';
 
     protected $fillable = [
         'campaign_id',
@@ -27,16 +25,18 @@ class CampaignUpdate extends Model
         'updated_at' => 'datetime',
     ];
 
-    /**
-     * Relationships
-     */
+    public function getUpdateIdAttribute()
+    {
+        return $this->attributes['_id'] ?? $this->getKey();
+    }
+
     public function campaign()
     {
-        return $this->belongsTo(Campaign::class, 'campaign_id', 'campaign_id');
+        return $this->belongsTo(Campaign::class, 'campaign_id', '_id');
     }
 
     public function organizer()
     {
-        return $this->belongsTo(User::class, 'user_id', 'user_id');
+        return $this->belongsTo(User::class, 'user_id', '_id');
     }
 }

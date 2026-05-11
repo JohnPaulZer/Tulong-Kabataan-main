@@ -13,11 +13,12 @@ use App\Mail\NewPasswordMail;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use App\Models\Campaign;
+use App\Models\Donation;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
-use App\Models\Campaign;
 use App\Models\EventRegistration;
 use App\Models\SiteSetting;
 
@@ -45,15 +46,18 @@ class LoginController
             ),
         ];
 
-        $featuredCampaigns = Campaign::withCount('donations')
-            ->where('status', 'active')
+        $featuredCampaigns = Campaign::where('status', 'active')
             ->orderByDesc('views')
             ->orderByDesc('current_amount')
             ->orderByDesc('donor_count')
-            ->orderByDesc('donations_count')
             ->latest()
             ->take(3)
             ->get();
+
+        // Compute donations_count in PHP for MongoDB compatibility
+        $featuredCampaigns->each(function ($campaign) {
+            $campaign->donations_count = Donation::where('campaign_id', $campaign->_id)->count();
+        });
 
         return $this->noCacheView('landpage', compact('homepageStats', 'featuredCampaigns'));
     }

@@ -3,14 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use MongoDB\Laravel\Eloquent\Model;
 
 class Donation extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'donation_id'; // since we used bigIncrements
-    protected $table = 'donations';
+    protected $connection = 'mongodb';
+    protected $collection = 'donations';
 
     protected $fillable = [
         'campaign_id',
@@ -25,15 +25,23 @@ class Donation extends Model
         'status',
     ];
 
-    // 🔗 Relationships
+    protected $casts = [
+        'amount' => 'float',
+        'is_anonymous' => 'boolean',
+    ];
+
+    public function getDonationIdAttribute()
+    {
+        return $this->attributes['_id'] ?? $this->getKey();
+    }
+
     public function campaign()
     {
-        return $this->belongsTo(Campaign::class, 'campaign_id', 'campaign_id');
+        return $this->belongsTo(Campaign::class, 'campaign_id', '_id');
     }
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id', 'user_id');
+        return $this->belongsTo(User::class, 'user_id', '_id');
     }
-
 }

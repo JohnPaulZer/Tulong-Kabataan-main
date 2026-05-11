@@ -2,24 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use MongoDB\Laravel\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
 class SiteSetting extends Model
 {
-    protected $table = 'site_settings';
-    protected $primaryKey = 'setting_id';
+    protected $connection = 'mongodb';
+    protected $collection = 'site_settings';
 
     protected $fillable = ['key', 'value', 'type', 'group'];
 
-    /**
-     * In-process cache TTL in seconds.
-     */
     protected const CACHE_TTL = 300;
 
-    /**
-     * Fallback defaults used if a key has not been created/seeded yet.
-     */
     protected static array $defaults = [
         'site.announcement.enabled'  => ['value' => false, 'type' => 'bool',   'group' => 'general'],
         'site.announcement.title'    => ['value' => '',    'type' => 'string', 'group' => 'general'],
@@ -45,7 +39,6 @@ class SiteSetting extends Model
             foreach ($rows as $row) {
                 $out[$row->key] = self::castValue($row->value, $row->type);
             }
-            // Fill in defaults for any missing keys
             foreach (self::$defaults as $k => $meta) {
                 if (!array_key_exists($k, $out)) {
                     $out[$k] = $meta['value'];

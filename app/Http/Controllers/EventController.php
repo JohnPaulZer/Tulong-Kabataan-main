@@ -42,7 +42,7 @@ class EventController
                 'id' => $event->event_id,
                 'title' => $event->title,
                 'description' => $event->description,
-                'photo' => $event->photo,
+                'photo' => file_url($event->photo),
                 'start_date' => $event->start_date,
                 'end_date' => $event->end_date,
             ];
@@ -200,7 +200,7 @@ class EventController
 
         // Basic validation
         $validated = $request->validate([
-            'event_id'       => 'required|integer|exists:events,event_id',
+            'event_id'       => 'required|string',
             'first_name'     => ['required', 'string', 'max:100'],
             'last_name'      => ['required', 'string', 'max:100'],
             'email'          => ['required', 'email', 'max:150'],
@@ -237,7 +237,7 @@ class EventController
                 ->first();
         } else {
             $existing = EventRegistration::where('event_id', $event->event_id)
-                ->whereRaw('LOWER(email) = ?', [strtolower($validated['email'])])
+                ->where('email', 'like', strtolower($validated['email']))
                 ->first();
         }
 

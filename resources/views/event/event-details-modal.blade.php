@@ -7,7 +7,7 @@
 
         <div class="evt-details-modal-header">
             <div class="evt-details-modal-image">
-                <img src="{{ asset('storage/' . $event->photo) }}" alt="{{ $event->title }}">
+                <img src="{{ file_url($event->photo, asset('img/bg2.jpg')) }}" alt="{{ $event->title }}">
             </div>
         </div>
 

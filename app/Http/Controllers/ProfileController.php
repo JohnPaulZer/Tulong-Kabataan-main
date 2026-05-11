@@ -23,9 +23,22 @@ use Dompdf\Options;
 use App\Notifications\CampaignUpdateNotification;
 use App\Models\InKindDonation;
 use App\Models\ImpactReport;
+use App\Services\Storage\R2StorageService;
+use App\Services\Storage\R2StorageException;
 
 class ProfileController
 {
+    /**
+     * Centralized R2 storage service. All file upload/replace/delete work for
+     * this controller must go through this instance — never call Storage::
+     * directly for user-uploaded files.
+     */
+    protected R2StorageService $storage;
+
+    public function __construct(R2StorageService $storage)
+    {
+        $this->storage = $storage;
+    }
 
     protected function noCacheView($view, $data = [])
     {
@@ -115,16 +128,19 @@ class ProfileController
 
         $user = Auth::user();
 
-        // Delete old image if stored locally
-        if ($user->profile_photo_url && Storage::disk('public')->exists($user->profile_photo_url)) {
-            Storage::disk('public')->delete($user->profile_photo_url);
+        try {
+            // Upload new photo to R2 and remove the previous one (if it was on R2).
+            $newKey = $this->storage->replace(
+                $request->file('photo'),
+                $user->profile_photo_url,
+                'profile_photos',
+                ['max_kb' => 2048, 'mimes' => config('r2.validation.image_mimes')]
+            );
+        } catch (R2StorageException $e) {
+            return back()->with('error', $e->getMessage());
         }
 
-        // Store new photo
-        $path = $request->file('photo')->store('profile_photos', 'public');
-
-        // Update DB
-        $user->update(['profile_photo_url' => $path]);
+        $user->update(['profile_photo_url' => $newKey]);
 
         return back()->with('success', 'Profile photo updated successfully!');
     }
@@ -219,18 +235,35 @@ class ProfileController
 
             $r->validate($rules);
 
-            // Save only updated files
-            if ($r->hasFile('id_front')) {
-                $vr->id_front_path = $r->file('id_front')->store('kyc/ids', 'public');
-            }
-            if ($r->hasFile('id_back')) {
-                $vr->id_back_path = $r->file('id_back')->store('kyc/ids', 'public');
-            }
-            if ($r->hasFile('face_photo')) {
-                $vr->face_photo_path = $r->file('face_photo')->store('kyc/faces', 'public');
-            }
-            if ($r->hasFile('selfie')) {
-                $vr->selfie_path = $r->file('selfie')->store('kyc/selfies', 'public');
+            try {
+                // Save only updated files — each replace uploads to R2 and
+                // deletes the previous object on success.
+                if ($r->hasFile('id_front')) {
+                    $vr->id_front_path = $this->storage->replace(
+                        $r->file('id_front'), $vr->id_front_path, 'kyc_ids',
+                        ['mimes' => ['image/jpeg', 'image/png', 'image/webp']]
+                    );
+                }
+                if ($r->hasFile('id_back')) {
+                    $vr->id_back_path = $this->storage->replace(
+                        $r->file('id_back'), $vr->id_back_path, 'kyc_ids',
+                        ['mimes' => ['image/jpeg', 'image/png', 'image/webp']]
+                    );
+                }
+                if ($r->hasFile('face_photo')) {
+                    $vr->face_photo_path = $this->storage->replace(
+                        $r->file('face_photo'), $vr->face_photo_path, 'kyc_faces',
+                        ['mimes' => ['image/jpeg', 'image/png', 'image/webp']]
+                    );
+                }
+                if ($r->hasFile('selfie')) {
+                    $vr->selfie_path = $this->storage->replace(
+                        $r->file('selfie'), $vr->selfie_path, 'kyc_selfies',
+                        ['mimes' => ['image/jpeg', 'image/png', 'image/webp']]
+                    );
+                }
+            } catch (R2StorageException $e) {
+                return back()->withErrors(['server' => $e->getMessage()])->withInput();
             }
 
             $vr->status = 'pending';
@@ -285,11 +318,22 @@ class ProfileController
             ]);
         }
 
-        // Store files
-        $frontPath  = $r->file('id_front')->store('kyc/ids', 'public');
-        $backPath   = $r->hasFile('id_back') ? $r->file('id_back')->store('kyc/ids', 'public') : null;
-        $facePath   = $r->file('face_photo')->store('kyc/faces', 'public');
-        $selfiePath = $r->file('selfie')->store('kyc/selfies', 'public');
+        // Store files on Cloudflare R2. If any upload fails, surface the error
+        // to the user without creating a half-written verification record.
+        try {
+            $frontPath  = $this->storage->upload($r->file('id_front'), 'kyc_ids',
+                ['mimes' => ['image/jpeg', 'image/png', 'image/webp']]);
+            $backPath   = $r->hasFile('id_back')
+                ? $this->storage->upload($r->file('id_back'), 'kyc_ids',
+                    ['mimes' => ['image/jpeg', 'image/png', 'image/webp']])
+                : null;
+            $facePath   = $this->storage->upload($r->file('face_photo'), 'kyc_faces',
+                ['mimes' => ['image/jpeg', 'image/png', 'image/webp']]);
+            $selfiePath = $this->storage->upload($r->file('selfie'), 'kyc_selfies',
+                ['mimes' => ['image/jpeg', 'image/png', 'image/webp']]);
+        } catch (R2StorageException $e) {
+            return back()->withErrors(['server' => $e->getMessage()])->withInput();
+        }
 
         $idHash = hash('sha256', $r->id_number);
 
@@ -442,9 +486,9 @@ class ProfileController
                 'campaigns_created' => $campaignsQuery->count(),
                 'active_campaigns'  => (clone $campaignsQuery)->where('status', 'active')->count(),
                 'ended_campaigns'   => (clone $campaignsQuery)->where('status', 'ended')->count(),
-                'total_donations'   => Donation::whereHas('campaign', function ($q) use ($userId) {
-                    $q->where('user_id', $userId);
-                })->sum('amount'),
+                'total_donations'   => Donation::whereIn('campaign_id',
+                    Campaign::where('user_id', $userId)->pluck('_id')
+                )->sum('amount'),
             ]
         ]);
     }
@@ -458,20 +502,23 @@ class ProfileController
 
         $campaignId = $request->query('campaign_id');
 
-        $donations = Donation::whereHas('campaign', function ($q) use ($user, $campaignId) {
-            $q->where('user_id', $user->user_id);
-            if ($campaignId && $campaignId !== "all") {
-                $q->where('campaign_id', $campaignId);
-            }
-        })
+        // Get user's campaign IDs first, then filter donations by those IDs
+        $campaignQuery = Campaign::where('user_id', $user->user_id);
+        if ($campaignId && $campaignId !== "all") {
+            $campaignQuery->where('_id', $campaignId);
+        }
+        $campaignIds = $campaignQuery->pluck('_id')->toArray();
+
+        // Fetch donations and group by date in PHP (MongoDB-compatible)
+        $rawDonations = Donation::whereIn('campaign_id', $campaignIds)
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->selectRaw('DATE(created_at) as date, SUM(amount) as total')
-            ->groupBy('date')
-            ->orderBy('date', 'asc')
-            ->pluck('total', 'date')
-            ->mapWithKeys(function ($total, $date) {
-                return [Carbon::parse($date)->format('Y-m-d') => $total];
-            });
+            ->get(['amount', 'created_at']);
+
+        $donations = $rawDonations->groupBy(function ($d) {
+            return $d->created_at->format('Y-m-d');
+        })->map(function ($group) {
+            return $group->sum('amount');
+        });
 
         $labels = [];
         $data   = [];
@@ -496,8 +543,7 @@ class ProfileController
         $user = Auth::user();
         $filter = $request->get('filter', 'all');
 
-        $query = Campaign::where('user_id', $user->user_id)
-            ->withSum('donations as total_donations', 'amount');
+        $query = Campaign::where('user_id', $user->user_id);
 
         if ($filter === 'active') {
             $query->where('status', 'active');
@@ -505,9 +551,13 @@ class ProfileController
             $query->where('status', 'ended');
         }
 
-        $campaigns = $query->orderByDesc('total_donations')
-            ->take(5)
-            ->get(['campaign_id', 'title']);
+        // MongoDB doesn't support withSum natively — compute in PHP
+        $campaigns = $query->get(['_id', 'title']);
+        $campaigns->each(function ($campaign) {
+            $campaign->total_donations = Donation::where('campaign_id', $campaign->_id)->sum('amount');
+        });
+
+        $campaigns = $campaigns->sortByDesc('total_donations')->take(5)->values();
 
         return response()->json([
             'success' => true,
@@ -574,8 +624,10 @@ class ProfileController
     {
         $user = Auth::user();
 
+        $campaignIds = Campaign::where('user_id', $user->user_id)->pluck('_id');
+
         $donations = Donation::with('campaign')
-            ->whereHas('campaign', fn($q) => $q->where('user_id', $user->user_id))
+            ->whereIn('campaign_id', $campaignIds)
             ->latest()
             ->take(5)
             ->get();
@@ -634,7 +686,14 @@ class ProfileController
 
         $proofPath = null;
         if ($request->hasFile('proof_image')) {
-            $proofPath = $request->file('proof_image')->store('manual_proofs', 'public');
+            try {
+                $proofPath = $this->storage->upload($request->file('proof_image'), 'manual_donation_proofs',
+                    ['max_kb' => 2048, 'mimes' => ['image/jpeg', 'image/png']]);
+            } catch (R2StorageException $e) {
+                return $request->ajax()
+                    ? response()->json(['success' => false, 'error' => $e->getMessage()], 422)
+                    : back()->with('error', $e->getMessage());
+            }
         }
 
         ManualDonationRequest::create([
@@ -703,7 +762,7 @@ class ProfileController
     public function storeUpdate(Request $request)
     {
         $request->validate([
-            'campaign_id' => 'required|exists:campaigns,campaign_id',
+            'campaign_id' => 'required|string',
             'message' => 'required|string|max:1000',
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
         ]);
@@ -720,11 +779,19 @@ class ProfileController
 
         $imagePaths = [];
 
-        // Handle multiple image uploads
+        // Handle multiple image uploads via R2
         if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                $path = $image->store('campaign-updates', 'public');
-                $imagePaths[] = $path;
+            try {
+                foreach ($request->file('images') as $image) {
+                    $imagePaths[] = $this->storage->upload($image, 'campaign_updates',
+                        ['max_kb' => 5120, 'mimes' => config('r2.validation.image_mimes')]);
+                }
+            } catch (R2StorageException $e) {
+                // Roll back any successfully uploaded files so we don't leak orphans.
+                foreach ($imagePaths as $orphan) {
+                    $this->storage->delete($orphan);
+                }
+                return response()->json(['success' => false, 'error' => $e->getMessage()], 422);
             }
         }
 
@@ -741,10 +808,18 @@ class ProfileController
 
         $this->notifyCampaignDonors($campaign, $update);
 
+        // Resolve image keys to full URLs so the frontend can render them directly.
+        $updatePayload = $update->toArray();
+        $updatePayload['images'] = collect($update->images ?? [])
+            ->map(fn ($key) => file_url($key))
+            ->filter()
+            ->values()
+            ->all();
+
         return response()->json([
             'success' => true,
             'message' => 'Update posted successfully!',
-            'update' => $update
+            'update' => $updatePayload,
         ]);
     }
 

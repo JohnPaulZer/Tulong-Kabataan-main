@@ -29,7 +29,7 @@
                 <a href="{{ route('campaign.view', $campaign->campaign_id) }}">
                     <div class="campaign-img-wrap">
                         <img src="{{ $campaign->featured_image
-                            ? asset('storage/' . $campaign->featured_image)
+                            ? file_url($campaign->featured_image)
                             : asset('img/default-camp.jpg') }}"
                             alt="{{ $campaign->title }}"
                             class="campaign-img"

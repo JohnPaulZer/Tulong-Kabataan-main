@@ -94,7 +94,7 @@
                 <div class="evt-event-card" data-event-id="{{ $event->event_id }}"
                     data-event-date="{{ $start->format('Y-m-d') }}" data-event-type="{{ $eventType }}">
                     <div class="evt-card-image">
-                        <img src="{{ asset('storage/' . $event->photo) }}" alt="Event photo">
+                        <img src="{{ file_url($event->photo, asset('img/bg2.jpg')) }}" alt="Event photo">
                     </div>
                     <div class="evt-card-content">
                         <div class="evt-card-header">

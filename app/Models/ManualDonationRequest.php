@@ -3,14 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use MongoDB\Laravel\Eloquent\Model;
 
 class ManualDonationRequest extends Model
 {
     use HasFactory;
 
-    protected $table = 'manual_donation_requests';
-    protected $primaryKey = 'request_id';
+    protected $connection = 'mongodb';
+    protected $collection = 'manual_donation_requests';
 
     protected $fillable = [
         'campaign_id',
@@ -23,16 +23,23 @@ class ManualDonationRequest extends Model
         'reviewed_at',
     ];
 
+    protected $casts = [
+        'amount' => 'float',
+        'reviewed_at' => 'datetime',
+    ];
 
-    // Link to the campaign
-    public function campaign()
+    public function getRequestIdAttribute()
     {
-        return $this->belongsTo(Campaign::class, 'campaign_id', 'campaign_id');
+        return $this->attributes['_id'] ?? $this->getKey();
     }
 
-    // The creator who submitted the request
+    public function campaign()
+    {
+        return $this->belongsTo(Campaign::class, 'campaign_id', '_id');
+    }
+
     public function creator()
     {
-        return $this->belongsTo(User::class, 'user_id', 'user_id');
+        return $this->belongsTo(User::class, 'user_id', '_id');
     }
 }

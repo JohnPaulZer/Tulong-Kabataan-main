@@ -4,19 +4,16 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use MongoDB\Laravel\Auth\User as Authenticatable;
 use App\Notifications\CustomVerifyEmail;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    protected $table = 'user_account';
-    protected $primaryKey = 'user_id';
-    public $incrementing = true;
-    protected $keyType = 'int';
+    protected $connection = 'mongodb';
+    protected $collection = 'users';
 
     protected $fillable = [
         'first_name',
@@ -30,6 +27,11 @@ class User extends Authenticatable implements MustVerifyEmail
         'profile_photo_url',
     ];
 
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
@@ -41,37 +43,55 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function verificationRequests()
     {
-        return $this->hasMany(VerificationRequest::class, 'user_id', 'user_id');
+        return $this->hasMany(VerificationRequest::class, 'user_id', '_id');
     }
 
     public function receivesBroadcastNotificationsOn()
     {
-        return 'App.Models.User.' . $this->user_id;
+        return 'App.Models.User.' . $this->_id;
     }
 
     public function identityStatus()
     {
-        return $this->hasOne(IdentityStatus::class, 'user_id', 'user_id');
+        return $this->hasOne(IdentityStatus::class, 'user_id', '_id');
     }
 
     public function donations()
     {
-        return $this->hasMany(InKindDonation::class, 'user_id', 'user_id');
+        return $this->hasMany(InKindDonation::class, 'user_id', '_id');
     }
 
-    // Add these new relationships
     public function campaignUpdates()
     {
-        return $this->hasMany(CampaignUpdate::class, 'user_id', 'user_id');
+        return $this->hasMany(CampaignUpdate::class, 'user_id', '_id');
     }
 
     public function campaigns()
     {
-        return $this->hasMany(Campaign::class, 'user_id', 'user_id');
+        return $this->hasMany(Campaign::class, 'user_id', '_id');
     }
 
     public function eventRegistrations()
     {
-        return $this->hasMany(EventRegistration::class, 'user_id', 'user_id');
+        return $this->hasMany(EventRegistration::class, 'user_id', '_id');
+    }
+
+    /**
+     * Override the default notifications relationship to use our MongoDB
+     * DatabaseNotification model instead of the SQL-based one.
+     */
+    public function notifications()
+    {
+        return $this->morphMany(DatabaseNotification::class, 'notifiable')
+            ->latest();
+    }
+
+    /**
+     * Backward-compatible accessor: code that references $user->user_id
+     * will still work by returning the MongoDB _id.
+     */
+    public function getUserIdAttribute()
+    {
+        return $this->attributes['_id'] ?? $this->getKey();
     }
 }

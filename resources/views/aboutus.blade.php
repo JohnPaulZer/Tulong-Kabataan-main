@@ -115,7 +115,7 @@
                                 @if (Str::startsWith($firstPhoto, ['http://', 'https://']))
                                     <img src="{{ $firstPhoto }}" alt="{{ $report->title }}">
                                 @else
-                                    <img src="{{ Storage::url($firstPhoto) }}" alt="{{ $report->title }}"
+                                    <img src="{{ file_url($firstPhoto) }}" alt="{{ $report->title }}"
                                         onerror="this.src='https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?q=80&w=2670&auto=format&fit=crop'">
                                 @endif
                             @else
@@ -147,7 +147,7 @@
                                 @if (Str::startsWith($event->photo, ['http://', 'https://']))
                                     <img src="{{ $event->photo }}" alt="{{ $event->title }}">
                                 @else
-                                    <img src="{{ Storage::url($event->photo) }}" alt="{{ $event->title }}"
+                                    <img src="{{ file_url($event->photo) }}" alt="{{ $event->title }}"
                                         onerror="this.src='https://images.unsplash.com/photo-1544027993-37dbfe43562a?q=80&w=2670&auto=format&fit=crop'">
                                 @endif
                             @else
@@ -182,7 +182,7 @@
                                 @if (Str::startsWith($campaign->featured_image, ['http://', 'https://']))
                                     <img src="{{ $campaign->featured_image }}" alt="{{ $campaign->title }}">
                                 @else
-                                    <img src="{{ Storage::url($campaign->featured_image) }}"
+                                    <img src="{{ file_url($campaign->featured_image) }}"
                                         alt="{{ $campaign->title }}"
                                         onerror="this.src='https://images.unsplash.com/photo-1593113598332-cd288d649433?q=80&w=2670&auto=format&fit=crop'">
                                 @endif
@@ -193,7 +193,7 @@
                                 @if (Str::startsWith($firstImage, ['http://', 'https://']))
                                     <img src="{{ $firstImage }}" alt="{{ $campaign->title }}">
                                 @else
-                                    <img src="{{ Storage::url($firstImage) }}" alt="{{ $campaign->title }}"
+                                    <img src="{{ file_url($firstImage) }}" alt="{{ $campaign->title }}"
                                         onerror="this.src='https://images.unsplash.com/photo-1593113598332-cd288d649433?q=80&w=2670&auto=format&fit=crop'">
                                 @endif
                             @else

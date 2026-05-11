@@ -263,16 +263,13 @@ class TulongKabataanKnowledgeService
      */
     private function campaignUpdatesContext(): string
     {
-        if (! Schema::hasTable('campaign_updates')) {
-            return 'No campaign updates table available.';
-        }
+        // MongoDB: no Schema::hasTable check needed (schemaless)
+        $activeCampaignIds = Campaign::whereIn('status', ['active', 'scheduled', 'ended', 'completed'])
+            ->pluck('_id');
 
         $updates = CampaignUpdate::query()
-            ->with(['campaign:campaign_id,title,status'])
-            ->whereHas('campaign', function ($q) {
-                $q->whereIn('status', ['active', 'scheduled', 'ended', 'completed']);
-            })
-            ->select(['update_id', 'campaign_id', 'message', 'created_at', 'updated_at'])
+            ->with(['campaign'])
+            ->whereIn('campaign_id', $activeCampaignIds)
             ->latest('updated_at')
             ->limit(5)
             ->get();
@@ -391,15 +388,17 @@ class TulongKabataanKnowledgeService
 
         foreach ($tables as $table) {
             try {
-                if (! Schema::hasTable($table)) {
-                    continue;
+                // MongoDB-compatible: use the model's collection to get count and latest updated_at
+                $collection = \Illuminate\Support\Facades\DB::connection('mongodb')->collection($table);
+                $count = $collection->count();
+                $latest = $collection->orderBy('updated_at', 'desc')->first();
+                $m = $latest['updated_at'] ?? '-';
+                if ($m instanceof \MongoDB\BSON\UTCDateTime) {
+                    $m = $m->toDateTime()->format('Y-m-d H:i:s');
                 }
-                $row = \Illuminate\Support\Facades\DB::table($table)
-                    ->selectRaw('MAX(updated_at) as m, COUNT(*) as c')
-                    ->first();
-                $parts[] = $table . '=' . ($row->m ?? '-') . ':' . ($row->c ?? 0);
-            } catch (Throwable) {
-                // Ignore if a table is missing or query fails; keep the signature best-effort.
+                $parts[] = $table . '=' . $m . ':' . $count;
+            } catch (\Throwable) {
+                // Ignore if a collection is missing or query fails; keep the signature best-effort.
             }
         }
 

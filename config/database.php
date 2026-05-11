@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'sqlite'),
+    'default' => env('DB_CONNECTION', 'mongodb'),
 
     /*
     |--------------------------------------------------------------------------
@@ -42,6 +42,22 @@ return [
             'synchronous' => null,
             'transaction_mode' => 'DEFERRED',
         ],
+
+        /*
+        |----------------------------------------------------------------------
+        | MongoDB (scaffolded, inactive by default)
+        |----------------------------------------------------------------------
+        | To activate: install "mongodb/laravel-mongodb", ensure the PHP
+        | mongodb extension is enabled, populate MONGODB_URI / MONGODB_DB_NAME,
+        | and switch DB_CONNECTION=mongodb. Leaving this scaffold in place does
+        | NOT affect the current SQLite configuration.
+        */
+        'mongodb' => [
+            'driver'   => 'mongodb',
+            'dsn'      => env('MONGODB_URI'),
+            'database' => env('MONGODB_DB_NAME'),
+        ],
+
 
         'mysql' => [
             'driver' => 'mysql',

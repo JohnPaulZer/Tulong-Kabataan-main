@@ -20,7 +20,7 @@
 
     @php
         $coverImage = $campaign->featured_image
-            ? asset('storage/' . $campaign->featured_image)
+            ? file_url($campaign->featured_image)
             : asset('img/default-camp.jpg');
 
         $targetAmount = (float) ($campaign->target_amount ?? 0);
@@ -52,7 +52,7 @@
             $organizerAvatar .= (str_contains($organizerAvatar, '?') ? '&' : '?') . 'sz=96';
         }
         if ($organizerAvatar && !\Illuminate\Support\Str::startsWith($organizerAvatar, ['http://', 'https://'])) {
-            $organizerAvatar = asset('storage/' . $organizerAvatar);
+            $organizerAvatar = file_url($organizerAvatar);
         }
 
         $descriptionParagraphs = array_values(array_filter(
@@ -147,7 +147,7 @@
                                 $updateAvatar .= (str_contains($updateAvatar, '?') ? '&' : '?') . 'sz=64';
                             }
                             if ($updateAvatar && !\Illuminate\Support\Str::startsWith($updateAvatar, ['http://', 'https://'])) {
-                                $updateAvatar = asset('storage/' . $updateAvatar);
+                                $updateAvatar = file_url($updateAvatar);
                             }
                         @endphp
 
@@ -189,8 +189,8 @@
                                         <div class="cpv-update-images-carousel">
                                             @foreach ($update->images as $image)
                                                 <div class="cpv-update-image">
-                                                    <img src="{{ asset('storage/' . $image) }}" alt="Campaign update image"
-                                                        onclick="showImageModal('{{ asset('storage/' . $image) }}')" />
+                                                    <img src="{{ file_url($image) }}" alt="Campaign update image"
+                                                        onclick="showImageModal('{{ file_url($image) }}')" />
                                                 </div>
                                             @endforeach
                                         </div>
@@ -367,7 +367,7 @@
                                 $updateAvatar .= (str_contains($updateAvatar, '?') ? '&' : '?') . 'sz=64';
                             }
                             if ($updateAvatar && !\Illuminate\Support\Str::startsWith($updateAvatar, ['http://', 'https://'])) {
-                                $updateAvatar = asset('storage/' . $updateAvatar);
+                                $updateAvatar = file_url($updateAvatar);
                             }
                         @endphp
 
@@ -400,8 +400,8 @@
                                         <div class="cpv-update-images-carousel">
                                             @foreach ($update->images as $image)
                                                 <div class="cpv-update-image">
-                                                    <img src="{{ asset('storage/' . $image) }}" alt="Campaign update image"
-                                                        onclick="showImageModal('{{ asset('storage/' . $image) }}')" />
+                                                    <img src="{{ file_url($image) }}" alt="Campaign update image"
+                                                        onclick="showImageModal('{{ file_url($image) }}')" />
                                                 </div>
                                             @endforeach
                                         </div>
@@ -449,7 +449,7 @@
             <h2>Donate to {{ $campaign->title }}</h2>
 
             <div class="qr-wrapper">
-                <img src="{{ $campaign->qr_code ? asset('storage/' . $campaign->qr_code) : asset('img/default-qr.png') }}"
+                <img src="{{ $campaign->qr_code ? file_url($campaign->qr_code) : asset('img/default-qr.png') }}"
                     alt="GCash QR Code" class="qr-image">
             </div>
 

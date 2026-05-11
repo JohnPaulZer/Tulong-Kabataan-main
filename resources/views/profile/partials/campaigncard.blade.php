@@ -183,10 +183,10 @@
                                 <td>{{ $donation->reference_number ?? 'N/A' }}</td>
                                 <td>
                                     @if ($donation->proof_image)
-                                        <img src="{{ asset('storage/' . $donation->proof_image) }}"
+                                        <img src="{{ file_url($donation->proof_image) }}"
                                             alt="Donation Proof" class="proof-image"
                                             onclick="viewProofImageWithDetails(
-                                                '{{ asset('storage/' . $donation->proof_image) }}',
+                                                '{{ file_url($donation->proof_image) }}',
                                                 '₱{{ number_format($donation->amount, 2) }}',
                                                 '{{ $donation->reference_number ?? 'N/A' }}',
                                                 '{{ $donation->is_anonymous ? 'Anonymous' : ($donation->user ? $donation->user->first_name : $donation->donor_name ?? 'Guest') }}'
