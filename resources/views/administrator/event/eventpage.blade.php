@@ -11,8 +11,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
     <!-- Charts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCxE6u2I1N_uFuYp8hZH2OSh_VEPo1N85M&libraries=places">
-    </script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @include('administrator.partials.admin-theme')
@@ -638,10 +636,7 @@
                     const removePhotoBtn = document.getElementById('createEventRemovePhoto');
                     let currentStep = 0;
                     let photoPreviewUrl = null;
-                    let eventMap;
-                    let eventMarker;
-                    let eventGeocoder;
-                    let eventAutocomplete;
+                    let eventMapController;
                     let mapInitialized = false;
 
                     function setStep(index, options = {}) {
@@ -767,62 +762,51 @@
                         photoPreview.hidden = false;
                     }
 
-                    function placeCreateEventMarker(location) {
-                        if (!eventMap) return;
-                        if (eventMarker) {
-                            eventMarker.setMap(null);
-                        }
-
-                        eventMarker = new google.maps.Marker({
-                            position: location,
-                            map: eventMap,
-                            draggable: true
-                        });
-
-                        eventMarker.addListener('dragend', () => {
-                            reverseGeocodeCreateEvent(eventMarker.getPosition());
-                        });
+                    function normalizeLeafletCoordinate(coordinate) {
+                        if (!coordinate) return null;
+                        return window.TKLeafletMaps?.normalizeCoordinate(coordinate) || null;
                     }
 
-                    function updateCreateEventLocation(address, latLng) {
-                        document.getElementById('createEventSelectedLocation').textContent = address;
-                        document.getElementById('create_event_location').value = address;
-                        document.getElementById('create_event_lat').value = latLng.lat();
-                        document.getElementById('create_event_lng').value = latLng.lng();
+                    function updateCreateEventLocation(address, coordinate) {
+                        const normalized = normalizeLeafletCoordinate(coordinate);
+                        if (!normalized) return;
+
+                        const label = address || window.TKLeafletMaps.coordinateToText(normalized);
+                        document.getElementById('createEventSelectedLocation').textContent = label;
+                        document.getElementById('create_event_location').value = label;
+                        document.getElementById('create_event_lat').value = normalized.latitude;
+                        document.getElementById('create_event_lng').value = normalized.longitude;
                         document.getElementById('create_event_location_search').setCustomValidity('');
                     }
 
-                    function reverseGeocodeCreateEvent(latLng) {
-                        if (!eventGeocoder) return;
-                        eventGeocoder.geocode({
-                            location: latLng
-                        }, (results, status) => {
-                            if (status === 'OK' && results[0]) {
-                                updateCreateEventLocation(results[0].formatted_address, latLng);
-                            }
-                        });
+                    async function reverseGeocodeCreateEvent(coordinate) {
+                        const normalized = normalizeLeafletCoordinate(coordinate);
+                        if (!normalized) return;
+
+                        const address = await window.TKLeafletMaps.reverseGeocode(normalized).catch(() => null);
+                        updateCreateEventLocation(address, normalized);
                     }
 
-                    function geocodeCreateEventAddress(address) {
-                        if (!eventGeocoder || !address) return;
-                        eventGeocoder.geocode({
-                            address
-                        }, (results, status) => {
-                            if (status === 'OK' && results[0]) {
-                                const location = results[0].geometry.location;
-                                eventMap.setCenter(location);
-                                eventMap.setZoom(17);
-                                placeCreateEventMarker(location);
-                                updateCreateEventLocation(results[0].formatted_address, location);
+                    async function geocodeCreateEventAddress(address) {
+                        if (!address || !eventMapController) return;
+
+                        try {
+                            const result = await eventMapController.search(address);
+                            if (result) {
+                                updateCreateEventLocation(result.label, result.coordinate);
                             }
-                        });
+                        } catch (error) {
+                            console.warn(error.message);
+                            document.getElementById('create_event_location_search')
+                                ?.setCustomValidity('No matching location found. Try a more specific address.');
+                            document.getElementById('create_event_location_search')?.reportValidity();
+                        }
                     }
 
                     function initCreateEventMap() {
-                        if (mapInitialized || typeof google === 'undefined') return;
+                        if (mapInitialized || !window.TKLeafletMaps) return;
                         mapInitialized = true;
 
-                        const mapElement = document.getElementById('createEventMap');
                         const loadingElement = document.getElementById('createEventMapLoading');
                         const latField = document.getElementById('create_event_lat');
                         const lngField = document.getElementById('create_event_lng');
@@ -842,65 +826,32 @@
                             loadingElement.style.display = 'none';
                         }
 
-                        eventMap = new google.maps.Map(mapElement, {
-                            center: defaultLocation,
-                            zoom: hasOldCoords ? 16 : 6,
-                            mapTypeControl: false,
-                            streetViewControl: false,
-                            fullscreenControl: true
+                        eventMapController = window.TKLeafletMaps.mountPicker({
+                            elementId: 'createEventMap',
+                            initialCoordinate: hasOldCoords ? defaultLocation : null,
+                            initialAddress: document.getElementById('create_event_location').value,
+                            latInputId: 'create_event_lat',
+                            lngInputId: 'create_event_lng',
+                            addressInputId: 'create_event_location',
+                            selectedTextId: 'createEventSelectedLocation',
+                            searchInputId: 'create_event_location_search',
+                            searchButtonId: 'createEventSearchBtn',
+                            popupTitle: 'Event location',
+                            height: '320px',
+                            onSelect: ({
+                                coordinate,
+                                address
+                            }) => updateCreateEventLocation(address, coordinate)
                         });
 
-                        eventGeocoder = new google.maps.Geocoder();
-
-                        if (hasOldCoords) {
-                            placeCreateEventMarker(defaultLocation);
-                        } else if (navigator.geolocation) {
-                            navigator.geolocation.getCurrentPosition(
-                                (position) => {
-                                    const userLocation = {
-                                        lat: position.coords.latitude,
-                                        lng: position.coords.longitude
-                                    };
-                                    eventMap.setCenter(userLocation);
-                                    eventMap.setZoom(14);
-                                    placeCreateEventMarker(userLocation);
-                                    reverseGeocodeCreateEvent(userLocation);
-                                },
-                                () => {},
-                                {
-                                    timeout: 5000,
-                                    maximumAge: 600000,
-                                    enableHighAccuracy: true
-                                }
-                            );
+                        if (!hasOldCoords) {
+                            eventMapController.locateUser()
+                                .then(({
+                                    coordinate,
+                                    address
+                                }) => updateCreateEventLocation(address, coordinate))
+                                .catch(() => {});
                         }
-
-                        eventMap.addListener('click', (event) => {
-                            placeCreateEventMarker(event.latLng);
-                            reverseGeocodeCreateEvent(event.latLng);
-                        });
-
-                        const searchInput = document.getElementById('create_event_location_search');
-                        eventAutocomplete = new google.maps.places.Autocomplete(searchInput, {
-                            componentRestrictions: {
-                                country: 'ph'
-                            },
-                            fields: ['formatted_address', 'geometry']
-                        });
-
-                        eventAutocomplete.addListener('place_changed', () => {
-                            const place = eventAutocomplete.getPlace();
-                            if (place.geometry) {
-                                eventMap.setCenter(place.geometry.location);
-                                eventMap.setZoom(17);
-                                placeCreateEventMarker(place.geometry.location);
-                                updateCreateEventLocation(place.formatted_address, place.geometry.location);
-                            }
-                        });
-
-                        document.getElementById('createEventSearchBtn')?.addEventListener('click', () => {
-                            geocodeCreateEventAddress(searchInput.value.trim());
-                        });
                     }
 
                     function reindexRoles() {
@@ -1368,6 +1319,28 @@
                                     document.getElementById('modalCoords').textContent =
                                         eventData.lat && eventData.lng ?
                                         `${eventData.lat}, ${eventData.lng}` : 'Not available';
+                                    const detailMapWrap = document.getElementById('modalEventMapWrap');
+                                    const detailCoordinate = window.TKLeafletMaps?.normalizeCoordinate({
+                                        latitude: eventData.lat ?? eventData.latitude,
+                                        longitude: eventData.lng ?? eventData.longitude
+                                    });
+                                    if (detailMapWrap && detailCoordinate && window.TKLeafletMaps) {
+                                        detailMapWrap.style.display = 'block';
+                                        window.adminEventDetailMap = window.TKLeafletMaps.mountStatic({
+                                            elementId: 'modalEventMap',
+                                            center: detailCoordinate,
+                                            zoom: 16,
+                                            height: '240px',
+                                            markers: [{
+                                                id: eventData.event_id || 'event',
+                                                coordinate: detailCoordinate,
+                                                title: eventData.title || 'Event location',
+                                                description: eventData.location || ''
+                                            }]
+                                        });
+                                    } else if (detailMapWrap) {
+                                        detailMapWrap.style.display = 'none';
+                                    }
                                     document.getElementById('modalCoordName').textContent = eventData
                                         .coordinator_name || 'N/A';
                                     document.getElementById('modalCoordEmail').textContent = eventData

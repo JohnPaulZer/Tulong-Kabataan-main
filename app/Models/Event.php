@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class Event extends Model
 {
     protected $primaryKey = 'event_id'; // since not "id"
+    protected $casts = [
+        'lat' => 'float',
+        'lng' => 'float',
+    ];
+
     protected $fillable = [
         'title',
         'description',
@@ -14,6 +19,8 @@ class Event extends Model
         'start_date',
         'end_date',
         'location',
+        'lat',
+        'lng',
         'deadline',
         'coordinator_name',
         'coordinator_email',

@@ -1,4 +1,6 @@
 import './bootstrap';
+import 'leaflet/dist/leaflet.css';
 import './react-icons';
+import './maps';
 import './components/chatbot';
 import './loading-modal';

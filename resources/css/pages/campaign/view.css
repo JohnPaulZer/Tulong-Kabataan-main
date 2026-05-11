@@ -1,23 +1,17 @@
 ﻿/* Scoped campaign view styles */
 body.campaign-view-page main *, body.campaign-view-page main *::before, body.campaign-view-page main *::after{
     box-sizing: border-box;
-    margin: 0;
-    padding: 0;
 }body.campaign-view-page h1, body.campaign-view-page h2, body.campaign-view-page h3, body.campaign-view-page h4, body.campaign-view-page h5, body.campaign-view-page h6, body.campaign-view-page .heading-font, body.campaign-view-page .section-title, body.campaign-view-page .featured-title, body.campaign-view-page .campaign-title, body.campaign-view-page .btn, body.campaign-view-page button, body.campaign-view-page .raised, body.campaign-view-page .campaign-count, body.campaign-view-page .featured-badge, body.campaign-view-page .pagination-number{
     font-family: var(--font-heading);
     letter-spacing: -0.01em;
-}body.campaign-view-page, body.campaign-view-page p, body.campaign-view-page a, body.campaign-view-page li, body.campaign-view-page span, body.campaign-view-page input, body.campaign-view-page select, body.campaign-view-page textarea, body.campaign-view-page label, body.campaign-view-page .body-font, body.campaign-view-page .section-desc, body.campaign-view-page .featured-desc, body.campaign-view-page .filters-label, body.campaign-view-page .goal, body.campaign-view-page .pagination-info{
+}body.campaign-view-page, body.campaign-view-page input, body.campaign-view-page select, body.campaign-view-page textarea, body.campaign-view-page label, body.campaign-view-page .body-font, body.campaign-view-page .section-desc, body.campaign-view-page .featured-desc, body.campaign-view-page .filters-label, body.campaign-view-page .goal, body.campaign-view-page .pagination-info{
     font-family: var(--font-body);
-    font-weight: 400;
     text-decoration: none;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }body.campaign-view-page .section-title, body.campaign-view-page .campaign-title, body.campaign-view-page .featured-title{
     font-weight: 700;
     color: #1e293b;
-}body.campaign-view-page p{
-    line-height: 1.7;
-    color: #4b5563;
 }body.campaign-view-page .btn{ font-weight: 600; }body.campaign-view-page input::placeholder{
     font-family: var(--font-body);
     font-weight: 400;

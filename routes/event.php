@@ -47,6 +47,8 @@ Route::get('/events/updates', function (Request $request) {
                     'start_date' => $event->start_date,
                     'end_date' => $event->end_date,
                     'location' => $event->location,
+                    'lat' => $event->lat,
+                    'lng' => $event->lng,
                     'deadline' => $event->deadline,
                     'updated_at' => $event->updated_at,
                     'created_at' => $event->created_at,
