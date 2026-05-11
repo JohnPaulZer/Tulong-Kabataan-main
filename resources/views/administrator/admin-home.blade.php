@@ -1211,7 +1211,7 @@
                         <article class="accomplishment-card">
                             <div class="accomplishment-card__image">
                                 @if ($event->photo)
-                                    <img src="{{ asset('storage/' . $event->photo) }}" alt="{{ $event->title }}">
+                                    <img src="{{ file_url($event->photo) }}" alt="{{ $event->title }}">
                                 @else
                                     <img src="{{ asset('img/camp.jpg') }}" alt="{{ $event->title }}">
                                 @endif
@@ -1429,7 +1429,7 @@
                                     @php
                                         $firstPhoto = is_array($report->photos) ? $report->photos[0] : $report->photos;
                                     @endphp
-                                    <img src="{{ asset('storage/' . $firstPhoto) }}" alt="{{ $report->title }}">
+                                    <img src="{{ file_url($firstPhoto) }}" alt="{{ $report->title }}">
                                 @else
                                     <img src="{{ asset('img/inkind.png') }}" alt="{{ $report->title }}">
                                 @endif
@@ -1606,10 +1606,10 @@
                         <article class="accomplishment-card">
                             <div class="accomplishment-card__image">
                                 @if ($campaign->featured_image)
-                                    <img src="{{ asset('storage/' . $campaign->featured_image) }}"
+                                    <img src="{{ file_url($campaign->featured_image) }}"
                                         alt="{{ $campaign->title }}">
                                 @elseif($campaign->images && is_array($campaign->images) && count($campaign->images) > 0)
-                                    <img src="{{ asset('storage/' . $campaign->images[0]) }}"
+                                    <img src="{{ file_url($campaign->images[0]) }}"
                                         alt="{{ $campaign->title }}">
                                 @else
                                     <img src="{{ asset('img/camp.jpg') }}" alt="{{ $campaign->title }}">

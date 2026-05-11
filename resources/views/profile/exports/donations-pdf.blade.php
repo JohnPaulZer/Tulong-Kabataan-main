@@ -299,35 +299,32 @@
                     <td class="proof-container">
                         @if ($donation->proof_image)
                             @php
+                                // Fetch proof image from R2 and embed as base64 for the PDF.
+                                // DomPDF needs inline data URIs since it can't fetch arbitrary URLs reliably.
                                 $imageFound = false;
-                                $possiblePaths = [
-                                    storage_path('app/public/donation_proofs/' . basename($donation->proof_image)),
-                                    storage_path('app/donation_proofs/' . basename($donation->proof_image)),
-                                    storage_path('app/public/' . $donation->proof_image),
-                                    storage_path('app/' . $donation->proof_image),
-                                    public_path('storage/donation_proofs/' . basename($donation->proof_image)),
-                                    public_path('storage/' . $donation->proof_image),
-                                ];
+                                $imageSrc = null;
+                                try {
+                                    $r2 = app(\App\Services\Storage\R2StorageService::class);
+                                    $contents = $r2->get($donation->proof_image);
+                                    if ($contents !== null) {
+                                        $mimeType = 'image/jpeg';
+                                        if ($info = @getimagesizefromstring($contents)) {
+                                            $mimeType = $info['mime'] ?? $mimeType;
+                                        }
+                                        $imageSrc = 'data:' . $mimeType . ';base64,' . base64_encode($contents);
+                                        $imageFound = true;
+                                    }
+                                } catch (\Throwable $e) {
+                                    $imageFound = false;
+                                }
                             @endphp
 
-                            @foreach ($possiblePaths as $proofPath)
-                                @if (file_exists($proofPath) && is_file($proofPath))
-                                    @php
-                                        $imageData = base64_encode(file_get_contents($proofPath));
-                                        $imageInfo = getimagesize($proofPath);
-                                        $mimeType = $imageInfo['mime'] ?? 'image/jpeg';
-                                        $imageSrc = 'data:' . $mimeType . ';base64,' . $imageData;
-                                        $imageFound = true;
-                                    @endphp
-                                    <img src="{{ $imageSrc }}" class="proof-image" alt="Donation Proof">
-                                    <div style="font-size: 12px; color: #666; margin-top: 5px;">
-                                        {{ basename($donation->proof_image) }}
-                                    </div>
-                                    @break
-                                @endif
-                            @endforeach
-
-                            @if (!$imageFound)
+                            @if ($imageFound)
+                                <img src="{{ $imageSrc }}" class="proof-image" alt="Donation Proof">
+                                <div style="font-size: 12px; color: #666; margin-top: 5px;">
+                                    {{ basename($donation->proof_image) }}
+                                </div>
+                            @else
                                 <span class="no-proof">Image not found: {{ basename($donation->proof_image) }}</span>
                             @endif
                         @else

@@ -2,21 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use MongoDB\Laravel\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class EventRegistration extends Model
 {
-    // Primary key
-    protected $primaryKey = 'registration_id';
+    protected $connection = 'mongodb';
+    protected $collection = 'event_registrations';
 
-    // No timestamps (since you didn’t add created_at/updated_at)
-    public $timestamps = false;
-
-    // Table name
-    protected $table = 'event_registrations';
-
-    // Mass assignable fields
     protected $fillable = [
         'user_id',
         'event_id',
@@ -35,22 +28,29 @@ class EventRegistration extends Model
         'status',
     ];
 
+    protected $casts = [
+        'remind_me' => 'boolean',
+        'age' => 'integer',
+        'reminder_minutes' => 'integer',
+    ];
 
-    /**
-     * Relationships
-     */
+    public function getRegistrationIdAttribute()
+    {
+        return $this->attributes['_id'] ?? $this->getKey();
+    }
+
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id', 'user_id');
+        return $this->belongsTo(User::class, 'user_id', '_id');
     }
 
     public function event(): BelongsTo
     {
-        return $this->belongsTo(Event::class, 'event_id', 'event_id');
+        return $this->belongsTo(Event::class, 'event_id', '_id');
     }
 
     public function volunteerRoles(): BelongsTo
     {
-        return $this->belongsTo(VolunteerRole::class, 'vroles_id', 'vroles_id');
+        return $this->belongsTo(VolunteerRole::class, 'vroles_id', '_id');
     }
 }

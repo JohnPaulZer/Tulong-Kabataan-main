@@ -2,19 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use MongoDB\Laravel\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class VerificationRequest extends Model
 {
     use HasFactory;
 
-    protected $table = 'verification_requests';
-    protected $primaryKey = 'request_id';  
-    public $incrementing = true;
-    protected $keyType = 'int';
+    protected $connection = 'mongodb';
+    protected $collection = 'verification_requests';
 
-    
     protected $fillable = [
         'user_id',
         'id_type',
@@ -25,29 +22,33 @@ class VerificationRequest extends Model
         'first_name',
         'middle_name',
         'last_name',
+        'address',
         'id_expiry',
         'id_front_path',
         'id_back_path',
-        'face_photo_path', 
+        'face_photo_path',
         'selfie_path',
+        'supporting_doc_path',
         'rule_flags',
+        'reupload_fields',
         'status',
-        'review_notes'
-        
+        'review_notes',
     ];
 
     protected $casts = [
-        'dob'        => 'date',
-        'id_expiry'  => 'date',
+        'dob' => 'date',
+        'id_expiry' => 'date',
         'rule_flags' => 'array',
-        'reupload_fields' => 'array', 
+        'reupload_fields' => 'array',
     ];
 
-    // Relations
-    public function user()
+    public function getRequestIdAttribute()
     {
-        return $this->belongsTo(User::class, 'user_id', 'user_id');
+        return $this->attributes['_id'] ?? $this->getKey();
     }
 
-
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', '_id');
+    }
 }

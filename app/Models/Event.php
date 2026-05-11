@@ -2,15 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use MongoDB\Laravel\Eloquent\Model;
 
 class Event extends Model
 {
-    protected $primaryKey = 'event_id'; // since not "id"
-    protected $casts = [
-        'lat' => 'float',
-        'lng' => 'float',
-    ];
+    protected $connection = 'mongodb';
+    protected $collection = 'events';
 
     protected $fillable = [
         'title',
@@ -24,16 +21,29 @@ class Event extends Model
         'deadline',
         'coordinator_name',
         'coordinator_email',
-        'coordinator_phone'
+        'coordinator_phone',
     ];
+
+    protected $casts = [
+        'lat' => 'float',
+        'lng' => 'float',
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
+        'deadline' => 'datetime',
+    ];
+
+    public function getEventIdAttribute()
+    {
+        return $this->attributes['_id'] ?? $this->getKey();
+    }
 
     public function volunteerRoles()
     {
-        return $this->hasMany(VolunteerRole::class, 'event_id');
+        return $this->hasMany(VolunteerRole::class, 'event_id', '_id');
     }
 
     public function registrations()
     {
-        return $this->hasMany(EventRegistration::class, 'event_id', 'event_id');
+        return $this->hasMany(EventRegistration::class, 'event_id', '_id');
     }
 }

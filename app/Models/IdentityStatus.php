@@ -2,32 +2,28 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use MongoDB\Laravel\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-
 
 class IdentityStatus extends Model
 {
     use HasFactory;
 
-    protected $table = 'identity_statuses';
-    protected $primaryKey = 'status_id';   // custom PK
-    public $incrementing = true;
-    protected $keyType = 'int';
+    protected $connection = 'mongodb';
+    protected $collection = 'identity_statuses';
 
     protected $fillable = [
         'user_id',
         'status',
     ];
 
-    // Relationships
-    public function user()
+    public function getStatusIdAttribute()
     {
-        return $this->belongsTo(
-            User::class,
-            'user_id',
-            'user_id'
-        );
+        return $this->attributes['_id'] ?? $this->getKey();
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', '_id');
+    }
 }

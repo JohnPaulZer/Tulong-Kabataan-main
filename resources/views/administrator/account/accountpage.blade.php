@@ -160,7 +160,7 @@
                                                 }
                                                 // Handle local storage photos
                                                 if (!Str::startsWith($avatar, 'http')) {
-                                                    $avatar = asset('storage/' . $avatar);
+                                                    $avatar = file_url($avatar);
                                                 }
                                             }
                                         @endphp
@@ -226,7 +226,7 @@
                                                         {{ basename($req->id_front_path) }}</div>
                                                 </div>
                                                 <button type="button" class="btn-outline view-btn"
-                                                    data-img="{{ asset('storage/' . $req->id_front_path) }}"
+                                                    data-img="{{ file_url($req->id_front_path) }}"
                                                     data-type="ID Front">
                                                     View
                                                 </button>
@@ -246,7 +246,7 @@
                                                         {{ basename($req->id_back_path) }}</div>
                                                 </div>
                                                 <button type="button" class="btn-outline view-btn"
-                                                    data-img="{{ asset('storage/' . $req->id_back_path) }}"
+                                                    data-img="{{ file_url($req->id_back_path) }}"
                                                     data-type="ID Back">
                                                     View
                                                 </button>
@@ -266,7 +266,7 @@
                                                         {{ basename($req->face_photo_path) }}</div>
                                                 </div>
                                                 <button type="button" class="btn-outline view-btn"
-                                                    data-img="{{ asset('storage/' . $req->face_photo_path) }}"
+                                                    data-img="{{ file_url($req->face_photo_path) }}"
                                                     data-type="Facial Photo">
                                                     View
                                                 </button>
@@ -286,7 +286,7 @@
                                                         {{ basename($req->selfie_path) }}</div>
                                                 </div>
                                                 <button type="button" class="btn-outline view-btn"
-                                                    data-img="{{ asset('storage/' . $req->selfie_path) }}"
+                                                    data-img="{{ file_url($req->selfie_path) }}"
                                                     data-type="Selfie with ID">
                                                     View
                                                 </button>

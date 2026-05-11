@@ -60,6 +60,29 @@ return [
             'report' => false,
         ],
 
+        /*
+        |--------------------------------------------------------------------------
+        | Cloudflare R2 (S3-compatible)
+        |--------------------------------------------------------------------------
+        |
+        | R2 exposes an S3-compatible API so we use Laravel's built-in s3 driver.
+        | The bucket, endpoint, and public URL are all loaded from .env — see
+        | config/r2.php for feature-level settings (folder prefixes, validation).
+        |
+        */
+        'r2' => [
+            'driver'                  => 's3',
+            'key'                     => env('R2_ACCESS_KEY_ID'),
+            'secret'                  => env('R2_SECRET_ACCESS_KEY'),
+            'region'                  => env('R2_REGION', 'auto'),
+            'bucket'                  => env('R2_BUCKET_NAME'),
+            'endpoint'                => env('R2_ENDPOINT'),
+            'url'                     => env('R2_PUBLIC_URL'),
+            'use_path_style_endpoint' => true,
+            'throw'                   => false,
+            'report'                  => false,
+        ],
+
     ],
 
     /*

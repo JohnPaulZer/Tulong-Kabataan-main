@@ -62,6 +62,7 @@ Route::get('/api/impact-reports/{id}', function ($id) {
                 'donor_name' => $donation->donor_name
             ];
         }),
-        'photos' => $report->photos ?? []
+        // Resolve R2 keys to full public URLs so the frontend can render them directly.
+        'photos' => collect($report->photos ?? [])->map(fn ($key) => file_url($key))->filter()->values(),
     ]);
 });

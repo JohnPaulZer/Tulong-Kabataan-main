@@ -181,7 +181,7 @@
                                                 data-campaign="{{ $campaign->title }}"
                                                 data-organizer="{{ $campaign->campaign_organizer ?? ($campaign->organizer->name ?? 'N/A') }}"
                                                 data-requested-at="{{ $req->created_at->format('M d, Y h:i A') }}"
-                                                data-proof-image="{{ $req->proof_image ? asset('storage/' . $req->proof_image) : '' }}">
+                                                data-proof-image="{{ $req->proof_image ? file_url($req->proof_image) : '' }}">
                                                 <i class="ri-eye-line"></i> View
                                             </button>
                                         @else

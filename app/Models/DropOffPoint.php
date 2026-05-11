@@ -3,16 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use MongoDB\Laravel\Eloquent\Model;
 
 class DropOffPoint extends Model
 {
     use HasFactory;
 
-    protected $table = 'drop_off_points';
-    protected $primaryKey = 'dropoff_id';
-    public $incrementing = true;
-    protected $keyType = 'int';
+    protected $connection = 'mongodb';
+    protected $collection = 'drop_off_points';
 
     protected $fillable = [
         'name',
@@ -20,17 +18,22 @@ class DropOffPoint extends Model
         'schedule_datetime',
         'latitude',
         'longitude',
-        'is_active'
+        'is_active',
     ];
 
     protected $casts = [
         'latitude' => 'float',
         'longitude' => 'float',
-        'is_active' => 'boolean'
+        'is_active' => 'boolean',
     ];
+
+    public function getDropoffIdAttribute()
+    {
+        return $this->attributes['_id'] ?? $this->getKey();
+    }
 
     public function donations()
     {
-        return $this->hasMany(InKindDonation::class, 'dropoff_id', 'dropoff_id');
+        return $this->hasMany(InKindDonation::class, 'dropoff_id', '_id');
     }
 }

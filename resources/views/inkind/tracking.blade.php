@@ -629,7 +629,7 @@
                             <article class="ops-card" data-report-id="{{ $report->impact_report_id }}">
                                 <div class="ops-img-container">
                                     @if ($report->photos && count($report->photos) > 0)
-                                        <img src="{{ asset('storage/' . $report->photos[0]) }}"
+                                        <img src="{{ file_url($report->photos[0]) }}"
                                             alt="{{ $report->title }}" class="ops-img">
                                     @else
                                         <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=600&auto=format&fit=crop"
@@ -910,7 +910,7 @@
                     <strong>Report Photos (${data.photos.length}):</strong>
                     <div class="photos-grid">
                         ${data.photos.map(photo => `
-                                <div class="photo-item"><img src="/storage/${photo}" alt="Report Photo" onclick="window.open('/storage/${photo}', '_blank')"></div>
+                                <div class="photo-item"><img src="${photo}" alt="Report Photo" onclick="window.open('${photo}', '_blank')"></div>
                             `).join('')}
                     </div>
                 </div>`;

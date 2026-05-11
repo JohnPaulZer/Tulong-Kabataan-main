@@ -1,5 +1,5 @@
 @php
-    $eventImage = !empty($event->photo) ? asset('storage/' . $event->photo) : asset('img/bg2.jpg');
+    $eventImage = !empty($event->photo) ? file_url($event->photo, asset('img/bg2.jpg')) : asset('img/bg2.jpg');
     $eventImageFallback = asset('img/bg2.jpg');
     $startDate = \Carbon\Carbon::parse($event->start_date);
     $endDate = \Carbon\Carbon::parse($event->end_date);

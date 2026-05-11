@@ -39,7 +39,7 @@ class InkindController
             'donor_name'   => 'nullable|string|max:255',
             'donor_email'  => 'required|email|max:255',
             'donor_phone'  => 'nullable|string|max:20',
-            'dropoff_id'   => 'required|exists:drop_off_points,dropoff_id',
+            'dropoff_id'   => 'required|string',
             'items'        => 'required|array|min:1',
             'items.*.item_name' => 'required|string|max:255',
             'items.*.category' => 'required|string|max:255',

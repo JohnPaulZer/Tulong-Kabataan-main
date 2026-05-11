@@ -2,17 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use MongoDB\Laravel\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Campaign extends Model
 {
     use HasFactory;
 
-    protected $table = 'campaigns';
-    protected $primaryKey = 'campaign_id';
-    public $incrementing = true;
-    protected $keyType = 'int';
+    protected $connection = 'mongodb';
+    protected $collection = 'campaigns';
 
     protected $fillable = [
         'user_id',
@@ -35,44 +33,49 @@ class Campaign extends Model
         'donor_count',
     ];
 
-
-    // Cast fields to appropriate types
     protected $casts = [
         'starts_at' => 'datetime',
         'ends_at' => 'datetime',
         'recurring_days' => 'array',
         'images' => 'array',
         'allow_anonymous' => 'boolean',
-        'recurring_time' => 'datetime:H:i',
+        'target_amount' => 'float',
+        'current_amount' => 'float',
+        'views' => 'integer',
+        'donor_count' => 'integer',
     ];
 
     /**
-     * Relationships
+     * Backward-compatible accessor for code referencing $campaign->campaign_id
      */
-    public function organizer()
+    public function getCampaignIdAttribute()
     {
-        return $this->belongsTo(User::class, 'user_id', 'user_id');
+        return $this->attributes['_id'] ?? $this->getKey();
     }
 
-    // Add this new relationship for updates
+    public function organizer()
+    {
+        return $this->belongsTo(User::class, 'user_id', '_id');
+    }
+
     public function updates()
     {
-        return $this->hasMany(CampaignUpdate::class, 'campaign_id', 'campaign_id')
+        return $this->hasMany(CampaignUpdate::class, 'campaign_id', '_id')
             ->orderBy('created_at', 'desc');
     }
 
-
     public function manualRequests()
     {
-        return $this->hasMany(ManualDonationRequest::class, 'campaign_id', 'campaign_id');
+        return $this->hasMany(ManualDonationRequest::class, 'campaign_id', '_id');
     }
+
     public function viewsTracked()
     {
-        return $this->hasMany(CampaignView::class, 'campaign_id');
+        return $this->hasMany(CampaignView::class, 'campaign_id', '_id');
     }
 
     public function donations()
     {
-        return $this->hasMany(Donation::class, 'campaign_id', 'campaign_id');
+        return $this->hasMany(Donation::class, 'campaign_id', '_id');
     }
 }

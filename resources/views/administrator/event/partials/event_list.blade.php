@@ -47,7 +47,22 @@
                       <button class="link-btn" data-target="participants-{{ $event->event_id }}">
                           View Participants
                       </button>
-                      <button class="link-btn view-details-btn" data-event='@json($event)'>
+                      <button class="link-btn view-details-btn" data-event='@json([
+                          'event_id' => $event->event_id,
+                          'title' => $event->title,
+                          'description' => $event->description,
+                          'start_date' => $event->start_date,
+                          'end_date' => $event->end_date,
+                          'deadline' => $event->deadline,
+                          'location' => $event->location,
+                          'lat' => $event->lat,
+                          'lng' => $event->lng,
+                          'coordinator_name' => $event->coordinator_name,
+                          'coordinator_email' => $event->coordinator_email,
+                          'coordinator_phone' => $event->coordinator_phone,
+                          'photo' => file_url($event->photo),
+                          'registrations' => $event->registrations,
+                      ])'>
                           View Details
                       </button>
                   </div>

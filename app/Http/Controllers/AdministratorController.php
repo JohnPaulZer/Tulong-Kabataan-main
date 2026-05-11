@@ -30,10 +30,18 @@ use App\Notifications\DonationDistributedNotification;
 use App\Models\ImpactReport;
 use App\Models\SiteSetting;
 use App\Models\User;
+use App\Services\Storage\R2StorageService;
+use App\Services\Storage\R2StorageException;
 
 
 class AdministratorController
 {
+    protected R2StorageService $storage;
+
+    public function __construct(R2StorageService $storage)
+    {
+        $this->storage = $storage;
+    }
 
     // Session flushing method
     protected function noCacheView($view, $data = [])
@@ -210,7 +218,7 @@ class AdministratorController
     public function decision(Request $r)
     {
         $r->validate([
-            'request_id'       => 'required|integer|exists:verification_requests,request_id',
+            'request_id'       => 'required|string',
             'action'           => 'required|in:approved,rejected,request_reupload',
             'notes'            => 'nullable|string|max:2000',
             'reupload_fields'  => 'nullable|array',
@@ -735,15 +743,14 @@ class AdministratorController
 
     public function getInKindChartData()
     {
+        // MongoDB-compatible: fetch and group in PHP
+        $donations = InKindDonation::whereIn('status', ['Received', 'Distributed'])->get(['quantity', 'created_at']);
 
-        $data = InKindDonation::selectRaw('
-            MONTH(created_at) as month,
-            SUM(quantity) as total_items
-        ')
-            ->whereIn('status', ['Received', 'Distributed'])
-            ->groupBy('month')
-            ->orderBy('month')
-            ->get();
+        $data = $donations->groupBy(function ($d) {
+            return (int) $d->created_at->format('m');
+        })->map(function ($group, $month) {
+            return ['month' => $month, 'total_items' => $group->sum('quantity')];
+        })->sortBy('month')->values();
 
         return response()->json([
             'success' => true,
@@ -754,11 +761,12 @@ class AdministratorController
 
     public function getCategoryChartData()
     {
-        $data = InKindDonation::selectRaw('category, SUM(quantity) as total_items')
-            ->whereIn('status', ['Received', 'Distributed'])
-            ->groupBy('category')
-            ->orderByDesc('total_items')
-            ->get();
+        // MongoDB-compatible: fetch and group in PHP
+        $donations = InKindDonation::whereIn('status', ['Received', 'Distributed'])->get(['category', 'quantity']);
+
+        $data = $donations->groupBy('category')->map(function ($group, $category) {
+            return ['category' => $category, 'total_items' => $group->sum('quantity')];
+        })->sortByDesc('total_items')->values();
 
         return response()->json([
             'success' => true,
@@ -774,33 +782,39 @@ class AdministratorController
             'report_date' => 'required|date',
             'description' => 'required|string',
             'selected_donations' => 'required|array',
-            'selected_donations.*' => 'exists:in_kind_donations,inkind_id',
+            'selected_donations.*' => 'string',
             'photos.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
         try {
-            // Upload photos
+            // Upload photos to Cloudflare R2 (rollback on error to avoid orphans).
             $photoPaths = [];
             if ($request->hasFile('photos')) {
                 foreach ($request->file('photos') as $photo) {
-                    $path = $photo->store('impact-reports/photos', 'public');
-                    $photoPaths[] = $path;
+                    try {
+                        $photoPaths[] = $this->storage->upload($photo, 'impact_report_photos',
+                            ['max_kb' => 2048, 'mimes' => config('r2.validation.image_mimes')]);
+                    } catch (R2StorageException $e) {
+                        foreach ($photoPaths as $orphan) { $this->storage->delete($orphan); }
+                        return response()->json([
+                            'success' => false,
+                            'message' => $e->getMessage(),
+                        ], 422);
+                    }
                 }
             }
 
-            // Create impact report
+            // Create impact report with donation IDs embedded (MongoDB document style)
             $impactReport = ImpactReport::create([
                 'title' => $request->title,
                 'description' => $request->description,
                 'report_date' => $request->report_date,
-                'photos' => $photoPaths
+                'photos' => $photoPaths,
+                'donation_ids' => $request->selected_donations,
             ]);
 
-            // Attach donations to the impact report
-            $impactReport->donations()->attach($request->selected_donations);
-
             // Get all donations that will be marked as distributed
-            $donations = InKindDonation::whereIn('inkind_id', $request->selected_donations)
+            $donations = InKindDonation::whereIn('_id', $request->selected_donations)
                 ->with('user') // Eager load user relationships
                 ->get();
 
@@ -890,13 +904,16 @@ class AdministratorController
             // Apply search filter
             if ($request->search) {
                 $search = $request->search;
-                $query->where(function ($q) use ($search) {
-                    $q->where('donor_name', 'LIKE', "%{$search}%")
-                        ->orWhere('item_name', 'LIKE', "%{$search}%")
-                        ->orWhere('category', 'LIKE', "%{$search}%")
-                        ->orWhereHas('user', function ($userQuery) use ($search) {
-                            $userQuery->where('email', 'LIKE', "%{$search}%");
-                        });
+                // Get user IDs matching email search for MongoDB compatibility
+                $matchingUserIds = User::where('email', 'like', "%{$search}%")->pluck('_id')->toArray();
+
+                $query->where(function ($q) use ($search, $matchingUserIds) {
+                    $q->where('donor_name', 'like', "%{$search}%")
+                        ->orWhere('item_name', 'like', "%{$search}%")
+                        ->orWhere('category', 'like', "%{$search}%");
+                    if (!empty($matchingUserIds)) {
+                        $q->orWhereIn('user_id', $matchingUserIds);
+                    }
                 });
             }
 
@@ -971,9 +988,14 @@ class AdministratorController
         ]);
 
 
-        $photoPath = $request->hasFile('photo')
-            ? $request->file('photo')->store('event_photos', 'public')
-            : null;
+        try {
+            $photoPath = $request->hasFile('photo')
+                ? $this->storage->upload($request->file('photo'), 'event_photos',
+                    ['max_kb' => 5120, 'mimes' => ['image/jpeg', 'image/png']])
+                : null;
+        } catch (R2StorageException $e) {
+            return back()->withInput()->with('error', $e->getMessage());
+        }
 
 
         $event = Event::create([
@@ -1131,14 +1153,14 @@ class AdministratorController
     // Volunterchart
     public function getVolunteerParticipationData(): JsonResponse
     {
-        // Fetch each event with its volunteer registration count
-        $data = Event::withCount('registrations')
+        // MongoDB-compatible: load events with registrations and count in PHP
+        $events = Event::with('registrations')
             ->orderBy('start_date', 'asc')
-            ->get(['title', 'event_id']);
+            ->get(['title']);
 
         return response()->json([
-            'labels' => $data->pluck('title'),
-            'values' => $data->pluck('registrations_count'),
+            'labels' => $events->pluck('title'),
+            'values' => $events->map(fn($e) => $e->registrations->count()),
         ]);
     }
 
@@ -1166,13 +1188,11 @@ class AdministratorController
         }
 
 
-        $events = Event::withCount(['registrations as attendees' => function ($q) {
-            $q->where('status', 'attended');
-        }])->get();
+        $events = Event::with('registrations')->get();
 
         return response()->json([
             'labels' => $events->pluck('title'),
-            'values' => $events->pluck('attendees'),
+            'values' => $events->map(fn($e) => $e->registrations->where('status', 'attended')->count()),
             'eventTitle' => null
         ]);
     }

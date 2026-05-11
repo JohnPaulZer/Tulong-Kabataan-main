@@ -1350,10 +1350,10 @@
                                     document.getElementById('modalRegistered').textContent = eventData
                                         .registrations?.length || 0;
 
-                                    // Photo
+                                    // Photo — already resolved to a full URL on the server side
                                     const photoEl = document.getElementById('modalEventPhoto');
                                     if (eventData.photo) {
-                                        photoEl.src = `/storage/${eventData.photo}`;
+                                        photoEl.src = eventData.photo;
                                         photoEl.style.display = 'block';
                                     } else {
                                         photoEl.style.display = 'none';

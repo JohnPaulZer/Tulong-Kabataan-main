@@ -2,17 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use MongoDB\Laravel\Eloquent\Model;
 
 class AdminAccount extends Model
 {
-    protected $table = 'admin_accounts';
-    protected $primaryKey = 'admin_id';
-    protected $keyType = 'int';
-    public $incrementing = true;
+    protected $connection = 'mongodb';
+    protected $collection = 'admin_accounts';
 
     protected $fillable = [
-        'admin_id',
         'username',
         'email',
         'password',
@@ -24,4 +21,13 @@ class AdminAccount extends Model
         'password',
         'reset_token',
     ];
+
+    protected $casts = [
+        'reset_token_expiry' => 'datetime',
+    ];
+
+    public function getAdminIdAttribute()
+    {
+        return $this->attributes['_id'] ?? $this->getKey();
+    }
 }
