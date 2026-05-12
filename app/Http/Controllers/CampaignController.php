@@ -37,6 +37,11 @@ class CampaignController
             ->header('Expires', '0');
     }
 
+    public function notificationpage()
+    {
+        return $this->noCacheView('notifications.index');
+    }
+
     public function campaignPage()
     {
         return $this->noCacheView('campaign.campaignpage');

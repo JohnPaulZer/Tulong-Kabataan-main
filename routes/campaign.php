@@ -26,7 +26,17 @@ Route::get('/notifications', [CampaignController::class, 'notificationpage'])
 
 
 
-// Mark single notification as read
+// Mark-all notification
+Route::post('/notifications/mark-all-read', function () {
+    $updated = Auth::user()
+        ->notifications()
+        ->whereNull('read_at')
+        ->update(['read_at' => now()]);
+
+    return response()->json(['success' => true, 'updated' => $updated]);
+})->middleware('auth')->name('notifications.mark-all-read');
+
+// Mark single notification as read. Keep this after the specific mark-all route.
 Route::post('/notifications/{notification}/read', function ($notificationId) {
     $notification = Auth::user()->notifications()->where('id', $notificationId)->first();
 
@@ -36,12 +46,6 @@ Route::post('/notifications/{notification}/read', function ($notificationId) {
 
     return response()->json(['success' => true]);
 })->middleware('auth')->name('notifications.read');
-
-// Mark-all notification
-Route::post('/notifications/mark-all-read', function () {
-    Auth::user()->unreadNotifications()->update(['read_at' => now()]);
-    return response()->json(['success' => true]);
-})->middleware('auth')->name('notifications.mark-all-read');
 
 
 
