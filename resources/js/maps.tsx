@@ -74,6 +74,12 @@ function updateText(id: string | undefined, value: string) {
     if (element) element.textContent = value;
 }
 
+function escapeHtml(value: string): string {
+    const element = document.createElement('div');
+    element.textContent = value;
+    return element.innerHTML;
+}
+
 async function fetchJson(url: URL) {
     const response = await fetch(url.toString(), {
         headers: {
@@ -89,31 +95,39 @@ async function fetchJson(url: URL) {
 }
 
 export async function searchAddress(query: string): Promise<GeocodeResult | null> {
+    const results = await searchAddressSuggestions(query, 1);
+    return results[0] ?? null;
+}
+
+export async function searchAddressSuggestions(query: string, limit = 5): Promise<GeocodeResult[]> {
     const trimmed = query.trim();
-    if (!trimmed) return null;
+    if (!trimmed) return [];
 
     const url = new URL('/search', mapConfig.nominatimBaseUrl);
     url.searchParams.set('format', 'jsonv2');
-    url.searchParams.set('limit', '1');
+    url.searchParams.set('limit', String(Math.max(1, Math.min(limit, 8))));
     url.searchParams.set('addressdetails', '1');
     url.searchParams.set('countrycodes', mapConfig.countryCodes);
     url.searchParams.set('q', trimmed);
 
     const results = await fetchJson(url);
-    const first = Array.isArray(results) ? results[0] : null;
-    if (!first) return null;
+    if (!Array.isArray(results)) return [];
 
-    const coordinate = normalizeCoordinate({
-        latitude: first.lat,
-        longitude: first.lon,
-    });
+    return results
+        .map((result) => {
+            const coordinate = normalizeCoordinate({
+                latitude: result.lat,
+                longitude: result.lon,
+            });
 
-    if (!coordinate) return null;
+            if (!coordinate) return null;
 
-    return {
-        coordinate,
-        label: first.display_name || trimmed,
-    };
+            return {
+                coordinate,
+                label: result.display_name || trimmed,
+            };
+        })
+        .filter((result): result is GeocodeResult => result !== null);
 }
 
 export async function reverseGeocode(coordinate: Coordinate): Promise<string | null> {
@@ -164,6 +178,11 @@ function mountPicker(options: PickerMountOptions) {
     let selectedCoordinate = normalizeCoordinate(options.initialCoordinate);
     let selectedAddress = options.initialAddress || '';
     let reverseLookupRun = 0;
+    let suggestionBox: HTMLDivElement | null = null;
+    let suggestionResults: GeocodeResult[] = [];
+    let activeSuggestionIndex = -1;
+    let suggestionTimer: number | undefined;
+    let suggestionRun = 0;
 
     function syncFields(coordinate: Coordinate | null, address?: string) {
         updateInputValue(options.latInputId, coordinate ? String(coordinate.latitude) : '');
@@ -241,6 +260,10 @@ function mountPicker(options: PickerMountOptions) {
                 address: result.label,
                 reverse: false,
             });
+            if (searchInput) {
+                searchInput.value = result.label;
+            }
+            hideSuggestions();
             return result;
         } catch (error) {
             if (!silent) throw error;
@@ -278,24 +301,193 @@ function mountPicker(options: PickerMountOptions) {
 
         searchButton?.addEventListener('click', runSearch);
         searchInput?.addEventListener('keydown', (event) => {
+            if (suggestionBox && !suggestionBox.hidden && suggestionResults.length > 0) {
+                if (event.key === 'ArrowDown') {
+                    event.preventDefault();
+                    setActiveSuggestion(activeSuggestionIndex + 1);
+                    return;
+                }
+
+                if (event.key === 'ArrowUp') {
+                    event.preventDefault();
+                    setActiveSuggestion(activeSuggestionIndex - 1);
+                    return;
+                }
+
+                if (event.key === 'Enter' && activeSuggestionIndex >= 0) {
+                    event.preventDefault();
+                    selectSuggestion(activeSuggestionIndex);
+                    return;
+                }
+
+                if (event.key === 'Escape') {
+                    hideSuggestions();
+                    return;
+                }
+            }
+
             if (event.key === 'Enter') {
                 event.preventDefault();
                 runSearch();
             }
         });
 
-        if (searchInput && options.debounceSearch) {
-            let timer: number | undefined;
+        if (searchInput) {
+            ensureSuggestionBox(searchInput);
             searchInput.addEventListener('input', () => {
-                window.clearTimeout(timer);
+                window.clearTimeout(suggestionTimer);
                 const value = searchInput.value.trim();
-                if (value.length < 5) return;
+                if (value.length < 3) {
+                    hideSuggestions();
+                    return;
+                }
 
-                timer = window.setTimeout(() => {
-                    search(value, true);
-                }, 900);
+                suggestionTimer = window.setTimeout(() => {
+                    loadSuggestions(value);
+                }, options.debounceSearch ? 450 : 350);
             });
+
+            searchInput.addEventListener('focus', () => {
+                if (suggestionResults.length > 0) {
+                    showSuggestions();
+                }
+            });
+
+            searchInput.addEventListener('blur', () => {
+                window.setTimeout(hideSuggestions, 160);
+            });
+
+            window.addEventListener('resize', positionSuggestions);
+            window.addEventListener('scroll', positionSuggestions, true);
         }
+    }
+
+    function ensureSuggestionBox(searchInput: HTMLInputElement) {
+        if (suggestionBox) return;
+
+        suggestionBox = document.createElement('div');
+        suggestionBox.className = 'tk-map-suggestions';
+        suggestionBox.hidden = true;
+        suggestionBox.setAttribute('role', 'listbox');
+        suggestionBox.setAttribute('aria-label', 'Location suggestions');
+        suggestionBox.addEventListener('mousedown', (event) => {
+            event.preventDefault();
+        });
+
+        document.body.appendChild(suggestionBox);
+        searchInput.setAttribute('autocomplete', 'off');
+        searchInput.setAttribute('aria-autocomplete', 'list');
+    }
+
+    function positionSuggestions() {
+        const searchInput = options.searchInputId
+            ? (document.getElementById(options.searchInputId) as HTMLInputElement | null)
+            : null;
+        if (!searchInput || !suggestionBox || suggestionBox.hidden) return;
+
+        const rect = searchInput.getBoundingClientRect();
+        suggestionBox.style.width = `${rect.width}px`;
+        suggestionBox.style.left = `${rect.left + window.scrollX}px`;
+        suggestionBox.style.top = `${rect.bottom + window.scrollY + 6}px`;
+    }
+
+    function showSuggestions() {
+        if (!suggestionBox) return;
+        suggestionBox.hidden = false;
+        positionSuggestions();
+    }
+
+    function hideSuggestions() {
+        if (!suggestionBox) return;
+        suggestionBox.hidden = true;
+        activeSuggestionIndex = -1;
+    }
+
+    function renderSuggestions(state: 'loading' | 'empty' | 'results' = 'results') {
+        if (!suggestionBox) return;
+
+        if (state === 'loading') {
+            suggestionBox.innerHTML = '<div class="tk-map-suggestion tk-map-suggestion--status">Searching locations...</div>';
+            showSuggestions();
+            return;
+        }
+
+        if (state === 'empty') {
+            suggestionBox.innerHTML = '<div class="tk-map-suggestion tk-map-suggestion--status">No matching locations found.</div>';
+            showSuggestions();
+            return;
+        }
+
+        suggestionBox.innerHTML = '';
+        suggestionResults.forEach((result, index) => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'tk-map-suggestion';
+            button.setAttribute('role', 'option');
+            button.setAttribute('aria-selected', String(index === activeSuggestionIndex));
+            button.dataset.index = String(index);
+            button.innerHTML = `
+                <span class="tk-map-suggestion__icon" aria-hidden="true"></span>
+                <span class="tk-map-suggestion__text">${escapeHtml(result.label)}</span>
+            `;
+            button.addEventListener('click', () => selectSuggestion(index));
+            suggestionBox?.appendChild(button);
+        });
+
+        showSuggestions();
+    }
+
+    async function loadSuggestions(query: string) {
+        const runId = ++suggestionRun;
+        renderSuggestions('loading');
+
+        try {
+            const results = await searchAddressSuggestions(query, 5);
+            if (runId !== suggestionRun) return;
+
+            suggestionResults = results;
+            activeSuggestionIndex = results.length > 0 ? 0 : -1;
+            renderSuggestions(results.length > 0 ? 'results' : 'empty');
+        } catch (error) {
+            if (runId !== suggestionRun) return;
+
+            console.warn(error instanceof Error ? error.message : error);
+            suggestionResults = [];
+            activeSuggestionIndex = -1;
+            renderSuggestions('empty');
+        }
+    }
+
+    function setActiveSuggestion(index: number) {
+        if (!suggestionResults.length) return;
+
+        activeSuggestionIndex = (index + suggestionResults.length) % suggestionResults.length;
+        suggestionBox?.querySelectorAll<HTMLElement>('.tk-map-suggestion[role="option"]').forEach((button, buttonIndex) => {
+            button.setAttribute('aria-selected', String(buttonIndex === activeSuggestionIndex));
+            if (buttonIndex === activeSuggestionIndex) {
+                button.scrollIntoView({
+                    block: 'nearest',
+                });
+            }
+        });
+    }
+
+    async function selectSuggestion(index: number) {
+        const result = suggestionResults[index];
+        const searchInput = options.searchInputId
+            ? (document.getElementById(options.searchInputId) as HTMLInputElement | null)
+            : null;
+        if (!result) return;
+
+        if (searchInput) {
+            searchInput.value = result.label;
+        }
+
+        hideSuggestions();
+        await selectCoordinate(result.coordinate, {
+            address: result.label,
+            reverse: false,
+        });
     }
 
     syncFields(selectedCoordinate, selectedAddress);
@@ -401,6 +593,7 @@ const TKLeafletMaps = {
     normalizeCoordinate,
     isValidCoordinate,
     searchAddress,
+    searchAddressSuggestions,
     reverseGeocode,
     locateUser,
     mountPicker,

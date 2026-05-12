@@ -63,6 +63,7 @@
                             <button class="ikd-tab ikd-is-active" data-filter="all">All Donations</button>
                             <button class="ikd-tab" data-filter="Scheduled">Scheduled</button>
                             <button class="ikd-tab" data-filter="Received">Received</button>
+                            <button class="ikd-tab" data-filter="Distributed">Distributed</button>
                             <button class="ikd-tab" data-filter="Cancelled">Cancelled</button>
                         </div>
                         <div class="ikd-toolbar">
@@ -86,6 +87,8 @@
                                             <span class="ikd-badge ikd-badge-yellow ikd-status-badge">Scheduled</span>
                                         @elseif($donation->status === 'Received')
                                             <span class="ikd-badge ikd-badge-green ikd-status-badge">Received</span>
+                                        @elseif($donation->status === 'Distributed')
+                                            <span class="ikd-badge ikd-badge-green ikd-status-badge">Distributed</span>
                                         @elseif($donation->status === 'Cancelled')
                                             <span class="ikd-badge ikd-badge-red ikd-status-badge">Cancelled</span>
                                         @endif
@@ -117,7 +120,7 @@
 
                                 <div class="ikd-right-col">
                                     <div class="ikd-row" style="gap:8px">
-                                        @if ($donation->status !== 'Cancelled')
+                                        @if ($donation->status === 'Scheduled')
                                             <button class="ikd-btn ikd-btn-danger ikd-cancel-btn"
                                                 data-id="{{ $donation->inkind_id }}">
                                                 Cancel
@@ -219,7 +222,13 @@
                             "content"),
                     },
                 })
-                .then((res) => res.json())
+                .then(async (res) => {
+                    const data = await res.json().catch(() => ({}));
+                    if (!res.ok) {
+                        throw new Error(data.error || data.message || "Request failed.");
+                    }
+                    return data;
+                })
                 .then((data) => {
                     if (data.success) {
                         const card = ikdTargetBtn.closest(".ikd-donation-card");
@@ -333,7 +342,7 @@
                         donations.forEach(donation => {
                             const card = document.createElement("div");
                             card.className = "ikd-donation-card " +
-                                (donation.status === "Received" ? "ikd-approved" :
+                                (donation.status === "Received" || donation.status === "Distributed" ? "ikd-approved" :
                                     donation.status === "Cancelled" ? "ikd-cancelled" : "");
                             card.setAttribute("data-status", donation.status);
 
@@ -345,6 +354,8 @@
                       ? `<span class="ikd-badge ikd-badge-yellow ikd-status-badge">Scheduled</span>`
                       : donation.status === "Received"
                       ? `<span class="ikd-badge ikd-badge-green ikd-status-badge">Received</span>`
+                      : donation.status === "Distributed"
+                      ? `<span class="ikd-badge ikd-badge-green ikd-status-badge">Distributed</span>`
                       : `<span class="ikd-badge ikd-badge-red ikd-status-badge">Cancelled</span>`}
                 </div>
                 <div class="ikd-grid">
@@ -370,7 +381,7 @@
               <div class="ikd-right-col">
                 <div class="ikd-row" style="gap:8px">
                   ${
-                    (donation.status !== "Cancelled" && donation.status !== "Received")
+                    donation.status === "Scheduled"
                       ? `<button class="ikd-btn ikd-btn-danger ikd-cancel-btn" data-id="${donation.inkind_id}">Cancel</button>`
                       : ""
                   }
@@ -387,12 +398,14 @@
                         // --- analytics update ---
                         let scheduled = 0,
                             received = 0,
+                            distributed = 0,
                             cancelled = 0;
                         let categoryMap = {};
 
                         donations.forEach(d => {
                             if (d.status === "Scheduled") scheduled++;
                             else if (d.status === "Received") received++;
+                            else if (d.status === "Distributed") distributed++;
                             else if (d.status === "Cancelled") cancelled++;
                             if (d.category) categoryMap[d.category] = (categoryMap[d.category] || 0) +
                                 1;
@@ -412,7 +425,7 @@
                             },
                             xAxis: {
                                 type: 'category',
-                                data: ['Scheduled', 'Received', 'Cancelled'],
+                                data: ['Scheduled', 'Received', 'Distributed', 'Cancelled'],
                                 axisLine: {
                                     lineStyle: {
                                         color: '#e5e7eb'
@@ -456,6 +469,12 @@
                                         value: received,
                                         itemStyle: {
                                             color: '#22c55e'
+                                        }
+                                    },
+                                    {
+                                        value: distributed,
+                                        itemStyle: {
+                                            color: '#3b82f6'
                                         }
                                     },
                                     {

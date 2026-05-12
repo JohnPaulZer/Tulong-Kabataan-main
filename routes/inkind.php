@@ -22,8 +22,7 @@ Route::get('/stats', [InkindController::class, 'getStats']);
 
 Route::get('/in-kind-tracking', function () {
     // Get impact reports with donations for the slider
-    $impactReports = ImpactReport::with('donations')
-        ->orderBy('report_date', 'desc')
+    $impactReports = ImpactReport::orderBy('report_date', 'desc')
         ->get();
 
 
@@ -48,7 +47,7 @@ Route::get('/in-kind-tracking', function () {
 
 
 Route::get('/api/impact-reports/{id}', function ($id) {
-    $report = ImpactReport::with('donations')->findOrFail($id);
+    $report = ImpactReport::findOrFail($id);
 
     return response()->json([
         'title' => $report->title,

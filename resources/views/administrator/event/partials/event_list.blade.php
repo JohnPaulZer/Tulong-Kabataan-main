@@ -30,6 +30,27 @@
                                   'Ongoing' => 'status-ongoing',
                                   'Ended' => 'status-ended',
                               };
+
+                              $eventDetails = [
+                                  'event_id' => $event->event_id,
+                                  'title' => $event->title,
+                                  'description' => $event->description,
+                                  'start_date' => $event->start_date,
+                                  'end_date' => $event->end_date,
+                                  'deadline' => $event->deadline,
+                                  'location' => $event->location,
+                                  'lat' => $event->lat,
+                                  'lng' => $event->lng,
+                                  'coordinator_name' => $event->coordinator_name,
+                                  'coordinator_email' => $event->coordinator_email,
+                                  'coordinator_phone' => $event->coordinator_phone,
+                                  'photo' => file_url($event->photo),
+                                  'registrations' => $event->registrations
+                                      ->map(fn ($registration) => [
+                                          'registration_id' => $registration->registration_id,
+                                      ])
+                                      ->values(),
+                              ];
                           @endphp
 
                           <span class="status-badge {{ $badgeClass }}">
@@ -47,22 +68,7 @@
                       <button class="link-btn" data-target="participants-{{ $event->event_id }}">
                           View Participants
                       </button>
-                      <button class="link-btn view-details-btn" data-event='@json([
-                          'event_id' => $event->event_id,
-                          'title' => $event->title,
-                          'description' => $event->description,
-                          'start_date' => $event->start_date,
-                          'end_date' => $event->end_date,
-                          'deadline' => $event->deadline,
-                          'location' => $event->location,
-                          'lat' => $event->lat,
-                          'lng' => $event->lng,
-                          'coordinator_name' => $event->coordinator_name,
-                          'coordinator_email' => $event->coordinator_email,
-                          'coordinator_phone' => $event->coordinator_phone,
-                          'photo' => file_url($event->photo),
-                          'registrations' => $event->registrations,
-                      ])'>
+                      <button class="link-btn view-details-btn" data-event='@json($eventDetails)'>
                           View Details
                       </button>
                   </div>
@@ -76,14 +82,14 @@
                       <!-- BULK ACTION BUTTONS -->
                       <div class="bulk-action">
                           <!-- Mark All as Attended -->
-                          <button onclick="markAllAttended({{ $event->event_id }})" class="btn-mark-all"
+                          <button onclick='markAllAttended(@json((string) $event->event_id))' class="btn-mark-all"
                               id="markAllBtn-{{ $event->event_id }}"
                               {{ $event->registrations->where('status', '!=', 'attended')->count() === 0 ? 'disabled' : '' }}>
                               <i class="ri-check-line"></i> Mark All as Attended
                           </button>
 
                           <!-- Mark All as Missing -->
-                          <button onclick="markAllMissing({{ $event->event_id }})"
+                          <button onclick='markAllMissing(@json((string) $event->event_id))'
                               class="btn-mark-all btn-mark-missing" id="markAllMissingBtn-{{ $event->event_id }}"
                               {{ $event->registrations->where('status', '!=', 'absent')->count() === 0 ? 'disabled' : '' }}>
                               <i class="ri-close-line"></i> Mark All as Missing
@@ -92,21 +98,21 @@
                           <!-- Select Participants with Dropdown Menu -->
                           <div class="select-participants-dropdown" id="selectDropdown-{{ $event->event_id }}">
                               <button class="btn-select-participants" id="toggleSelectBtn-{{ $event->event_id }}"
-                                  onclick="toggleSelectionMode({{ $event->event_id }})">
+                                  onclick='toggleSelectionMode(@json((string) $event->event_id))'>
                                   <i class="ri-checkbox-multiple-line"></i> Select Participants
                               </button>
 
                               <!-- Dropdown Menu (Hidden by default) -->
                               <div class="dropdown-menu" id="dropdownMenu-{{ $event->event_id }}"
                                   style="display: none;">
-                                  <button onclick="markSelectedAttended({{ $event->event_id }})" class="dropdown-item">
+                                  <button onclick='markSelectedAttended(@json((string) $event->event_id))' class="dropdown-item">
                                       <i class="ri-check-double-line"></i> Mark as Attended
                                   </button>
-                                  <button onclick="markSelectedMissing({{ $event->event_id }})" class="dropdown-item">
+                                  <button onclick='markSelectedMissing(@json((string) $event->event_id))' class="dropdown-item">
                                       <i class="ri-close-line"></i> Mark as Missing
                                   </button>
                                   <div class="dropdown-divider"></div>
-                                  <button onclick="cancelSelection({{ $event->event_id }})"
+                                  <button onclick='cancelSelection(@json((string) $event->event_id))'
                                       class="dropdown-item cancel">
                                       <i class="ri-close-line"></i> Cancel Selection
                                   </button>
@@ -130,7 +136,7 @@
                                   <input type="checkbox" class="participant-checkbox"
                                       value="{{ $reg->registration_id }}" id="checkbox-{{ $reg->registration_id }}"
                                       {{ $reg->status == 'attended' ? 'disabled' : '' }}
-                                      onchange="updateSelectedCount({{ $event->event_id }})">
+                                      onchange='updateSelectedCount(@json((string) $event->event_id))'>
                               </div>
 
                               <div class="p-left">

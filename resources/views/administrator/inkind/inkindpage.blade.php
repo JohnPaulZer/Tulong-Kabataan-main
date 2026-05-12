@@ -119,14 +119,17 @@
                     <!-- Rest of your locations-grid remains the same -->
                     <div class="locations-grid">
                         @forelse($dropoffs as $dropoff)
+                            @php
+                                $dropoffPayload = [
+                                    'name' => $dropoff->name,
+                                    'address' => $dropoff->address,
+                                    'schedule' => $dropoff->schedule_datetime,
+                                    'lat' => $dropoff->latitude,
+                                    'lng' => $dropoff->longitude,
+                                ];
+                            @endphp
                             <article class="location" data-id="{{ $dropoff->dropoff_id }}"
-                                onclick="openLocationModal({{ $dropoff->dropoff_id }}, {
-                                    name: '{{ addslashes($dropoff->name) }}',
-                                    address: '{{ addslashes($dropoff->address) }}',
-                                    schedule: '{{ addslashes($dropoff->schedule_datetime) }}',
-                                    lat: {{ $dropoff->latitude ?? 'null' }},
-                                    lng: {{ $dropoff->longitude ?? 'null' }}
-                                })">
+                                onclick='openLocationModal(@js((string) $dropoff->dropoff_id), @js($dropoffPayload))'>
 
                                 <div class="location-head"
                                     style="display:flex;justify-content:space-between;align-items:center">
@@ -352,7 +355,15 @@
 
                     <tbody id="donations-body">
                         @forelse ($donations as $donation)
-                            <tr id="donation-row-{{ $donation->inkind_id }}">
+                            <tr id="donation-row-{{ $donation->inkind_id }}"
+                                data-donation-id="{{ $donation->inkind_id }}"
+                                data-donor-name="{{ $donation->donor_name ?? '' }}"
+                                data-donor-email="{{ $donation->donor_email ?? '' }}"
+                                data-donor-phone="{{ $donation->donor_phone ?? '' }}"
+                                data-item-name="{{ $donation->item_name ?? '' }}"
+                                data-category="{{ $donation->category ?? '' }}"
+                                data-quantity="{{ $donation->quantity ?? '' }}"
+                                data-status="{{ $donation->status ?? '' }}">
 
                                 <td>
                                     <div class="donor">
@@ -397,11 +408,11 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td>{{ $donation->donor_phone }}</td>
-                                <td>{{ $donation->item_name }}</td>
-                                <td>{{ $donation->category }}</td>
-                                <td>{{ $donation->quantity }}</td>
-                                <td>{{ $donation->dropOffPoint->name ?? 'N/A' }}</td>
+                                <td class="donation-phone">{{ $donation->donor_phone }}</td>
+                                <td class="donation-item-name">{{ $donation->item_name }}</td>
+                                <td class="donation-category">{{ $donation->category }}</td>
+                                <td class="donation-quantity">{{ $donation->quantity }}</td>
+                                <td class="donation-location">{{ $donation->dropOffPoint->name ?? 'N/A' }}</td>
                                 <td>
                                     <span id="status-badge-{{ $donation->inkind_id }}"
                                         class="badge {{ strtolower($donation->status) }}"
@@ -418,7 +429,9 @@
                                         </select>
                                     @else
                                         <select
-                                            onchange="updateDonationStatus({{ $donation->inkind_id }}, this.value)"
+                                            data-donation-status-control="{{ $donation->inkind_id }}"
+                                            data-current-status="{{ $donation->status }}"
+                                            onchange='updateDonationStatus(@json((string) $donation->inkind_id), this.value, this)'
                                             style="padding: 4px 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; cursor: pointer;">
                                             <option value="Scheduled"
                                                 {{ $donation->status == 'Scheduled' ? 'selected' : '' }}>Scheduled
@@ -429,17 +442,15 @@
                                         </select>
                                     @endif
 
-                                </td>
-                                <td>
                                     <button class="btn btn-sm" data-id="{{ $donation->inkind_id }}"
-                                        onclick="openEditModal({{ $donation->inkind_id }})">
+                                        onclick='openEditModal(@json((string) $donation->inkind_id))'>
                                         Edit
                                     </button>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="9">
+                                <td colspan="8">
                                     @include('administrator.partials.empty-state', [
                                         'icon' => 'ri-gift-line',
                                         'title' => 'No Donations Yet',
@@ -644,6 +655,30 @@
             </section>
         </main>
 
+        <script>
+            function inkindJsArg(value) {
+                return JSON.stringify(String(value ?? ''));
+            }
+
+            function inkindEscapeHtml(value) {
+                const div = document.createElement('div');
+                div.textContent = value ?? '';
+                return div.innerHTML;
+            }
+
+            function setDonationRowData(row, donation) {
+                if (!row || !donation) return;
+
+                row.dataset.donorName = donation.donor_name ?? '';
+                row.dataset.donorEmail = donation.donor_email ?? '';
+                row.dataset.donorPhone = donation.donor_phone ?? '';
+                row.dataset.itemName = donation.item_name ?? '';
+                row.dataset.category = donation.category ?? '';
+                row.dataset.quantity = donation.quantity ?? '';
+                row.dataset.status = donation.status ?? '';
+            }
+        </script>
+
 
         {{-- ====================================PAGINATION========================================= --}}
         <script>
@@ -751,7 +786,7 @@
                 if (donations.length === 0) {
                     tbody.innerHTML = `
             <tr>
-                <td colspan="9">
+                <td colspan="8">
                     <div class="admin-empty-state admin-empty-state--table">
                         <div class="admin-empty-state__icon" aria-hidden="true">
                             <i class="ri-search-line"></i>
@@ -768,14 +803,18 @@
                 let html = '';
 
                 donations.forEach(donation => {
+                    const id = String(donation.id ?? donation.inkind_id ?? '');
+                    const status = donation.status || 'Scheduled';
+                    const jsId = inkindJsArg(id);
+
                     // Build avatar HTML
                     const avatarHtml = donation.avatar_url ?
-                        `<img class="user-avatar" src="${donation.avatar_url}" alt="Profile photo" referrerpolicy="no-referrer">` :
-                        `<span>${donation.donor_name ? donation.donor_name.substring(0, 2).toUpperCase() : 'AN'}</span>`;
+                        `<img class="user-avatar" src="${inkindEscapeHtml(donation.avatar_url)}" alt="Profile photo" referrerpolicy="no-referrer">` :
+                        `<span>${donation.donor_name ? inkindEscapeHtml(donation.donor_name.substring(0, 2).toUpperCase()) : 'AN'}</span>`;
 
                     // Build status dropdown based on current status
                     let statusDropdown = '';
-                    if (donation.status === 'Distributed') {
+                    if (status === 'Distributed') {
                         statusDropdown = `
                 <select disabled style="padding: 4px 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; background: #f3f4f6; color: #6b7280; cursor: not-allowed;">
                     <option selected>No action required</option>
@@ -783,16 +822,25 @@
             `;
                     } else {
                         statusDropdown = `
-                <select onchange="updateDonationStatus(${donation.id}, this.value)" style="padding: 4px 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; cursor: pointer;">
-                    <option value="Scheduled" ${donation.status === 'Scheduled' ? 'selected' : ''}>Scheduled</option>
-                    <option value="Received" ${donation.status === 'Received' ? 'selected' : ''}>Received</option>
+                <select data-donation-status-control="${inkindEscapeHtml(id)}" data-current-status="${inkindEscapeHtml(status)}" onchange='updateDonationStatus(${jsId}, this.value, this)' style="padding: 4px 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; cursor: pointer;">
+                    <option value="Scheduled" ${status === 'Scheduled' ? 'selected' : ''}>Scheduled</option>
+                    <option value="Received" ${status === 'Received' ? 'selected' : ''}>Received</option>
                 </select>
             `;
                     }
 
                     // Build the row HTML
                     html += `
-            <tr id="donation-row-${donation.id}" data-date="${donation.created_at}">
+            <tr id="donation-row-${inkindEscapeHtml(id)}"
+                data-donation-id="${inkindEscapeHtml(id)}"
+                data-date="${inkindEscapeHtml(donation.created_at || '')}"
+                data-donor-name="${inkindEscapeHtml(donation.donor_name || '')}"
+                data-donor-email="${inkindEscapeHtml(donation.donor_email || '')}"
+                data-donor-phone="${inkindEscapeHtml(donation.donor_phone || '')}"
+                data-item-name="${inkindEscapeHtml(donation.item_name || '')}"
+                data-category="${inkindEscapeHtml(donation.category || '')}"
+                data-quantity="${inkindEscapeHtml(donation.quantity ?? '')}"
+                data-status="${inkindEscapeHtml(status)}">
                 <td>
                     <div class="donor">
                         <div class="avatar blue">
@@ -800,29 +848,27 @@
                         </div>
                         <div class="donor-meta">
                             <div class="donor-name">
-                                ${donation.donor_name || 'Anonymous'}
+                                ${inkindEscapeHtml(donation.donor_name || 'Anonymous')}
                             </div>
                             <div class="muted xsmall">
-                                ${donation.donor_email || ''}
+                                ${inkindEscapeHtml(donation.donor_email || '')}
                             </div>
                         </div>
                     </div>
                 </td>
-                <td>${donation.donor_phone || ''}</td>
-                <td>${donation.item_name}</td>
-                <td>${donation.category}</td>
-                <td>${donation.quantity}</td>
-                <td>${donation.dropoff_name || 'N/A'}</td>
+                <td class="donation-phone">${inkindEscapeHtml(donation.donor_phone || '')}</td>
+                <td class="donation-item-name">${inkindEscapeHtml(donation.item_name || '')}</td>
+                <td class="donation-category">${inkindEscapeHtml(donation.category || '')}</td>
+                <td class="donation-quantity">${inkindEscapeHtml(donation.quantity ?? '')}</td>
+                <td class="donation-location">${inkindEscapeHtml(donation.dropoff_name || 'N/A')}</td>
                 <td>
-                    <span id="status-badge-${donation.id}" class="badge ${donation.status.toLowerCase()}" style="display:inline-block;min-width:90px;text-align:center;white-space:nowrap;">
-                        ${donation.status}
+                    <span id="status-badge-${inkindEscapeHtml(id)}" class="badge ${inkindEscapeHtml(status.toLowerCase())}" style="display:inline-block;min-width:90px;text-align:center;white-space:nowrap;">
+                        ${inkindEscapeHtml(status)}
                     </span>
                 </td>
                 <td>
                     ${statusDropdown}
-                </td>
-                <td>
-                    <button class="btn btn-sm" data-id="${donation.id}" onclick="openEditModal(${donation.id})">
+                    <button class="btn btn-sm" data-id="${inkindEscapeHtml(id)}" onclick='openEditModal(${jsId})'>
                         Edit
                     </button>
                 </td>
@@ -923,7 +969,7 @@
 
                     tbody.innerHTML = `
             <tr>
-                <td colspan="9" style="text-align: center; padding: 40px;">
+                <td colspan="8" style="text-align: center; padding: 40px;">
                     <div class="spinner" style="display: inline-block; width: 30px; height: 30px; border: 3px solid #e5e7eb; border-top-color: #3b82f6; border-radius: 50%; animation: spin 1s linear infinite;"></div>
                     <p style="margin-top: 15px; color: #6b7280;">Loading donations...</p>
                 </td>
@@ -1326,33 +1372,51 @@
 
         {{-- =========================In-KIND TABLE SCRIPT================================ --}}
         <script>
-            function updateDonationStatus(id, status) {
+            function updateDonationStatus(id, status, control = null) {
+                id = String(id ?? '');
+                const previousStatus = control?.dataset.currentStatus || '';
+
                 fetch("{{ route('donations.updateStatus') }}", {
                         method: "POST",
                         headers: {
                             "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                            "Content-Type": "application/json"
+                            "Content-Type": "application/json",
+                            "Accept": "application/json",
+                            "X-Requested-With": "XMLHttpRequest"
                         },
                         body: JSON.stringify({
                             id: id,
                             status: status
                         })
                     })
-                    .then(response => response.json())
+                    .then(async response => {
+                        const data = await response.json().catch(() => ({}));
+                        if (!response.ok) {
+                            throw new Error(data.message || 'Failed to update status.');
+                        }
+                        return data;
+                    })
                     .then(data => {
                         if (data.success) {
                             const badge = document.getElementById("status-badge-" + id);
-                            badge.textContent = data.new_status;
+                            if (badge) {
+                                badge.textContent = data.new_status;
 
-                            // Remove old classes
-                            badge.classList.remove("scheduled", "received", "distributed");
+                                // Remove old classes
+                                badge.classList.remove("scheduled", "received", "distributed", "cancelled");
 
-                            // Add new class
-                            badge.classList.add(data.new_status.toLowerCase());
+                                // Add new class
+                                badge.classList.add(data.new_status.toLowerCase());
+                            }
+
+                            const row = document.getElementById("donation-row-" + id);
+                            if (row) row.dataset.status = data.new_status;
+                            if (control) control.dataset.currentStatus = data.new_status;
 
                             // If status is now Distributed, disable the dropdown
                             if (data.new_status === 'Distributed') {
-                                const select = document.querySelector(`select[onchange*="${id}"]`);
+                                const select = control || document.querySelector(
+                                    `[data-donation-status-control="${id}"]`);
                                 if (select) {
                                     // Create disabled dropdown
                                     const newSelect = document.createElement('select');
@@ -1374,11 +1438,21 @@
                                     select.parentNode.replaceChild(newSelect, select);
                                 }
                             }
+
+                            UniversalModalManager.showToast(`Donation marked as ${data.new_status}.`, 'success');
+                            if (typeof refreshDonations === 'function') {
+                                refreshDonations();
+                            }
                         } else {
+                            if (control && previousStatus) control.value = previousStatus;
                             UniversalModalManager.showToast('Failed to update status.', 'error');
                         }
                     })
-                    .catch(error => console.error("Error:", error));
+                    .catch(error => {
+                        if (control && previousStatus) control.value = previousStatus;
+                        console.error("Error:", error);
+                        UniversalModalManager.showToast(error.message || 'Failed to update status.', 'error');
+                    });
             }
         </script>
 
@@ -1389,14 +1463,20 @@
             }
 
             function openEditModal(id) {
+                id = String(id ?? '');
                 const row = document.getElementById("donation-row-" + id);
+                if (!row) {
+                    showModalMessage('Unable to find this donation row. Please refresh the page.', 'error');
+                    return;
+                }
+
                 document.getElementById("edit_donation_id").value = id;
-                document.getElementById("edit_donor_name").value = row.querySelector(".donor-name").textContent.trim();
-                document.getElementById("edit_donor_email").value = row.querySelector(".muted.xsmall").textContent.trim();
-                document.getElementById("edit_donor_phone").value = row.children[2].textContent.trim();
-                document.getElementById("edit_item_name").value = row.children[3].textContent.trim();
-                document.getElementById("edit_category").value = row.children[4].textContent.trim();
-                document.getElementById("edit_quantity").value = row.children[5].textContent.trim();
+                document.getElementById("edit_donor_name").value = row.dataset.donorName || '';
+                document.getElementById("edit_donor_email").value = row.dataset.donorEmail || '';
+                document.getElementById("edit_donor_phone").value = row.dataset.donorPhone || '';
+                document.getElementById("edit_item_name").value = row.dataset.itemName || '';
+                document.getElementById("edit_category").value = row.dataset.category || '';
+                document.getElementById("edit_quantity").value = row.dataset.quantity || '';
 
                 // Hide message when opening modal
                 document.getElementById('modal-message').style.display = 'none';
@@ -1437,12 +1517,15 @@
                         if (data.success) {
                             // Update row cells directly
                             const row = document.getElementById(`donation-row-${donationId}`);
-                            row.querySelector(".donor-name").textContent = data.donation.donor_name ?? "Anonymous";
-                            row.querySelector(".muted.xsmall").textContent = data.donation.donor_email ?? "";
-                            row.children[2].textContent = data.donation.donor_phone ?? "";
-                            row.children[3].textContent = data.donation.item_name;
-                            row.children[4].textContent = data.donation.category;
-                            row.children[5].textContent = data.donation.quantity;
+                            if (row) {
+                                setDonationRowData(row, data.donation);
+                                row.querySelector(".donor-name").textContent = data.donation.donor_name ?? "Anonymous";
+                                row.querySelector(".muted.xsmall").textContent = data.donation.donor_email ?? "";
+                                row.querySelector(".donation-phone").textContent = data.donation.donor_phone ?? "";
+                                row.querySelector(".donation-item-name").textContent = data.donation.item_name ?? "";
+                                row.querySelector(".donation-category").textContent = data.donation.category ?? "";
+                                row.querySelector(".donation-quantity").textContent = data.donation.quantity ?? "";
+                            }
 
                             // Show success message instead of alert
                             showModalMessage(data.message || 'Donation updated successfully!', 'success');
@@ -1469,7 +1552,10 @@
                 document.querySelectorAll('.filter-btn').forEach(btn => {
                     btn.classList.remove('active');
                 });
-                event.target.classList.add('active');
+
+                const activeButton = (typeof event !== 'undefined' && event.target?.closest?.('.filter-btn')) ||
+                    document.querySelector(`.filter-btn[data-status="${status}"]`);
+                if (activeButton) activeButton.classList.add('active');
 
 
                 const rows = document.querySelectorAll('#donations-body tr');
@@ -1551,46 +1637,59 @@
                 let html = '';
 
                 donations.forEach(donation => {
+                    const id = String(donation.inkind_id ?? donation.id ?? '');
+                    const status = donation.status || 'Scheduled';
+                    const jsId = inkindJsArg(id);
+                    const dropoffName = donation.dropoff_name || donation.drop_off_point?.name || 'N/A';
+                    const statusDropdown = status === 'Distributed' ?
+                        `<select disabled style="padding: 4px 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; background: #f3f4f6; color: #6b7280; cursor: not-allowed;">
+                            <option selected>No action required</option>
+                        </select>` :
+                        `<select data-donation-status-control="${inkindEscapeHtml(id)}" data-current-status="${inkindEscapeHtml(status)}" onchange='updateDonationStatus(${jsId}, this.value, this)'>
+                            <option value="Scheduled" ${status === 'Scheduled' ? 'selected' : ''}>Scheduled</option>
+                            <option value="Received" ${status === 'Received' ? 'selected' : ''}>Received</option>
+                        </select>`;
+
                     html += `
-                <tr id="donation-row-${donation.inkind_id}">
-                    <td class="col-check">
-                        <input class="row-check" type="checkbox" />
-                    </td>
+                <tr id="donation-row-${inkindEscapeHtml(id)}"
+                    data-donation-id="${inkindEscapeHtml(id)}"
+                    data-donor-name="${inkindEscapeHtml(donation.donor_name || '')}"
+                    data-donor-email="${inkindEscapeHtml(donation.donor_email || '')}"
+                    data-donor-phone="${inkindEscapeHtml(donation.donor_phone || '')}"
+                    data-item-name="${inkindEscapeHtml(donation.item_name || '')}"
+                    data-category="${inkindEscapeHtml(donation.category || '')}"
+                    data-quantity="${inkindEscapeHtml(donation.quantity ?? '')}"
+                    data-status="${inkindEscapeHtml(status)}">
                     <td>
                         <div class="donor">
                             <div class="avatar blue">
-                                ${donation.donor_name ? donation.donor_name.substring(0, 2).toUpperCase() : 'AN'}
+                                ${donation.donor_name ? inkindEscapeHtml(donation.donor_name.substring(0, 2).toUpperCase()) : 'AN'}
                             </div>
                             <div class="donor-meta">
                                 <div class="donor-name">
-                                    ${donation.donor_name || 'Anonymous'}
+                                    ${inkindEscapeHtml(donation.donor_name || 'Anonymous')}
                                 </div>
                                 <div class="muted xsmall">
-                                    ${donation.donor_email || ''}
+                                    ${inkindEscapeHtml(donation.donor_email || '')}
                                 </div>
                             </div>
                         </div>
                     </td>
-                    <td>${donation.donor_phone || ''}</td>
-                    <td>${donation.item_name}</td>
-                    <td>${donation.category}</td>
-                    <td>${donation.quantity}</td>
-                    <td>${donation.drop_off_point ? donation.drop_off_point.name : 'N/A'}</td>
+                    <td class="donation-phone">${inkindEscapeHtml(donation.donor_phone || '')}</td>
+                    <td class="donation-item-name">${inkindEscapeHtml(donation.item_name || '')}</td>
+                    <td class="donation-category">${inkindEscapeHtml(donation.category || '')}</td>
+                    <td class="donation-quantity">${inkindEscapeHtml(donation.quantity ?? '')}</td>
+                    <td class="donation-location">${inkindEscapeHtml(dropoffName)}</td>
                     <td>
-                        <span id="status-badge-${donation.inkind_id}"
-                            class="badge ${donation.status.toLowerCase()}"
+                        <span id="status-badge-${inkindEscapeHtml(id)}"
+                            class="badge ${inkindEscapeHtml(status.toLowerCase())}"
                             style="display:inline-block;min-width:90px;text-align:center;white-space:nowrap;">
-                            ${donation.status}
+                            ${inkindEscapeHtml(status)}
                         </span>
                     </td>
                     <td>
-                        <select onchange="updateDonationStatus(${donation.inkind_id}, this.value)">
-                            <option value="Scheduled" ${donation.status === 'Scheduled' ? 'selected' : ''}>Scheduled</option>
-                            <option value="Received" ${donation.status === 'Received' ? 'selected' : ''}>Received</option>
-                        </select>
-                    </td>
-                    <td>
-                        <button class="btn btn-sm" data-id="${donation.inkind_id}" onclick="openEditModal(${donation.inkind_id})">
+                        ${statusDropdown}
+                        <button class="btn btn-sm" data-id="${inkindEscapeHtml(id)}" onclick='openEditModal(${jsId})'>
                             Edit
                         </button>
                     </td>
@@ -2590,7 +2689,7 @@
                                 badge.classList.add('distributed');
 
                                 // Also update the dropdown
-                                const select = document.querySelector(`select[onchange*="${id}"]`);
+                                const select = document.querySelector(`[data-donation-status-control="${id}"]`);
                                 if (select) {
                                     // Create disabled dropdown
                                     const newSelect = document.createElement('select');

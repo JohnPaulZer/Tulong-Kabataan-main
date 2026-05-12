@@ -115,7 +115,8 @@
                     Login to Register
                 </a>
             @else
-                <button class="evt-details-modal-register-btn" onclick="registerForEvent({{ $event->event_id }})">
+                <button class="evt-details-modal-register-btn"
+                    onclick='registerForEvent(@json((string) $event->event_id))'>
                     Register Now
                 </button>
             @endif

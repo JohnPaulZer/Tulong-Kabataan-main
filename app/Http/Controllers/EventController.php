@@ -205,11 +205,11 @@ class EventController
             'last_name'      => ['required', 'string', 'max:100'],
             'email'          => ['required', 'email', 'max:150'],
             'phone'          => ['required', 'string', 'max:50'],
-            'messenger_link' => ['nullable', 'url', 'max:250'],
+            'messenger_link' => ['nullable', 'string', 'max:250'],
             'age'            => ['nullable', 'integer', 'min:10'],
             'sex'            => ['nullable', 'in:male,female'],
             'address'        => ['nullable', 'string', 'max:255'],
-            'vroles_id'      => ['nullable', 'integer'],
+            'vroles_id'      => ['required', 'string'],
             'remind_me'        => 'nullable|in:0,1',
             'reminder_minutes' => 'nullable|integer|min:1',
         ]);
@@ -221,11 +221,9 @@ class EventController
 
         $selectedRole = null;
         if (!empty($validated['vroles_id'])) {
-            $selectedRole = VolunteerRole::where('vroles_id', $validated['vroles_id'])
-                ->where('event_id', $event->event_id)
-                ->first();
+            $selectedRole = VolunteerRole::find($validated['vroles_id']);
 
-            if (! $selectedRole) {
+            if (! $selectedRole || $selectedRole->event_id !== $event->event_id) {
                 return back()->withInput()->withErrors(['vroles_id' => 'Selected role is invalid for this event.']);
             }
         }

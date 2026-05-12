@@ -43,7 +43,7 @@ Route::get('/events/updates', function (Request $request) {
                     'event_id' => $event->event_id,
                     'title' => $event->title,
                     'description' => $event->description,
-                    'photo' => $event->photo,
+                    'photo' => file_url($event->photo),
                     'start_date' => $event->start_date,
                     'end_date' => $event->end_date,
                     'location' => $event->location,

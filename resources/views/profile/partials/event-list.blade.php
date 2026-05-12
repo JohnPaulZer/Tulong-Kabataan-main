@@ -83,7 +83,7 @@
                 <div class="usereve-btn-row">
                     @if ($showUnregister)
                         <button type="button" class="usereve-btn usereve-btn-danger usereve-rounded-button"
-                            onclick="confirmUnregister({{ $event->event_id }}, '{{ addslashes($event->title) }}')">
+                            data-event-id="{{ $event->event_id }}" data-event-title="{{ $event->title }}">
                             Unregister
                         </button>
                     @endif
@@ -98,4 +98,3 @@
         <p>You haven't registered for any events yet.</p>
     </div>
 @endforelse
-

@@ -232,17 +232,17 @@
                                     @else
                                         required
                                         placeholder="Enter your age"
-                                        min="1"
+                                        min="10"
                                         max="120" @endif>
                             </div>
 
                             <div class="flex min-w-0 flex-col gap-1.5">
                                 <label for="event_messenger" class="text-xs font-semibold text-slate-700">
-                                    Messenger Link <span class="text-red-600">*</span>
+                                    Messenger Profile
                                 </label>
-                                <input id="event_messenger" type="url"
+                                <input id="event_messenger" type="text"
                                     class="form-control min-h-10 border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
-                                    name="messenger_link" placeholder="https://m.me/yourprofile" required>
+                                    name="messenger_link" placeholder="Messenger name or profile link">
                             </div>
 
                             <div class="flex min-w-0 flex-col gap-1.5">
