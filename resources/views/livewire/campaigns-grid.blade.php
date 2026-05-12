@@ -1,4 +1,4 @@
-<div wire:poll.{{ $pollingInterval }}ms>
+<div>
     <!-- Top Bar -->
     <div class="tk-campaigns-toolbar">
         <span class="campaign-count">{{ $campaignCount }} campaigns found</span>
@@ -25,6 +25,29 @@
     <!-- Campaign Cards Grid - Now using vertical layout -->
     <div class="tk-campaigns-grid">
         @foreach($campaigns as $campaign)
+            @php
+                $targetAmount = (float) ($campaign->target_amount ?? 0);
+                $currentAmount = (float) ($campaign->current_amount ?? 0);
+                $progress = $targetAmount > 0
+                    ? min(100, max(0, ($currentAmount / $targetAmount) * 100))
+                    : 0;
+                $progressLabel = number_format($progress, 0);
+                $categoryLabel = $campaign->category ?? 'Community Project';
+                $organizerName = $campaign->campaign_organizer ?: 'Campaign Organizer';
+                $organizerInitials = collect(explode(' ', trim($organizerName)))
+                    ->filter()
+                    ->take(2)
+                    ->map(fn ($part) => \Illuminate\Support\Str::upper(\Illuminate\Support\Str::substr($part, 0, 1)))
+                    ->implode('');
+                $organizerInitials = $organizerInitials ?: 'TK';
+                $views = (int) ($campaign->views ?? 0);
+                $viewsLabel = $views >= 1000000
+                    ? rtrim(rtrim(number_format($views / 1000000, 1), '0'), '.') . 'M'
+                    : ($views >= 1000
+                        ? rtrim(rtrim(number_format($views / 1000, 1), '0'), '.') . 'K'
+                        : number_format($views));
+            @endphp
+
             <div class="tk-campaign-card" wire:key="campaign-{{ $campaign->id }}">
                 <a href="{{ route('campaign.view', $campaign->campaign_id) }}">
                     <div class="campaign-img-wrap">
@@ -35,38 +58,47 @@
                             class="campaign-img"
                             loading="lazy">
                         <span class="views-badge">
-                            <i class="ri-eye-line"></i>
-                            {{ number_format($campaign->views) }} views
+                            <i class="ri-eye-line campaign-card-icon"></i>
+                            {{ $viewsLabel }}
                         </span>
                     </div>
                 </a>
 
                 <div class="tk-campaign-content">
+                    <span class="campaign-category">{{ $categoryLabel }}</span>
+
                     <a href="{{ route('campaign.view', $campaign->campaign_id) }}">
                         <h3 class="campaign-title">{{ $campaign->title }}</h3>
                     </a>
 
-                    @php
-                        $progress = $campaign->target_amount > 0
-                            ? ($campaign->current_amount / $campaign->target_amount) * 100
-                            : 0;
-                    @endphp
                     <div class="progress-container">
+                        <div class="campaign-raised-row">
+                            <p class="raised">&#8369;{{ number_format($currentAmount, 0) }} raised</p>
+                            <span class="campaign-percent">{{ $progressLabel }}%</span>
+                        </div>
                         <div class="progress-bar-bg">
                             <div class="progress-bar" style="width: {{ $progress }}%"></div>
                         </div>
-                        <p class="raised">
-                            ₱{{ number_format($campaign->current_amount, 0) }} raised
-                            <span style="color: #9ca3af;">of</span>
-                            <span class="goal">₱{{ number_format($campaign->target_amount, 0) }} goal</span>
-                        </p>
+                        <p class="goal">Goal: &#8369;{{ number_format($targetAmount, 0) }}</p>
+                    </div>
+
+                    <div class="campaign-card-footer">
+                        <div class="campaign-organizer">
+                            <span class="organizer-avatar">{{ $organizerInitials }}</span>
+                            <span class="organizer-name">{{ $organizerName }}</span>
+                        </div>
+                        <a class="campaign-donate-link" href="{{ route('campaign.view', $campaign->campaign_id) }}"
+                            aria-label="Donate to {{ $campaign->title }}">
+                            <i class="ri-heart-fill campaign-card-icon"></i>
+                            <span>Donate</span>
+                        </a>
                     </div>
                 </div>
             </div>
         @endforeach
     </div>
 
-<!-- Modern Pagination -->
+    <!-- Modern Pagination -->
     @if($campaigns->hasPages())
     <div class="modern-pagination">
         <div class="pagination-info">
@@ -150,4 +182,3 @@ function handlePaginationClick() {
     setTimeout(scrollToTop, 450);
 }
 </script>
-

@@ -5,6 +5,7 @@ import {
     RiAlarmLine,
     RiAlarmWarningLine,
     RiAlertLine,
+    RiApps2Line,
     RiArrowDownSLine,
     RiArrowGoBackLine,
     RiArrowLeftLine,
@@ -28,6 +29,7 @@ import {
     RiCalendarScheduleLine,
     RiCalendarTodoLine,
     RiCameraLine,
+    RiChatSmile3Line,
     RiCheckDoubleLine,
     RiCheckLine,
     RiCheckboxBlankCircleFill,
@@ -41,8 +43,11 @@ import {
     RiComputerLine,
     RiContactsLine,
     RiCustomerService2Line,
+    RiCustomerServiceLine,
     RiDashboardLine,
+    RiDatabase2Line,
     RiDeleteBinLine,
+    RiDownloadLine,
     RiDropLine,
     RiEdit2Line,
     RiEditLine,
@@ -54,9 +59,11 @@ import {
     RiFileCopyLine,
     RiFileDownloadLine,
     RiFileLine,
+    RiFileList3Line,
     RiFileListLine,
     RiFileTextLine,
     RiFlagLine,
+    RiFlashlightLine,
     RiFocus3Line,
     RiFolderLine,
     RiGift2Line,
@@ -79,13 +86,16 @@ import {
     RiInboxLine,
     RiInformationLine,
     RiInstagramLine,
+    RiLayoutRightLine,
     RiLeafFill,
     RiLineChartLine,
     RiLoader4Line,
+    RiLock2Line,
     RiLockLine,
     RiLoginBoxLine,
     RiLogoutBoxRLine,
     RiMailCheckLine,
+    RiMailCloseLine,
     RiMailLine,
     RiMailSendLine,
     RiMap2Line,
@@ -94,7 +104,9 @@ import {
     RiMapPinLine,
     RiMedicineBottleLine,
     RiMegaphoneLine,
+    RiMenu3Line,
     RiMenuLine,
+    RiMessage3Line,
     RiMessengerLine,
     RiMoneyDollarCircleLine,
     RiNavigationLine,
@@ -105,32 +117,48 @@ import {
     RiPhoneLine,
     RiPlayCircleLine,
     RiPriceTag3Line,
+    RiPriceTagLine,
     RiQrCodeLine,
+    RiQrScanLine,
     RiRefreshLine,
+    RiRepeatLine,
     RiSave3Line,
+    RiSaveLine,
     RiSearchLine,
+    RiSendPlane2Fill,
     RiSendPlaneFill,
+    RiSendPlaneLine,
+    RiSettings3Line,
     RiSettingsLine,
     RiShareLine,
     RiShieldCheckFill,
     RiShieldCheckLine,
+    RiShieldUserLine,
     RiShoppingBasketLine,
+    RiStackLine,
     RiStopCircleLine,
     RiTShirtLine,
     RiTeamLine,
     RiTimeLine,
     RiTimerLine,
+    RiToggleLine,
+    RiToolsLine,
+    RiTrophyLine,
     RiTruckLine,
     RiTwitterXFill,
     RiUpload2Line,
+    RiUploadCloud2Line,
     RiUser3Line,
     RiUserAddLine,
     RiUserFill,
+    RiUserForbidLine,
     RiUserFollowFill,
     RiUserFollowLine,
     RiUserHeartLine,
     RiUserLine,
     RiUserLocationLine,
+    RiUserSearchLine,
+    RiUserSettingsLine,
     RiUserStarLine,
 } from 'react-icons/ri';
 
@@ -140,6 +168,7 @@ const iconMap = {
     'ri-alarm-line': RiAlarmLine,
     'ri-alarm-warning-line': RiAlarmWarningLine,
     'ri-alert-line': RiAlertLine,
+    'ri-apps-2-line': RiApps2Line,
     'ri-arrow-down-s-line': RiArrowDownSLine,
     'ri-arrow-go-back-line': RiArrowGoBackLine,
     'ri-arrow-left-line': RiArrowLeftLine,
@@ -163,6 +192,7 @@ const iconMap = {
     'ri-calendar-schedule-line': RiCalendarScheduleLine,
     'ri-calendar-todo-line': RiCalendarTodoLine,
     'ri-camera-line': RiCameraLine,
+    'ri-chat-smile-3-line': RiChatSmile3Line,
     'ri-checkbox-blank-circle-fill': RiCheckboxBlankCircleFill,
     'ri-checkbox-blank-line': RiCheckboxBlankLine,
     'ri-checkbox-circle-fill': RiCheckboxCircleFill,
@@ -176,8 +206,11 @@ const iconMap = {
     'ri-computer-line': RiComputerLine,
     'ri-contacts-line': RiContactsLine,
     'ri-customer-service-2-line': RiCustomerService2Line,
+    'ri-customer-service-line': RiCustomerServiceLine,
     'ri-dashboard-line': RiDashboardLine,
+    'ri-database-2-line': RiDatabase2Line,
     'ri-delete-bin-line': RiDeleteBinLine,
+    'ri-download-line': RiDownloadLine,
     'ri-drop-line': RiDropLine,
     'ri-edit-2-line': RiEdit2Line,
     'ri-edit-line': RiEditLine,
@@ -189,9 +222,11 @@ const iconMap = {
     'ri-file-copy-line': RiFileCopyLine,
     'ri-file-download-line': RiFileDownloadLine,
     'ri-file-line': RiFileLine,
+    'ri-file-list-3-line': RiFileList3Line,
     'ri-file-list-line': RiFileListLine,
     'ri-file-text-line': RiFileTextLine,
     'ri-flag-line': RiFlagLine,
+    'ri-flashlight-line': RiFlashlightLine,
     'ri-folder-line': RiFolderLine,
     'ri-gift-2-line': RiGift2Line,
     'ri-gift-line': RiGiftLine,
@@ -213,13 +248,16 @@ const iconMap = {
     'ri-inbox-line': RiInboxLine,
     'ri-information-line': RiInformationLine,
     'ri-instagram-line': RiInstagramLine,
+    'ri-layout-right-line': RiLayoutRightLine,
     'ri-leaf-fill': RiLeafFill,
     'ri-line-chart-line': RiLineChartLine,
     'ri-loader-4-line': RiLoader4Line,
+    'ri-lock-2-line': RiLock2Line,
     'ri-lock-line': RiLockLine,
     'ri-login-box-line': RiLoginBoxLine,
     'ri-logout-box-r-line': RiLogoutBoxRLine,
     'ri-mail-check-line': RiMailCheckLine,
+    'ri-mail-close-line': RiMailCloseLine,
     'ri-mail-line': RiMailLine,
     'ri-mail-send-line': RiMailSendLine,
     'ri-map-2-line': RiMap2Line,
@@ -228,7 +266,9 @@ const iconMap = {
     'ri-map-pin-line': RiMapPinLine,
     'ri-medicine-bottle-line': RiMedicineBottleLine,
     'ri-megaphone-line': RiMegaphoneLine,
+    'ri-menu-3-line': RiMenu3Line,
     'ri-menu-line': RiMenuLine,
+    'ri-message-3-line': RiMessage3Line,
     'ri-messenger-line': RiMessengerLine,
     'ri-money-dollar-circle-line': RiMoneyDollarCircleLine,
     'ri-navigation-line': RiNavigationLine,
@@ -239,33 +279,49 @@ const iconMap = {
     'ri-phone-line': RiPhoneLine,
     'ri-play-circle-line': RiPlayCircleLine,
     'ri-price-tag-3-line': RiPriceTag3Line,
+    'ri-price-tag-line': RiPriceTagLine,
     'ri-qr-code-line': RiQrCodeLine,
+    'ri-qr-scan-line': RiQrScanLine,
     'ri-refresh-line': RiRefreshLine,
+    'ri-repeat-line': RiRepeatLine,
     'ri-save-3-line': RiSave3Line,
+    'ri-save-line': RiSaveLine,
     'ri-search-line': RiSearchLine,
+    'ri-send-plane-2-fill': RiSendPlane2Fill,
     'ri-send-plane-fill': RiSendPlaneFill,
+    'ri-send-plane-line': RiSendPlaneLine,
+    'ri-settings-3-line': RiSettings3Line,
     'ri-settings-line': RiSettingsLine,
     'ri-share-line': RiShareLine,
     'ri-shield-check-fill': RiShieldCheckFill,
     'ri-shield-check-line': RiShieldCheckLine,
+    'ri-shield-user-line': RiShieldUserLine,
     'ri-shopping-basket-line': RiShoppingBasketLine,
+    'ri-stack-line': RiStackLine,
     'ri-stop-circle-line': RiStopCircleLine,
     'ri-target-line': RiFocus3Line,
     'ri-team-line': RiTeamLine,
     'ri-time-line': RiTimeLine,
     'ri-timer-line': RiTimerLine,
+    'ri-toggle-line': RiToggleLine,
+    'ri-tools-line': RiToolsLine,
+    'ri-trophy-line': RiTrophyLine,
     'ri-truck-line': RiTruckLine,
     'ri-t-shirt-line': RiTShirtLine,
     'ri-twitter-x-fill': RiTwitterXFill,
     'ri-upload-2-line': RiUpload2Line,
+    'ri-upload-cloud-2-line': RiUploadCloud2Line,
     'ri-user-3-line': RiUser3Line,
     'ri-user-add-line': RiUserAddLine,
     'ri-user-check-fill': RiUserFollowFill,
     'ri-user-fill': RiUserFill,
+    'ri-user-forbid-line': RiUserForbidLine,
     'ri-user-follow-line': RiUserFollowLine,
     'ri-user-heart-line': RiUserHeartLine,
     'ri-user-line': RiUserLine,
     'ri-user-location-line': RiUserLocationLine,
+    'ri-user-search-line': RiUserSearchLine,
+    'ri-user-settings-line': RiUserSettingsLine,
     'ri-user-star-line': RiUserStarLine,
 };
 
@@ -276,7 +332,11 @@ function getIconClass(element) {
 function renderIcon(element) {
     const iconClass = getIconClass(element);
 
-    if (!iconClass || element.dataset.tkReactIcon === iconClass) {
+    if (!iconClass) {
+        return;
+    }
+
+    if (element.dataset.tkReactIcon === iconClass && element.querySelector('svg')) {
         return;
     }
 
@@ -305,37 +365,6 @@ function renderIcon(element) {
 
 function renderIcons(root = document) {
     root.querySelectorAll('[class*="ri-"]').forEach(renderIcon);
-}
-
-function observeIcons() {
-    const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-            if (mutation.type === 'childList') {
-                mutation.addedNodes.forEach((node) => {
-                    if (!(node instanceof Element)) {
-                        return;
-                    }
-
-                    if (getIconClass(node)) {
-                        renderIcon(node);
-                    }
-
-                    renderIcons(node);
-                });
-            }
-
-            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                renderIcon(mutation.target);
-            }
-        });
-    });
-
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true,
-        attributes: true,
-        attributeFilter: ['class'],
-    });
 }
 
 function injectIconStyles() {
@@ -373,10 +402,32 @@ function injectIconStyles() {
     document.head.appendChild(style);
 }
 
+function scheduleRenderIcons(root = document) {
+    window.requestAnimationFrame(() => renderIcons(root));
+}
+
+function bindLivewireIconRendering() {
+    document.addEventListener('livewire:init', () => {
+        if (!window.Livewire || typeof window.Livewire.hook !== 'function') {
+            return;
+        }
+
+        window.Livewire.hook('morph.updated', ({ el }) => {
+            if (el instanceof Element) {
+                scheduleRenderIcons(el);
+            }
+        });
+
+        window.Livewire.hook('commit', ({ succeed }) => {
+            succeed(() => scheduleRenderIcons());
+        });
+    }, { once: true });
+}
+
 function initReactIcons() {
     injectIconStyles();
     renderIcons();
-    observeIcons();
+    bindLivewireIconRendering();
 }
 
 if (document.readyState === 'loading') {
