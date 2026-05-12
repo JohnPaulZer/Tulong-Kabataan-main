@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\AdminAccount;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
@@ -17,16 +17,14 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        DB::table('admin_accounts')->insert([
-            [
-                'admin_id' => 1,
+        if (! AdminAccount::where('username', 'admin')
+            ->orWhere('email', 'admin@tulongkabataan.com')
+            ->exists()) {
+            AdminAccount::create([
                 'username' => 'admin',
                 'email' => 'admin@tulongkabataan.com',
-                'password' => Hash::make('admin123'), // Bcrypt hashed password
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            // Add more admin accounts if needed
-        ]);
+                'password' => Hash::make('admin123'),
+            ]);
+        }
     }
 }

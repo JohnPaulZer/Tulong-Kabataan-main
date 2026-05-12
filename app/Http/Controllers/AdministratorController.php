@@ -38,6 +38,8 @@ use App\Services\Storage\R2StorageException;
 
 class AdministratorController
 {
+    private const ADMIN_GATE_TTL_SECONDS = 600;
+
     protected R2StorageService $storage;
 
     public function __construct(R2StorageService $storage)
@@ -67,6 +69,8 @@ class AdministratorController
         if (!$expiresAt || $expiresAt < time()) {
             return redirect()->route('landpage');
         }
+
+        session(['admin_gate_expires_at' => time() + self::ADMIN_GATE_TTL_SECONDS]);
 
         return view('administrator.admin-login');
     }
@@ -116,8 +120,8 @@ class AdministratorController
      */
     public function adminGate(Request $request)
     {
-        // Allow access to admin login for the next 15 seconds
-        $request->session()->put('admin_gate_expires_at', time() + 15);
+        // Allow enough time for the administrator to load the page and sign in.
+        $request->session()->put('admin_gate_expires_at', time() + self::ADMIN_GATE_TTL_SECONDS);
 
         return response()->json(['ok' => true]);
     }
