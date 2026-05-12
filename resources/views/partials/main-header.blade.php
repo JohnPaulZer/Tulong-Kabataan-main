@@ -284,7 +284,7 @@
                     </div>
 
                     <div class="notif-footer">
-                        <a href="#" id="seeAllNotifications" data-modal-trigger>
+                        <a href="{{ route('notifications.index') }}" id="seeAllNotifications" data-modal-trigger>
                             See all notifications
                         </a>
                     </div>
@@ -780,6 +780,7 @@
                     const closeBtn = document.getElementById('notificationsModalCloseBtn');
 
                     const closeModal = () => {
+                        modal.classList.remove('show');
                         modal.style.display = 'none';
                         this.exitDeleteMode();
                     };
@@ -897,6 +898,7 @@
                 openModal() {
                     const modal = document.getElementById('notificationsModal');
                     if (modal) {
+                        modal.classList.add('show');
                         modal.style.display = 'block';
                         this.filterModalNotifications(this.modalCurrentFilter);
                         this.exitDeleteMode(); // Ensure normal mode when opening
@@ -927,14 +929,19 @@
 
                 closeModal() {
                     const modal = document.getElementById('notificationsModal');
-                    if (modal) modal.style.display = 'none';
+                    if (modal) {
+                        modal.classList.remove('show');
+                        modal.style.display = 'none';
+                    }
                 }
 
                 updateTabBadges() {
                     const campaignUnread = document.querySelectorAll('.campaign-notification.unread').length;
                     const donationUnread = document.querySelectorAll('.donation-notification.unread').length;
                     const eventUnread = document.querySelectorAll('.event-notification.unread').length; // ADD THIS
-                    const totalUnread = campaignUnread + donationUnread + eventUnread; // UPDATE THIS
+                    const totalUnread = document.querySelectorAll(
+                        '.notif-item.unread, #notificationsModalContent .notifications-modal-item.unread'
+                    ).length;
 
                     const campaignsBadge = document.getElementById('campaignsTabBadge');
                     const donationsBadge = document.getElementById('donationsTabBadge');
@@ -1045,7 +1052,10 @@
                     }
                 }
 
-                markAllAsRead() {
+                async markAllAsRead() {
+                    const saved = await this.markAllAsReadOnServer();
+                    if (!saved) return;
+
                     const unreadItems = document.querySelectorAll('.notif-item.unread');
                     const modalUnreadItems = document.querySelectorAll(
                         '#notificationsModalContent .notifications-modal-item.unread');
@@ -1059,7 +1069,7 @@
                     if (this.currentFilter === 'unread') this.filterNotifications('unread');
                     if (this.modalCurrentFilter === 'unread') this.filterModalNotifications('unread');
 
-                    this.markAllAsReadOnServer();
+                    this.showToast('All notifications marked as read', 'success');
                 }
 
                 resetBadge() {
@@ -1072,7 +1082,7 @@
 
                 async markAllAsReadOnServer() {
                     try {
-                        await fetch('/notifications/mark-all-read', {
+                        const response = await fetch('/notifications/mark-all-read', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -1080,9 +1090,16 @@
                             },
                             body: JSON.stringify({})
                         });
+
+                        if (!response.ok) {
+                            throw new Error('Failed to mark notifications as read');
+                        }
+
+                        return true;
                     } catch (error) {
                         console.error('Error marking all notifications as read:', error);
                         this.showToast('Failed to mark notifications as read', 'error');
+                        return false;
                     }
                 }
 
