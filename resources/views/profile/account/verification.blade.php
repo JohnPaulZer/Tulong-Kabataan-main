@@ -308,7 +308,14 @@
         // ====== Wizard Logic ======
         const reuploadMode = @json($vr && $vr->status === 'reupload');
         const reuploadFields = @json($reuploadFields);
+        const maxVerificationFileBytes = @json((int) config('r2.validation.max_size_kb', 16384) * 1024);
+        const maxVerificationPostBytes = 64 * 1024 * 1024;
         let step = 1;
+
+        function formatBytes(bytes) {
+            if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+            return `${Math.ceil(bytes / 1024)} KB`;
+        }
 
         // Build step list dynamically
         let activeSteps = [];
@@ -422,6 +429,11 @@
                     showError(input, label + " is required");
                     return false;
                 }
+
+                if (input.files[0].size > maxVerificationFileBytes) {
+                    showError(input, `${label} must be ${formatBytes(maxVerificationFileBytes)} or smaller`);
+                    return false;
+                }
             } else if (!input.value.trim()) {
                 showError(input, label + " is required");
                 return false;
@@ -515,6 +527,25 @@
 
         // Prevent invalid submit
         document.getElementById('kycForm').addEventListener('submit', function(e) {
+            const selectedFiles = [idFront, idBack, facePhoto, selfie]
+                .flatMap(input => Array.from(input?.files || []));
+            const totalBytes = selectedFiles.reduce((sum, file) => sum + file.size, 0);
+
+            if (totalBytes > maxVerificationPostBytes) {
+                e.preventDefault();
+                const firstFileInput = [idFront, idBack, facePhoto, selfie].find(input => input?.files?.length);
+                if (firstFileInput) {
+                    showError(firstFileInput,
+                        `Total uploaded images must be ${formatBytes(maxVerificationPostBytes)} or smaller`);
+                    firstFileInput.focus();
+                    firstFileInput.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                }
+                return;
+            }
+
             if (!validateStep(activeSteps[maxStep - 1].id)) {
                 e.preventDefault();
                 const firstInvalid = document.querySelector('.verification-is-invalid');

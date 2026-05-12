@@ -185,24 +185,13 @@
         // Function to setup unregister buttons
         function setupUnregisterButtons() {
             document.querySelectorAll('.usereve-btn-danger').forEach(btn => {
-                if (btn.onclick && btn.onclick.toString().includes('confirmUnregister')) {
-                    // Already has onclick handler, skip
-                    return;
-                }
+                const eventId = btn.dataset.eventId;
+                if (!eventId) return;
 
-                // Extract event ID and title from onclick attribute if exists
-                const onclickAttr = btn.getAttribute('onclick');
-                if (onclickAttr && onclickAttr.includes('confirmUnregister')) {
-                    // Parse the onclick attribute
-                    const match = onclickAttr.match(/confirmUnregister\((\d+),\s*'([^']+)'\)/);
-                    if (match) {
-                        const eventId = match[1];
-                        const eventTitle = match[2];
-                        btn.onclick = (e) => {
-                            e.preventDefault();
-                            confirmUnregister(eventId, eventTitle);
-                        };
-                    }
+                const eventTitle = btn.dataset.eventTitle || 'this event';
+                btn.onclick = (e) => {
+                    e.preventDefault();
+                    confirmUnregister(eventId, eventTitle);
                 }
             });
         }

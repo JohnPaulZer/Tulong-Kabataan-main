@@ -76,13 +76,16 @@
                 enctype="multipart/form-data" class="event-stepper-form">
                 @csrf
 
-                @if ($errors->any())
+                @if ($errors->any() || session('error'))
                     <div class="event-create-errors">
                         <strong>Please review the highlighted fields.</strong>
                         <ul>
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
                             @endforeach
+                            @if (session('error'))
+                                <li>{{ session('error') }}</li>
+                            @endif
                         </ul>
                     </div>
                 @endif
@@ -130,8 +133,8 @@
                             <div class="event-field">
                                 <label for="create_event_photo">Cover Photo</label>
                                 <input type="file" id="create_event_photo" name="photo"
-                                    accept="image/png, image/jpeg">
-                                <small>Accepted: JPG or PNG. Max size: 5MB.</small>
+                                    accept="image/png, image/jpeg, image/webp">
+                                <small>Accepted: JPG, PNG, or WebP. Max size: 5MB.</small>
                             </div>
 
                             <div class="event-photo-preview" id="createEventPhotoPreview" hidden>
@@ -177,6 +180,7 @@
                             <div class="event-location-search">
                                 <i class="ri-search-line"></i>
                                 <input type="text" id="create_event_location_search"
+                                    value="{{ old('location') }}"
                                     placeholder="Search for a venue, barangay, or landmark">
                                 <button type="button" id="createEventSearchBtn">Find</button>
                             </div>
@@ -200,10 +204,8 @@
 
                             <input type="hidden" id="create_event_location" name="location"
                                 value="{{ old('location') }}" required>
-                            <input type="hidden" id="create_event_lat" name="lat" value="{{ old('lat') }}"
-                                required>
-                            <input type="hidden" id="create_event_lng" name="lng" value="{{ old('lng') }}"
-                                required>
+                            <input type="hidden" id="create_event_lat" name="lat" value="{{ old('lat') }}">
+                            <input type="hidden" id="create_event_lng" name="lng" value="{{ old('lng') }}">
                         </div>
                     </section>
 
@@ -684,10 +686,12 @@
                         }
 
                         if (index === 1) {
+                            syncTypedLocation();
+
                             const location = document.getElementById('create_event_location');
                             const search = document.getElementById('create_event_location_search');
                             if (!location.value.trim()) {
-                                search.setCustomValidity('Select a location from the map or search results.');
+                                search.setCustomValidity('Enter an event location or select one from the map.');
                                 search.reportValidity();
                                 search.addEventListener('input', () => search.setCustomValidity(''), {
                                     once: true
@@ -777,6 +781,24 @@
                         document.getElementById('create_event_lat').value = normalized.latitude;
                         document.getElementById('create_event_lng').value = normalized.longitude;
                         document.getElementById('create_event_location_search').setCustomValidity('');
+                    }
+
+                    function syncTypedLocation() {
+                        const location = document.getElementById('create_event_location');
+                        const search = document.getElementById('create_event_location_search');
+                        const selected = document.getElementById('createEventSelectedLocation');
+                        const typedLocation = search?.value?.trim() || '';
+
+                        if (location && typedLocation && !location.value.trim()) {
+                            location.value = typedLocation;
+                            if (selected) {
+                                selected.textContent = typedLocation;
+                            }
+                        }
+
+                        if (location?.value?.trim()) {
+                            search?.setCustomValidity('');
+                        }
                     }
 
                     async function reverseGeocodeCreateEvent(coordinate) {
@@ -936,6 +958,8 @@
                     });
 
                     form?.addEventListener('submit', (event) => {
+                        syncTypedLocation();
+
                         for (let index = 0; index < steps.length; index++) {
                             setStep(index, {
                                 skipAnimation: true
@@ -958,7 +982,7 @@
                         skipAnimation: true
                     });
 
-                    @if ($errors->any())
+                    @if ($errors->any() || session('error'))
                         openModal();
                     @endif
                 });

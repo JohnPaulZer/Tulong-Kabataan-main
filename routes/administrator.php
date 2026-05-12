@@ -74,7 +74,7 @@ Route::prefix('administrator')->group(function () {
     Route::post('/donations/impact-reports/create', [AdministratorController::class, 'impactreportstore'])
         ->name('impact-reports.store');
 
-    Route::get('/administrator/donations/received', [AdministratorController::class, 'getReceivedDonations'])
+    Route::get('/donations/received', [AdministratorController::class, 'getReceivedDonations'])
         ->name('donations.getReceived');
     //==================================================================================================================
 

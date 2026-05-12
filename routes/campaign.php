@@ -31,7 +31,7 @@ Route::post('/notifications/{notification}/read', function ($notificationId) {
     $notification = Auth::user()->notifications()->where('id', $notificationId)->first();
 
     if ($notification) {
-        $notification->markAsRead();
+        $notification->forceFill(['read_at' => now()])->save();
     }
 
     return response()->json(['success' => true]);
@@ -39,7 +39,7 @@ Route::post('/notifications/{notification}/read', function ($notificationId) {
 
 // Mark-all notification
 Route::post('/notifications/mark-all-read', function () {
-    Auth::user()->unreadNotifications->markAsRead();
+    Auth::user()->unreadNotifications()->update(['read_at' => now()]);
     return response()->json(['success' => true]);
 })->middleware('auth')->name('notifications.mark-all-read');
 

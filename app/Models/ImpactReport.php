@@ -36,9 +36,30 @@ class ImpactReport extends Model
      * on the document instead of using a pivot table. This method provides
      * a compatible interface for attaching donations.
      */
-    public function donations()
+    public function donationQuery()
     {
         return InKindDonation::whereIn('_id', $this->donation_ids ?? []);
+    }
+
+    public function getDonationsAttribute()
+    {
+        if (array_key_exists('donations', $this->relations)) {
+            return $this->relations['donations'];
+        }
+
+        $ids = collect($this->donation_ids ?? [])
+            ->map(fn ($id) => (string) $id)
+            ->filter()
+            ->values()
+            ->all();
+
+        $donations = empty($ids)
+            ? collect()
+            : InKindDonation::whereIn('_id', $ids)->get();
+
+        $this->setRelation('donations', $donations);
+
+        return $donations;
     }
 
     /**

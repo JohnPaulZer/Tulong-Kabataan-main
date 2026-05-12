@@ -215,6 +215,20 @@
 
         /* Data from backend */
         const calendarEventsAll = @json($calendarEvents);
+        const eventPhotoFallback = @json(asset('img/bg2.jpg'));
+        const localStorageBaseUrl = @json(url('storage'));
+
+        function resolveEventPhotoUrl(photo) {
+            if (!photo) {
+                return eventPhotoFallback;
+            }
+
+            if (/^https?:\/\//i.test(photo) || photo.startsWith('/')) {
+                return photo;
+            }
+
+            return `${localStorageBaseUrl}/${String(photo).replace(/^\/+/, '')}`;
+        }
 
         // ==================== MODAL LIFECYCLE HELPERS ====================
         let eventModalScrollState = null;
@@ -741,8 +755,7 @@
         function updateTooltipContent() {
             const evt = currentTooltipEvents[currentTooltipIndex];
 
-            // FIX 1: Corrected asset path to include 'event_photos' folder
-            tooltipImg.src = `{{ url('storage') }}/${evt.photo}`;
+            tooltipImg.src = resolveEventPhotoUrl(evt.photo);
             tooltipTitle.textContent = evt.title;
             tooltipDesc.textContent = evt.description || "No description available.";
 
@@ -1217,15 +1230,6 @@
                     hasErrors = true;
                 }
 
-                // Validate messenger link
-                if (!messengerLink.value.trim()) {
-                    showError(messengerLink);
-                    hasErrors = true;
-                } else if (!isValidUrl(messengerLink.value.trim())) {
-                    showError(messengerLink);
-                    hasErrors = true;
-                }
-
                 // Validate sex selection
                 if (!sexSelect.value) {
                     showError(sexSelect);
@@ -1253,10 +1257,9 @@
                     return false;
                 }
 
-                localStorage.setItem('pendingToast', JSON.stringify({
-                    message: 'Successfully registered for the event!',
-                    type: 'success'
-                }));
+                if (!form.reportValidity()) {
+                    return false;
+                }
 
                 // If validation passes, submit the form
                 window.TKLoadingModal?.show();
@@ -1287,16 +1290,6 @@
                     removeError(reminderSelect);
                 }
             });
-        }
-
-        // Helper functions for validation
-        function isValidUrl(string) {
-            try {
-                new URL(string);
-                return true;
-            } catch (_) {
-                return false;
-            }
         }
 
         function showError(field) {
@@ -1556,18 +1549,6 @@
         }
 
         /**
-         * Check for stored toast messages from previous page
-         */
-        function checkForStoredToast() {
-            const storedToast = localStorage.getItem('pendingToast');
-            if (storedToast) {
-                const toastData = JSON.parse(storedToast);
-                showUniversalToast(toastData.message, toastData.type);
-                localStorage.removeItem('pendingToast'); // Clear after showing
-            }
-        }
-
-        /**
          * Check for session messages from server
          */
         function checkForSessionMessages() {
@@ -1639,7 +1620,6 @@
             initializeBackgroundClickHandler();
 
             // Check for notifications
-            checkForStoredToast();
             checkForSessionMessages();
 
             // Initial render
@@ -1849,7 +1829,7 @@
             if (description) description.textContent = eventData.description.substring(0, 100) +
                 (eventData.description.length > 100 ? '...' : '');
             if (image) {
-                image.src = `{{ url('storage') }}/${eventData.photo}`;
+                image.src = resolveEventPhotoUrl(eventData.photo);
                 image.alt = eventData.title;
             }
 
@@ -1964,7 +1944,7 @@
              data-event-type="${eventType}"
              data-load-time="${now.toISOString()}">
             <div class="evt-card-image">
-                <img src="{{ url('storage') }}/${eventData.photo}" alt="${eventData.title}">
+                <img src="${resolveEventPhotoUrl(eventData.photo)}" alt="${eventData.title}">
             </div>
             <div class="evt-card-content">
                 <div class="evt-card-header">

@@ -139,8 +139,7 @@ class AdministratorController
             ->get();
 
         // Get impact reports
-        $impactReports = ImpactReport::with('donations')
-            ->orderBy('report_date', 'desc') // Limit to 3 recent reports
+        $impactReports = ImpactReport::orderBy('report_date', 'desc') // Limit to 3 recent reports
             ->get();
 
         // Get ended campaigns (NEW)
@@ -766,9 +765,13 @@ class AdministratorController
 
     public function updatestatus(Request $request)
     {
+        $validated = $request->validate([
+            'id' => ['required', 'string'],
+            'status' => ['required', 'in:Scheduled,Received,Distributed,Cancelled'],
+        ]);
 
-        $donation = InKindDonation::findOrFail($request->id);
-        $donation->status = $request->status;
+        $donation = InKindDonation::findOrFail($validated['id']);
+        $donation->status = $validated['status'];
         $donation->save();
 
         return response()->json([
@@ -811,7 +814,18 @@ class AdministratorController
     {
         $donations = InKindDonation::with('dropOffPoint')
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->get()
+            ->map(fn ($donation) => [
+                'inkind_id' => $donation->inkind_id,
+                'donor_name' => $donation->donor_name,
+                'donor_email' => $donation->donor_email,
+                'donor_phone' => $donation->donor_phone,
+                'item_name' => $donation->item_name,
+                'category' => $donation->category,
+                'quantity' => $donation->quantity,
+                'dropoff_name' => $donation->dropOffPoint->name ?? null,
+                'status' => $donation->status,
+            ]);
 
         // UPDATE THIS LINE: Include both Received AND Distributed
         $receivedTotalItems = InKindDonation::whereIn('status', ['Received', 'Distributed'])->sum('quantity');
@@ -952,7 +966,7 @@ class AdministratorController
             return response()->json([
                 'success' => true,
                 'message' => 'Impact report created successfully!',
-                'data' => $impactReport->load('donations')
+                'data' => $impactReport
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -1068,8 +1082,11 @@ class AdministratorController
 
     public function submitevent(Request $request)
     {
+        if (!$request->session()->has('admin_logged_in')) {
+            return redirect()->route('admin.login');
+        }
 
-        $request->validate([
+        $validated = $request->validate([
             'title'               => 'required|string|max:255',
             'description'         => 'required|string',
             'photo'               => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120', // 5MB
@@ -1087,7 +1104,8 @@ class AdministratorController
             'roles.*.description' => 'required|string',
         ]);
 
-
+        $photoPath = null;
+        $event = null;
         try {
             $photoPath = $request->hasFile('photo')
                 ? $this->storage->upload($request->file('photo'), 'event_photos',
@@ -1097,29 +1115,44 @@ class AdministratorController
             return back()->withInput()->with('error', $e->getMessage());
         }
 
-
-        $event = Event::create([
-            'title'             => $request->input('title'),
-            'description'       => $request->input('description'),
-            'photo'             => $photoPath,
-            'start_date'        => $request->input('start_date'),
-            'end_date'          => $request->input('end_date'),
-            'location'          => $request->input('location'),
-            'lat'               => $request->input('lat'),
-            'lng'               => $request->input('lng'),
-            'deadline'          => $request->input('deadline'),
-            'coordinator_name'  => $request->input('coordinator_name'),
-            'coordinator_email' => $request->input('coordinator_email'),
-            'coordinator_phone' => $request->input('coordinator_phone'),
-        ]);
-
-
-        foreach ($request->input('roles') as $role) {
-            VolunteerRole::create([
-                'event_id'    => $event->event_id,
-                'name'        => $role['name'],
-                'description' => $role['description'],
+        try {
+            $event = Event::create([
+                'title'             => $validated['title'],
+                'description'       => $validated['description'],
+                'photo'             => $photoPath,
+                'start_date'        => $validated['start_date'],
+                'end_date'          => $validated['end_date'],
+                'location'          => $validated['location'],
+                'lat'               => $validated['lat'] ?? null,
+                'lng'               => $validated['lng'] ?? null,
+                'deadline'          => $validated['deadline'],
+                'coordinator_name'  => $validated['coordinator_name'],
+                'coordinator_email' => $validated['coordinator_email'],
+                'coordinator_phone' => $validated['coordinator_phone'],
             ]);
+
+            foreach ($validated['roles'] as $role) {
+                VolunteerRole::create([
+                    'event_id'    => $event->event_id,
+                    'name'        => $role['name'],
+                    'description' => $role['description'],
+                ]);
+            }
+        } catch (\Throwable $e) {
+            if ($event) {
+                $event->delete();
+            }
+
+            if ($photoPath) {
+                $this->storage->delete($photoPath);
+            }
+
+            Log::error('[Event] Create failed', [
+                'title' => $validated['title'] ?? null,
+                'message' => $e->getMessage(),
+            ]);
+
+            return back()->withInput()->with('error', 'Event was not saved. Please try again.');
         }
 
 

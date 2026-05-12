@@ -201,6 +201,9 @@ class ProfileController
     public function submitverifcation(Request $r)
     {
         $user   = $r->user();
+        $verificationImageMaxKb = (int) config('r2.validation.max_size_kb', 16384);
+        $requiredVerificationImage = "required|image|mimes:jpeg,png,webp|max:{$verificationImageMaxKb}";
+        $nullableVerificationImage = "nullable|image|mimes:jpeg,png,webp|max:{$verificationImageMaxKb}";
         $userId = $user->user_id; // ✅ using custom PK
 
         // 🔹 Re-upload flow
@@ -220,16 +223,16 @@ class ProfileController
 
             // Only require what admin requested
             if (in_array('id_front', $reuploadFields)) {
-                $rules['id_front'] = 'required|image|mimes:jpeg,png,webp|max:7168';
+                $rules['id_front'] = $requiredVerificationImage;
             }
             if (in_array('id_back', $reuploadFields)) {
-                $rules['id_back'] = 'required|image|mimes:jpeg,png,webp|max:7168';
+                $rules['id_back'] = $requiredVerificationImage;
             }
             if (in_array('face_photo', $reuploadFields)) {
-                $rules['face_photo'] = 'required|image|mimes:jpeg,png,webp|max:7168';
+                $rules['face_photo'] = $requiredVerificationImage;
             }
             if (in_array('selfie', $reuploadFields)) {
-                $rules['selfie'] = 'required|image|mimes:jpeg,png,webp|max:7168';
+                $rules['selfie'] = $requiredVerificationImage;
             }
 
             $r->validate($rules);
@@ -303,16 +306,16 @@ class ProfileController
             'sex'         => 'required|in:M,F',
 
             // Images
-            'id_front'    => 'required|image|mimes:jpeg,png,webp|max:7168',
-            'id_back'     => 'nullable|image|mimes:jpeg,png,webp|max:7168',
+            'id_front'    => $requiredVerificationImage,
+            'id_back'     => $nullableVerificationImage,
             'id_expiry'   => 'nullable|date',
-            'face_photo'  => 'required|image|mimes:jpeg,png,webp|max:7168',
-            'selfie'      => 'required|image|mimes:jpeg,png,webp|max:7168',
+            'face_photo'  => $requiredVerificationImage,
+            'selfie'      => $requiredVerificationImage,
         ]);
 
         if ($r->id_type === 'drivers_license') {
             $r->validate([
-                'id_back'   => 'required|image|mimes:jpeg,png,webp|max:7168',
+                'id_back'   => $requiredVerificationImage,
                 'id_expiry' => 'required|date|after:today',
             ]);
         }
@@ -1026,8 +1029,15 @@ class ProfileController
 
     public function cancelInKind(InKindDonation $donation)
     {
-        if ($donation->user_id !== Auth::id()) {
+        if ((string) $donation->user_id !== (string) Auth::id()) {
             return response()->json(['success' => false, 'error' => 'Unauthorized'], 403);
+        }
+
+        if ($donation->status !== 'Scheduled') {
+            return response()->json([
+                'success' => false,
+                'error' => 'Only scheduled donations can be cancelled.',
+            ], 422);
         }
 
         $donation->status = 'Cancelled';
@@ -1042,7 +1052,7 @@ class ProfileController
 
     public function deleteInKind(InKindDonation $donation)
     {
-        if ($donation->user_id !==  Auth::id()) {
+        if ((string) $donation->user_id !== (string) Auth::id()) {
             return response()->json(['success' => false, 'error' => 'Unauthorized'], 403);
         }
 
@@ -1093,8 +1103,7 @@ class ProfileController
             ->get();
 
         // Get impact reports
-        $impactReports = ImpactReport::with('donations')
-            ->orderBy('report_date', 'desc') // Limit to 3 recent reports
+        $impactReports = ImpactReport::orderBy('report_date', 'desc') // Limit to 3 recent reports
             ->get();
 
         // Get ended campaigns (NEW)
