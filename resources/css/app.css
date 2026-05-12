@@ -333,6 +333,14 @@ body.email-verified-page::before {
     content: none !important;
 }
 
+.tk-react-icon.ri-lg {
+    font-size: 1.3333em;
+}
+
+.tk-react-icon.ri-xl {
+    font-size: 1.5em;
+}
+
 @layer components {
     .verification-container {
         @apply mx-auto w-full px-5;

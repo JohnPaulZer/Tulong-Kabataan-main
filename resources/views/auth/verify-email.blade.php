@@ -7,7 +7,6 @@
     <title>Verify Email | Tulong Kabataan</title>
     <link rel="icon" href="{{ asset('img/log2.png') }}" type="image/png">
     <link rel="preload" as="image" href="{{ asset('img/backlogin.png') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="verify-email-page relative flex min-h-screen items-center justify-center overflow-hidden bg-[url('/img/backlogin.png')] bg-cover bg-center bg-no-repeat px-4 py-8 font-body text-slate-950"

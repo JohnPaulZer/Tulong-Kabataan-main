@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>DNC Record Details | Tulong Kabataan</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
   <link rel="icon" href="{{ asset('img/log2.png') }}" type="image/png">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   @vite('resources/js/app.js')
