@@ -1,275 +1,429 @@
 # Tulong Kabataan
 
-Tulong Kabataan is a Laravel-based community support platform for organizing donations, campaigns, volunteer events, and youth-focused community initiatives in Bicol. The system gives donors, volunteers, campaign creators, and administrators one place to manage fundraising, in-kind donations, event participation, account verification, and impact reporting.
+Tulong Kabataan is a web-based donation, campaign, volunteer, and community support platform. It helps users browse active campaigns, donate through a QR/payment proof flow, track donation activity, register for volunteer events, submit in-kind donations, and view transparency updates about how donations are used.
 
 Live website: **https://tulongkabataanbicol.com/**
 
-## Core Features
+## Project Overview
 
-- **Landing and public pages** for introducing the platform, featured campaigns, impact highlights, and trust information.
-- **Authentication** with registration, login, Google OAuth, email verification, forgot password, and reset password flows.
-- **Campaign management** for creating campaigns, viewing campaign details, receiving donations, tracking campaign progress, and exporting donation records.
-- **In-kind donation management** for item donations, drop-off locations, donation tracking, category charts, and impact reports.
-- **Event management** for volunteer events, event registration, volunteer roles, event status updates, and attendance/participation tracking.
-- **User profile dashboard** for managing personal details, identity verification, campaigns, donations, events, and in-kind records.
-- **Administrator dashboard** for account verification, campaign review, donation review, event management, in-kind location management, DNC records, charts, and reports.
+The system is built for youth-focused community support and relief initiatives. It provides public pages for campaigns, events, in-kind donations, impact reports, and policy information, while also giving registered users a dashboard for managing their profile, campaigns, donations, event registrations, verification status, and notifications.
+
+An administrator area is included for reviewing accounts, managing campaigns, checking donation proofs, publishing impact reports, managing events, maintaining drop-off points, and controlling site settings.
+
+## Purpose of the System
+
+The purpose of Tulong Kabataan is to make community support easier to organize and easier to verify. The platform helps:
+
+- Donors find campaigns and submit donations with payment proof.
+- Campaign creators publish fundraising campaigns and track donation progress.
+- Volunteers register for community events.
+- Users submit and track in-kind donations.
+- Administrators review records and publish transparency reports.
+- Visitors understand platform policies, contact channels, and donation usage.
+
+## Key Features
+
+- Campaign listing and campaign detail pages
+- QR-based donation flow with reference number and proof upload
+- Campaign progress tracking, donor count, and campaign updates
+- User registration, login, Google authentication, email verification, and password reset
+- User profile and dashboard pages
+- Identity verification workflow
+- In-kind donation submission and tracking
+- Drop-off point management
+- Volunteer event browsing and registration
+- Notifications for campaign, donation, event, and verification activity
+- Chatbot assistance for user-side platform questions
+- Transparency and impact report pages
+- Legal and policy pages
+- Administrator dashboard and reporting tools
+
+## User-Side Features
+
+- Browse public campaigns
+- View campaign details, goals, schedules, QR code, and updates
+- Donate to a campaign using GCash reference details and proof upload
+- Create campaigns after logging in
+- Track owned campaigns and donation activity
+- Add campaign updates
+- Register and verify an account
+- Update profile details, password, and profile photo
+- Submit identity verification documents
+- Browse volunteer events and register for roles
+- View event registration history
+- Submit in-kind donations
+- Track in-kind donation status
+- View impact reports and in-kind transparency information
+- Receive notifications
+- Use the chatbot assistant for platform guidance
+- Access About, Contact, Privacy Policy, Terms of Service, Cookie Policy, and Sitemap pages
+
+## Admin-Side Features
+
+- Admin login and dashboard
+- Account verification review and decision handling
+- Campaign monitoring and campaign detail review
+- Manual donation request approval or rejection
+- Campaign statistics, monthly funds, and PDF export
+- In-kind donation status management
+- Drop-off point creation, update, activation, and deletion
+- Impact report creation
+- Event creation and volunteer registration management
+- Volunteer statistics and live event data
+- DNC records management
+- Site settings for maintenance mode, announcements, registration, Google login, chatbot visibility, and public page access
+- User account activation, suspension, and deletion
 
 ## Tech Stack
 
 - **Backend:** Laravel 12, PHP 8.2+
-- **Frontend:** Blade, Tailwind CSS 4, Vite
-- **Interactivity:** JavaScript, Axios, Livewire
-- **Authentication:** Laravel auth/session flow, Laravel Socialite for Google login
-- **Reports/PDF:** Dompdf
-- **Charts and UI libraries:** ECharts, Chart.js, Remixicon, Bootstrap icons where used
-- **Database:** Configurable through `.env`
+- **Frontend:** Laravel Blade, Vite, JavaScript, React components for maps
+- **Styling:** Tailwind CSS 4 and modular CSS files
+- **Database:** MongoDB using `mongodb/laravel-mongodb`
+- **Storage:** Cloudflare R2 through Laravel's S3-compatible filesystem driver
+- **Authentication:** Laravel authentication flow, sessions, email verification, Laravel Socialite for Google login
+- **Chatbot:** Groq API configuration
+- **PDF/Reports:** Dompdf
+- **Maps:** Leaflet, React Leaflet
+- **Build Tools:** Composer, npm, Vite
 
-## Local Setup
+## Project Folder Structure
 
-1. Install PHP dependencies:
+```text
+Tulong-Kabataan-main/
+|-- app/                          # Laravel application code
+|   |-- Http/Controllers/          # Login, profile, campaign, event, in-kind, chatbot, and admin controllers
+|   |-- Jobs/                      # Queued jobs for scheduled campaign and event work
+|   |-- Livewire/                  # Livewire components
+|   |-- Mail/                      # Mail classes
+|   |-- Models/                    # MongoDB Eloquent models
+|   |-- Notifications/             # Laravel notifications
+|   `-- Services/                  # Chatbot and Cloudflare R2 storage services
+|-- bootstrap/                     # Laravel bootstrap and route loading configuration
+|-- config/                        # App, database, mail, queue, filesystem, R2, and service config
+|-- database/                      # Migrations, factories, and seeders
+|-- public/                        # Public entry point, images, and page-level JavaScript
+|-- resources/
+|   |-- css/                       # Tailwind entry file and modular CSS
+|   |-- js/                        # Vite-managed JavaScript and React map components
+|   `-- views/                     # Blade templates grouped by feature
+|-- routes/                        # Route files split by feature area
+|-- scripts/                       # Utility scripts, including image conversion
+|-- storage/                       # Logs, framework cache, and runtime files
+|-- tests/                         # Laravel tests
+|-- composer.json                  # PHP dependencies and scripts
+|-- package.json                   # Frontend dependencies and scripts
+|-- vite.config.js                 # Vite configuration
+`-- vercel.json                    # Deployment configuration
+```
+
+## Installation Steps
+
+### Prerequisites
+
+- PHP 8.2 or higher
+- Composer
+- Node.js and npm
+- MongoDB database
+- PHP MongoDB extension enabled
+- Cloudflare R2 account if file uploads will use R2
+
+### Setup
+
+1. Clone the repository.
+
+```bash
+git clone <repository-url>
+cd Tulong-Kabataan-main
+```
+
+2. Install PHP dependencies.
 
 ```bash
 composer install
 ```
 
-2. Install frontend dependencies:
+3. Install frontend dependencies.
 
 ```bash
 npm install
 ```
 
-3. Create your local environment file:
+4. Create the local environment file.
 
 ```bash
 copy .env.example .env
 ```
 
-On macOS/Linux:
+For macOS or Linux:
 
 ```bash
 cp .env.example .env
 ```
 
-4. Fill in the required `.env` values, especially database, mail, app URL, and Google OAuth credentials if Google login is needed.
-
-5. Generate the Laravel app key:
+5. Generate the application key.
 
 ```bash
 php artisan key:generate
 ```
 
-6. Run migrations:
+6. Configure `.env` with database, mail, storage, Google login, and chatbot values as needed.
+
+7. Run migrations if your environment uses the migration-backed setup.
 
 ```bash
 php artisan migrate
 ```
 
-7. Build frontend assets:
+8. Build frontend assets.
 
 ```bash
 npm run build
 ```
 
-8. Start the local server:
+## Environment Variables Example
+
+```env
+APP_NAME="Tulong Kabataan"
+APP_ENV=local
+APP_KEY=
+APP_DEBUG=true
+APP_URL=http://127.0.0.1:8000
+
+DB_CONNECTION=mongodb
+MONGODB_URI=mongodb://127.0.0.1:27017
+MONGODB_DB_NAME=tulong_kabataan
+
+SESSION_DRIVER=file
+QUEUE_CONNECTION=database
+CACHE_STORE=database
+FILESYSTEM_DISK=r2
+
+MAIL_MAILER=smtp
+MAIL_HOST=your-mail-host
+MAIL_PORT=587
+MAIL_USERNAME=your-mail-username
+MAIL_PASSWORD=your-mail-password
+MAIL_FROM_ADDRESS=no-reply@example.com
+MAIL_FROM_NAME="${APP_NAME}"
+
+R2_ACCOUNT_ID=
+R2_ACCESS_KEY_ID=
+R2_SECRET_ACCESS_KEY=
+R2_BUCKET_NAME=
+R2_ENDPOINT=
+R2_PUBLIC_URL=
+R2_REGION=auto
+R2_CONVERT_IMAGES_TO_WEBP=true
+
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+GOOGLE_REDIRECT_URI=http://127.0.0.1:8000/auth/google/callback
+
+GROQ_API_KEY=
+GROQ_MODEL=llama-3.3-70b-versatile
+
+VITE_APP_NAME="${APP_NAME}"
+VITE_MAP_TILE_URL=
+VITE_MAP_TILE_ATTRIBUTION=
+VITE_MAPTILER_API_KEY=
+VITE_NOMINATIM_BASE_URL=
+```
+
+Do not commit real `.env` credentials.
+
+## How to Run Locally
+
+Start the Laravel development server:
 
 ```bash
 php artisan serve
 ```
 
-For active frontend development, run Vite:
+Start Vite in a separate terminal during frontend development:
 
 ```bash
 npm run dev
 ```
 
-## Useful Commands
+Run the queue worker if testing queued jobs and notifications:
 
 ```bash
-php artisan serve
+php artisan queue:listen --tries=1
 ```
 
-Starts the Laravel development server.
+The application will usually be available at:
 
-```bash
-npm run dev
+```text
+http://127.0.0.1:8000
 ```
 
-Starts the Vite development server.
+You can also use the Composer development script:
 
 ```bash
+composer run dev
+```
+
+## Payment Setup Note
+
+The current donation flow uses a QR/payment proof process. Campaign creators upload a GCash QR code and GCash number when creating a campaign. Donors submit the donation amount, reference number, and proof image. Submitted donations are stored for review and transparency tracking.
+
+No Xendit or other automated payment gateway is currently wired into the codebase. If a payment provider is added later, place the provider credentials in `.env`, add server-side webhook validation, and update the donation status flow to rely on verified payment events.
+
+## File Upload and Storage Setup Note
+
+File uploads are handled through `App\Services\Storage\R2StorageService` and Cloudflare R2. The app stores object keys in the database and generates public URLs from the configured R2 public URL.
+
+Common upload folders are configured in `config/r2.php`, including:
+
+- User profile photos and verification documents
+- Campaign featured images, campaign images, and campaign QR codes
+- Donation proof images
+- Event banners
+- Impact report photos
+
+Set `FILESYSTEM_DISK=r2` and configure the `R2_*` variables in `.env`. Image uploads can be converted to WebP using `scripts/convert-image-to-webp.mjs`.
+
+For local-only storage, update `FILESYSTEM_DISK` and file URL handling carefully before testing uploads.
+
+## API Overview
+
+Most routes return Blade pages or JSON responses from Laravel controllers. Route files are split by feature in the `routes/` directory.
+
+| Area | Main Routes | Description |
+| --- | --- | --- |
+| Public pages | `/`, `/about-us`, `/privacy-policy`, `/terms-of-service`, `/cookie-policy`, `/contact-us`, `/sitemap` | Landing, information, and policy pages |
+| Authentication | `/login`, `/register`, `/loginaccount`, `/registeraccount`, `/auth/google`, `/email/verify` | Login, registration, Google OAuth, email verification, and password reset |
+| Campaigns | `/campaignpage`, `/campaignview/{id}`, `/campaign/create`, `/campaigns`, `/donations/store` | Campaign browsing, campaign creation, and donation submission |
+| Profile | `/profile`, `/profile/dashboard`, `/profile/event`, `/profile/inkind`, `/verifypage` | User profile, dashboard, verification, campaign owner tools, event history, and in-kind history |
+| Events | `/eventpage`, `/eventview/{event_id}`, `/event-register/{event}`, `/submit-registration`, `/events/updates` | Event browsing, event details, volunteer registration, and live updates |
+| In-kind donations | `/inkindpage`, `/inkind-donate`, `/my-donations`, `/in-kind-tracking`, `/api/impact-reports/{id}` | In-kind donation submission, tracking, stats, and public impact report data |
+| Notifications | `/notifications`, `/notifications/all`, `/notifications/mark-all-read`, `/notifications/{notification}/read` | User notification display and status updates |
+| Chatbot | `/chatbot/message` | JSON endpoint for chatbot replies |
+| Admin | `/administrator/*` | Admin dashboard, accounts, campaigns, donations, events, DNC records, settings, and reports |
+
+To view all registered routes locally:
+
+```bash
+php artisan route:list
+```
+
+## Screenshots
+
+Add screenshots after deployment or local UI testing.
+
+### Landing Page
+
+```text
+screenshots/landing-page.png
+```
+
+### Campaign Listing
+
+```text
+screenshots/campaign-listing.png
+```
+
+### Campaign Details and Donation Flow
+
+```text
+screenshots/campaign-details.png
+```
+
+### User Dashboard
+
+```text
+screenshots/user-dashboard.png
+```
+
+### In-Kind Donation Tracking
+
+```text
+screenshots/inkind-tracking.png
+```
+
+### Admin Dashboard
+
+```text
+screenshots/admin-dashboard.png
+```
+
+## Deployment Instructions
+
+1. Prepare the production environment with PHP 8.2+, Composer, Node.js, npm, MongoDB access, and required PHP extensions.
+
+2. Install dependencies.
+
+```bash
+composer install --no-dev --optimize-autoloader
+npm install
 npm run build
 ```
 
-Builds production frontend assets into `public/build`.
+3. Create and configure the production `.env` file.
 
 ```bash
-php artisan test
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://your-domain.com
+DB_CONNECTION=mongodb
+FILESYSTEM_DISK=r2
 ```
 
-Runs the Laravel test suite.
+4. Generate the application key if it has not been generated yet.
 
 ```bash
-php artisan config:clear
+php artisan key:generate
 ```
 
-Clears cached configuration after `.env` changes.
-
-## Environment Files
-
-- `.env` is the local private environment file. It should contain real credentials and must not be committed.
-- `.env.example` is the public template. It contains the same keys as `.env` but empty values so other developers know what to configure.
-
-## Route Organization
-
-This project uses multiple route files instead of a single `routes/web.php`. They are loaded in `bootstrap/app.php`.
-
-- `routes/login.php` handles landing page, login, registration, Google OAuth, email verification, forgot password, and reset password routes.
-- `routes/profile.php` handles user profile, identity verification, profile dashboard, campaign owner tools, event history, and in-kind donation history.
-- `routes/campaign.php` handles public campaign listing, campaign details, campaign creation, donations, and notifications.
-- `routes/event.php` handles public event pages, registration, event details, and live event update endpoints.
-- `routes/inkind.php` handles public in-kind donation pages, donation submission, tracking, stats, and impact report APIs.
-- `routes/administrator.php` handles administrator login, dashboard, account verification, campaigns, events, in-kind donations, locations, reports, and DNC records.
-- `routes/console.php` is reserved for Artisan console routes.
-
-## Folder Guide
-
-### Root Files
-
-- `.env.example` defines the required environment keys with empty values.
-- `artisan` is Laravel's command-line entry point.
-- `composer.json` lists PHP dependencies, Laravel scripts, autoloading, and test commands.
-- `package.json` lists frontend tooling such as Vite and Tailwind CSS.
-- `vite.config.js` configures Laravel Vite asset building.
-- `phpunit.xml` configures the Laravel test runner.
-- `README.md` contains this project documentation.
-
-### `app/`
-
-Contains the Laravel application code.
-
-- `app/Http/Controllers/` contains the main request handlers: authentication, profile, campaign, event, in-kind, and administrator logic.
-- `app/Models/` contains Eloquent models such as users, campaigns, donations, events, drop-off points, verification requests, and impact reports.
-- `app/Jobs/` contains queued/background work if the application needs async processing.
-- `app/Livewire/` contains Livewire components.
-- `app/Mail/` contains mail classes for email features.
-- `app/Notifications/` contains Laravel notification classes.
-- `app/Providers/` contains service providers that bootstrap application services.
-
-### `bootstrap/`
-
-Contains Laravel bootstrap files.
-
-- `bootstrap/app.php` configures the application, route files, middleware, exception handling, and health route.
-- `bootstrap/cache/` is used by Laravel for cached framework files.
-
-### `config/`
-
-Contains Laravel configuration files for app settings, database, sessions, filesystems, mail, cache, queues, and services. Most values are powered by `.env`.
-
-### `database/`
-
-Contains database-related files.
-
-- `database/migrations/` defines the tables for users, campaigns, donations, events, notifications, admin accounts, and impact reports.
-- `database/factories/` contains model factories for test or seed data.
-- `database/seeders/` contains seeders for inserting starter records.
-
-### `public/`
-
-Contains publicly accessible files served by the web server.
-
-- `public/img/` stores public images and branding assets.
-- `public/js/` stores page-specific JavaScript that is not bundled through Vite.
-- `public/build/` stores generated production assets from `npm run build`.
-
-There is no `public/css` folder anymore. Project CSS is handled through `resources/css/app.css` and Vite.
-
-### `resources/`
-
-Contains frontend source files.
-
-- `resources/views/` contains Blade templates for all pages.
-- `resources/css/app.css` is the main Tailwind/Vite CSS entrypoint.
-- `resources/css/layout/` contains shared layout styling such as the main header.
-- `resources/css/pages/` contains modular page styles grouped by feature area.
-- `resources/css/admin/` contains administrator page styles.
-- `resources/js/` contains Vite-managed JavaScript entry files.
-
-### `resources/views/`
-
-Blade templates are grouped by feature.
-
-- `resources/views/login/` contains login and register pages.
-- `resources/views/auth/` contains email verification and reset password pages.
-- `resources/views/campaign/` contains campaign listing, campaign detail, and campaign creation pages.
-- `resources/views/event/` contains public event pages and registration views.
-- `resources/views/inkind/` contains in-kind donation pages, modals, and tracking views.
-- `resources/views/profile/` contains user profile, account verification, dashboard, event history, and in-kind history pages.
-- `resources/views/administrator/` contains admin dashboard pages for accounts, campaigns, events, in-kind donations, and DNC records.
-- `resources/views/partials/` contains shared public partials such as headers, footers, and modals.
-- `resources/views/emails/` contains email templates.
-- `resources/views/livewire/` contains Livewire view templates.
-
-### `resources/css/`
-
-CSS is modular but still compiled through one Vite entrypoint.
-
-- `resources/css/app.css` imports Tailwind, global fonts, shared styles, and all CSS modules.
-- `resources/css/layout/main-header.css` styles the shared public header.
-- `resources/css/pages/profile/` styles profile dashboard, profile events, profile in-kind, and main profile pages.
-- `resources/css/pages/campaign/` styles campaign list, campaign detail, and campaign creation pages.
-- `resources/css/pages/event/` styles public event pages.
-- `resources/css/pages/inkind/` styles public in-kind pages and modals.
-- `resources/css/admin/` styles administrator account, event, and in-kind management pages.
-
-The CSS modules are scoped by page body classes where possible to reduce conflicts between pages.
-
-### `routes/`
-
-Contains route files grouped by domain instead of one large route file. This keeps authentication, profile, campaign, event, in-kind, and admin routes easier to maintain.
-
-### `storage/`
-
-Stores generated and uploaded runtime files.
-
-- `storage/app/` stores application files.
-- `storage/framework/` stores cache, sessions, compiled views, and framework runtime files.
-- `storage/logs/` stores Laravel logs.
-
-For public uploads, make sure the storage link exists:
+5. Run migrations if required by the target database setup.
 
 ```bash
-php artisan storage:link
+php artisan migrate --force
 ```
 
-### `tests/`
+6. Cache production configuration.
 
-Contains automated tests for the Laravel application. Use `php artisan test` to run them.
+```bash
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
 
-### `vendor/`
+7. Make sure the web server points to the `public/` directory.
 
-Contains Composer-installed PHP packages. This folder is generated by `composer install` and should not be edited manually.
+8. Start or configure the queue worker if using queued jobs.
 
-### `node_modules/`
+```bash
+php artisan queue:work --tries=3
+```
 
-Contains npm-installed frontend packages. This folder is generated by `npm install` and should not be edited manually.
+9. Configure scheduled tasks if recurring campaign or event reminder jobs are used.
 
-## Styling Notes
+```bash
+php artisan schedule:run
+```
 
-The project uses Tailwind CSS through Vite. The global font setup is:
+In production, run the scheduler through the server's task scheduler or cron.
 
-- **Primary/headings:** Merriweather
-- **Secondary/body/forms:** Inter
+## Future Improvements
 
-All project CSS should be imported through `resources/css/app.css`. Avoid adding new CSS files in `public/css`; keep source styles under `resources/css/` so Vite can compile them.
+- Add an automated payment gateway with webhook verification
+- Add stricter role-based access control for admin modules
+- Improve donation receipt generation
+- Add more automated tests for donation, campaign, verification, and admin workflows
+- Add a dedicated screenshot gallery for documentation
+- Add audit logs for admin actions
+- Improve campaign search and filtering
+- Add dashboard export options for more report types
+- Add more detailed transparency analytics for donors
 
-## Security Notes
+## Contributors
 
-- Do not commit `.env`.
-- Keep real database, mail, Google OAuth, and API credentials only in local or server environment variables.
-- Use `.env.example` only as a safe template.
-- Review admin routes and middleware before production deployment to ensure sensitive admin pages are protected.
+- Tulong Kabataan development team
 
-## Project Summary
+Contributors can add their names here as the project is maintained.
 
-Tulong Kabataan is built to make community support more organized and transparent. It connects donors, volunteers, campaign creators, and administrators through one Laravel application with dedicated tools for campaigns, in-kind donations, events, verification, reporting, and impact tracking.
+## License
+
+This project is currently documented as an academic/community capstone project. Add a specific license before public distribution or reuse.
