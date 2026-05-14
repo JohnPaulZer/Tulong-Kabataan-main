@@ -1,30 +1,52 @@
 <div>
+    @php
+        $visibleCampaigns = $campaigns->count();
+    @endphp
+
     <!-- Top Bar -->
     <div class="tk-campaigns-toolbar">
-        <span class="campaign-count">{{ $campaignCount }} campaigns found</span>
+        <span class="campaign-count">
+            <i class="ri-search-line"></i>
+            {{ $campaignCount }} {{ \Illuminate\Support\Str::plural('campaign', $campaignCount) }} found
+        </span>
         <div class="tk-campaign-toolbar-actions">
-            <div class="toolbar-sort">
-                <label for="sort">Sort:</label>
-                <select id="sort" wire:model.live="sort">
-                    <option value="latest">Latest</option>
-                    <option value="oldest">Oldest</option>
-                    <option value="most_funded">Most Funded</option>
-                    <option value="ending_soon">Ending Soon</option>
-                </select>
+            <div class="toolbar-field toolbar-sort">
+                <label for="sort">
+                    <i class="ri-arrow-down-s-line"></i>
+                    Sort
+                </label>
+                <div class="toolbar-select-wrap">
+                    <select id="sort" wire:model.live="sort">
+                        <option value="latest">Latest</option>
+                        <option value="oldest">Oldest</option>
+                        <option value="most_funded">Most Funded</option>
+                        <option value="ending_soon">Ending Soon</option>
+                    </select>
+                </div>
             </div>
-            <div class="toolbar-perpage">
-                <select wire:model.live="perPage">
-                    <option value="12">12 per page</option>
-                    <option value="24">24 per page</option>
-                    <option value="36">36 per page</option>
-                </select>
+            <div class="toolbar-field toolbar-perpage">
+                <label for="perPage">
+                    <i class="ri-apps-2-line"></i>
+                    Show
+                </label>
+                <div class="toolbar-select-wrap">
+                    <select id="perPage" wire:model.live="perPage">
+                        <option value="12">12 per page</option>
+                        <option value="24">24 per page</option>
+                        <option value="36">36 per page</option>
+                    </select>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Campaign Cards Grid - Now using vertical layout -->
-    <div class="tk-campaigns-grid">
-        @foreach($campaigns as $campaign)
+    <!-- Campaign Cards Grid -->
+    <div @class([
+        'tk-campaigns-grid',
+        'tk-campaigns-grid--compact' => $visibleCampaigns > 0 && $visibleCampaigns < 3,
+        'tk-campaigns-grid--empty' => $visibleCampaigns === 0,
+    ])>
+        @forelse($campaigns as $campaign)
             @php
                 $targetAmount = (float) ($campaign->target_amount ?? 0);
                 $currentAmount = (float) ($campaign->current_amount ?? 0);
@@ -46,14 +68,20 @@
                     : ($views >= 1000
                         ? rtrim(rtrim(number_format($views / 1000, 1), '0'), '.') . 'K'
                         : number_format($views));
+                $description = trim(strip_tags((string) ($campaign->description ?? '')));
+                $excerpt = $description
+                    ? \Illuminate\Support\Str::limit($description, 112)
+                    : 'Open this campaign to learn more about the support needed.';
+                $donorCount = (int) ($campaign->donor_count ?? 0);
+                $donorLabel = $donorCount === 1 ? '1 donor' : number_format($donorCount) . ' donors';
             @endphp
 
-            <div class="tk-campaign-card" wire:key="campaign-{{ $campaign->id }}">
-                <a href="{{ route('campaign.view', $campaign->campaign_id) }}">
+            <article class="tk-campaign-card" wire:key="campaign-{{ $campaign->id }}">
+                <a class="campaign-card-media-link" href="{{ route('campaign.view', $campaign->campaign_id) }}">
                     <div class="campaign-img-wrap">
                         <img src="{{ $campaign->featured_image
                             ? file_url($campaign->featured_image)
-                            : asset('img/default-camp.jpg') }}"
+                            : asset('img/camp.jpg') }}"
                             alt="{{ $campaign->title }}"
                             class="campaign-img"
                             loading="lazy">
@@ -65,21 +93,33 @@
                 </a>
 
                 <div class="tk-campaign-content">
-                    <span class="campaign-category">{{ $categoryLabel }}</span>
+                    <div class="campaign-card-kicker">
+                        <span class="campaign-category">{{ $categoryLabel }}</span>
+                    </div>
 
-                    <a href="{{ route('campaign.view', $campaign->campaign_id) }}">
+                    <a class="campaign-title-link" href="{{ route('campaign.view', $campaign->campaign_id) }}">
                         <h3 class="campaign-title">{{ $campaign->title }}</h3>
                     </a>
 
+                    <p class="campaign-excerpt">{{ $excerpt }}</p>
+
                     <div class="progress-container">
                         <div class="campaign-raised-row">
-                            <p class="raised">&#8369;{{ number_format($currentAmount, 0) }} raised</p>
+                            <div>
+                                <span class="campaign-stat-label">Raised</span>
+                                <p class="raised">&#8369;{{ number_format($currentAmount, 0) }}</p>
+                            </div>
                             <span class="campaign-percent">{{ $progressLabel }}%</span>
                         </div>
-                        <div class="progress-bar-bg">
+                        <div class="progress-bar-bg" role="progressbar" aria-valuenow="{{ $progressLabel }}"
+                            aria-valuemin="0" aria-valuemax="100"
+                            aria-label="{{ $progressLabel }}% funded">
                             <div class="progress-bar" style="width: {{ $progress }}%"></div>
                         </div>
-                        <p class="goal">Goal: &#8369;{{ number_format($targetAmount, 0) }}</p>
+                        <div class="campaign-goal-row">
+                            <p class="goal">Goal: &#8369;{{ number_format($targetAmount, 0) }}</p>
+                            <span class="campaign-donors">{{ $donorLabel }}</span>
+                        </div>
                     </div>
 
                     <div class="campaign-card-footer">
@@ -94,8 +134,16 @@
                         </a>
                     </div>
                 </div>
+            </article>
+        @empty
+            <div class="campaign-empty-state">
+                <div class="campaign-empty-icon">
+                    <i class="ri-heart-add-line"></i>
+                </div>
+                <h3>No active campaigns yet</h3>
+                <p>New community campaigns will appear here as soon as they are published.</p>
             </div>
-        @endforeach
+        @endforelse
     </div>
 
     <!-- Modern Pagination -->
