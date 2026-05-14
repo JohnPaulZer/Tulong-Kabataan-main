@@ -364,7 +364,11 @@ function renderIcon(element) {
 }
 
 function renderIcons(root = document) {
-    root.querySelectorAll('[class*="ri-"]').forEach(renderIcon);
+    if (root instanceof Element && root.matches('[class*="ri-"]')) {
+        renderIcon(root);
+    }
+
+    root.querySelectorAll?.('[class*="ri-"]').forEach(renderIcon);
 }
 
 function injectIconStyles() {
@@ -406,6 +410,49 @@ function scheduleRenderIcons(root = document) {
     window.requestAnimationFrame(() => renderIcons(root));
 }
 
+function bindDynamicIconRendering() {
+    const observeRoot = document.body;
+
+    if (!observeRoot) {
+        return;
+    }
+
+    const pendingRoots = new Set();
+    let scheduled = false;
+
+    const flushPendingRoots = () => {
+        scheduled = false;
+        pendingRoots.forEach((root) => renderIcons(root));
+        pendingRoots.clear();
+    };
+
+    const queueRoot = (root) => {
+        pendingRoots.add(root);
+
+        if (scheduled) {
+            return;
+        }
+
+        scheduled = true;
+        window.requestAnimationFrame(flushPendingRoots);
+    };
+
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            mutation.addedNodes.forEach((node) => {
+                if (node instanceof Element) {
+                    queueRoot(node);
+                }
+            });
+        });
+    });
+
+    observer.observe(observeRoot, {
+        childList: true,
+        subtree: true,
+    });
+}
+
 function bindLivewireIconRendering() {
     document.addEventListener('livewire:init', () => {
         if (!window.Livewire || typeof window.Livewire.hook !== 'function') {
@@ -427,7 +474,13 @@ function bindLivewireIconRendering() {
 function initReactIcons() {
     injectIconStyles();
     renderIcons();
+    bindDynamicIconRendering();
     bindLivewireIconRendering();
+
+    window.TKReactIcons = {
+        render: renderIcons,
+        scheduleRender: scheduleRenderIcons,
+    };
 }
 
 if (document.readyState === 'loading') {

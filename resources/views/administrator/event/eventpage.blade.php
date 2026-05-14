@@ -264,8 +264,9 @@
                             </div>
                             <div class="event-field">
                                 <label for="create_event_coordinator_phone">Phone Number <span>*</span></label>
-                                <input type="text" id="create_event_coordinator_phone" name="coordinator_phone"
-                                    value="{{ old('coordinator_phone') }}" placeholder="0912 345 6789" required>
+                                <input type="tel" id="create_event_coordinator_phone" name="coordinator_phone"
+                                    value="{{ old('coordinator_phone') }}" placeholder="09XXXXXXXXX"
+                                    inputmode="numeric" pattern="09[0-9]{9}" maxlength="11" required>
                             </div>
                         </div>
                     </section>

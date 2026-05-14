@@ -98,8 +98,8 @@
 
                 <div>
                     <div class="relative">
-                        <input type="tel" id="phone" placeholder=" " name="phone_number" required maxlength="20"
-                            class="{{ $inputClass }}">
+                        <input type="tel" id="phone" placeholder=" " name="phone_number" required
+                            inputmode="numeric" pattern="09[0-9]{9}" maxlength="11" class="{{ $inputClass }}">
                         <label class="{{ $labelClass }}">Contact Number</label>
                     </div>
                     <span id="phoneFeedback" class="{{ $feedbackClass }}"></span>

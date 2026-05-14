@@ -213,6 +213,7 @@
                                     <input type="text" name="id_number" id="id_number"
                                         class="verification-form-control"
                                         value="{{ old('id_number', $vr->id_number ?? '') }}"
+                                        autocomplete="off" inputmode="numeric" maxlength="19"
                                         @if ($vr && $vr->status === 'reupload') readonly @else required @endif />
                                     <div id="id_number_error"
                                         class="verification-invalid-feedback verification-d-block"></div>
@@ -441,22 +442,95 @@
             return true;
         }
 
+        function normalizeIdNumberValue() {
+            const idType = document.getElementById('id_type');
+            const idNumber = document.getElementById('id_number');
+
+            if (!idNumber || !idType?.value) {
+                return '';
+            }
+
+            if (idType.value === 'philid') {
+                const digits = idNumber.value.replace(/\D/g, '').slice(0, 16);
+                idNumber.value = (digits.match(/.{1,4}/g) || []).join('-');
+                return idNumber.value;
+            }
+
+            if (idType.value === 'drivers_license') {
+                const compact = idNumber.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                const letter = /^[A-Z]/.test(compact) ? compact.charAt(0) : '';
+
+                if (!letter) {
+                    idNumber.value = '';
+                    return '';
+                }
+
+                const digits = compact.slice(1).replace(/\D/g, '').slice(0, 10);
+                let formatted = letter;
+
+                if (digits.length > 0) {
+                    formatted += digits.slice(0, 2);
+                }
+
+                if (digits.length > 2) {
+                    formatted += `-${digits.slice(2, 4)}`;
+                }
+
+                if (digits.length > 4) {
+                    formatted += `-${digits.slice(4, 10)}`;
+                }
+
+                idNumber.value = formatted;
+                return formatted;
+            }
+
+            return idNumber.value.trim();
+        }
+
+        function syncIdNumberFieldForType() {
+            const idType = document.getElementById('id_type');
+            const idNumber = document.getElementById('id_number');
+
+            if (!idNumber) {
+                return;
+            }
+
+            if (idType?.value === 'philid') {
+                idNumber.inputMode = 'numeric';
+                idNumber.maxLength = 19;
+                idNumber.placeholder = '1234-5678-9012';
+            } else if (idType?.value === 'drivers_license') {
+                idNumber.inputMode = 'text';
+                idNumber.maxLength = 13;
+                idNumber.placeholder = 'E12-23-000386';
+            } else {
+                idNumber.inputMode = 'text';
+                idNumber.maxLength = 40;
+                idNumber.placeholder = '';
+            }
+
+            normalizeIdNumberValue();
+        }
+
         function validateIdNumber() {
             const idType = document.getElementById('id_type');
             const idNumber = document.getElementById('id_number');
-            const raw = idNumber?.value.trim();
+            const raw = normalizeIdNumberValue();
             let regex, message = '';
+
             if (idType?.value === 'philid') {
-                regex = /^(\d{4}-?\d{4}-?\d{4}|\d{4}-?\d{4}-?\d{4}-?\d{4})$/;
-                message = 'PhilSys ID must be 12 or 16 digits.';
+                regex = /^(\d{4}-\d{4}-\d{4}|\d{4}-\d{4}-\d{4}-\d{4})$/;
+                message = 'PhilSys ID must be exactly 12 or 16 digits.';
             } else if (idType?.value === 'drivers_license') {
-                regex = /^[A-Za-z]\d{2}-?\d{2}-?\d{6}$/;
-                message = "Driver's License must look like E12-23-000386 or E1223000386.";
+                regex = /^[A-Z]\d{2}-\d{2}-\d{6}$/;
+                message = "Driver's License must be exactly 1 letter and 10 digits, like E12-23-000386.";
             }
+
             if (!regex || raw === '') {
                 clearError(idNumber);
                 return true;
             }
+
             if (!regex.test(raw)) {
                 showError(idNumber, message);
                 return false;
@@ -563,74 +637,60 @@
 
         // Toggle ID Back + Expiry fields based on ID type
         function toggleIdFields() {
-            const idType = document.getElementById('id_type').value;
+            const idType = document.getElementById('id_type')?.value;
             const backWrapper = document.getElementById('idBackWrapper');
             const expiryWrapper = document.getElementById('idExpiryWrapper');
-            if (idType === 'drivers_license') {
+            if (idType === 'drivers_license' && backWrapper && expiryWrapper) {
                 backWrapper.style.display = '';
                 expiryWrapper.style.display = '';
-            } else {
+            } else if (backWrapper && expiryWrapper) {
                 backWrapper.style.display = 'none';
                 expiryWrapper.style.display = 'none';
             }
+
+            syncIdNumberFieldForType();
         }
         toggleIdFields();
         document.getElementById('id_type')?.addEventListener('change', toggleIdFields);
 
-        // ... your existing toggleIdFields function ...
-
-        // Auto-format ID number as user types
-        function autoFormatIdNumber() {
-            const idType = document.getElementById('id_type')?.value;
-            const idNumberInput = document.getElementById('id_number');
-            if (!idNumberInput || !idType) return;
-
-            let value = idNumberInput.value.replace(/[^A-Za-z0-9]/g, '');
-
-            if (idType === 'philid') {
-                // Format as 1234-5678-9012 or 1234-5678-9012-3456
-                if (value.length > 4) value = value.substring(0, 4) + '-' + value.substring(4);
-                if (value.length > 9) value = value.substring(0, 9) + '-' + value.substring(9);
-                if (value.length > 14) value = value.substring(0, 14) + '-' + value.substring(14);
-                // Remove extra dashes if user deletes digits
-                value = value.replace(/-+$/g, '');
-            } else if (idType === 'drivers_license') {
-                // Format as E12-23-000386
-                if (value.length > 0) {
-                    const firstChar = value.charAt(0).toUpperCase();
-                    const digits = value.substring(1).replace(/\D/g, '');
-                    let formatted = firstChar;
-
-                    if (digits.length > 2) formatted += digits.substring(0, 2) + '-' + digits.substring(2);
-                    else formatted += digits;
-
-                    if (digits.length > 4) formatted = formatted.substring(0, 5) + '-' + formatted.substring(5);
-                    if (digits.length > 10) formatted = formatted.substring(0, 10);
-
-                    value = formatted;
-                }
-            }
-
-            idNumberInput.value = value;
-        }
-
-        // Add event listeners
         const idNumberInput = document.getElementById('id_number');
         const idTypeSelect = document.getElementById('id_type');
 
         if (idNumberInput) {
-            idNumberInput.addEventListener('input', autoFormatIdNumber);
+            idNumberInput.addEventListener('keydown', function(event) {
+                if (event.ctrlKey || event.metaKey || event.altKey || event.key.length !== 1) {
+                    return;
+                }
+
+                if (idTypeSelect?.value === 'philid' && !/\d/.test(event.key)) {
+                    event.preventDefault();
+                } else if (idTypeSelect?.value === 'drivers_license') {
+                    const compact = idNumberInput.value.replace(/[^A-Za-z0-9]/g, '');
+                    if (compact.length === 0 && !/[A-Za-z]/.test(event.key)) {
+                        event.preventDefault();
+                    } else if (compact.length > 0 && !/\d/.test(event.key)) {
+                        event.preventDefault();
+                    }
+                }
+            });
+
+            idNumberInput.addEventListener('input', () => {
+                normalizeIdNumberValue();
+                validateIdNumber();
+            });
         }
 
         if (idTypeSelect) {
             idTypeSelect.addEventListener('change', function() {
-                // Reformat existing value when type changes
-                setTimeout(autoFormatIdNumber, 10);
+                if (idNumberInput) {
+                    idNumberInput.value = '';
+                }
+                syncIdNumberFieldForType();
+                clearError(idNumberInput);
             });
         }
 
-        // Initial format if there's already a value
-        setTimeout(autoFormatIdNumber, 100);
+        syncIdNumberFieldForType();
     </script>
 
 </body>

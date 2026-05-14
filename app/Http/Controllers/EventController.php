@@ -196,6 +196,9 @@ class EventController
         $user = Auth::user();
         $userId = $user->user_id ?? null;
 
+        $request->merge([
+            'phone' => preg_replace('/\D+/', '', (string) $request->input('phone')),
+        ]);
 
 
         // Basic validation
@@ -204,9 +207,9 @@ class EventController
             'first_name'     => ['required', 'string', 'max:100'],
             'last_name'      => ['required', 'string', 'max:100'],
             'email'          => ['required', 'email', 'max:150'],
-            'phone'          => ['required', 'string', 'max:50'],
+            'phone'          => ['required', 'regex:/^09\d{9}$/'],
             'messenger_link' => ['nullable', 'string', 'max:250'],
-            'age'            => ['nullable', 'integer', 'min:10'],
+            'age'            => ['nullable', 'integer', 'min:10', 'max:120'],
             'sex'            => ['nullable', 'in:male,female'],
             'address'        => ['nullable', 'string', 'max:255'],
             'vroles_id'      => ['required', 'string'],

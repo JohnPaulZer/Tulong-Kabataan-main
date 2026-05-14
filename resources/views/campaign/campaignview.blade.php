@@ -483,12 +483,13 @@
                 <input type="hidden" name="campaign_id" value="{{ $campaign->campaign_id }}">
 
                 <label>Amount Donated (PHP)</label>
-                <input type="number" name="amount" step="0.01" min="0" required
+                <input type="number" name="amount" step="0.01" min="1" required
                     onkeydown="return preventInvalidInput(event)" oninput="sanitizeAmount(this)">
 
                 <label>Reference Number</label>
                 <div class="reference-input-container">
                     <input type="text" name="reference_number" required id="referenceInput"
+                        inputmode="numeric" pattern="[0-9]{13}" maxlength="13"
                         oninput="checkReferenceNumber(this.value)">
                     <div id="referenceStatus" class="reference-status"></div>
                     <small id="referenceError" class="reference-error">

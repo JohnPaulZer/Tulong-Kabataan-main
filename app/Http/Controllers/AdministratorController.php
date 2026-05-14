@@ -785,10 +785,17 @@ class AdministratorController
     {
         $donation = InKindDonation::findOrFail($id);
 
+        if ($request->has('donor_phone')) {
+            $donorPhone = preg_replace('/\D+/', '', (string) $request->input('donor_phone'));
+            $request->merge([
+                'donor_phone' => $donorPhone !== '' ? $donorPhone : null,
+            ]);
+        }
+
         $request->validate([
             'donor_name'   => 'nullable|string|max:255',
             'donor_email'  => 'nullable|email|max:255',
-            'donor_phone'  => 'nullable|string|max:20',
+            'donor_phone'  => 'nullable|regex:/^09\d{9}$/',
             'item_name'    => 'required|string|max:255',
             'category'     => 'required|string|max:255',
             'quantity'     => 'required|integer|min:1',
@@ -1086,6 +1093,10 @@ class AdministratorController
             return redirect()->route('admin.login');
         }
 
+        $request->merge([
+            'coordinator_phone' => preg_replace('/\D+/', '', (string) $request->input('coordinator_phone')),
+        ]);
+
         $validated = $request->validate([
             'title'               => 'required|string|max:255',
             'description'         => 'required|string',
@@ -1098,7 +1109,7 @@ class AdministratorController
             'deadline'            => 'required|date|before:start_date',
             'coordinator_name'    => 'required|string|max:255',
             'coordinator_email'   => 'required|email',
-            'coordinator_phone'   => 'required|string|max:20',
+            'coordinator_phone'   => 'required|regex:/^09\d{9}$/',
             'roles'               => 'required|array|min:1',
             'roles.*.name'        => 'required|string|max:255',
             'roles.*.description' => 'required|string',
@@ -1383,26 +1394,26 @@ class AdministratorController
                 'province'         => 'required|string|max:255',
                 'municipality'     => 'required|string|max:255',
                 'barangay'         => 'required|string|max:255',
-                'households'       => 'nullable|integer',
-                'individuals'      => 'nullable|integer',
+                'households'       => 'nullable|integer|min:0',
+                'individuals'      => 'nullable|integer|min:0',
 
                 // Population
-                'pop_male'         => 'nullable|integer',
-                'pop_female'       => 'nullable|integer',
-                'pop_children'     => 'nullable|integer',
-                'pop_elderly'      => 'nullable|integer',
-                'pop_pwds'         => 'nullable|integer',
+                'pop_male'         => 'nullable|integer|min:0',
+                'pop_female'       => 'nullable|integer|min:0',
+                'pop_children'     => 'nullable|integer|min:0',
+                'pop_elderly'      => 'nullable|integer|min:0',
+                'pop_pwds'         => 'nullable|integer|min:0',
 
                 // B. Damage
-                'houses_full'      => 'nullable|integer',
-                'houses_partial'   => 'nullable|integer',
+                'houses_full'      => 'nullable|integer|min:0',
+                'houses_partial'   => 'nullable|integer|min:0',
                 'infrastructure'   => 'nullable|array',
 
                 // Livelihood
                 'crop_type'        => 'nullable|string|max:255',
-                'crop_hectares'    => 'nullable|numeric',
+                'crop_hectares'    => 'nullable|numeric|min:0',
                 'livestock_type'   => 'nullable|string|max:255',
-                'livestock_number' => 'nullable|integer',
+                'livestock_number' => 'nullable|integer|min:0',
                 'tools_destroyed'  => 'nullable|string|max:255',
 
                 // Community Facilities
@@ -1478,20 +1489,20 @@ class AdministratorController
                 'province'         => 'required|string|max:255',
                 'municipality'     => 'required|string|max:255',
                 'barangay'         => 'required|string|max:255',
-                'households'       => 'nullable|integer',
-                'individuals'      => 'nullable|integer',
-                'pop_male'         => 'nullable|integer',
-                'pop_female'       => 'nullable|integer',
-                'pop_children'     => 'nullable|integer',
-                'pop_elderly'      => 'nullable|integer',
-                'pop_pwds'         => 'nullable|integer',
-                'houses_full'      => 'nullable|integer',
-                'houses_partial'   => 'nullable|integer',
+                'households'       => 'nullable|integer|min:0',
+                'individuals'      => 'nullable|integer|min:0',
+                'pop_male'         => 'nullable|integer|min:0',
+                'pop_female'       => 'nullable|integer|min:0',
+                'pop_children'     => 'nullable|integer|min:0',
+                'pop_elderly'      => 'nullable|integer|min:0',
+                'pop_pwds'         => 'nullable|integer|min:0',
+                'houses_full'      => 'nullable|integer|min:0',
+                'houses_partial'   => 'nullable|integer|min:0',
                 'infrastructure'   => 'nullable|array',
                 'crop_type'        => 'nullable|string|max:255',
-                'crop_hectares'    => 'nullable|numeric',
+                'crop_hectares'    => 'nullable|numeric|min:0',
                 'livestock_type'   => 'nullable|string|max:255',
-                'livestock_number' => 'nullable|integer',
+                'livestock_number' => 'nullable|integer|min:0',
                 'tools_destroyed'  => 'nullable|string|max:255',
                 'facilities_affected' => 'nullable|in:Yes,No',
                 'facilities_notes'    => 'nullable|string',

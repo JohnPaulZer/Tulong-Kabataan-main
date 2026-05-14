@@ -147,10 +147,17 @@ class ProfileController
     //UPDATE PROFILE
     public function update(Request $request)
     {
+        if ($request->has('phone_number')) {
+            $phoneNumber = preg_replace('/\D+/', '', (string) $request->input('phone_number'));
+            $request->merge([
+                'phone_number' => $phoneNumber !== '' ? $phoneNumber : null,
+            ]);
+        }
+
         $request->validate([
             'first_name' => 'required|string|max:50',
             'last_name'  => 'required|string|max:50',
-            'phone_number' => 'nullable|string|max:20|regex:/^[0-9+\-\s()]+$/',
+            'phone_number' => 'nullable|regex:/^09\d{9}$/',
             'birthday' => 'nullable|date|before:today|after:1900-01-01',
         ]);
 
@@ -282,19 +289,37 @@ class ProfileController
         }
 
 
+        if ($r->input('id_type') === 'philid') {
+            $digits = preg_replace('/\D+/', '', (string) $r->input('id_number'));
+            $r->merge([
+                'id_number' => implode('-', str_split($digits, 4)),
+            ]);
+        } elseif ($r->input('id_type') === 'drivers_license') {
+            $compactLicense = strtoupper(preg_replace('/[^A-Z0-9]/i', '', (string) $r->input('id_number')));
+
+            if (preg_match('/^([A-Z])(\d{10})$/', $compactLicense, $matches)) {
+                $digits = $matches[2];
+                $compactLicense = $matches[1] . substr($digits, 0, 2) . '-' . substr($digits, 2, 2) . '-' . substr($digits, 4, 6);
+            }
+
+            $r->merge([
+                'id_number' => $compactLicense,
+            ]);
+        }
+
         $r->validate([
             'id_type'   => 'required|in:philid,drivers_license',
             'id_number' => ['required', 'string', 'max:40', function ($attr, $value, $fail) use ($r) {
                 if (
                     $r->id_type === 'philid' &&
-                    !preg_match('/^(\d{4}-?\d{4}-?\d{4}|\d{4}-?\d{4}-?\d{4}-?\d{4})$/', $value)
+                    !preg_match('/^(\d{4}-\d{4}-\d{4}|\d{4}-\d{4}-\d{4}-\d{4})$/', $value)
                 ) {
-                    return $fail('PhilSys ID must be 12 or 16 digits (with or without dashes). Example: 1234-5678-9012 or 1234-5678-9012-3456');
+                    return $fail('PhilSys ID must be exactly 12 or 16 digits. Example: 1234-5678-9012 or 1234-5678-9012-3456');
                 }
 
                 if (
                     $r->id_type === 'drivers_license' &&
-                    !preg_match('/^[A-Z]\d{2}-?\d{2}-?\d{6}$/i', $value)
+                    !preg_match('/^[A-Z]\d{2}-\d{2}-\d{6}$/', $value)
                 ) {
                     return $fail('Driver’s License must be in the format E12-23-000386 or E1223000386.');
                 }
@@ -701,9 +726,16 @@ class ProfileController
                 : back()->with('error', 'Unauthorized action.');
         }
 
+        if ($request->has('reference_number')) {
+            $referenceNumber = preg_replace('/\D+/', '', (string) $request->input('reference_number'));
+            $request->merge([
+                'reference_number' => $referenceNumber !== '' ? $referenceNumber : null,
+            ]);
+        }
+
         $validated = $request->validate([
             'amount' => 'required|numeric|min:1',
-            'reference_number' => 'nullable|string|max:100',
+            'reference_number' => 'nullable|regex:/^\d{5,30}$/',
             'proof_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 

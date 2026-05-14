@@ -303,7 +303,7 @@ class LoginController
 
     public function checkPhone(Request $request)
     {
-        $phone = $request->query('phone'); // get phone from query string
+        $phone = preg_replace('/\D+/', '', (string) $request->query('phone')); // get phone from query string
         $exists = User::where('phone_number', $phone)->exists();
         return response()->json(['exists' => $exists]);
     }
@@ -314,11 +314,15 @@ class LoginController
             return back()->with('error', 'New account registration is currently disabled.');
         }
 
+        $request->merge([
+            'phone_number' => preg_replace('/\D+/', '', (string) $request->input('phone_number')),
+        ]);
+
         $request->validate([
             'first_name'   => 'required|string|max:100',
             'last_name'    => 'required|string|max:100',
             'email'        => 'required|email|unique:user_account,email',
-            'phone_number' => 'required|string|max:20|unique:user_account,phone_number',
+            'phone_number' => 'required|regex:/^09\d{9}$/|unique:user_account,phone_number',
             'birthday' => 'required|date|before:today',
             'password'     => 'required|min:8|max:20',
         ]);
