@@ -35,7 +35,7 @@
             <input type="hidden" name="event_id" value="{{ $event->event_id }}">
 
             <div class="event-modal-body min-h-0 flex-1 overflow-y-auto bg-white">
-                <header class="relative min-h-[220px] overflow-hidden bg-slate-900 sm:min-h-[260px]">
+                <header class="event-modal-hero relative min-h-[220px] overflow-hidden bg-slate-900 sm:min-h-[260px]">
                     <img class="absolute inset-0 h-full w-full object-cover" src="{{ $eventImage }}"
                         alt="{{ $event->title }}"
                         onerror="this.onerror=null; this.src='{{ $eventImageFallback }}'; this.classList.add('object-contain', 'p-10', 'bg-slate-100');">
@@ -60,7 +60,7 @@
                 </header>
 
                 <div class="space-y-5 px-5 py-5 sm:px-7">
-                    <section class="border border-slate-300 bg-white p-4" aria-label="Event information">
+                    <section class="event-modal-summary border border-slate-300 bg-white p-4" aria-label="Event information">
                         <div class="grid gap-x-6 gap-y-5 sm:grid-cols-2">
                             <div class="flex gap-3">
                                 <span class="mt-0.5 text-indigo-600">
@@ -121,13 +121,13 @@
                         </div>
                     </section>
 
-                    <section aria-label="Event description">
+                    <section class="event-modal-description" aria-label="Event description">
                         <p class="m-0 text-sm leading-6 text-slate-600">
                             {{ Str::limit($event->description, 240) }}
                         </p>
                     </section>
 
-                    <section aria-label="Event venue">
+                    <section class="event-modal-venue" aria-label="Event venue">
                         <h3 class="mb-2 text-[11px] font-extrabold uppercase tracking-wide text-slate-700">
                             Event Venue
                         </h3>
@@ -148,7 +148,7 @@
                         @endif
                     </section>
 
-                    <section class="border border-slate-200 bg-slate-50 p-4" aria-label="Registration information">
+                    <section class="event-modal-fields border border-slate-200 bg-slate-50 p-4" aria-label="Registration information">
                         <h3 class="mb-4 text-[11px] font-extrabold uppercase tracking-wide text-slate-700">
                             Registration Information
                         </h3>
@@ -286,7 +286,7 @@
                             </div>
                         </div>
 
-                        <div class="mt-4 flex flex-col gap-3 border border-indigo-100 bg-white p-3 sm:flex-row sm:items-center sm:justify-between">
+                        <div class="event-modal-reminder mt-4 flex flex-col gap-3 border border-indigo-100 bg-white p-3 sm:flex-row sm:items-center sm:justify-between">
                             <label class="flex cursor-pointer items-center gap-3 text-sm font-semibold text-slate-700" for="remind_me">
                                 <span class="relative inline-flex h-7 w-12 shrink-0 items-center rounded-full bg-slate-300 transition has-[:checked]:bg-indigo-600">
                                     <input type="checkbox" id="remind_me" name="remind_me" value="1"
