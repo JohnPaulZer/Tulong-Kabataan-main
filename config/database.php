@@ -54,7 +54,7 @@ return [
         */
         'mongodb' => [
             'driver'   => 'mongodb',
-            'dsn'      => env('MONGODB_URI'),
+            'dsn'      => env('MONGODB_URI', env('MONGO_URL')),
             'database' => env('MONGODB_DB_NAME'),
         ],
 
