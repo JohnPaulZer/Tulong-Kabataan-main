@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
     pkg-config \
     unzip \
     && docker-php-ext-install dom mbstring simplexml xml xmlreader xmlwriter zip \
-    && pecl install mongodb \
+    && pecl install mongodb-1.21.4 \
     && docker-php-ext-enable mongodb \
     && rm -rf /var/lib/apt/lists/*
 
