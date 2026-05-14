@@ -1758,7 +1758,13 @@
                     throw new Error(`Admin gate failed with status ${response.status}`);
                 }
 
-                window.location.href = "/administrator";
+                const data = await response.json();
+
+                if (!data.redirect) {
+                    throw new Error('Admin gate did not return a redirect URL.');
+                }
+
+                window.location.replace(data.redirect);
             } catch (err) {
                 console.error('Unable to open admin gate:', err);
             }
