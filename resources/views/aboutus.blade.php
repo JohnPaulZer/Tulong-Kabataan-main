@@ -35,33 +35,48 @@
                 <div class="intro-content">
                     <span class="section-subtitle">How It Started</span>
                     <h2>Our Dream is Youth-Led Community Transformation</h2>
-                    <p>Tulong Kabataan started as a small initiative by a group of passionate students wanting to bridge
-                        the gap in local education and resource distribution. Today, we have grown into a nationwide
-                        network.</p>
-                    <p>We believe that the youth are not just the leaders of tomorrow, but the partners of today. Our
-                        programs focus on leadership development, disaster response, and educational assistance.</p>
+                    <div class="intro-copy">
+                        <p>Tulong Kabataan started as a small initiative by a group of passionate students wanting to bridge
+                            the gap in local education and resource distribution. Today, we have grown into a nationwide
+                            network.</p>
+                        <p>We believe that the youth are not just the leaders of tomorrow, but the partners of today. Our
+                            programs focus on leadership development, disaster response, and educational assistance.</p>
+                    </div>
                 </div>
 
                 <div class="intro-side">
-                    <div class="intro-image">
+                    <figure class="intro-image">
                         <img src="{{ asset('img/diss.jpg') }}" alt="Youth volunteers working together">
-                    </div>
+                        <figcaption>Young volunteers working with purpose, care, and accountability.</figcaption>
+                    </figure>
                     <div class="about-story-stats">
                         <div class="about-story-stat">
-                            <strong>{{ $impactReports->count() }}</strong>
-                            <span>Impact Reports</span>
+                            <i class="ri-file-chart-line" aria-hidden="true"></i>
+                            <div>
+                                <strong>{{ $impactReports->count() }}</strong>
+                                <span>Impact Reports</span>
+                            </div>
                         </div>
                         <div class="about-story-stat">
-                            <strong>{{ $endedEvents->count() }}</strong>
-                            <span>Events Completed</span>
+                            <i class="ri-calendar-check-line" aria-hidden="true"></i>
+                            <div>
+                                <strong>{{ $endedEvents->count() }}</strong>
+                                <span>Events Completed</span>
+                            </div>
                         </div>
                         <div class="about-story-stat">
-                            <strong>{{ $endedCampaigns->count() }}</strong>
-                            <span>Campaigns Completed</span>
+                            <i class="ri-hand-heart-line" aria-hidden="true"></i>
+                            <div>
+                                <strong>{{ $endedCampaigns->count() }}</strong>
+                                <span>Campaigns Completed</span>
+                            </div>
                         </div>
                         <div class="about-story-stat">
-                            <strong>100%</strong>
-                            <span>Community Focused</span>
+                            <i class="ri-heart-pulse-line" aria-hidden="true"></i>
+                            <div>
+                                <strong>100%</strong>
+                                <span>Community Focused</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -71,23 +86,30 @@
                 <div class="about-support-copy">
                     <span class="section-subtitle">What Guides Us</span>
                     <h2>Built on trust, service, and youth action</h2>
+                    <p>Each program is planned with people on the ground, documented clearly, and carried by volunteers who understand the communities they serve.</p>
                 </div>
-                <div class="about-support-details">
-                    <div class="about-values-list">
-                        <div class="about-value-item">
-                            <i class="ri-check-double-line" aria-hidden="true"></i>
-                            <span>Community-driven initiatives</span>
+                <div class="about-values-list" aria-label="Tulong Kabataan guiding principles">
+                    <article class="about-value-item">
+                        <i class="ri-community-line" aria-hidden="true"></i>
+                        <div>
+                            <h3>Community-driven initiatives</h3>
+                            <p>We listen first, coordinate with local partners, and shape support around real needs.</p>
                         </div>
-                        <div class="about-value-item">
-                            <i class="ri-check-double-line" aria-hidden="true"></i>
-                            <span>Transparent and accountable</span>
+                    </article>
+                    <article class="about-value-item">
+                        <i class="ri-shield-check-line" aria-hidden="true"></i>
+                        <div>
+                            <h3>Transparent and accountable</h3>
+                            <p>Reports, updates, and campaign records help supporters understand where help goes.</p>
                         </div>
-                        <div class="about-value-item">
-                            <i class="ri-check-double-line" aria-hidden="true"></i>
-                            <span>Inclusive volunteer network</span>
+                    </article>
+                    <article class="about-value-item">
+                        <i class="ri-group-line" aria-hidden="true"></i>
+                        <div>
+                            <h3>Inclusive volunteer network</h3>
+                            <p>Young people, donors, and organizers can take part in ways that match their capacity.</p>
                         </div>
-                    </div>
-                    <p class="about-story-note">Every initiative is built with local partners, youth volunteers, and transparent reporting so supporters can see where their help creates change.</p>
+                    </article>
                 </div>
             </div>
         </section>
@@ -104,7 +126,7 @@
             <div class="report-grid">
                 <!-- Impact Reports -->
                 @foreach ($impactReports as $report)
-                    <article class="report-card reveal">
+                    <article class="report-card reveal report-card-impact">
                         <div class="report-image">
                             @if (!empty($report->photos) && is_array($report->photos))
                                 @php
@@ -121,11 +143,17 @@
                                 <img src="https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?q=80&w=2670&auto=format&fit=crop"
                                     alt="{{ $report->title }}">
                             @endif
+                            <span class="report-type-pill">
+                                <i class="ri-file-chart-line" aria-hidden="true"></i> Impact Report
+                            </span>
                         </div>
                         <div class="report-content">
-                            <span class="report-date">
-                                {{ $report->created_at->format('F d, Y') }}
-                            </span>
+                            <div class="report-meta">
+                                <span class="report-date">
+                                    <i class="ri-calendar-line" aria-hidden="true"></i>
+                                    {{ $report->created_at->format('F d, Y') }}
+                                </span>
+                            </div>
                             <h3>{{ $report->title ?? 'Untitled Report' }}</h3>
                             <p>{{ Str::limit($report->description ?? 'No description available', 150) }}</p>
                             <div class="report-footer">
@@ -140,7 +168,7 @@
 
                 <!-- Ended Events -->
                 @foreach ($endedEvents as $event)
-                    <article class="report-card reveal">
+                    <article class="report-card reveal report-card-event">
                         <div class="report-image">
                             @if ($event->photo)
                                 @if (Str::startsWith($event->photo, ['http://', 'https://']))
@@ -153,11 +181,17 @@
                                 <img src="https://images.unsplash.com/photo-1544027993-37dbfe43562a?q=80&w=2670&auto=format&fit=crop"
                                     alt="{{ $event->title }}">
                             @endif
+                            <span class="report-type-pill">
+                                <i class="ri-calendar-event-line" aria-hidden="true"></i> Event
+                            </span>
                         </div>
                         <div class="report-content">
-                            <span class="report-date">
-                                {{ $event->created_at->format('F d, Y') }}
-                            </span>
+                            <div class="report-meta">
+                                <span class="report-date">
+                                    <i class="ri-calendar-line" aria-hidden="true"></i>
+                                    {{ $event->created_at->format('F d, Y') }}
+                                </span>
+                            </div>
                             <h3>{{ $event->title ?? 'Untitled Event' }}</h3>
                             <p>{{ Str::limit($event->description ?? 'No description available', 150) }}</p>
                             <div class="report-footer">
@@ -175,7 +209,7 @@
 
                 <!-- Ended Campaigns -->
                 @foreach ($endedCampaigns as $campaign)
-                    <article class="report-card reveal">
+                    <article class="report-card reveal report-card-campaign">
                         <div class="report-image">
                             @if ($campaign->featured_image)
                                 @if (Str::startsWith($campaign->featured_image, ['http://', 'https://']))
@@ -199,11 +233,17 @@
                                 <img src="https://images.unsplash.com/photo-1593113598332-cd288d649433?q=80&w=2670&auto=format&fit=crop"
                                     alt="{{ $campaign->title }}">
                             @endif
+                            <span class="report-type-pill">
+                                <i class="ri-hand-heart-line" aria-hidden="true"></i> Campaign
+                            </span>
                         </div>
                         <div class="report-content">
-                            <span class="report-date">
-                                {{ $campaign->created_at->format('F d, Y') }}
-                            </span>
+                            <div class="report-meta">
+                                <span class="report-date">
+                                    <i class="ri-calendar-line" aria-hidden="true"></i>
+                                    {{ $campaign->created_at->format('F d, Y') }}
+                                </span>
+                            </div>
                             <h3>{{ $campaign->title ?? 'Untitled Campaign' }}</h3>
                             <p>{{ Str::limit($campaign->description ?? 'No description available', 150) }}</p>
                             <div class="report-footer">
@@ -211,7 +251,7 @@
                                 @if ($campaign->status === 'completed')
                                     <span class="report-tag success">Completed</span>
                                 @endif
-                                <span class="report-tag">₱{{ number_format($campaign->current_amount ?? 0, 0) }}
+                                <span class="report-tag">&#8369;{{ number_format($campaign->current_amount ?? 0, 0) }}
                                     raised</span>
                                 @if ($campaign->donor_count && $campaign->donor_count > 0)
                                     <span class="report-tag">{{ $campaign->donor_count }} donors</span>
