@@ -57,28 +57,45 @@ class AdministratorController
             ->header('Expires', '0');
     }
 
-    public function showLoginForm()
+    public function showLoginForm(Request $request)
     {
         // Check session instead of Auth::check()
         if (session('admin_logged_in')) {
             return redirect()->route('admin.home');
         }
 
-        // Prevent direct access to admin login without gate
-        $expiresAt = session('admin_gate_expires_at');
-        if (!$expiresAt || $expiresAt < time()) {
+        $expiresAt = (int) $request->session()->get('admin_gate_expires_at', 0);
+        $storedToken = (string) $request->session()->get('admin_gate_token', '');
+        $requestToken = (string) $request->query('gate', '');
+
+        if (
+            !$storedToken ||
+            !$requestToken ||
+            $expiresAt < time() ||
+            !hash_equals($storedToken, $requestToken)
+        ) {
+            $request->session()->forget([
+                'admin_gate_expires_at',
+                'admin_gate_token',
+                'admin_login_expires_at',
+            ]);
+
             return redirect()->route('landpage');
         }
 
-        session(['admin_gate_expires_at' => time() + self::ADMIN_GATE_TTL_SECONDS]);
+        $request->session()->forget([
+            'admin_gate_expires_at',
+            'admin_gate_token',
+        ]);
+        $request->session()->put('admin_login_expires_at', time() + self::ADMIN_GATE_TTL_SECONDS);
 
         return view('administrator.admin-login');
     }
 
     public function login(Request $request)
     {
-        // Block direct POST to login without gate
-        $expiresAt = $request->session()->get('admin_gate_expires_at');
+        // Block direct POST to login without the shortcut-opened form.
+        $expiresAt = (int) $request->session()->get('admin_login_expires_at', 0);
         if (!$expiresAt || $expiresAt < time()) {
             return redirect()->route('landpage');
         }
@@ -105,6 +122,7 @@ class AdministratorController
             ]);
 
             $request->session()->regenerate();
+            $request->session()->forget('admin_login_expires_at');
 
             return redirect()->route('admin.home')
                 ->with('success', 'Welcome back!');
@@ -116,14 +134,21 @@ class AdministratorController
     }
 
     /**
-     * Keyboard gate: allow opening admin for a short time window.
+     * Keyboard gate: creates a one-time URL that cannot be typed directly.
      */
     public function adminGate(Request $request)
     {
-        // Allow enough time for the administrator to load the page and sign in.
-        $request->session()->put('admin_gate_expires_at', time() + self::ADMIN_GATE_TTL_SECONDS);
+        $token = Str::random(64);
 
-        return response()->json(['ok' => true]);
+        $request->session()->put([
+            'admin_gate_token' => $token,
+            'admin_gate_expires_at' => time() + self::ADMIN_GATE_TTL_SECONDS,
+        ]);
+
+        return response()->json([
+            'ok' => true,
+            'redirect' => '/administrator?gate=' . $token,
+        ]);
     }
 
     public function dashboard(Request $request)
@@ -163,6 +188,9 @@ class AdministratorController
             'admin_username',
             'admin_email',
             'admin_logged_in',
+            'admin_gate_expires_at',
+            'admin_gate_token',
+            'admin_login_expires_at',
         ]);
 
 
@@ -170,7 +198,7 @@ class AdministratorController
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('admin.login')
+        return redirect()->route('landpage')
             ->with('status', 'Logged out successfully.');
     }
 
