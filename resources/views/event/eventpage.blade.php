@@ -23,6 +23,7 @@
         </div>
         <div class="evt-hero-content">
             <div class="evt-text-container">
+                <span class="evt-hero-badge">Volunteer Opportunities</span>
                 <h1>Find Your Next Volunteer Opportunity</h1>
                 <p>Join thousands of volunteers making a difference in their communities through our events platform.
                 </p>
@@ -47,20 +48,27 @@
         <div class="evt-container evt-view-toggle-calendar-stack">
             <div class="evt-view-toggle-calendar-top">
                 <div class="evt-view-toggle">
-                    <button class="evt-view-toggle-button evt-active">Grid</button>
-                    <button class="evt-view-toggle-button">Calendar</button>
+                    <button class="evt-view-toggle-button evt-active">
+                        <i class="ri-apps-2-line"></i>
+                        <span>Grid</span>
+                    </button>
+                    <button class="evt-view-toggle-button">
+                        <i class="ri-calendar-line"></i>
+                        <span>Calendar</span>
+                    </button>
                 </div>
                 <div class="evt-calendar-info">
+                    <i class="ri-calendar-event-line"></i>
                     <span class="evt-text-sm">Showing events for May 2025</span>
                 </div>
             </div>
 
-            <div class="evt-mini-calendar">
+                <div class="evt-mini-calendar">
                 <div class="evt-calendar-navigation">
                     <div class="evt-calendar-month-nav">
-                        <button class="evt-calendar-nav-button"><i class="ri-arrow-left-s-line"></i></button>
+                        <button class="evt-calendar-nav-button" aria-label="Previous calendar range"><i class="ri-arrow-left-s-line"></i></button>
                         <div class="evt-calendar-month">May 2025</div>
-                        <button class="evt-calendar-nav-button"><i class="ri-arrow-right-s-line"></i></button>
+                        <button class="evt-calendar-nav-button" aria-label="Next calendar range"><i class="ri-arrow-right-s-line"></i></button>
                     </div>
                     <div class="evt-calendar-days"></div>
                 </div>
@@ -80,6 +88,12 @@
 
                     $status = $eventStatuses[$event->event_id] ?? 'upcoming';
                     $isRegistered = \Auth::check() && in_array($event->event_id, $registeredEventIds ?? []);
+                    $statusLabel = match ($status) {
+                        'ongoing' => 'Ongoing',
+                        'ended' => 'Ended',
+                        'closed' => 'Registration Closed',
+                        default => 'Upcoming',
+                    };
 
                     // Determine event type for filtering
                     $eventType = 'all';
@@ -90,10 +104,18 @@
                     }
                 @endphp
 
-                <div class="evt-event-card" data-event-id="{{ $event->event_id }}"
+                <article @class([
+                    'evt-event-card',
+                    'evt-event-card--ongoing' => $status === 'ongoing',
+                    'evt-event-card--ended' => $status === 'ended',
+                    'evt-event-card--closed' => $status === 'closed',
+                ]) data-event-id="{{ $event->event_id }}"
                     data-event-date="{{ $start->format('Y-m-d') }}" data-event-type="{{ $eventType }}">
                     <div class="evt-card-image">
                         <img src="{{ file_url($event->photo, asset('img/bg2.jpg')) }}" alt="Event photo">
+                        <span class="evt-card-status evt-status-chip evt-status-chip--{{ $status }}">
+                            {{ $statusLabel }}
+                        </span>
                     </div>
                     <div class="evt-card-content">
                         <div class="evt-card-header">
@@ -103,6 +125,12 @@
                         <div class="evt-card-details">
                             <span class="evt-card-date">
                                 <i class="ri-time-line"></i>
+                                <span>
+                                    {{ $start->format('M d, Y') }} &bull; {{ $start->format('h:i A') }}
+                                    @if (!$isOngoing && !$isPast)
+                                        - {{ $end->format('M d, Y') }} &bull; {{ $end->format('h:i A') }}
+                                    @endif
+                                </span>
                                 {{ $start->format('M d, Y • h:i A') }}
                                 @if (!$isOngoing && !$isPast)
                                     - {{ $end->format('M d, Y • h:i A') }}
@@ -110,60 +138,56 @@
                             </span>
                             <span class="evt-card-location">
                                 <i class="ri-map-pin-line"></i>
-                                {{ $event->location }}
+                                <span>{{ $event->location }}</span>
                             </span>
                         </div>
                         <div class="evt-card-footer">
-                            <div class="evt-card-actions" style="width:100%">
+                            <div class="evt-card-actions">
                                 @if ($status === 'ongoing')
                                     @if ($isRegistered)
-                                        <button class="evt-register-button" disabled
-                                            style="background: #f59e0b; color: white; cursor: default;">Already
+                                        <button class="evt-register-button evt-register-button--ongoing" disabled>Already
                                             Registered (Ongoing)</button>
                                     @else
-                                        <button class="evt-register-button" disabled
-                                            style="background: #f59e0b; color: white; cursor: default;">Ongoing</button>
+                                        <button class="evt-register-button evt-register-button--ongoing" disabled>Ongoing</button>
                                     @endif
                                 @elseif($status === 'ended')
-                                    <button class="evt-register-button" disabled
-                                        style="background: #ef4444; color: white; cursor: default;">Event
+                                    <button class="evt-register-button evt-register-button--ended" disabled>Event
                                         Ended</button>
                                 @elseif($status === 'closed')
-                                    <button class="evt-register-button" disabled
-                                        style="background: #6b7280; color: white;  cursor: default;">Registration
+                                    <button class="evt-register-button evt-register-button--closed" disabled>Registration
                                         Closed</button>
                                 @elseif($isRegistered)
-                                    <button class="evt-register-button" disabled
-                                        style="background: #9ca3af; color: white; cursor: default;">Already
+                                    <button class="evt-register-button evt-register-button--registered" disabled>Already
                                         Registered</button>
                                 @elseif (!\Auth::check())
-                                    <a href="{{ route('login.register') }}" class="evt-register-button"
-                                        id="evt-btn-login-register"
-                                        style="background: #4f46e5; color: white; text-decoration: none; display: flex; align-items: center; justify-content: center;">
+                                    <a href="{{ route('login.register') }}" class="evt-register-button evt-register-button--primary"
+                                        id="evt-btn-login-register">
                                         Login/Register to Volunteer
                                     </a>
                                 @else
-                                    <button class="evt-register-button"
-                                        style="background: #4f46e5; color: white;">Register Now</button>
+                                    <button class="evt-register-button evt-register-button--primary">Register Now</button>
                                 @endif
                             </div>
                         </div>
                     </div>
-                </div>
+                </article>
             @endforeach
 
             <!-- Empty state messages -->
-            <div id="no-all-events" class="evt-empty-state"
-                style="display: none; text-align: center; padding: 40px; color: #6b7280; font-size: 1rem; width: 100%;">
-                No events found.
+            <div id="no-all-events" class="evt-empty-state">
+                <i class="ri-calendar-event-line"></i>
+                <h3>No events found</h3>
+                <p>Volunteer opportunities will appear here once events are available.</p>
             </div>
-            <div id="no-ongoing-events" class="evt-empty-state"
-                style="display: none; text-align: center; padding: 40px; color: #6b7280; font-size: 1rem; width: 100%;">
-                No ongoing events found.
+            <div id="no-ongoing-events" class="evt-empty-state">
+                <i class="ri-time-line"></i>
+                <h3>No ongoing events found</h3>
+                <p>There are no events happening right now. Please check upcoming opportunities.</p>
             </div>
-            <div id="no-past-events" class="evt-empty-state"
-                style="display: none; text-align: center; padding: 40px; color: #6b7280; font-size: 1rem; width: 100%;">
-                No past events found.
+            <div id="no-past-events" class="evt-empty-state">
+                <i class="ri-calendar-check-line"></i>
+                <h3>No past events found</h3>
+                <p>Completed volunteer activities will be listed here after events end.</p>
             </div>
         </div>
     </section>
@@ -182,8 +206,7 @@
             <div id="tooltip-title" class="tooltip-title"></div>
             <div id="tooltip-desc" class="tooltip-desc"></div>
 
-            <a href="#" id="tooltip-event-link" class="evt-register-button"
-                style="margin-top: 10px; display: inline-block; text-align: center; width: 100%;">
+            <a href="#" id="tooltip-event-link" class="evt-register-button evt-register-button--primary">
                 View Event Details
             </a>
             <div id="tooltip-nav" class="tooltip-nav" style="display:none;">
@@ -227,6 +250,75 @@
             }
 
             return `${localStorageBaseUrl}/${String(photo).replace(/^\/+/, '')}`;
+        }
+
+        function getEventStatusKey(now, startDate, endDate, deadlineValue = null) {
+            const deadline = deadlineValue ? new Date(deadlineValue) : null;
+
+            if (now >= startDate && now <= endDate) return 'ongoing';
+            if (now > endDate) return 'ended';
+            if (deadline && now > deadline) return 'closed';
+            return 'upcoming';
+        }
+
+        function getEventTypeFromStatus(statusKey) {
+            if (statusKey === 'ongoing') return 'ongoing';
+            if (statusKey === 'ended') return 'past';
+            return 'all';
+        }
+
+        function getEventStatusLabel(statusKey) {
+            if (statusKey === 'ongoing') return 'Ongoing';
+            if (statusKey === 'ended') return 'Ended';
+            if (statusKey === 'closed') return 'Registration Closed';
+            return 'Upcoming';
+        }
+
+        function syncEventCardStatus(card, statusKey) {
+            if (!card) return;
+
+            card.classList.remove('evt-event-card--ongoing', 'evt-event-card--ended', 'evt-event-card--closed');
+            if (statusKey !== 'upcoming') {
+                card.classList.add(`evt-event-card--${statusKey}`);
+            }
+
+            let chip = card.querySelector('.evt-card-status');
+            if (!chip) {
+                const imageWrap = card.querySelector('.evt-card-image');
+                chip = document.createElement('span');
+                chip.className = 'evt-card-status evt-status-chip';
+                imageWrap?.appendChild(chip);
+            }
+
+            chip.className = `evt-card-status evt-status-chip evt-status-chip--${statusKey}`;
+            chip.textContent = getEventStatusLabel(statusKey);
+        }
+
+        function getButtonHtmlForStatusKey(statusKey, isRegistered = false) {
+            if (statusKey === 'ongoing') {
+                const label = isRegistered ? 'Already Registered (Ongoing)' : 'Ongoing';
+                return `<button class="evt-register-button evt-register-button--ongoing" disabled>${label}</button>`;
+            }
+
+            if (statusKey === 'ended') {
+                return `<button class="evt-register-button evt-register-button--ended" disabled>Event Ended</button>`;
+            }
+
+            if (statusKey === 'closed') {
+                return `<button class="evt-register-button evt-register-button--closed" disabled>Registration Closed</button>`;
+            }
+
+            if (isRegistered) {
+                return `<button class="evt-register-button evt-register-button--registered" disabled>Already Registered</button>`;
+            }
+
+            const isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
+
+            if (!isLoggedIn) {
+                return `<a href="{{ route('login.register') }}" class="evt-register-button evt-register-button--primary" id="evt-btn-login-register">Login/Register to Volunteer</a>`;
+            }
+
+            return `<button class="evt-register-button evt-register-button--primary">Register Now</button>`;
         }
 
         // ==================== MODAL LIFECYCLE HELPERS ====================
@@ -345,7 +437,10 @@
 
         function syncEventModalState() {
             const container = getEventModalContainer();
-            const hasOpenModal = Boolean(container?.querySelector('.event-modal-backdrop, .evt-details-modal'));
+            const confirmModal = document.getElementById('confirmModal');
+            const hasConfirmModalOpen = Boolean(confirmModal && window.getComputedStyle(confirmModal).display !== 'none');
+            const hasOpenModal = Boolean(container?.querySelector('.event-modal-backdrop, .evt-details-modal')) ||
+                hasConfirmModalOpen;
 
             if (hasOpenModal) {
                 lockEventPageScroll();
@@ -385,6 +480,15 @@
                 childList: true,
                 subtree: false
             });
+
+            const confirmModal = document.getElementById('confirmModal');
+            if (confirmModal) {
+                const confirmObserver = new MutationObserver(syncEventModalState);
+                confirmObserver.observe(confirmModal, {
+                    attributes: true,
+                    attributeFilter: ['class', 'style']
+                });
+            }
 
             syncEventModalState();
         }
@@ -549,11 +653,7 @@
             weekDays.forEach(wd => {
                 const el = document.createElement('div');
                 el.textContent = wd;
-                el.style.fontWeight = 'bold';
-                el.style.textAlign = 'center';
-                el.style.fontSize = '0.8rem';
-                el.style.color = '#6b7280';
-                el.style.padding = '5px 0';
+                el.className = 'evt-calendar-weekday';
                 daysContainer.appendChild(el);
             });
         }
@@ -568,6 +668,7 @@
             let firstWeekday = new Date(currentYear, currentMonth, 1).getDay();
             for (let i = 0; i < firstWeekday; i++) {
                 const emptyEl = document.createElement('div');
+                emptyEl.className = 'evt-calendar-empty-day';
                 daysContainer.appendChild(emptyEl);
             }
 
@@ -630,7 +731,7 @@
 
                 dayEl.classList.add('has-event');
             } else {
-                contentHtml += `<div style="flex-grow:1;"></div>`;
+                contentHtml += `<div class="evt-calendar-day-empty"></div>`;
             }
 
             dayEl.innerHTML = contentHtml;
@@ -1838,15 +1939,14 @@
             const endDate = new Date(eventData.end_date);
             const isOngoing = now >= startDate && now <= endDate;
             const isPast = now > endDate;
+            const statusKey = getEventStatusKey(now, startDate, endDate, eventData.deadline);
 
             // Update data attributes
             card.dataset.eventDate = startDate.toISOString().split('T')[0];
 
             // Update event type
-            let eventType = 'all';
-            if (isOngoing) eventType = 'ongoing';
-            else if (isPast) eventType = 'past';
-            card.dataset.eventType = eventType;
+            card.dataset.eventType = getEventTypeFromStatus(statusKey);
+            syncEventCardStatus(card, statusKey);
 
             // Update date display
             if (date) {
@@ -1859,7 +1959,14 @@
                     minute: '2-digit'
                 });
 
-                let dateHtml = `<i class="ri-time-line"></i> ${formattedStart}`;
+                let dateHtml = `<i class="ri-time-line"></i> <span>${startDate.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                })} at ${startDate.toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })}`;
 
                 if (!isOngoing && !isPast) {
                     const formattedEnd = endDate.toLocaleDateString('en-US', {
@@ -1870,15 +1977,23 @@
                         hour: '2-digit',
                         minute: '2-digit'
                     });
-                    dateHtml += ` - ${formattedEnd}`;
+                    dateHtml += ` - ${endDate.toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
+                    })} at ${endDate.toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    })}`;
                 }
 
+                dateHtml += `</span>`;
                 date.innerHTML = dateHtml;
             }
 
             // Update location
             if (location) {
-                location.innerHTML = `<i class="ri-map-pin-line"></i> ${eventData.location || 'TBA'}`;
+                location.innerHTML = `<i class="ri-map-pin-line"></i> <span>${eventData.location || 'TBA'}</span>`;
             }
 
             // Update button status - with registration preservation
@@ -1901,11 +2016,10 @@
             const endDate = new Date(eventData.end_date);
             const isOngoing = now >= startDate && now <= endDate;
             const isPast = now > endDate;
+            const statusKey = getEventStatusKey(now, startDate, endDate, eventData.deadline);
 
             // Determine event type
-            let eventType = 'all';
-            if (isOngoing) eventType = 'ongoing';
-            else if (isPast) eventType = 'past';
+            const eventType = getEventTypeFromStatus(statusKey);
 
             // Check registration status
             const isRegistered = eventData.is_registered || userRegisteredEvents.has(eventData.event_id.toString());
@@ -1920,7 +2034,14 @@
                 minute: '2-digit'
             });
 
-            let dateDisplay = formattedStart;
+            let dateDisplay = `${startDate.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            })} at ${startDate.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit'
+            })}`;
             if (!isOngoing && !isPast) {
                 const formattedEnd = endDate.toLocaleDateString('en-US', {
                     month: 'short',
@@ -1930,7 +2051,14 @@
                     hour: '2-digit',
                     minute: '2-digit'
                 });
-                dateDisplay += ` - ${formattedEnd}`;
+                dateDisplay += ` - ${endDate.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                })} at ${endDate.toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })}`;
             }
 
             // Create button HTML based on status AND registration
@@ -1938,12 +2066,13 @@
 
             // Create the card HTML
             const cardHtml = `
-        <div class="evt-event-card" data-event-id="${eventData.event_id}"
+        <div class="evt-event-card ${statusKey === 'upcoming' ? '' : `evt-event-card--${statusKey}`}" data-event-id="${eventData.event_id}"
              data-event-date="${startDate.toISOString().split('T')[0]}"
              data-event-type="${eventType}"
              data-load-time="${now.toISOString()}">
             <div class="evt-card-image">
                 <img src="${resolveEventPhotoUrl(eventData.photo)}" alt="${eventData.title}">
+                <span class="evt-card-status evt-status-chip evt-status-chip--${statusKey}">${getEventStatusLabel(statusKey)}</span>
             </div>
             <div class="evt-card-content">
                 <div class="evt-card-header">
@@ -1954,14 +2083,14 @@
                 </p>
                 <div class="evt-card-details">
                     <span class="evt-card-date">
-                        <i class="ri-time-line"></i> ${dateDisplay}
+                        <i class="ri-time-line"></i> <span>${dateDisplay}</span>
                     </span>
                     <span class="evt-card-location">
-                        <i class="ri-map-pin-line"></i> ${eventData.location || 'TBA'}
+                        <i class="ri-map-pin-line"></i> <span>${eventData.location || 'TBA'}</span>
                     </span>
                 </div>
                 <div class="evt-card-footer">
-                    <div class="evt-card-actions" style="width:100%">
+                    <div class="evt-card-actions">
                         ${buttonHtml}
                     </div>
                 </div>
@@ -1999,46 +2128,12 @@
             const buttonContainer = card.querySelector('.evt-card-actions');
             if (!buttonContainer) return;
 
-            // Determine status based on time
-            const isOngoing = now >= startDate && now <= endDate;
-            const isPast = now > endDate;
-            const deadline = eventData.deadline ? new Date(eventData.deadline) : null;
-            const isClosed = deadline && now > deadline;
+            const statusKey = getEventStatusKey(now, startDate, endDate, eventData.deadline);
 
             // Use provided registration status or check our local set
             const isRegistered = isCurrentlyRegistered || userRegisteredEvents.has(eventData.event_id.toString());
 
-            let newButtonHtml = '';
-
-            if (isOngoing) {
-                if (isRegistered) {
-                    newButtonHtml =
-                        `<button class="evt-register-button" disabled style="background: #f59e0b; color: white; cursor: default;">Already Registered (Ongoing)</button>`;
-                } else {
-                    newButtonHtml =
-                        `<button class="evt-register-button" disabled style="background: #f59e0b; color: white; cursor: default;">Ongoing</button>`;
-                }
-            } else if (isPast) {
-                newButtonHtml =
-                    `<button class="evt-register-button" disabled style="background: #ef4444; color: white; cursor: default;">Event Ended</button>`;
-            } else if (isClosed) {
-                newButtonHtml =
-                    `<button class="evt-register-button" disabled style="background: #6b7280; color: white; cursor: default;">Registration Closed</button>`;
-            } else if (isRegistered) {
-                newButtonHtml =
-                    `<button class="evt-register-button" disabled style="background: #9ca3af; color: white; cursor: default;">Already Registered</button>`;
-            } else {
-                // Check if user is logged in (from PHP)
-                const isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
-
-                if (!isLoggedIn) {
-                    newButtonHtml =
-                        `<a href="{{ route('login.register') }}" class="evt-register-button" id="evt-btn-login-register" style="background: #4f46e5; color: white; text-decoration: none; display: flex; align-items: center; justify-content: center;">Login/Register to Volunteer</a>`;
-                } else {
-                    newButtonHtml =
-                        `<button class="evt-register-button" style="background: #4f46e5; color: white;">Register Now</button>`;
-                }
-            }
+            const newButtonHtml = getButtonHtmlForStatusKey(statusKey, isRegistered);
 
             // Get current button to compare
             const currentButton = buttonContainer.querySelector('.evt-register-button');
@@ -2060,32 +2155,7 @@
          * Get button HTML for status with registration check
          */
         function getButtonHtmlForStatus(eventData, now, startDate, endDate, isRegistered = false) {
-            const isOngoing = now >= startDate && now <= endDate;
-            const isPast = now > endDate;
-            const deadline = eventData.deadline ? new Date(eventData.deadline) : null;
-            const isClosed = deadline && now > deadline;
-
-            if (isOngoing) {
-                if (isRegistered) {
-                    return `<button class="evt-register-button" disabled style="background: #f59e0b; color: white; cursor: default;">Already Registered (Ongoing)</button>`;
-                } else {
-                    return `<button class="evt-register-button" disabled style="background: #f59e0b; color: white; cursor: default;">Ongoing</button>`;
-                }
-            } else if (isPast) {
-                return `<button class="evt-register-button" disabled style="background: #ef4444; color: white; cursor: default;">Event Ended</button>`;
-            } else if (isClosed) {
-                return `<button class="evt-register-button" disabled style="background: #6b7280; color: white; cursor: default;">Registration Closed</button>`;
-            } else if (isRegistered) {
-                return `<button class="evt-register-button" disabled style="background: #9ca3af; color: white; cursor: default;">Already Registered</button>`;
-            } else {
-                const isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
-
-                if (!isLoggedIn) {
-                    return `<a href="{{ route('login.register') }}" class="evt-register-button" id="evt-btn-login-register" style="background: #4f46e5; color: white; text-decoration: none; display: flex; align-items: center; justify-content: center;">Login/Register to Volunteer</a>`;
-                } else {
-                    return `<button class="evt-register-button" style="background: #4f46e5; color: white;">Register Now</button>`;
-                }
-            }
+            return getButtonHtmlForStatusKey(getEventStatusKey(now, startDate, endDate, eventData.deadline), isRegistered);
         }
 
         /**
@@ -2143,7 +2213,7 @@
                                 const updatedButton = eventCard.querySelector('.evt-register-button');
                                 if (updatedButton) {
                                     updatedButton.outerHTML =
-                                        `<button class="evt-register-button" disabled style="background: #9ca3af; color: white; cursor: default;">Already Registered</button>`;
+                                        `<button class="evt-register-button evt-register-button--registered" disabled>Already Registered</button>`;
                                 }
                                 observer.disconnect();
                             }
