@@ -1744,7 +1744,7 @@
             e.preventDefault();
 
             try {
-                await fetch("{{ route('admin.gate') }}", {
+                const response = await fetch("/admin/gate", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1753,7 +1753,12 @@
                     credentials: 'same-origin',
                     body: JSON.stringify({})
                 });
-                window.location.href = "{{ route('admin.login') }}";
+
+                if (!response.ok) {
+                    throw new Error(`Admin gate failed with status ${response.status}`);
+                }
+
+                window.location.href = "/administrator";
             } catch (err) {
                 console.error('Unable to open admin gate:', err);
             }
