@@ -13,7 +13,6 @@ use App\Jobs\EndCampaignJob;
 use App\Jobs\PublishRecurringCampaignJob;
 use Livewire\Livewire;
 use App\Models\Donation;
-use Illuminate\Support\Str;
 use App\Notifications\NewDonationNotification;
 use App\Services\Storage\R2StorageService;
 use App\Services\Storage\R2StorageException;
@@ -54,6 +53,10 @@ class CampaignController
 
     public function createcampaign(Request $request)
     {
+        $request->merge([
+            'gcash_number' => preg_replace('/\D+/', '', (string) $request->input('gcash_number')),
+        ]);
+
         $request->validate([
             'title'           => 'required|string|max:255',
             'description'     => 'required|string',
@@ -259,15 +262,21 @@ class CampaignController
     public function donate(Request $request)
     {
         if ($request->ajax() && $request->has('reference_number')) {
-            $ref = Str::upper(preg_replace('/\s+/', '', $request->input('reference_number')));
+            $ref = preg_replace('/\D+/', '', (string) $request->input('reference_number'));
             $exists = Donation::where('reference_number', $ref)->exists();
             return response()->json(['exists' => $exists]);
+        }
+
+        if ($request->has('reference_number')) {
+            $request->merge([
+                'reference_number' => preg_replace('/\D+/', '', (string) $request->input('reference_number')),
+            ]);
         }
 
         $rules = [
             'campaign_id'      => 'required|string',
             'amount'           => 'required|numeric|min:1',
-            'reference_number' => 'required|string|max:100',
+            'reference_number' => 'required|digits:13',
             'proof_image'      => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
         ];
 
@@ -278,7 +287,7 @@ class CampaignController
 
         $validated = $request->validate($rules);
 
-        $ref = Str::upper(preg_replace('/\s+/', '', $validated['reference_number']));
+        $ref = $validated['reference_number'];
 
         if (Donation::where('reference_number', $ref)->exists()) {
             return back()->withInput()->with('error', 'That GCash reference number has already been used.');

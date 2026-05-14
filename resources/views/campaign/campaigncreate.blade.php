@@ -72,7 +72,7 @@
                         <div class="tk-input-wrap">
                             <span class="tk-leading-icon"><i class="ri-money-dollar-circle-line"></i></span>
                             <input type="number" id="target_amount" name="target_amount" class="tk-input has-icon"
-                                placeholder="Enter fundraising goal" min="0" step="1" required>
+                                placeholder="Enter fundraising goal" min="1" step="1" required>
                         </div>
                         <div class="tk-inline" id="goalHelper">Tip: set a realistic goal donors can help achieve.</div>
                     </div>
@@ -172,7 +172,7 @@
                         <div class="tk-input-wrap">
                             <span class="tk-leading-icon"><i class="ri-phone-line"></i></span>
                             <input type="tel" id="gcash_number" name="gcash_number" class="tk-input has-icon"
-                                placeholder="09XX XXX XXXX" pattern="[0-9]{11}" maxlength="11" required>
+                                placeholder="09XXXXXXXXX" inputmode="numeric" pattern="09[0-9]{9}" maxlength="11" required>
                         </div>
                         <div class="tk-help">Enter your 11-digit GCash mobile number</div>
                     </div>

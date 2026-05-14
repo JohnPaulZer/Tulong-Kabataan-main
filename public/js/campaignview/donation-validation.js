@@ -7,10 +7,15 @@ function checkReferenceNumber(refNumber) {
     const referenceStatus = document.getElementById("referenceStatus");
     const referenceError = document.getElementById("referenceError");
     const submitBtn = document.getElementById("submitBtn");
+    const normalizedRefNumber = String(refNumber || "").replace(/\D/g, "").slice(0, 13);
 
-    currentReferenceNumber = refNumber;
+    if (referenceInput && referenceInput.value !== normalizedRefNumber) {
+        referenceInput.value = normalizedRefNumber;
+    }
 
-    if (refNumber.length < 5) {
+    currentReferenceNumber = normalizedRefNumber;
+
+    if (normalizedRefNumber.length !== 13) {
         referenceStatus.style.display = "none";
         referenceError.style.display = "none";
         referenceInput.classList.remove("input-error", "input-success");
@@ -36,12 +41,12 @@ function checkReferenceNumber(refNumber) {
             "X-Requested-With": "XMLHttpRequest",
         },
         body: JSON.stringify({
-            reference_number: refNumber,
+            reference_number: normalizedRefNumber,
         }),
     })
         .then((res) => res.json())
         .then((data) => {
-            if (refNumber !== currentReferenceNumber) return;
+            if (normalizedRefNumber !== currentReferenceNumber) return;
 
             if (data.exists) {
                 referenceStatus.style.display = "none";
@@ -61,7 +66,7 @@ function checkReferenceNumber(refNumber) {
         })
         .catch((err) => {
             console.error("Reference check failed:", err);
-            if (refNumber === currentReferenceNumber) {
+            if (normalizedRefNumber === currentReferenceNumber) {
                 referenceStatus.style.display = "none";
                 referenceInput.classList.remove("input-error", "input-success");
                 submitBtn.disabled = false;

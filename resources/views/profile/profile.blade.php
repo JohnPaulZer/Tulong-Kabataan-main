@@ -184,7 +184,7 @@
                             @endif
                         </label>
                         <input type="tel" id="phone_number" name="phone_number" value="{{ $phoneNumberValue }}"
-                            class="modal-input"
+                            class="modal-input" inputmode="numeric" pattern="09[0-9]{9}" maxlength="11"
                             @if ($phoneNumberReadonly) readonly style="background:#f3f4f6; cursor:not-allowed;"
                             @else
                                 required @endif>

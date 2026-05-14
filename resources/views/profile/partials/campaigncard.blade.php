@@ -274,7 +274,8 @@
                     <span class="label-optional">(Optional)</span>
                 </label>
                 <input type="text" id="manualReference" name="reference_number"
-                    placeholder="e.g., Bank transfer reference" class="form-input">
+                    placeholder="e.g., Bank transfer reference" class="form-input"
+                    inputmode="numeric" pattern="[0-9]{5,30}" maxlength="30">
                 <div class="form-hint">Transaction ID or reference number</div>
             </div>
 

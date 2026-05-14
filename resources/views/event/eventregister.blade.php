@@ -203,7 +203,8 @@
                                     class="form-control min-h-10 border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
                                     name="phone" value="{{ $phoneValue }}" {{ $isReadonly ? 'readonly' : '' }}
                                     {{ !$isReadonly ? 'required' : '' }}
-                                    placeholder="{{ $isReadonly ? '' : 'Enter your phone number' }}">
+                                    inputmode="numeric" pattern="09[0-9]{9}" maxlength="11"
+                                    placeholder="{{ $isReadonly ? '' : '09XXXXXXXXX' }}">
                             </div>
 
                             @php
