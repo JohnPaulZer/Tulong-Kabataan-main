@@ -24,6 +24,8 @@ use App\Models\InKindDonation;
 use App\Models\ImpactReport;
 use App\Services\Storage\R2StorageService;
 use App\Services\Storage\R2StorageException;
+use App\Services\Verification\IdVerificationService;
+use App\Services\Verification\VerificationException;
 
 class ProfileController
 {
@@ -34,9 +36,17 @@ class ProfileController
      */
     protected R2StorageService $storage;
 
-    public function __construct(R2StorageService $storage)
+    /**
+     * Automated ID verification orchestrator. Runs after a verification
+     * record is created so we can short-circuit obvious approvals /
+     * rejections before they hit the admin queue.
+     */
+    protected IdVerificationService $idVerification;
+
+    public function __construct(R2StorageService $storage, IdVerificationService $idVerification)
     {
         $this->storage = $storage;
+        $this->idVerification = $idVerification;
     }
 
     protected function noCacheView($view, $data = [])
@@ -207,7 +217,13 @@ class ProfileController
     public function submitverifcation(Request $r)
     {
         $user   = $r->user();
+        // Tighter limits for ID images come from config/id_verification.php
+        // so the same value is enforced from .env across environments.
+        $idMaxKb = ((int) config('id_verification.file.max_size_mb', 5)) * 1024;
+        $allowedTypes = implode(',', (array) config('id_verification.file.allowed_types', ['jpg', 'jpeg', 'png', 'webp']));
         $verificationImageMaxKb = (int) config('r2.validation.max_size_kb', 16384);
+        $requiredIdImage = "required|image|mimes:{$allowedTypes}|max:{$idMaxKb}";
+        $nullableIdImage = "nullable|image|mimes:{$allowedTypes}|max:{$idMaxKb}";
         $requiredVerificationImage = "required|image|mimes:jpeg,png,webp|max:{$verificationImageMaxKb}";
         $nullableVerificationImage = "nullable|image|mimes:jpeg,png,webp|max:{$verificationImageMaxKb}";
         $userId = $user->user_id; // ✅ using custom PK
@@ -229,10 +245,10 @@ class ProfileController
 
             // Only require what admin requested
             if (in_array('id_front', $reuploadFields)) {
-                $rules['id_front'] = $requiredVerificationImage;
+                $rules['id_front'] = $requiredIdImage;
             }
             if (in_array('id_back', $reuploadFields)) {
-                $rules['id_back'] = $requiredVerificationImage;
+                $rules['id_back'] = $requiredIdImage;
             }
             if (in_array('face_photo', $reuploadFields)) {
                 $rules['face_photo'] = $requiredVerificationImage;
@@ -242,6 +258,18 @@ class ProfileController
             }
 
             $r->validate($rules);
+
+            // Pre-flight signature & per-user attempt checks for the ID images.
+            try {
+                if ($r->hasFile('id_front')) {
+                    $this->idVerification->validateUpload($r->file('id_front'), $userId);
+                }
+                if ($r->hasFile('id_back')) {
+                    $this->idVerification->validateUpload($r->file('id_back'), $userId);
+                }
+            } catch (VerificationException $e) {
+                return back()->withErrors(['id_front' => $e->userMessage()])->withInput();
+            }
 
             try {
                 // Save only updated files — each replace uploads to R2 and
@@ -276,6 +304,12 @@ class ProfileController
 
             $vr->status = 'pending';
             $vr->review_notes = null;
+            // Reset automated decision metadata so the new submission is judged fresh.
+            $vr->decision_source = null;
+            $vr->decision_reason = null;
+            $vr->confidence_score = null;
+            $vr->fraud_warnings = null;
+            $vr->reupload_fields = null;
             $vr->save();
 
             IdentityStatus::updateOrCreate(
@@ -283,8 +317,17 @@ class ProfileController
                 ['status'  => 'pending']
             );
 
+            // Re-run the automated review against the new image(s).
+            try {
+                $this->idVerification->runAutomatedReview($vr->fresh(), $user);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('[IdVerification] Reupload review failed', [
+                    'error' => $e::class,
+                ]);
+            }
+
             return redirect()->route('profile')
-                ->with(['message' => 'Thanks! Your images were re-uploaded for review.']);
+                ->with(['message' => 'Thanks! Your images were re-uploaded. We are reviewing them now.']);
         }
 
 
@@ -329,32 +372,45 @@ class ProfileController
             'dob'         => 'required|date',
             'sex'         => 'required|in:M,F',
 
-            // Images
-            'id_front'    => $requiredVerificationImage,
-            'id_back'     => $nullableVerificationImage,
+            // Images: front, back, and selfie are all required so the
+            // automated review has the full set of evidence to score.
+            // The face-only photo is optional (legacy) — the selfie
+            // already establishes face presence and ID-holder context.
+            'id_front'    => $requiredIdImage,
+            'id_back'     => $requiredIdImage,
             'id_expiry'   => 'nullable|date',
-            'face_photo'  => $requiredVerificationImage,
+            'face_photo'  => $nullableVerificationImage,
             'selfie'      => $requiredVerificationImage,
         ]);
 
         if ($r->id_type === 'drivers_license') {
             $r->validate([
-                'id_back'   => $requiredVerificationImage,
                 'id_expiry' => 'required|date|after:today',
             ]);
         }
 
+        // Pre-flight signature, MIME and per-user attempt checks for the ID images.
+        try {
+            $this->idVerification->validateUpload($r->file('id_front'), $userId);
+            $this->idVerification->validateUpload($r->file('id_back'), $userId);
+        } catch (VerificationException $e) {
+            return back()->withErrors(['id_front' => $e->userMessage()])->withInput();
+        }
+
         // Store files on Cloudflare R2. If any upload fails, surface the error
         // to the user without creating a half-written verification record.
+        // Both ID front and back are required so the orchestrator can OCR
+        // both sides for a more accurate match. Face photo is optional —
+        // the selfie-with-ID covers the face-presence requirement.
         try {
             $frontPath  = $this->storage->upload($r->file('id_front'), 'kyc_ids',
                 ['mimes' => ['image/jpeg', 'image/png', 'image/webp']]);
-            $backPath   = $r->hasFile('id_back')
-                ? $this->storage->upload($r->file('id_back'), 'kyc_ids',
+            $backPath   = $this->storage->upload($r->file('id_back'), 'kyc_ids',
+                ['mimes' => ['image/jpeg', 'image/png', 'image/webp']]);
+            $facePath   = $r->hasFile('face_photo')
+                ? $this->storage->upload($r->file('face_photo'), 'kyc_faces',
                     ['mimes' => ['image/jpeg', 'image/png', 'image/webp']])
                 : null;
-            $facePath   = $this->storage->upload($r->file('face_photo'), 'kyc_faces',
-                ['mimes' => ['image/jpeg', 'image/png', 'image/webp']]);
             $selfiePath = $this->storage->upload($r->file('selfie'), 'kyc_selfies',
                 ['mimes' => ['image/jpeg', 'image/png', 'image/webp']]);
         } catch (R2StorageException $e) {
@@ -363,13 +419,28 @@ class ProfileController
 
         $idHash = hash('sha256', $r->id_number);
 
-        if (VerificationRequest::where('id_number_hash', $idHash)
-            ->orWhere('id_number', $r->id_number)
-            ->exists()) {
+        // Block duplicates ONLY across different users. The same user
+        // resubmitting their own ID (e.g. after an automated rejection or
+        // a failed OCR call) should be allowed — the previous record is
+        // marked superseded below.
+        $duplicate = VerificationRequest::where(function ($q) use ($idHash, $r) {
+                $q->where('id_number_hash', $idHash)
+                  ->orWhere('id_number', $r->id_number);
+            })
+            ->where('user_id', '!=', $userId)
+            ->exists();
+
+        if ($duplicate) {
             return back()->withErrors([
-                'id_number' => 'This ID number has already been used.'
+                'id_number' => 'This ID number is already linked to another account.'
             ])->withInput();
         }
+
+        // Supersede the user's prior verification records for this ID so the
+        // history is preserved but the new submission is the active one.
+        VerificationRequest::where('user_id', $userId)
+            ->whereIn('status', ['pending', 'rejected', 'reupload'])
+            ->update(['status' => 'superseded']);
 
         $uploadedVerificationFiles = array_filter([$frontPath, $backPath, $facePath, $selfiePath]);
         $vr = null;
@@ -413,9 +484,33 @@ class ProfileController
             ])->withInput();
         }
 
+        // Kick off automated review. Errors here must not block the user —
+        // the orchestrator handles its own failures and falls back to manual
+        // review, so we only catch unexpected exceptions here.
+        $reviewResult = ['decision' => null, 'score' => null];
+        try {
+            $reviewResult = $this->idVerification->runAutomatedReview($vr->fresh(), $user);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('[IdVerification] Pipeline trigger failed', [
+                'request_id' => (string) $vr->getKey(),
+                'error' => $e::class,
+            ]);
+        }
+
+        $userMessage = match ($reviewResult['decision']) {
+            IdVerificationService::DECISION_APPROVED
+                => 'Verified! Your account is now fully verified.',
+            IdVerificationService::DECISION_REJECTED
+                => 'Your verification could not be approved. Please review the message on your verification page.',
+            IdVerificationService::DECISION_NEEDS_RESUBMISSION
+                => 'Your ID image needs to be re-uploaded. Please check your verification page for details.',
+            default
+                => 'Submitted! Your verification has been received and is now under review.',
+        };
+
         return redirect()
             ->route('profile')
-            ->with(['message' => 'Submitted! Your verification is now pending review.']);
+            ->with(['message' => $userMessage]);
     }
 
 

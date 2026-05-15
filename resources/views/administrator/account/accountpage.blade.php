@@ -50,6 +50,38 @@
                 <p>Review and manage user account decision requests</p>
             </section>
 
+            {{-- Verification Provider Switcher Panel --}}
+            <section class="provider-panel" style="margin-bottom:24px;padding:16px 20px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:12px">
+                    <h3 style="margin:0;font-size:15px;display:flex;align-items:center;gap:8px">
+                        <i class="ri-shield-keyhole-line" style="color:#2563eb"></i>
+                        Verification Provider
+                    </h3>
+                    <div id="providerStatus" style="font-size:12px;color:#6b7280">Loading...</div>
+                </div>
+
+                <div id="providerButtons" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+                    <button type="button" class="provider-btn" data-provider="didit"
+                        style="padding:8px 16px;border-radius:8px;border:2px solid #e2e8f0;background:#fff;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s">
+                        <i class="ri-shield-check-line"></i> Didit
+                        <span style="font-size:10px;display:block;font-weight:400;color:#6b7280">Face match + Auto-approve</span>
+                    </button>
+                    <button type="button" class="provider-btn" data-provider="ocr_space"
+                        style="padding:8px 16px;border-radius:8px;border:2px solid #e2e8f0;background:#fff;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s">
+                        <i class="ri-file-text-line"></i> OCR.Space
+                        <span style="font-size:10px;display:block;font-weight:400;color:#6b7280">Text only + Manual review</span>
+                    </button>
+                    <button type="button" class="provider-btn" data-provider="google_vision"
+                        style="padding:8px 16px;border-radius:8px;border:2px solid #e2e8f0;background:#fff;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s">
+                        <i class="ri-google-line"></i> Google Vision
+                        <span style="font-size:10px;display:block;font-weight:400;color:#6b7280">Text only + Manual review</span>
+                    </button>
+                </div>
+
+                <div id="providerQuota" style="margin-top:12px;font-size:12px;color:#374151"></div>
+                <div id="providerNote" style="margin-top:8px;font-size:11px;color:#6b7280;font-style:italic"></div>
+            </section>
+
             <section class="stats-grid" aria-hidden="false">
 
                 <!-- 🟦 Total Accounts -->
@@ -306,8 +338,149 @@
                                         @endif
                                     @endif
 
+                                    {{-- Automated Review Panel --}}
+                                    @if (!empty($req->confidence_score) || !empty($req->id_type_detected) || !empty($req->fraud_warnings) || !empty($req->extracted_full_name) || $req->decision_source)
+                                        @php
+                                            $score = (int) ($req->confidence_score ?? 0);
+                                            $autoApprove = (int) config('id_verification.scoring.auto_approve', 85);
+                                            $manualReview = (int) config('id_verification.scoring.manual_review', 60);
+                                            $scoreColor = $score >= $autoApprove ? '#16a34a' : ($score >= $manualReview ? '#ca8a04' : '#dc2626');
+                                            $sourceLabel = $req->decision_source === 'auto'
+                                                ? 'Automated Review'
+                                                : ($req->decision_source === 'admin' ? 'Manual Admin Decision' : 'Pending Auto Review');
+                                            $providerLabel = $req->provider_used ?: 'none';
+                                        @endphp
+                                        <div class="auto-review-panel"
+                                            style="margin:15px 0;border:1px solid #e5e7eb;border-radius:8px;background:#fafafa;padding:14px">
+                                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+                                                <h5 style="margin:0;font-size:14px;display:flex;align-items:center;gap:6px">
+                                                    <i class="ri-shield-keyhole-line" style="color:#2563eb"></i>
+                                                    Automated Review
+                                                </h5>
+                                                @if (!empty($req->confidence_score))
+                                                    <span style="background:{{ $scoreColor }};color:#fff;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600">
+                                                        Score: {{ $score }}/100
+                                                    </span>
+                                                @endif
+                                            </div>
+                                            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;font-size:13px;color:#374151">
+                                                <div>
+                                                    <div style="font-size:11px;color:#6b7280;text-transform:uppercase">Decision Source</div>
+                                                    <div style="font-weight:600">{{ $sourceLabel }}</div>
+                                                </div>
+                                                <div>
+                                                    <div style="font-size:11px;color:#6b7280;text-transform:uppercase">Provider Used</div>
+                                                    <div style="font-weight:600">{{ ucfirst(str_replace('_', ' ', $providerLabel)) }}</div>
+                                                </div>
+                                                <div>
+                                                    <div style="font-size:11px;color:#6b7280;text-transform:uppercase">Detected ID Type</div>
+                                                    <div style="font-weight:600">
+                                                        @if ($req->id_type_detected === 'philid')
+                                                            PhilSys ID
+                                                        @elseif($req->id_type_detected === 'drivers_license')
+                                                            Driver's License
+                                                        @elseif($req->id_type_detected === 'unknown')
+                                                            <span style="color:#dc2626">Unknown</span>
+                                                        @else
+                                                            —
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div style="font-size:11px;color:#6b7280;text-transform:uppercase">Selected ID Type</div>
+                                                    <div style="font-weight:600">{{ ucfirst(str_replace('_', ' ', (string) $req->id_type)) }}</div>
+                                                </div>
+                                            </div>
+
+                                            @if (!empty($req->decision_reason))
+                                                <div style="margin-top:12px;padding:10px;background:#fff;border-radius:6px;border-left:3px solid {{ $scoreColor }};font-size:13px;color:#1f2937">
+                                                    <strong>Reason:</strong> {{ $req->decision_reason }}
+                                                </div>
+                                            @endif
+
+                                            @if (!empty($req->fraud_warnings))
+                                                <div style="margin-top:12px">
+                                                    <div style="font-size:12px;font-weight:600;color:#dc2626;margin-bottom:6px">
+                                                        <i class="ri-alarm-warning-line"></i> Fraud Warnings
+                                                    </div>
+                                                    <ul style="margin:0;padding-left:20px;font-size:13px;color:#7f1d1d">
+                                                        @foreach ($req->fraud_warnings as $warn)
+                                                            <li>
+                                                                <span style="text-transform:uppercase;font-size:10px;background:#fee2e2;color:#991b1b;padding:1px 6px;border-radius:4px;margin-right:4px">
+                                                                    {{ $warn['severity'] ?? 'info' }}
+                                                                </span>
+                                                                {{ $warn['reason'] ?? '' }}
+                                                            </li>
+                                                        @endforeach
+                                                    </ul>
+                                                </div>
+                                            @endif
+
+                                            @if (!empty($req->extracted_full_name) || !empty($req->extracted_birthdate) || !empty($req->extracted_id_number) || !empty($req->extracted_address))
+                                                <div style="margin-top:12px">
+                                                    <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:6px">Extracted from ID</div>
+                                                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;font-size:13px">
+                                                        @if (!empty($req->extracted_full_name))
+                                                            <div><strong>Name:</strong> {{ $req->extracted_full_name }}</div>
+                                                        @endif
+                                                        @if (!empty($req->extracted_birthdate))
+                                                            <div><strong>Birthdate:</strong>
+                                                                {{ \Carbon\Carbon::parse($req->extracted_birthdate)->format('M d, Y') }}
+                                                            </div>
+                                                        @endif
+                                                        @if (!empty($req->extracted_id_number))
+                                                            <div><strong>ID Number:</strong> {{ $req->extracted_id_number }}</div>
+                                                        @endif
+                                                        @if (!empty($req->extracted_expiration_date))
+                                                            <div><strong>Expiration:</strong>
+                                                                {{ \Carbon\Carbon::parse($req->extracted_expiration_date)->format('M d, Y') }}
+                                                            </div>
+                                                        @endif
+                                                        @if (!empty($req->extracted_sex))
+                                                            <div><strong>Sex:</strong> {{ $req->extracted_sex }}</div>
+                                                        @endif
+                                                        @if (!empty($req->extracted_nationality))
+                                                            <div><strong>Nationality:</strong> {{ $req->extracted_nationality }}</div>
+                                                        @endif
+                                                        @if (!empty($req->extracted_address))
+                                                            <div style="grid-column: 1/-1"><strong>Address:</strong>
+                                                                {{ $req->extracted_address }}</div>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            @endif
+
+                                            @if (!empty($req->score_breakdown))
+                                                <details style="margin-top:12px">
+                                                    <summary style="cursor:pointer;font-size:12px;color:#2563eb;font-weight:600">Score breakdown</summary>
+                                                    <table style="width:100%;font-size:12px;margin-top:8px;border-collapse:collapse">
+                                                        @foreach ($req->score_breakdown as $key => $row)
+                                                            @if (is_array($row) && isset($row['weight']))
+                                                                <tr style="border-bottom:1px solid #f3f4f6">
+                                                                    <td style="padding:4px 8px;text-transform:capitalize;color:#374151">
+                                                                        {{ str_replace('_', ' ', $key) }}
+                                                                    </td>
+                                                                    <td style="padding:4px 8px;text-align:right;font-weight:600">
+                                                                        {{ $row['points'] ?? 0 }} / {{ $row['weight'] }}
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
+                                                        @endforeach
+                                                    </table>
+                                                </details>
+                                            @endif
+
+                                            @if (!empty($req->image_quality_report) && isset($req->image_quality_report['metrics']))
+                                                <details style="margin-top:8px">
+                                                    <summary style="cursor:pointer;font-size:12px;color:#2563eb;font-weight:600">Image quality metrics</summary>
+                                                    <pre style="margin-top:6px;background:#f3f4f6;padding:8px;border-radius:6px;font-size:11px;overflow:auto">{{ json_encode($req->image_quality_report['metrics'], JSON_PRETTY_PRINT) }}</pre>
+                                                </details>
+                                            @endif
+                                        </div>
+                                    @endif
+
                                     {{-- Actions --}}
-                                    @if ($req->status === 'pending')
+                                    @if ($req->status === 'pending' || ($req->status === 'approved' && $req->wasAutoDecided()) || ($req->status === 'rejected' && $req->wasAutoDecided()))
                                         <div class="account-actions"
                                             style="position:sticky;bottom:0;background:#fff;padding:10px;border-top:1px solid #e5e7eb;z-index:5">
                                             <form action="{{ route('decision') }}" method="POST"
@@ -319,6 +492,14 @@
                                                 {{-- Notes --}}
                                                 <textarea name="notes" rows="2" class="notes-input" placeholder="General Review Notes"
                                                     style="width:100%;padding:8px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;margin-bottom:10px"></textarea>
+
+                                                @if ($req->wasAutoDecided() && $req->status !== 'pending')
+                                                    <div style="background:#fef3c7;color:#92400e;border-left:3px solid #f59e0b;padding:8px 10px;border-radius:6px;font-size:12px;margin-bottom:10px">
+                                                        <i class="ri-information-line"></i>
+                                                        This account was auto-{{ $req->status }} by the system. Use the
+                                                        buttons below to override.
+                                                    </div>
+                                                @endif
 
                                                 {{-- Reupload Reasons  --}}
                                                 <div id="reuploadOptions" style="display:none; margin-bottom:10px">
@@ -336,13 +517,9 @@
                                                             <label><input type="checkbox" name="reupload_fields[]"
                                                                     value="id_back"> ID Back</label>
                                                         @endif
-                                                        @if ($req->face_photo_path)
-                                                            <label><input type="checkbox" name="reupload_fields[]"
-                                                                    value="face_photo"> Facial Photo</label>
-                                                        @endif
                                                         @if ($req->selfie_path)
                                                             <label><input type="checkbox" name="reupload_fields[]"
-                                                                    value="selfie"> Selfie with ID</label>
+                                                                    value="selfie"> Selfie</label>
                                                         @endif
                                                     </div>
                                                 </div>
@@ -1481,6 +1658,114 @@
     </script>
 
 
+
+    {{-- ===================== PROVIDER SWITCHER LOGIC ===================== --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const buttons = document.querySelectorAll('.provider-btn');
+            const statusEl = document.getElementById('providerStatus');
+            const quotaEl = document.getElementById('providerQuota');
+            const noteEl = document.getElementById('providerNote');
+            let currentProvider = null;
+
+            function loadProvider() {
+                fetch("{{ route('accounts.verification-provider') }}", {
+                    headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (!data.success) return;
+                    currentProvider = data.active;
+                    updateUI(data);
+                })
+                .catch(() => {
+                    statusEl.textContent = 'Could not load provider info';
+                });
+            }
+
+            function updateUI(data) {
+                // Highlight active button
+                buttons.forEach(btn => {
+                    const p = btn.dataset.provider;
+                    const isActive = p === data.active;
+                    const info = data.providers[p];
+                    btn.style.borderColor = isActive ? '#2563eb' : '#e2e8f0';
+                    btn.style.background = isActive ? '#eff6ff' : '#fff';
+                    btn.style.opacity = (info && info.configured) ? '1' : '0.5';
+                    if (info && !info.configured) {
+                        btn.title = 'API key not configured';
+                    } else {
+                        btn.title = '';
+                    }
+                });
+
+                // Status text
+                const activeInfo = data.providers[data.active];
+                const name = activeInfo ? activeInfo.name : data.active;
+                statusEl.innerHTML = `Active: <strong>${name}</strong>` +
+                    (data.enabled ? ' <span style="color:#16a34a">● Enabled</span>' : ' <span style="color:#dc2626">● Disabled</span>');
+
+                // Quota display
+                if (activeInfo && activeInfo.quota) {
+                    const q = activeInfo.quota;
+                    const dailyPct = q.daily_limit > 0 ? Math.round((q.daily_used / q.daily_limit) * 100) : 0;
+                    const monthlyPct = q.monthly_limit > 0 ? Math.round((q.monthly_used / q.monthly_limit) * 100) : 0;
+                    const barColor = monthlyPct >= 90 ? '#dc2626' : monthlyPct >= 70 ? '#f59e0b' : '#16a34a';
+                    quotaEl.innerHTML = `
+                        <div style="display:flex;gap:20px;flex-wrap:wrap">
+                            <div>Today: <strong>${q.daily_used}</strong> / ${q.daily_limit}</div>
+                            <div>This month: <strong>${q.monthly_used}</strong> / ${q.monthly_limit}
+                                <div style="width:120px;height:6px;background:#e5e7eb;border-radius:3px;margin-top:3px;display:inline-block;vertical-align:middle">
+                                    <div style="width:${monthlyPct}%;height:100%;background:${barColor};border-radius:3px"></div>
+                                </div>
+                            </div>
+                        </div>`;
+                } else {
+                    quotaEl.innerHTML = '';
+                }
+
+                // Note
+                if (activeInfo && !activeInfo.primary) {
+                    noteEl.textContent = 'This provider only extracts text — auto-approval is disabled. All submissions go to admin for manual review.';
+                } else if (activeInfo && activeInfo.primary) {
+                    noteEl.textContent = 'Didit supports face matching — submissions with a high score can be auto-approved without admin review.';
+                } else {
+                    noteEl.textContent = '';
+                }
+            }
+
+            buttons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const provider = btn.dataset.provider;
+                    if (provider === currentProvider) return;
+
+                    if (!confirm(`Switch verification provider to ${btn.textContent.trim().split('\n')[0]}?`)) return;
+
+                    fetch("{{ route('accounts.verification-provider.update') }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify({ provider: provider, enabled: true })
+                    })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.success) {
+                            loadProvider();
+                        } else {
+                            alert(data.message || 'Failed to switch provider');
+                        }
+                    })
+                    .catch(() => alert('Network error'));
+                });
+            });
+
+            loadProvider();
+        });
+    </script>
 
 </body>
 

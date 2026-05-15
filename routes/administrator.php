@@ -34,6 +34,10 @@ Route::prefix('administrator')->middleware('throttle:admin')->group(function () 
         ->name('accounts.stats');
     Route::get('/accounts/{request}/documents/{field}', [AdministratorController::class, 'verificationDocument'])
         ->name('accounts.verification-document');
+    Route::get('/accounts/verification-provider', [AdministratorController::class, 'getVerificationProvider'])
+        ->name('accounts.verification-provider');
+    Route::post('/accounts/verification-provider', [AdministratorController::class, 'setVerificationProvider'])
+        ->name('accounts.verification-provider.update');
     //===================================================================================================================
 
     //===========================================CAMPAIGN ROUTE==========================================================

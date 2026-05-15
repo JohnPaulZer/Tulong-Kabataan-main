@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use App\Models\Concerns\EncryptsSensitiveAttributes;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 use MongoDB\Laravel\Eloquent\Model;
 
 class AdminAccount extends Model
 {
-    use EncryptsSensitiveAttributes;
+    use EncryptsSensitiveAttributes, Notifiable;
 
     protected $connection = 'mongodb';
     protected $collection = 'admin_accounts';
@@ -55,5 +56,15 @@ class AdminAccount extends Model
     public function setResetTokenAttribute($value): void
     {
         $this->attributes['reset_token'] = $this->encryptSensitiveValue($value);
+    }
+
+    /**
+     * Override the default notifications relationship to use the MongoDB
+     * DatabaseNotification model.
+     */
+    public function notifications()
+    {
+        return $this->morphMany(DatabaseNotification::class, 'notifiable')
+            ->latest();
     }
 }

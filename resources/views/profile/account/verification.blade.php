@@ -14,13 +14,31 @@
     @include('partials.main-header')
 
     @if ($errors->any())
-        <div class="verification-container verification-page-wrap verification-pt-3">
+        <div class="verification-container verification-page-wrap verification-pt-3" id="verification-errors">
             <div class="verification-alert verification-alert-danger">
-                <ul class="verification-mb-0">
+                <strong><i class="ri-error-warning-line"></i> Please fix the following before submitting:</strong>
+                <ul class="verification-mb-0" style="margin-top:6px">
                     @foreach ($errors->all() as $err)
                         <li>{{ $err }}</li>
                     @endforeach
                 </ul>
+            </div>
+        </div>
+        <script>
+            // Make sure the user can actually see the error after a redirect-back.
+            document.addEventListener('DOMContentLoaded', () => {
+                const el = document.getElementById('verification-errors');
+                if (el) {
+                    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        </script>
+    @endif
+
+    @if (session('error'))
+        <div class="verification-container verification-page-wrap verification-pt-3">
+            <div class="verification-alert verification-alert-danger">
+                {{ session('error') }}
             </div>
         </div>
     @endif
@@ -66,13 +84,69 @@
                         ->latest('created_at')
                         ->first();
                     $reuploadFields = $vr && $vr->status === 'reupload' ? $vr->reupload_fields ?? [] : [];
+
+                    // Friendly status data for the status banner / tips card.
+                    $autoDecided = $vr && method_exists($vr, 'wasAutoDecided') && $vr->wasAutoDecided();
+                    $statusFriendly = match ($vr?->status) {
+                        'approved' => 'Verified',
+                        'pending'  => 'Under Review',
+                        'reupload' => 'Action Needed',
+                        'rejected' => 'Not Approved',
+                        default    => null,
+                    };
                 @endphp
+
+                {{-- Status summary --}}
+                @if ($vr && $statusFriendly)
+                    @php
+                        $tone = match ($vr->status) {
+                            'approved' => 'success',
+                            'pending'  => 'info',
+                            'reupload' => 'warning',
+                            'rejected' => 'danger',
+                            default    => 'info',
+                        };
+                    @endphp
+                    <div class="verification-alert verification-alert-{{ $tone }} verification-mb-4">
+                        <strong>Status: {{ $statusFriendly }}</strong>
+                        @if ($autoDecided)
+                            <span style="font-size:12px;opacity:.8"> · Decided automatically</span>
+                        @endif
+                        <br>
+                        @if ($vr->status === 'approved')
+                            Your account is verified. You now have access to all platform features.
+                        @elseif ($vr->status === 'pending')
+                            We received your documents and they are being reviewed. This usually takes a few minutes for
+                            the automated check, with admin review if needed.
+                        @elseif ($vr->status === 'reupload')
+                            {{ $vr->review_notes ?? 'Please re-upload the requested documents.' }}
+                        @elseif ($vr->status === 'rejected')
+                            {{ $vr->review_notes ?? 'Your verification was not approved. Please review and submit again.' }}
+                        @endif
+                    </div>
+                @endif
 
                 {{-- Show admin reupload message --}}
                 @if ($vr && $vr->status === 'reupload')
                     <div class="verification-alert verification-alert-warning verification-mb-4">
                         <strong>Reupload Required</strong><br>
                         {{ $vr->review_notes ?? 'Please reupload the requested documents.' }}
+                    </div>
+                @endif
+
+                {{-- Image quality tips --}}
+                @if (!$vr || in_array($vr->status, ['reupload', 'rejected']))
+                    <div class="verification-alert verification-alert-info verification-mb-4" style="background:#eff6ff;border-color:#bfdbfe;color:#1e3a8a">
+                        <strong><i class="ri-lightbulb-line"></i> Tips for a clear ID photo</strong>
+                        <ul style="margin:8px 0 0 18px;padding:0;font-size:13px">
+                            <li>Use good lighting, no glare or shadows.</li>
+                            <li>Place the ID on a flat, contrasting surface — fill most of the frame.</li>
+                            <li>Make sure all four corners and the text are sharp and readable.</li>
+                            <li>Accepted IDs: <strong>PhilSys National ID</strong> and <strong>Driver's License</strong>.</li>
+                            <li>Accepted file types: JPG, JPEG, PNG, WEBP (max
+                                {{ (int) config('id_verification.file.max_size_mb', 5) }} MB).</li>
+                            <li>No screenshots, photocopies, or web images. Take a fresh photo of the physical ID.</li>
+                        </ul>
                     </div>
                 @endif
 
@@ -87,13 +161,13 @@
                     @endif
                     <input type="hidden" id="_step" name="_step" value="1">
 
-                    <!-- STEP 1: ADD ID -->
-                    @if (!$vr || $vr->status !== 'reupload' || in_array('id_front', $reuploadFields) || in_array('id_back', $reuploadFields))
+                    <!-- STEP 1: ID Front Photo -->
+                    @if (!$vr || $vr->status !== 'reupload' || in_array('id_front', $reuploadFields))
                         <section class="verification-step verification-show" id="step-1">
                             <h2
                                 class="verification-h6 verification-text-uppercase verification-text-muted verification-mb-3">
-                                Government ID</h2>
-                            <p class="verification-step-copy">Upload a clear photo of your valid ID. Add the back side only when required.</p>
+                                ID Front Photo</h2>
+                            <p class="verification-step-copy">Upload a clear photo of the <strong>front</strong> of your valid government ID.</p>
                             <div class="verification-row verification-g-3 verification-g-md-4">
 
                                 <!-- ID Type -->
@@ -118,30 +192,17 @@
                                         class="verification-form-control" accept="image/*" capture="environment"
                                         @if ($vr && $vr->status === 'reupload') @if (in_array('id_front', $reuploadFields)) required @else disabled @endif
                                     @else required @endif />
+                                    <div class="verification-form-text">Make sure all text and the photo on the front are clearly visible.</div>
                                     <div class="verification-preview-box verification-mt-2">
                                         <img id="preview_front" alt="Front Preview" class="verification-d-none" />
                                         <span class="verification-placeholder-text">No file selected</span>
                                     </div>
                                 </div>
 
-                                <!-- Upload Back -->
-                                <div class="verification-col-12 verification-col-md-6" id="idBackWrapper"
-                                    style="display:none;">
-                                    <label for="id_back" class="verification-form-label">Upload ID (Back)</label>
-                                    <input type="file" name="id_back" id="id_back"
-                                        class="verification-form-control" accept="image/*" capture="environment"
-                                        @if ($vr && $vr->status === 'reupload') @if (in_array('id_back', $reuploadFields)) required @else disabled @endif
-                                        @endif />
-                                    <div class="verification-preview-box verification-mt-2">
-                                        <img id="preview_back" alt="Back Preview" class="verification-d-none" />
-                                        <span class="verification-placeholder-text">No file selected</span>
-                                    </div>
-                                </div>
-
-                                <!-- Expiry Date -->
+                                <!-- Expiry Date (Driver's License only) -->
                                 <div class="verification-col-12 verification-col-md-6" id="idExpiryWrapper"
                                     style="display:none;">
-                                    <label for="id_expiry" class="verification-form-label">ID Expiry Date</label>
+                                    <label for="id_expiry" class="verification-form-label verification-required">ID Expiry Date</label>
                                     <input type="date" name="id_expiry" id="id_expiry"
                                         class="verification-form-control"
                                         @if ($vr && $vr->status === 'reupload') disabled @endif />
@@ -151,36 +212,36 @@
                         </section>
                     @endif
 
-                    <!-- STEP 2: Facial Photo -->
-                    @if (!$vr || $vr->status !== 'reupload' || in_array('face_photo', $reuploadFields))
+                    <!-- STEP 2: ID Back Photo -->
+                    @if (!$vr || $vr->status !== 'reupload' || in_array('id_back', $reuploadFields))
                         <section class="verification-step" id="step-2">
                             <h2
                                 class="verification-h6 verification-text-uppercase verification-text-muted verification-mb-3">
-                                Face Photo</h2>
-                            <p class="verification-step-copy">Take a front-facing photo with good lighting.</p>
+                                ID Back Photo</h2>
+                            <p class="verification-step-copy">Upload a clear photo of the <strong>back</strong> of your ID. This helps verify the barcode, QR code, or additional details.</p>
                             <div class="verification-col-12 verification-col-md-8">
-                                <label for="face_photo" class="verification-form-label verification-required">Take a
-                                    face-only photo</label>
-                                <input type="file" name="face_photo" id="face_photo"
-                                    class="verification-form-control" accept="image/*" capture="user"
-                                    @if ($vr && $vr->status === 'reupload') @if (in_array('face_photo', $reuploadFields)) required @else disabled @endif
+                                <label for="id_back" class="verification-form-label verification-required">Upload
+                                    ID (Back)</label>
+                                <input type="file" name="id_back" id="id_back"
+                                    class="verification-form-control" accept="image/*" capture="environment"
+                                    @if ($vr && $vr->status === 'reupload') @if (in_array('id_back', $reuploadFields)) required @else disabled @endif
                                 @else required @endif />
-                                <div class="verification-form-text">Remove hats/masks; good lighting required.</div>
+                                <div class="verification-form-text">Flip your ID over and photograph the back side.</div>
                                 <div class="verification-preview-box verification-mt-2">
-                                    <img id="preview_face" alt="Face Preview" class="verification-d-none" />
+                                    <img id="preview_back" alt="Back Preview" class="verification-d-none" />
                                     <span class="verification-placeholder-text">No file selected</span>
                                 </div>
                             </div>
                         </section>
                     @endif
 
-                    <!-- STEP 3: Selfie with ID -->
+                    <!-- STEP 3: Selfie Photo -->
                     @if (!$vr || $vr->status !== 'reupload' || in_array('selfie', $reuploadFields))
                         <section class="verification-step" id="step-3">
                             <h2
                                 class="verification-h6 verification-text-uppercase verification-text-muted verification-mb-3">
-                                Selfie with ID</h2>
-                            <p class="verification-step-copy">Hold the ID beside your face so both are readable in one photo.</p>
+                                Selfie Photo</h2>
+                            <p class="verification-step-copy">Take a selfie holding your ID next to your face so we can confirm you are the ID holder.</p>
                             <div class="verification-col-12 verification-col-md-8">
                                 <label for="selfie" class="verification-form-label verification-required">Upload
                                     selfie while holding your ID</label>
@@ -188,8 +249,7 @@
                                     class="verification-form-control" accept="image/*" capture="user"
                                     @if ($vr && $vr->status === 'reupload') @if (in_array('selfie', $reuploadFields)) required @else disabled @endif
                                 @else required @endif />
-                                <div class="verification-form-text">Hold your ID next to your face. Both must be
-                                    visible.</div>
+                                <div class="verification-form-text">Hold your ID next to your face. Both your face and the ID must be clearly visible.</div>
                                 <div class="verification-preview-box verification-mt-2">
                                     <img id="preview_selfie" alt="Selfie Preview" class="verification-d-none" />
                                     <span class="verification-placeholder-text">No file selected</span>
@@ -317,17 +377,18 @@
             return `${Math.ceil(bytes / 1024)} KB`;
         }
 
-        // Build step list dynamically
+        // Build step list dynamically based on the new flow:
+        // Step 1: ID Front | Step 2: ID Back | Step 3: Selfie | Step 4: Details
         let activeSteps = [];
-        if (!reuploadMode || reuploadFields.includes("id_front") || reuploadFields.includes("id_back"))
+        if (!reuploadMode || reuploadFields.includes("id_front"))
             activeSteps.push({
                 id: 1,
-                label: "ID"
+                label: "Front"
             });
-        if (!reuploadMode || reuploadFields.includes("face_photo"))
+        if (!reuploadMode || reuploadFields.includes("id_back"))
             activeSteps.push({
                 id: 2,
-                label: "Face"
+                label: "Back"
             });
         if (!reuploadMode || reuploadFields.includes("selfie"))
             activeSteps.push({
@@ -542,7 +603,6 @@
         function validateStep(stepId) {
             const idFront = document.getElementById('id_front');
             const idBack = document.getElementById('id_back');
-            const facePhoto = document.getElementById('face_photo');
             const selfie = document.getElementById('selfie');
             const idNumber = document.getElementById('id_number');
             const firstName = document.getElementById('first_name');
@@ -552,18 +612,25 @@
             const idType = document.getElementById('id_type');
 
             if (stepId === 1) {
+                // Step 1: ID Front — require type + front image
                 if (!validateRequired(idType, "ID Type")) return false;
                 if (reuploadMode) {
-                    if (reuploadFields.includes("id_front") && !validateRequired(idFront, "Front ID")) return false;
-                    if (reuploadFields.includes("id_back") && !validateRequired(idBack, "Back ID")) return false;
+                    if (reuploadFields.includes("id_front") && !validateRequired(idFront, "Front ID Photo")) return false;
                 } else {
-                    if (!validateRequired(idFront, "Front ID")) return false;
-                    if (idType?.value === 'drivers_license' && !validateRequired(idBack, "Back ID")) return false;
+                    if (!validateRequired(idFront, "Front ID Photo")) return false;
                 }
                 return true;
             }
-            if (stepId === 2) return validateRequired(facePhoto, "Facial Photo");
-            if (stepId === 3) return validateRequired(selfie, "Selfie with ID");
+            if (stepId === 2) {
+                // Step 2: ID Back — always required for both PhilSys and DL
+                if (reuploadMode) {
+                    if (reuploadFields.includes("id_back") && !validateRequired(idBack, "Back ID Photo")) return false;
+                } else {
+                    if (!validateRequired(idBack, "Back ID Photo")) return false;
+                }
+                return true;
+            }
+            if (stepId === 3) return validateRequired(selfie, "Selfie Photo");
             if (stepId === 4) {
                 return validateIdNumber() &&
                     validateRequired(idNumber, "ID Number") &&
@@ -591,16 +658,14 @@
         }
         const idFront = document.getElementById('id_front');
         const idBack = document.getElementById('id_back');
-        const facePhoto = document.getElementById('face_photo');
         const selfie = document.getElementById('selfie');
         idFront?.addEventListener('change', () => showPreview(idFront, document.getElementById('preview_front')));
         idBack?.addEventListener('change', () => showPreview(idBack, document.getElementById('preview_back')));
-        facePhoto?.addEventListener('change', () => showPreview(facePhoto, document.getElementById('preview_face')));
         selfie?.addEventListener('change', () => showPreview(selfie, document.getElementById('preview_selfie')));
 
         // Prevent invalid submit
         document.getElementById('kycForm').addEventListener('submit', function(e) {
-            const selectedFiles = [idFront, idBack, facePhoto, selfie]
+            const selectedFiles = [idFront, idBack, selfie]
                 .flatMap(input => Array.from(input?.files || []));
             const totalBytes = selectedFiles.reduce((sum, file) => sum + file.size, 0);
 
@@ -635,16 +700,13 @@
         // Init wizard
         setStep(1);
 
-        // Toggle ID Back + Expiry fields based on ID type
+        // Toggle Expiry field based on ID type (back is always required now)
         function toggleIdFields() {
             const idType = document.getElementById('id_type')?.value;
-            const backWrapper = document.getElementById('idBackWrapper');
             const expiryWrapper = document.getElementById('idExpiryWrapper');
-            if (idType === 'drivers_license' && backWrapper && expiryWrapper) {
-                backWrapper.style.display = '';
+            if (idType === 'drivers_license' && expiryWrapper) {
                 expiryWrapper.style.display = '';
-            } else if (backWrapper && expiryWrapper) {
-                backWrapper.style.display = 'none';
+            } else if (expiryWrapper) {
                 expiryWrapper.style.display = 'none';
             }
 
