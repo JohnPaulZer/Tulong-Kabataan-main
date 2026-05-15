@@ -285,7 +285,8 @@ body.profile-inkind-page .prof-main {
 body.login-page,
 body.register-page,
 body.verify-email-page,
-body.email-verified-page {
+body.email-verified-page,
+body.reset-password-page {
     position: relative;
     isolation: isolate;
     min-height: 100vh;
@@ -297,7 +298,8 @@ body.email-verified-page {
 body.login-page::before,
 body.register-page::before,
 body.verify-email-page::before,
-body.email-verified-page::before {
+body.email-verified-page::before,
+body.reset-password-page::before {
     content: "";
     position: fixed;
     inset: 0;

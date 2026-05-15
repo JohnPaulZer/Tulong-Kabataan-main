@@ -5,13 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Email Verified | Tulong Kabataan</title>
-    <link rel="icon" href="{{ asset('img/log2.png') }}" type="image/png">
+    <link rel="icon" href="{{ page_media_url('site_favicon', asset('img/log2.png')) }}" type="image/png">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="preload" as="image" href="{{ asset('img/backlogin.png') }}">
+    <link rel="preload" as="image" href="{{ page_media_url('email_verification_background', asset('img/backlogin.png')) }}">
 </head>
 
-<body class="email-verified-page relative flex min-h-screen items-center justify-center overflow-hidden bg-[url('/img/backlogin.png')] bg-cover bg-center bg-no-repeat px-4 py-8 font-body text-slate-950"
-    style="--auth-bg: url('{{ asset('img/backlogin.png') }}');">
+<body class="email-verified-page relative flex min-h-screen items-center justify-center overflow-hidden bg-cover bg-center bg-no-repeat px-4 py-8 font-body text-slate-950"
+    style="--auth-bg: url('{{ page_media_url('email_verification_background', asset('img/backlogin.png')) }}');">
     <div class="absolute inset-0 bg-slate-950/25 backdrop-blur-[1px]"></div>
     <div class="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-white/40 to-transparent"></div>
 

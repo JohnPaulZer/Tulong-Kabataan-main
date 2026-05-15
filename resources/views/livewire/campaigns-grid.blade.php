@@ -81,7 +81,7 @@
                     <div class="campaign-img-wrap">
                         <img src="{{ $campaign->featured_image
                             ? file_url($campaign->featured_image)
-                            : asset('img/camp.jpg') }}"
+                            : page_media_url('campaign_default_image', asset('img/camp.jpg')) }}"
                             alt="{{ $campaign->title }}"
                             class="campaign-img"
                             loading="lazy">

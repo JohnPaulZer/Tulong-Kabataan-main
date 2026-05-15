@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Events | Tulong Kabataan</title>
-    <link rel="icon" href="img/log2.png" type="image/png" />
+    <link rel="icon" href="{{ page_media_url('site_favicon', asset('img/log2.png')) }}" type="image/png" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
@@ -18,7 +18,7 @@
 
     <section class="evt-hero-section">
         <div class="evt-hero-image">
-            <img src="img/bg1.jpg" alt="Events Hero" />
+            <img src="{{ page_media_url('event_hero_image', asset('img/bg1.jpg')) }}" alt="Events Hero" />
             <div class="evt-overlay"></div>
         </div>
         <div class="evt-hero-content">
@@ -112,7 +112,7 @@
                 ]) data-event-id="{{ $event->event_id }}"
                     data-event-date="{{ $start->format('Y-m-d') }}" data-event-type="{{ $eventType }}">
                     <div class="evt-card-image">
-                        <img src="{{ file_url($event->photo, asset('img/bg2.jpg')) }}" alt="Event photo">
+                        <img src="{{ file_url($event->photo, page_media_url('event_default_image', asset('img/bg2.jpg'))) }}" alt="Event photo">
                         <span class="evt-card-status evt-status-chip evt-status-chip--{{ $status }}">
                             {{ $statusLabel }}
                         </span>
@@ -233,7 +233,7 @@
 
         /* Data from backend */
         const calendarEventsAll = @json($calendarEvents);
-        const eventPhotoFallback = @json(asset('img/bg2.jpg'));
+        const eventPhotoFallback = @json(page_media_url('event_default_image', asset('img/bg2.jpg')));
         const localStorageBaseUrl = @json(url('storage'));
 
         function resolveEventPhotoUrl(photo) {

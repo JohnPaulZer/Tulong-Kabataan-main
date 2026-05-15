@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Verify Email | Tulong Kabataan</title>
-    <link rel="icon" href="{{ asset('img/log2.png') }}" type="image/png">
-    <link rel="preload" as="image" href="{{ asset('img/backlogin.png') }}">
+    <link rel="icon" href="{{ page_media_url('site_favicon', asset('img/log2.png')) }}" type="image/png">
+    <link rel="preload" as="image" href="{{ page_media_url('email_verification_background', asset('img/backlogin.png')) }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="verify-email-page relative flex min-h-screen items-center justify-center overflow-hidden bg-[url('/img/backlogin.png')] bg-cover bg-center bg-no-repeat px-4 py-8 font-body text-slate-950"
-    style="--auth-bg: url('{{ asset('img/backlogin.png') }}');">
+<body class="verify-email-page relative flex min-h-screen items-center justify-center overflow-hidden bg-cover bg-center bg-no-repeat px-4 py-8 font-body text-slate-950"
+    style="--auth-bg: url('{{ page_media_url('email_verification_background', asset('img/backlogin.png')) }}');">
     @include('administrator.partials.loading-screen')
 
     <div class="absolute inset-0 bg-slate-950/25 backdrop-blur-[1px]"></div>

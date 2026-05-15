@@ -5,12 +5,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>About Us | Tulong Kabataan</title>
-    <link rel="icon" href="{{ asset('img/log2.png') }}" type="image/png" />
+    <link rel="icon" href="{{ page_media_url('site_favicon', asset('img/log2.png')) }}" type="image/png" />
     <!-- Remixicon -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="about-page">
+<body class="about-page" style="--about-hero-bg: url('{{ page_media_url('about_hero_image', asset('img/bg2.jpg')) }}');">
     @include('administrator.partials.loading-screen')
 
     <!-- Navigation & Header -->
@@ -46,7 +46,7 @@
 
                 <div class="intro-side">
                     <figure class="intro-image">
-                        <img src="{{ asset('img/diss.jpg') }}" alt="Youth volunteers working together">
+                        <img src="{{ page_media_url('about_intro_image', asset('img/diss.jpg')) }}" alt="Youth volunteers working together">
                         <figcaption>Young volunteers working with purpose, care, and accountability.</figcaption>
                     </figure>
                     <div class="about-story-stats">
@@ -137,10 +137,10 @@
                                     <img src="{{ $firstPhoto }}" alt="{{ $report->title }}">
                                 @else
                                     <img src="{{ file_url($firstPhoto) }}" alt="{{ $report->title }}"
-                                        onerror="this.src='https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?q=80&w=2670&auto=format&fit=crop'">
+                                        onerror="this.src='{{ page_media_url('about_impact_fallback_image', asset('img/bg1.jpg')) }}'">
                                 @endif
                             @else
-                                <img src="https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?q=80&w=2670&auto=format&fit=crop"
+                                <img src="{{ page_media_url('about_impact_fallback_image', asset('img/bg1.jpg')) }}"
                                     alt="{{ $report->title }}">
                             @endif
                             <span class="report-type-pill">
@@ -175,10 +175,10 @@
                                     <img src="{{ $event->photo }}" alt="{{ $event->title }}">
                                 @else
                                     <img src="{{ file_url($event->photo) }}" alt="{{ $event->title }}"
-                                        onerror="this.src='https://images.unsplash.com/photo-1544027993-37dbfe43562a?q=80&w=2670&auto=format&fit=crop'">
+                                        onerror="this.src='{{ page_media_url('event_default_image', asset('img/bg2.jpg')) }}'">
                                 @endif
                             @else
-                                <img src="https://images.unsplash.com/photo-1544027993-37dbfe43562a?q=80&w=2670&auto=format&fit=crop"
+                                <img src="{{ page_media_url('event_default_image', asset('img/bg2.jpg')) }}"
                                     alt="{{ $event->title }}">
                             @endif
                             <span class="report-type-pill">
@@ -217,7 +217,7 @@
                                 @else
                                     <img src="{{ file_url($campaign->featured_image) }}"
                                         alt="{{ $campaign->title }}"
-                                        onerror="this.src='https://images.unsplash.com/photo-1593113598332-cd288d649433?q=80&w=2670&auto=format&fit=crop'">
+                                        onerror="this.src='{{ page_media_url('campaign_default_image', asset('img/camp.jpg')) }}'">
                                 @endif
                             @elseif(!empty($campaign->images) && is_array($campaign->images))
                                 @php
@@ -227,10 +227,10 @@
                                     <img src="{{ $firstImage }}" alt="{{ $campaign->title }}">
                                 @else
                                     <img src="{{ file_url($firstImage) }}" alt="{{ $campaign->title }}"
-                                        onerror="this.src='https://images.unsplash.com/photo-1593113598332-cd288d649433?q=80&w=2670&auto=format&fit=crop'">
+                                        onerror="this.src='{{ page_media_url('campaign_default_image', asset('img/camp.jpg')) }}'">
                                 @endif
                             @else
-                                <img src="https://images.unsplash.com/photo-1593113598332-cd288d649433?q=80&w=2670&auto=format&fit=crop"
+                                <img src="{{ page_media_url('campaign_default_image', asset('img/camp.jpg')) }}"
                                     alt="{{ $campaign->title }}">
                             @endif
                             <span class="report-type-pill">

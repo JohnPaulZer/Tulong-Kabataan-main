@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdministratorController;
+use App\Http\Controllers\PageMediaController;
 use App\Http\Controllers\AttendanceEmailController;
 
 
@@ -116,6 +117,15 @@ Route::prefix('administrator')->middleware('throttle:admin')->group(function () 
     //====================================== SETTINGS (User-side management) =====================================
     Route::get('/settings', [AdministratorController::class, 'settingsPage'])->name('admin.settings');
     Route::post('/settings/update', [AdministratorController::class, 'updateSettings'])->name('admin.settings.update');
+
+    //====================================== PAGE MEDIA (User-side images) =====================================
+    Route::get('/page-media', [PageMediaController::class, 'index'])->name('admin.page-media');
+    Route::post('/page-media/{key}', [PageMediaController::class, 'update'])
+        ->middleware('throttle:upload')
+        ->name('admin.page-media.update');
+    Route::delete('/page-media/{key}', [PageMediaController::class, 'reset'])
+        ->middleware('throttle:upload')
+        ->name('admin.page-media.reset');
 
     // User account management from settings
     Route::get('/settings/users', [AdministratorController::class, 'listUsers'])->name('admin.settings.users');

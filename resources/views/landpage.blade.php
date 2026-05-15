@@ -5,11 +5,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tulong Kabataan</title>
-    <link rel="icon" href="{{ asset('img/log2.png') }}" type="image/png" />
+    <link rel="icon" href="{{ page_media_url('site_favicon', asset('img/log2.png')) }}" type="image/png" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="land-page m-0 overflow-x-hidden bg-gray-50 font-body text-slate-900 antialiased">
+<body class="land-page m-0 overflow-x-hidden bg-gray-50 font-body text-slate-900 antialiased"
+    style="--tk-home-cta-bg: url('{{ page_media_url('home_cta_background', asset('img/bg2.jpg')) }}'); --tk-decorative-pattern: url('{{ page_media_url('decorative_pattern_image', asset('img/doodle.svg')) }}');">
     @include('administrator.partials.loading-screen')
     @include('partials.main-header')
     @include('partials.site-announcement')
@@ -17,7 +18,7 @@
     <main id="main-content" class="overflow-x-hidden">
         <section class="tk-land-hero relative isolate flex min-h-[calc(100svh-60px)] items-start overflow-hidden md:min-h-[700px] md:items-center" aria-labelledby="homepage-hero-title">
             <div class="tk-land-hero-bg absolute inset-0 -z-10 overflow-hidden">
-                <img class="h-full w-full object-cover" src="{{ asset('img/bg1.jpg') }}"
+                <img class="h-full w-full object-cover" src="{{ page_media_url('home_hero_background', asset('img/bg1.jpg')) }}"
                     alt="Community volunteers preparing relief support" decoding="async" fetchpriority="high" />
                 <div class="tk-land-overlay absolute inset-0 bg-white/80"></div>
             </div>
@@ -89,7 +90,7 @@
             <div class="flex flex-wrap items-start justify-center gap-10">
                 <div class="tk-land-image-card flex max-w-[600px] flex-1 basis-[600px] items-center justify-center md:pt-12">
                     <img class="h-auto w-full rounded-lg object-cover shadow-[0_4px_24px_rgba(0,0,0,0.07)]"
-                        src="{{ asset('img/diss.jpg') }}" alt="Volunteers distributing disaster relief supplies"
+                        src="{{ page_media_url('home_impact_image', asset('img/diss.jpg')) }}" alt="Volunteers distributing disaster relief supplies"
                         loading="lazy" decoding="async">
                 </div>
                 <div class="grid min-w-0 flex-1 basis-[500px] gap-8">
@@ -168,7 +169,7 @@
                     @php
                         $imageUrl = $campaign->featured_image
                             ? file_url($campaign->featured_image)
-                            : asset('img/camp.jpg');
+                            : page_media_url('campaign_default_image', asset('img/camp.jpg'));
                         $progress = $campaign->target_amount > 0
                             ? min(100, round(($campaign->current_amount / $campaign->target_amount) * 100))
                             : 0;

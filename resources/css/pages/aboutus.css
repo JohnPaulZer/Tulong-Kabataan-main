@@ -53,7 +53,7 @@ body.about-page .page-header {
     text-align: center;
     background:
         linear-gradient(180deg, rgba(17, 24, 39, 0.68), rgba(49, 46, 129, 0.58)),
-        url('/img/bg2.jpg') center / cover no-repeat;
+        var(--about-hero-bg, url('/img/bg2.jpg')) center / cover no-repeat;
 }
 
 body.about-page .page-header h1 {

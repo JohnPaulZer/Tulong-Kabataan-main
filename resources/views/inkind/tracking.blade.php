@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tracking & Needs | Tulong Kabataan</title>
-    <link rel="icon" href="{{ asset('img/log2.png') }}" type="image/png">
+    <link rel="icon" href="{{ page_media_url('site_favicon', asset('img/log2.png')) }}" type="image/png">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -111,7 +111,7 @@
             position: absolute;
             inset: 0;
             z-index: -2;
-            background: url('{{ asset('img/bg1.jpg') }}') center / cover no-repeat;
+            background: url('{{ page_media_url('donation_tracking_hero_image', asset('img/bg1.jpg')) }}') center / cover no-repeat;
             filter: saturate(1.03) contrast(1.04);
         }
 
@@ -1059,7 +1059,7 @@
                                 @if ($report->photos && count($report->photos) > 0)
                                     <img src="{{ file_url($report->photos[0]) }}" alt="{{ $report->title }}" class="ops-img">
                                 @else
-                                    <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=600&auto=format&fit=crop"
+                                    <img src="{{ page_media_url('donation_default_image', asset('img/inkind.png')) }}"
                                         alt="{{ $report->title }}" class="ops-img">
                                 @endif
                                 <span class="ops-date-badge">
@@ -1100,7 +1100,7 @@
                         @for ($i = 0; $i < 3; $i++)
                             <article class="ops-card">
                                 <div class="ops-img-container">
-                                    <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=600&auto=format&fit=crop"
+                                    <img src="{{ page_media_url('empty_state_image', asset('img/camp.jpg')) }}"
                                         alt="No reports yet" class="ops-img">
                                     <span class="ops-date-badge">
                                         <i class="ri-calendar-line" aria-hidden="true"></i>

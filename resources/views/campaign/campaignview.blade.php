@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Campaign | Tulong Kabataan</title>
-    <link rel="icon" href="{{ asset('img/log2.png') }}" type="image/png">
+    <link rel="icon" href="{{ page_media_url('site_favicon', asset('img/log2.png')) }}" type="image/png">
     <!-- Remixicon -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -20,7 +20,7 @@
     @php
         $coverImage = $campaign->featured_image
             ? file_url($campaign->featured_image)
-            : asset('img/default-camp.jpg');
+            : page_media_url('campaign_default_image', asset('img/camp.jpg'));
 
         $targetAmount = (float) ($campaign->target_amount ?? 0);
         $currentAmount = (float) ($campaign->current_amount ?? 0);
@@ -158,7 +158,7 @@
                                             alt="{{ $update->organizer->first_name ?? 'Organizer' }}"
                                             class="size-11 rounded-full object-cover ring-2 ring-white" referrerpolicy="no-referrer">
                                     @else
-                                        <img src="{{ asset('img/log2.png') }}"
+                                        <img src="{{ page_media_url('site_favicon', asset('img/log2.png')) }}"
                                             alt="{{ $update->organizer->first_name ?? 'Organizer' }}"
                                             class="size-11 rounded-full object-cover ring-2 ring-white">
                                     @endif
@@ -378,7 +378,7 @@
                                             alt="{{ $update->organizer->first_name ?? 'Organizer' }}"
                                             referrerpolicy="no-referrer" />
                                     @else
-                                        <img src="{{ asset('img/log2.png') }}"
+                                        <img src="{{ page_media_url('site_favicon', asset('img/log2.png')) }}"
                                             alt="{{ $update->organizer->first_name ?? 'Organizer' }}" />
                                     @endif
                                     <div>
@@ -448,7 +448,7 @@
             <h2>Donate to {{ $campaign->title }}</h2>
 
             <div class="qr-wrapper">
-                <img src="{{ $campaign->qr_code ? file_url($campaign->qr_code) : asset('img/default-qr.png') }}"
+                <img src="{{ $campaign->qr_code ? file_url($campaign->qr_code) : page_media_url('default_placeholder_image', asset('img/camp.jpg')) }}"
                     alt="GCash QR Code" class="qr-image">
             </div>
 

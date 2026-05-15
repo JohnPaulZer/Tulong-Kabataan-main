@@ -9,11 +9,13 @@
     <meta http-equiv="Expires" content="0">
 
     <title>Reset Password | Tulong Kabataan</title>
-    <link rel="icon" href="{{ asset('img/log2.png') }}" type="image/png">
+    <link rel="icon" href="{{ page_media_url('site_favicon', asset('img/log2.png')) }}" type="image/png">
+    <link rel="preload" as="image" href="{{ page_media_url('reset_password_background', asset('img/backlogin.png')) }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="relative flex min-h-screen items-center justify-center overflow-hidden bg-[url('/img/backlogin.png')] bg-cover bg-center bg-no-repeat px-4 py-8 font-body text-slate-50">
+<body class="reset-password-page relative flex min-h-screen items-center justify-center overflow-hidden bg-cover bg-center bg-no-repeat px-4 py-8 font-body text-slate-50"
+    style="--auth-bg: url('{{ page_media_url('reset_password_background', asset('img/backlogin.png')) }}');">
     <div class="absolute inset-0 bg-slate-950/25 backdrop-blur-[1px]"></div>
     <div class="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-white/40 to-transparent"></div>
 
@@ -41,7 +43,7 @@
         @else
             <div class="mb-6 flex justify-center">
                 <a href="{{ route('landpage') }}" class="inline-flex rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-4">
-                    <img src="{{ asset('img/log.png') }}" alt="Tulong Kabataan Logo" class="h-[60px] w-auto">
+                    <img src="{{ page_media_url('website_logo', asset('img/log.png')) }}" alt="Tulong Kabataan Logo" class="h-[60px] w-auto">
                 </a>
             </div>
 
