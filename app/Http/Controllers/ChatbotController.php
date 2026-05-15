@@ -14,9 +14,6 @@ class ChatbotController
     {
         $validator = Validator::make($request->all(), [
             'message' => ['required', 'string', 'min:1', 'max:600'],
-            'history' => ['sometimes', 'array', 'max:8'],
-            'history.*.role' => ['required_with:history', 'in:user,assistant'],
-            'history.*.content' => ['required_with:history', 'string', 'max:700'],
         ]);
 
         if ($validator->fails()) {
@@ -29,7 +26,7 @@ class ChatbotController
             return response()->json([
                 'reply' => $chatbot->reply(
                     (string) $validator->validated()['message'],
-                    $validator->validated()['history'] ?? []
+                    $this->safeHistory($request->input('history', []))
                 ),
             ]);
         } catch (Throwable) {
@@ -37,5 +34,32 @@ class ChatbotController
                 'reply' => TulongKabataanChatbotService::UNKNOWN_REPLY,
             ], 500);
         }
+    }
+
+    private function safeHistory(mixed $history): array
+    {
+        if (! is_array($history)) {
+            return [];
+        }
+
+        return collect($history)
+            ->filter(fn ($item) => is_array($item))
+            ->map(function (array $item) {
+                $role = $item['role'] ?? '';
+                $content = trim(strip_tags((string) ($item['content'] ?? '')));
+
+                if (! in_array($role, ['user', 'assistant'], true) || $content === '') {
+                    return null;
+                }
+
+                return [
+                    'role' => $role,
+                    'content' => mb_substr($content, 0, 700),
+                ];
+            })
+            ->filter()
+            ->take(-8)
+            ->values()
+            ->all();
     }
 }
