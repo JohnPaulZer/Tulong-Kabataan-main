@@ -29,6 +29,10 @@ class SiteSetting extends Model
 
         'site.maintenance.enabled'   => ['value' => false, 'type' => 'bool',   'group' => 'maintenance'],
         'site.maintenance.message'   => ['value' => 'We are performing scheduled maintenance. Please check back soon.', 'type' => 'string', 'group' => 'maintenance'],
+
+        // ID Verification provider settings (managed from admin verification page)
+        'verification.provider'      => ['value' => 'didit', 'type' => 'string', 'group' => 'verification'],
+        'verification.enabled'       => ['value' => true,    'type' => 'bool',   'group' => 'verification'],
     ];
 
     public static function all_keyed(): array

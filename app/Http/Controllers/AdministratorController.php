@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use App\Models\AdminAccount;
 use App\Notifications\VerificationDecisionNotification;
+use App\Services\Verification\VerificationAuditService;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use App\Notifications\ManualDonationStatusNotification;
@@ -203,6 +204,85 @@ class AdministratorController
     }
 
     /*=========================Account Verification Controller ================================*/
+
+    /**
+     * Get the current verification provider settings + quota usage.
+     * Used by the admin verification page's provider switcher panel.
+     */
+    public function getVerificationProvider(Request $request)
+    {
+        if (! $request->session()->has('admin_logged_in')) {
+            return response()->json(['success' => false], 401);
+        }
+
+        $quotaGuard = app(\App\Services\Verification\QuotaGuard::class);
+        $ocrService = app(\App\Services\Verification\OcrService::class);
+
+        // The active provider is determined by: SiteSetting override > .env default
+        $activeProvider = SiteSetting::get('verification.provider', config('id_verification.provider', 'didit'));
+        $enabled = SiteSetting::isTrue('verification.enabled');
+
+        // Check which providers are actually configured (have API keys)
+        $providers = [
+            'didit' => [
+                'name'       => 'Didit',
+                'configured' => $ocrService->provider('didit')->isConfigured(),
+                'features'   => 'Face match, liveness, OCR, authenticity',
+                'quota'      => $quotaGuard->usage('didit'),
+                'primary'    => true,
+            ],
+            'ocr_space' => [
+                'name'       => 'OCR.Space',
+                'configured' => $ocrService->provider('ocr_space')->isConfigured(),
+                'features'   => 'Text extraction only (manual review mode)',
+                'quota'      => $quotaGuard->usage('ocr_space'),
+                'primary'    => false,
+            ],
+            'google_vision' => [
+                'name'       => 'Google Vision',
+                'configured' => $ocrService->provider('google_vision')->isConfigured(),
+                'features'   => 'Text extraction only (manual review mode)',
+                'quota'      => $quotaGuard->usage('google_vision'),
+                'primary'    => false,
+            ],
+        ];
+
+        return response()->json([
+            'success'   => true,
+            'active'    => $activeProvider,
+            'enabled'   => $enabled,
+            'providers' => $providers,
+        ]);
+    }
+
+    /**
+     * Switch the active verification provider from the admin panel.
+     */
+    public function setVerificationProvider(Request $request)
+    {
+        if (! $request->session()->has('admin_logged_in')) {
+            return response()->json(['success' => false], 401);
+        }
+
+        $request->validate([
+            'provider' => 'required|in:didit,ocr_space,google_vision',
+            'enabled'  => 'nullable|boolean',
+        ]);
+
+        $provider = $request->input('provider');
+        $enabled  = $request->boolean('enabled', true);
+
+        SiteSetting::set('verification.provider', $provider, 'string', 'verification');
+        SiteSetting::set('verification.enabled', $enabled, 'bool', 'verification');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Verification provider updated to ' . ucfirst(str_replace('_', ' ', $provider)) . '.',
+            'active'  => $provider,
+            'enabled' => $enabled,
+        ]);
+    }
+
     public function accountpage(Request $request)
     {
 
@@ -342,7 +422,7 @@ class AdministratorController
             'action'           => 'required|in:approved,rejected,request_reupload',
             'notes'            => 'nullable|string|max:2000',
             'reupload_fields'  => 'nullable|array',
-            'reupload_fields.*' => 'in:id_front,id_back,face_photo,selfie',
+            'reupload_fields.*' => 'in:id_front,id_back,selfie',
         ]);
 
         $req = VerificationRequest::findOrFail($r->request_id);
@@ -356,6 +436,12 @@ class AdministratorController
         }
 
         $req->review_notes = $r->notes;
+        // Mark this decision as a manual admin action so it overrides the
+        // automated pipeline's earlier decision.
+        $req->decision_source = VerificationRequest::SOURCE_ADMIN;
+        $req->decision_reason = trim('Admin ' . $r->action . ($r->notes ? ': ' . $r->notes : ''));
+        $req->reviewed_by_admin_id = (string) ($r->session()->get('admin_id') ?? $r->session()->get('admin_logged_in') ?? null);
+        $req->reviewed_at = now();
         $req->save();
 
         IdentityStatus::updateOrCreate(
@@ -364,6 +450,21 @@ class AdministratorController
                 : ($req->status === 'rejected' ? 'Rejected'
                     : ($req->status === 'reupload' ? 'Reupload' : 'Pending'))]
         );
+
+        // Append to the audit log so we have a paper trail of every admin
+        // override (especially when it contradicts the automated decision).
+        try {
+            app(VerificationAuditService::class)->record(
+                $req,
+                'admin_' . $r->action,
+                $r->notes,
+                ['reupload_fields' => $req->reupload_fields],
+                'admin',
+                (string) ($r->session()->get('admin_id') ?? null)
+            );
+        } catch (\Throwable) {
+            // Audit failures must not block the admin flow.
+        }
 
         // Send notification to the user
         if ($req->user) {
