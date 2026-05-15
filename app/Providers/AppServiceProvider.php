@@ -27,11 +27,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        RateLimiter::for('chatbot', function (Request $request) {
-            return Limit::perMinute(12)->by(
-                optional($request->user())->getAuthIdentifier() ?: $request->ip()
-            );
-        });
+        $this->configureRateLimiters();
 
         // Expose site settings to every view as $siteSettings
         View::composer('*', function ($view) {
@@ -79,5 +75,49 @@ class AppServiceProvider extends ServiceProvider
                 'windir',
             ]
         )));
+    }
+
+    private function configureRateLimiters(): void
+    {
+        foreach (['public', 'api', 'admin', 'payment', 'upload', 'chatbot', 'webhook'] as $name) {
+            RateLimiter::for($name, function (Request $request) use ($name) {
+                return $this->limit($name)->by($this->rateLimitKey($request, $name));
+            });
+        }
+
+        RateLimiter::for('auth', function (Request $request) {
+            $login = strtolower((string) ($request->input('email') ?: $request->input('username') ?: $request->query('email')));
+
+            return $this->limit('auth')->by($this->rateLimitKey($request, 'auth') . '|' . $login);
+        });
+    }
+
+    private function limit(string $name): Limit
+    {
+        $max = max(1, (int) config("security.rate_limits.{$name}.max_attempts", 60));
+        $decay = max(1, (int) config("security.rate_limits.{$name}.decay_minutes", 1));
+
+        return Limit::perMinute($max, $decay)->response(function (Request $request, array $headers) {
+            $message = 'Too many requests. Please wait a moment before trying again.';
+
+            if ($request->expectsJson()) {
+                return response()->json(['message' => $message], 429, $headers);
+            }
+
+            return back()
+                ->with('error', $message)
+                ->withHeaders($headers);
+        });
+    }
+
+    private function rateLimitKey(Request $request, string $name): string
+    {
+        $userId = optional($request->user())->getAuthIdentifier();
+
+        return implode('|', [
+            $name,
+            $userId ?: 'guest',
+            $request->ip() ?: 'unknown-ip',
+        ]);
     }
 }

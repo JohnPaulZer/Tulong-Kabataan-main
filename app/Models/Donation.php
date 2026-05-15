@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\EncryptsSensitiveAttributes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use MongoDB\Laravel\Eloquent\Model;
 
 class Donation extends Model
 {
-    use HasFactory;
+    use EncryptsSensitiveAttributes, HasFactory;
 
     protected $connection = 'mongodb';
     protected $collection = 'donations';
@@ -38,6 +39,16 @@ class Donation extends Model
     public function setAmountAttribute($value): void
     {
         $this->attributes['amount'] = is_numeric($value) ? (float) $value : 0.0;
+    }
+
+    public function getProofImageAttribute($value)
+    {
+        return $this->decryptSensitiveValue($value);
+    }
+
+    public function setProofImageAttribute($value): void
+    {
+        $this->attributes['proof_image'] = $this->encryptSensitiveValue($value);
     }
 
     public function campaign()

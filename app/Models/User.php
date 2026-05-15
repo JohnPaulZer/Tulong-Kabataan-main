@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 use MongoDB\Laravel\Auth\User as Authenticatable;
 use App\Notifications\CustomVerifyEmail;
 
@@ -93,5 +94,17 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getUserIdAttribute()
     {
         return (string) ($this->attributes['_id'] ?? $this->getKey());
+    }
+
+    public function setPasswordAttribute($value): void
+    {
+        if ($value === null || $value === '') {
+            $this->attributes['password'] = $value;
+            return;
+        }
+
+        $this->attributes['password'] = password_get_info((string) $value)['algo'] !== 0
+            ? (string) $value
+            : Hash::make((string) $value);
     }
 }

@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\EncryptsSensitiveAttributes;
 use MongoDB\Laravel\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class VerificationRequest extends Model
 {
-    use HasFactory;
+    use EncryptsSensitiveAttributes, HasFactory;
 
     protected $connection = 'mongodb';
     protected $collection = 'verification_requests';
@@ -45,6 +46,36 @@ class VerificationRequest extends Model
     public function getRequestIdAttribute()
     {
         return (string) ($this->attributes['_id'] ?? $this->getKey());
+    }
+
+    public function getIdNumberAttribute($value)
+    {
+        return $this->decryptSensitiveValue($value);
+    }
+
+    public function setIdNumberAttribute($value): void
+    {
+        $this->attributes['id_number'] = $this->encryptSensitiveValue($value);
+    }
+
+    public function getAddressAttribute($value)
+    {
+        return $this->decryptSensitiveValue($value);
+    }
+
+    public function setAddressAttribute($value): void
+    {
+        $this->attributes['address'] = $this->encryptSensitiveValue($value);
+    }
+
+    public function getReviewNotesAttribute($value)
+    {
+        return $this->decryptSensitiveValue($value);
+    }
+
+    public function setReviewNotesAttribute($value): void
+    {
+        $this->attributes['review_notes'] = $this->encryptSensitiveValue($value);
     }
 
     public function user()

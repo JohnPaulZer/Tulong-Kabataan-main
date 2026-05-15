@@ -7,15 +7,25 @@ use App\Models\Event;
 use Illuminate\Support\Facades\Auth;
 use App\Models\EventRegistration;
 
-Route::get('/eventpage', [EventController::class, 'eventpage'])->name('event.page');
+Route::get('/eventpage', [EventController::class, 'eventpage'])
+    ->middleware('throttle:public')
+    ->name('event.page');
 
-Route::get('/event-register/{event}', [EventController::class, 'registerpage'])->name('event.register');
+Route::get('/event-register/{event}', [EventController::class, 'registerpage'])
+    ->middleware(['auth', 'throttle:public'])
+    ->name('event.register');
 
-Route::post('/submit-registration', [EventController::class, 'registerevent'])->name('submitregistration');
+Route::post('/submit-registration', [EventController::class, 'registerevent'])
+    ->middleware(['auth', 'throttle:api'])
+    ->name('submitregistration');
 
-Route::get('/eventview/{event_id}', [EventController::class, 'eventview'])->name('event.view');
+Route::get('/eventview/{event_id}', [EventController::class, 'eventview'])
+    ->middleware('throttle:public')
+    ->name('event.view');
 
-Route::get('/event-modal/{event_id}', [EventController::class, 'eventModal'])->name('event.modal');
+Route::get('/event-modal/{event_id}', [EventController::class, 'eventModal'])
+    ->middleware('throttle:api')
+    ->name('event.modal');
 
 
 Route::get('/events/updates', function (Request $request) {
@@ -65,7 +75,7 @@ Route::get('/events/updates', function (Request $request) {
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
-            'error' => $e->getMessage()
+            'message' => 'Unable to load event updates.'
         ], 500);
     }
-});
+})->middleware('throttle:api');

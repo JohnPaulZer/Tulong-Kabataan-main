@@ -3,16 +3,19 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'throttle:api'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'profileview'])->name('profile');
 
     //VERIFCATION ACCOUNT ROUTE
     Route::get('/verifypage', [ProfileController::class, 'verifypage'])->name('verify.page'); // GET page
-    Route::post('/submit', [ProfileController::class, 'submitverifcation'])->name('submit.verification');   // POST submit
+    Route::post('/submit', [ProfileController::class, 'submitverifcation'])
+        ->middleware('throttle:upload')
+        ->name('submit.verification');   // POST submit
 
     Route::put('/profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password');
 
     Route::post('/profile/change-photo', [ProfileController::class, 'changePhoto'])
+        ->middleware('throttle:upload')
         ->name('profile.change-photo');
 
     Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
@@ -52,6 +55,7 @@ Route::middleware('auth')->group(function () {
         ->name('donations.reportFake');
 
     Route::post('/campaigns/{campaign}/manual-request', [ProfileController::class, 'manualadd'])
+        ->middleware(['throttle:payment', 'throttle:upload'])
         ->name('manual.requests.store');
 
 //ADDED ROUTE
@@ -61,7 +65,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/campaigns/{campaign}/export-donations-pdf', [ProfileController::class, 'exportDonationsPDF'])->name('campaigns.export-pdf');
 
 //ADDED ACTION UPDATE
-    Route::post('/campaign-updates', [ProfileController::class, 'storeUpdate'])->name('campaign.updates.store');
+    Route::post('/campaign-updates', [ProfileController::class, 'storeUpdate'])
+        ->middleware('throttle:upload')
+        ->name('campaign.updates.store');
 //=========================================================================================================================
 
 

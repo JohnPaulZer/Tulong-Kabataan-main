@@ -102,7 +102,7 @@ class CampaignController
             }
         } catch (R2StorageException $e) {
             foreach ($uploadedKeys as $k) { $this->storage->delete($k); }
-            return back()->withInput()->with('error', $e->getMessage());
+            return back()->withInput()->with('error', 'File upload failed. Please try again.');
         }
 
         // Determine initial status
@@ -297,7 +297,7 @@ class CampaignController
             $proofPath = $this->storage->upload($request->file('proof_image'), 'donation_proofs',
                 ['max_kb' => 2048, 'mimes' => ['image/jpeg', 'image/png', 'image/webp']]);
         } catch (R2StorageException $e) {
-            return back()->withInput()->with('error', $e->getMessage());
+            return back()->withInput()->with('error', 'File upload failed. Please try again.');
         }
 
         $isAnonymous = $request->boolean('is_anonymous');

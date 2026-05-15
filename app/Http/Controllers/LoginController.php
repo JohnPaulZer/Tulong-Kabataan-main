@@ -203,8 +203,12 @@ class LoginController
             request()->session()->regenerate();
             return redirect()->route('landpage');
         } catch (\Throwable $th) {
+            Log::warning('Google login failed safely.', [
+                'error' => $th::class,
+            ]);
+
             return redirect()->route('login.page')
-                ->withErrors(['google' => 'Google login failed: ' . $th->getMessage()]);
+                ->withErrors(['google' => 'Google login failed. Please try again or use email and password.']);
         }
     }
 
@@ -216,7 +220,9 @@ class LoginController
         $user = User::where('email', $request->email)->first();
 
         if (!$user) {
-            return response()->json(['error' => 'Email not found!'], 404);
+            return response()->json([
+                'success' => 'If that email exists, we sent a password reset link. Please check your inbox or spam folder.'
+            ]);
         }
 
         // Generate a reset token
@@ -238,7 +244,7 @@ class LoginController
         Mail::to($user->email)->send(new NewPasswordMail($user, $resetUrl));
 
         return response()->json([
-            'success' => 'We’ve emailed you a password reset link! Please check your inbox (or spam folder).'
+            'success' => 'If that email exists, we sent a password reset link. Please check your inbox or spam folder.'
         ]);
     }
 
@@ -346,8 +352,7 @@ class LoginController
         } catch (\Throwable $e) {
             Log::error('Email verification send failed after registration.', [
                 'user_id' => $user->getKey(),
-                'email' => $user->email,
-                'error' => $e->getMessage(),
+                'error' => $e::class,
             ]);
 
             return redirect()
@@ -413,8 +418,7 @@ class LoginController
         } catch (\Throwable $e) {
             Log::error('Email verification resend failed.', [
                 'user_id' => $request->user()?->getKey(),
-                'email' => $request->user()?->email,
-                'error' => $e->getMessage(),
+                'error' => $e::class,
             ]);
 
             return back()->with('mail_error', 'Verification email was not sent because the mail server rejected the current credentials.');

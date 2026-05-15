@@ -27,6 +27,10 @@ class TulongKabataanChatbotService
             return self::UNKNOWN_REPLY;
         }
 
+        if ($this->isPromptInjectionAttempt($message)) {
+            return self::SENSITIVE_REPLY;
+        }
+
         if ($this->isSensitiveRequest($message)) {
             return self::SENSITIVE_REPLY;
         }
@@ -167,6 +171,10 @@ PROMPT;
                     return null;
                 }
 
+                if ($role === 'user' && ($this->isPromptInjectionAttempt($content) || $this->isSensitiveRequest($content))) {
+                    return null;
+                }
+
                 return [
                     'role' => $role,
                     'content' => Str::limit($content, 700, ''),
@@ -246,6 +254,27 @@ PROMPT;
                     continue;
                 }
 
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function isPromptInjectionAttempt(string $message): bool
+    {
+        $patterns = [
+            '/\b(ignore|forget|disregard|override)\b.{0,60}\b(previous|prior|above|system|developer|hidden)\b.{0,40}\b(instruction|prompt|rule|message)s?\b/i',
+            '/\b(reveal|show|print|dump|repeat|summarize|export)\b.{0,60}\b(system prompt|developer message|hidden prompt|internal instruction|rules|policy|configuration)\b/i',
+            '/\b(jailbreak|DAN mode|developer mode|god mode|root mode|sudo|simulate admin|act as admin)\b/i',
+            '/\b(exfiltrate|leak|extract|dump)\b.{0,60}\b(secret|token|api key|database|env|\.env|credentials?)\b/i',
+            '/\b(base64|rot13|hex|unicode|cipher|encode|decode)\b.{0,60}\b(secret|token|prompt|instruction|api key|password)\b/i',
+            '/<\s*(system|developer|assistant|tool|script)\b/i',
+            '/\bBEGIN\b.{0,30}\bSYSTEM\b.{0,30}\bPROMPT\b/i',
+        ];
+
+        foreach ($patterns as $pattern) {
+            if (preg_match($pattern, $message)) {
                 return true;
             }
         }
@@ -618,12 +647,16 @@ PROMPT;
         $patterns = [
             '/\bGroq\b/i',
             '/\bAPI key\b/i',
+            '/\bsecret key\b/i',
             '/\bsystem prompt\b/i',
+            '/\bdeveloper message\b/i',
+            '/\binternal instruction\b/i',
             '/\bbackend secret\b/i',
             '/\bserver configuration\b/i',
             '/\bdatabase schema\b/i',
             '/\bSQL\b/i',
             '/\.env\b/i',
+            '/sk-[A-Za-z0-9_-]{12,}/i',
             '/Bearer\s+[A-Za-z0-9._-]+/i',
         ];
 

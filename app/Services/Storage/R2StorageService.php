@@ -68,7 +68,7 @@ class R2StorageService
             Log::error('[R2] Upload failed', [
                 'folder'  => $folder,
                 'key'     => $key,
-                'message' => $e->getMessage(),
+                'error' => $e::class,
             ]);
             throw new R2StorageException('Failed to upload file to storage. Please try again.', 0, $e);
         } finally {
@@ -127,7 +127,7 @@ class R2StorageService
         } catch (\Throwable $e) {
             Log::warning('[R2] Delete failed', [
                 'key'     => $key,
-                'message' => $e->getMessage(),
+                'error' => $e::class,
             ]);
             return false;
         }
@@ -159,7 +159,7 @@ class R2StorageService
         try {
             return $this->disk()->url($key);
         } catch (\Throwable $e) {
-            Log::warning('[R2] URL generation failed', ['key' => $key, 'message' => $e->getMessage()]);
+            Log::warning('[R2] URL generation failed', ['key' => $key, 'error' => $e::class]);
             return null;
         }
     }
@@ -178,7 +178,7 @@ class R2StorageService
             $disk = $this->disk();
             return $disk->exists($key) ? $disk->get($key) : null;
         } catch (\Throwable $e) {
-            Log::warning('[R2] Read failed', ['key' => $key, 'message' => $e->getMessage()]);
+            Log::warning('[R2] Read failed', ['key' => $key, 'error' => $e::class]);
             return null;
         }
     }

@@ -57,13 +57,12 @@ class ProfileController
         }
 
         $user = Auth::user();         // logged-in user
-        $users = User::all();
         $latestRequest = VerificationRequest::where('user_id', $user->user_id)
             ->latest('created_at')
             ->first();
 
 
-        return $this->noCacheView('profile.profile', compact('user', 'users', 'latestRequest'));
+        return $this->noCacheView('profile.profile', compact('user', 'latestRequest'));
     }
 
     public function changePassword(Request $request)
@@ -136,7 +135,7 @@ class ProfileController
                 ['max_kb' => 2048, 'mimes' => config('r2.validation.image_mimes')]
             );
         } catch (R2StorageException $e) {
-            return back()->with('error', $e->getMessage());
+            return back()->with('error', 'File upload failed. Please try again.');
         }
 
         $user->update(['profile_photo_url' => $newKey]);
@@ -272,7 +271,7 @@ class ProfileController
                     );
                 }
             } catch (R2StorageException $e) {
-                return back()->withErrors(['server' => $e->getMessage()])->withInput();
+                return back()->withErrors(['server' => 'File upload failed. Please try again.'])->withInput();
             }
 
             $vr->status = 'pending';
@@ -359,12 +358,14 @@ class ProfileController
             $selfiePath = $this->storage->upload($r->file('selfie'), 'kyc_selfies',
                 ['mimes' => ['image/jpeg', 'image/png', 'image/webp']]);
         } catch (R2StorageException $e) {
-            return back()->withErrors(['server' => $e->getMessage()])->withInput();
+            return back()->withErrors(['server' => 'File upload failed. Please try again.'])->withInput();
         }
 
         $idHash = hash('sha256', $r->id_number);
 
-        if (VerificationRequest::where('id_number', $r->id_number)->exists()) {
+        if (VerificationRequest::where('id_number_hash', $idHash)
+            ->orWhere('id_number', $r->id_number)
+            ->exists()) {
             return back()->withErrors([
                 'id_number' => 'This ID number has already been used.'
             ])->withInput();
@@ -408,7 +409,7 @@ class ProfileController
             }
 
             return back()->withErrors([
-                'server' => 'Failed to save verification. ' . $e->getMessage()
+                'server' => 'Failed to save verification. Please try again.'
             ])->withInput();
         }
 
@@ -746,8 +747,8 @@ class ProfileController
                     ['max_kb' => 2048, 'mimes' => ['image/jpeg', 'image/png', 'image/webp']]);
             } catch (R2StorageException $e) {
                 return $request->ajax()
-                    ? response()->json(['success' => false, 'error' => $e->getMessage()], 422)
-                    : back()->with('error', $e->getMessage());
+                    ? response()->json(['success' => false, 'error' => 'File upload failed. Please try again.'], 422)
+                    : back()->with('error', 'File upload failed. Please try again.');
             }
         }
 
@@ -846,7 +847,7 @@ class ProfileController
                 foreach ($imagePaths as $orphan) {
                     $this->storage->delete($orphan);
                 }
-                return response()->json(['success' => false, 'error' => $e->getMessage()], 422);
+                return response()->json(['success' => false, 'error' => 'File upload failed. Please try again.'], 422);
             }
         }
 

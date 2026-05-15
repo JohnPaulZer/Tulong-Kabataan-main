@@ -7,15 +7,20 @@ use App\Http\Controllers\AttendanceEmailController;
 
 
 // Keyboard gate endpoint (CSRF-protected)
-Route::post('/admin/gate', [AdministratorController::class, 'adminGate'])->name('admin.gate');
+Route::post('/admin/gate', [AdministratorController::class, 'adminGate'])
+    ->middleware('throttle:auth')
+    ->name('admin.gate');
 
-Route::prefix('administrator')->group(function () {
+Route::prefix('administrator')->middleware('throttle:admin')->group(function () {
 
     Route::get('/', [AdministratorController::class, 'showLoginForm'])
         ->name('admin.login')
         ->middleware('guest');
     Route::post('/login', [AdministratorController::class, 'login'])
+        ->middleware('throttle:auth')
         ->name('login.submit');
+
+    Route::middleware('admin.session')->group(function () {
     Route::get('/dashboard', [AdministratorController::class, 'dashboard'])
         ->name('admin.home');
     Route::get('/logout', [AdministratorController::class, 'logout'])
@@ -117,8 +122,11 @@ Route::prefix('administrator')->group(function () {
     Route::post('/settings/users/{id}/suspend', [AdministratorController::class, 'suspendUser'])->name('admin.settings.users.suspend');
     Route::post('/settings/users/{id}/activate', [AdministratorController::class, 'activateUser'])->name('admin.settings.users.activate');
     Route::delete('/settings/users/{id}', [AdministratorController::class, 'deleteUser'])->name('admin.settings.users.delete');
+    });
 });
 
 
 //IN-KIND DONATIONS PAGE PAGINATION
-Route::post('/administrator/donations/paginate', [AdministratorController::class, 'paginateDonations'])->name('donations.paginate');
+Route::post('/administrator/donations/paginate', [AdministratorController::class, 'paginateDonations'])
+    ->middleware(['admin.session', 'throttle:admin'])
+    ->name('donations.paginate');
