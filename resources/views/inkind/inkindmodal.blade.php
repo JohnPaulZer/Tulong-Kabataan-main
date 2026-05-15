@@ -19,11 +19,12 @@
             <div class="hero-overlay"></div>
         </div>
         <div class="hero-content">
+            <a href="{{ route('inkind.page') }}" class="hero-back-link" aria-label="Back to In-Kind Donations">
+                <i class="ri-arrow-left-line" aria-hidden="true"></i>
+                <span>Back</span>
+            </a>
             <h1>Donate Your Items</h1>
             <p>Share usable goods with communities that need them. Complete the form below and choose your preferred drop-off location.</p>
-            <a href="{{ route('inkind.page') }}" class="hero-back-link">
-                <i class="ri-arrow-left-line" aria-hidden="true"></i> Back to In-Kind Donations
-            </a>
         </div>
         @include('partials.wave-divider')
     </section>
@@ -156,12 +157,12 @@
                                     <label class="tk-label" for="items[0][category]">Category <span class="tk-req">*</span></label>
                                     <select id="items[0][category]" name="items[0][category]" class="tk-input" required>
                                         <option value="">Select a category</option>
-                                        <option value="Food & Groceries">Food & Groceries</option>
-                                        <option value="Clothing & Accessories">Clothing & Accessories</option>
-                                        <option value="Home Goods">Home Goods</option>
-                                        <option value="School Supplies">School Supplies</option>
-                                        <option value="Medical Supplies">Medical Supplies</option>
-                                        <option value="Electronics">Electronics</option>
+                                        <option value="Food & Potable Water">Food & Potable Water</option>
+                                        <option value="Hygiene & Sanitation Kits">Hygiene & Sanitation Kits</option>
+                                        <option value="Sleeping & Evacuation Kits">Sleeping & Evacuation Kits</option>
+                                        <option value="Kitchen & Family Kits">Kitchen & Family Kits</option>
+                                        <option value="First Aid & Health">First Aid & Health</option>
+                                        <option value="Emergency Power & Safety">Emergency Power & Safety</option>
                                         <option value="Other">Other</option>
                                     </select>
                                 </div>
@@ -439,12 +440,12 @@
                             <label class="tk-label" for="items[${newIndex}][category]">Category <span class="tk-req">*</span></label>
                             <select id="items[${newIndex}][category]" name="items[${newIndex}][category]" class="tk-input" required>
                                 <option value="">Select a category</option>
-                                <option value="Food & Groceries">Food & Groceries</option>
-                                <option value="Clothing & Accessories">Clothing & Accessories</option>
-                                <option value="Home Goods">Home Goods</option>
-                                <option value="School Supplies">School Supplies</option>
-                                <option value="Medical Supplies">Medical Supplies</option>
-                                <option value="Electronics">Electronics</option>
+                                <option value="Food & Potable Water">Food & Potable Water</option>
+                                <option value="Hygiene & Sanitation Kits">Hygiene & Sanitation Kits</option>
+                                <option value="Sleeping & Evacuation Kits">Sleeping & Evacuation Kits</option>
+                                <option value="Kitchen & Family Kits">Kitchen & Family Kits</option>
+                                <option value="First Aid & Health">First Aid & Health</option>
+                                <option value="Emergency Power & Safety">Emergency Power & Safety</option>
                                 <option value="Other">Other</option>
                             </select>
                         </div>

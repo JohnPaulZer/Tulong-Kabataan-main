@@ -154,37 +154,33 @@
             text-shadow: 0 2px 12px rgba(15, 23, 42, 0.42);
         }
 
-        .hero-back-link {
+        .tracking-header .hero-back-link {
+            position: absolute;
+            top: clamp(-4.5rem, -5vw, -3rem);
+            left: 0;
             display: inline-flex;
-            min-height: 48px;
+            min-height: 40px;
             align-items: center;
             justify-content: center;
-            gap: 9px;
-            margin-top: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.72);
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.12);
+            gap: 6px;
             color: #ffffff;
-            padding: 0 18px;
+            padding: 0 0.35rem;
             font-size: 0.94rem;
             font-weight: 700;
             line-height: 1.2;
-            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.16);
-            backdrop-filter: blur(10px);
-            transition: background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+            text-shadow: 0 2px 8px rgba(15, 23, 42, 0.45);
+            transition: color 0.18s ease, opacity 0.18s ease;
         }
 
-        .hero-back-link i {
+        .tracking-header .hero-back-link i {
             font-size: 1.05rem;
             line-height: 1;
         }
 
-        .hero-back-link:hover,
-        .hero-back-link:focus-visible {
-            border-color: #ffffff;
-            background: rgba(255, 255, 255, 0.2);
+        .tracking-header .hero-back-link:hover,
+        .tracking-header .hero-back-link:focus-visible {
             color: #ffffff;
-            transform: translateY(-1px);
+            opacity: 0.82;
         }
 
         .tracking-main {
@@ -931,8 +927,9 @@
                 line-height: 1.62;
             }
 
-            .hero-back-link {
-                width: min(100%, 360px);
+            .tracking-header .hero-back-link {
+                width: fit-content;
+                max-width: 100%;
             }
 
             .ops-card {
@@ -1017,15 +1014,15 @@
 
     <header class="tracking-header">
         <div class="tracking-container">
+            <a href="{{ route('inkind.page') }}" class="hero-back-link" aria-label="Back to In-Kind Donations">
+                <i class="ri-arrow-left-line" aria-hidden="true"></i>
+                <span>Back</span>
+            </a>
             <h1 class="tracking-title">Donation Impact Tracker</h1>
             <p class="tracking-desc">
                 Transparency is key. See exactly where in-kind donations are being distributed and track the remaining
                 items needed to reach our campaign goals.
             </p>
-            <a href="{{ route('inkind.page') }}" class="hero-back-link">
-                <i class="ri-arrow-left-line" aria-hidden="true"></i>
-                <span>Back to In-Kind Donations</span>
-            </a>
         </div>
         @include('partials.wave-divider')
     </header>

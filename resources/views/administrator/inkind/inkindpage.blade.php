@@ -622,13 +622,19 @@
 
                         <label>Category</label>
                         <select id="edit_category" name="category">
-                            <option value="Food & Groceries">Food & Groceries</option>
-                            <option value="Clothing & Accessories">Clothing & Accessories</option>
-                            <option value="Home Goods">Home Goods</option>
-                            <option value="School Supplies">School Supplies</option>
-                            <option value="Medical Supplies">Medical Supplies</option>
-                            <option value="Electronics">Electronics</option>
+                            <option value="Food & Potable Water">Food & Potable Water</option>
+                            <option value="Hygiene & Sanitation Kits">Hygiene & Sanitation Kits</option>
+                            <option value="Sleeping & Evacuation Kits">Sleeping & Evacuation Kits</option>
+                            <option value="Kitchen & Family Kits">Kitchen & Family Kits</option>
+                            <option value="First Aid & Health">First Aid & Health</option>
+                            <option value="Emergency Power & Safety">Emergency Power & Safety</option>
                             <option value="Other">Other</option>
+                            <option value="Food & Groceries">Legacy - Food & Groceries</option>
+                            <option value="Clothing & Accessories">Legacy - Clothing & Accessories</option>
+                            <option value="Home Goods">Legacy - Home Goods</option>
+                            <option value="School Supplies">Legacy - School Supplies</option>
+                            <option value="Medical Supplies">Legacy - Medical Supplies</option>
+                            <option value="Electronics">Legacy - Electronics</option>
                         </select>
 
                         <label>Quantity</label>
