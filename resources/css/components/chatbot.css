@@ -298,9 +298,24 @@
     }
 
     .tk-chatbot-panel {
+        right: var(--tk-float-right);
+        bottom: calc(0.75rem + env(safe-area-inset-bottom));
         width: calc(100vw - 2rem);
-        min-height: 390px;
-        max-height: calc(100svh - 13.5rem);
+        height: min(560px, calc(100svh - 1.5rem));
+        min-height: min(390px, calc(100svh - 1.5rem));
+        max-height: calc(100svh - 1.5rem);
+    }
+
+    @supports (height: 100dvh) {
+        .tk-chatbot-panel {
+            height: min(560px, calc(100dvh - 1.5rem));
+            min-height: min(390px, calc(100dvh - 1.5rem));
+            max-height: calc(100dvh - 1.5rem);
+        }
+    }
+
+    .tk-chatbot.is-open .tk-chatbot-toggle {
+        display: none;
     }
 
     .tk-chatbot-header {
@@ -321,6 +336,7 @@
 @media (max-width: 380px) {
     .tk-chatbot-panel {
         right: 0.75rem;
+        bottom: calc(0.65rem + env(safe-area-inset-bottom));
         width: calc(100vw - 1.5rem);
     }
 
