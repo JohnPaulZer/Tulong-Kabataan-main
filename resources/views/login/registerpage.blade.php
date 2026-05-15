@@ -31,13 +31,16 @@
                 </button>
             </a>
 
-            <div id="panelImage"
-                class="hidden w-full rounded-[14px] bg-cover bg-center transition-[background-image] duration-1000 md:block md:h-[120px] lg:h-[260px]"
-                data-images='@json([
+            @php
+                $panelImages = [
                     page_media_url('register_panel_image_1', asset('img/eyy.png')),
                     page_media_url('register_panel_image_2', asset('img/yagit.png')),
                     page_media_url('register_panel_image_3', asset('img/diss.jpg')),
-                ])'>
+                ];
+            @endphp
+            <div id="panelImage"
+                class="hidden w-full rounded-[14px] bg-cover bg-center transition-[background-image] duration-1000 md:block md:h-[120px] lg:h-[260px]"
+                data-images="{{ json_encode($panelImages) }}">
             </div>
 
             <div class="mt-3 hidden font-heading text-[1.18rem] font-semibold tracking-[0.3px] text-gray-800 lg:block">
