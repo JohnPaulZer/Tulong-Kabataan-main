@@ -583,6 +583,19 @@
             document.getElementById('customCount').textContent = count;
         }
 
+        window.addEventListener('tk:page-media-changed', (event) => {
+            const item = event.detail?.item;
+            if (!item?.key) return;
+
+            const card = document.getElementById(`media-${item.key}`);
+            if (!card) return;
+
+            updateCard(card, item);
+            pendingFiles.delete(item.key);
+            card.querySelector('[data-action="save"]').hidden = true;
+            refreshCustomCount();
+        });
+
         const searchInput = document.getElementById('mediaSearch');
         const tabButtons = document.querySelectorAll('.media-tab');
         let activePage = document.querySelector('.media-tab.active')?.dataset.tabPage || document.querySelector('.media-group')?.dataset.group || '';
