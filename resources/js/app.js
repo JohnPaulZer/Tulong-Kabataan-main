@@ -6,3 +6,4 @@ import './maps';
 import './components/chatbot';
 import './loading-modal';
 import './image-chunk-loader';
+import './live-updates';

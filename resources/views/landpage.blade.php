@@ -18,7 +18,7 @@
     <main id="main-content" class="overflow-x-hidden">
         <section class="tk-land-hero relative isolate flex min-h-[calc(100svh-60px)] items-start overflow-hidden md:min-h-[700px] md:items-center" aria-labelledby="homepage-hero-title">
             <div class="tk-land-hero-bg absolute inset-0 -z-10 overflow-hidden">
-                <img class="h-full w-full object-cover" src="{{ page_media_url('home_hero_background', asset('img/bg1.jpg')) }}"
+                <img class="h-full w-full object-cover" data-page-media-key="home_hero_background" src="{{ page_media_url('home_hero_background', asset('img/bg1.jpg')) }}"
                     alt="Community volunteers preparing relief support" decoding="async" fetchpriority="high" />
                 <div class="tk-land-overlay absolute inset-0 bg-white/80"></div>
             </div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PageMediaChanged;
 use App\Models\PageMedia;
 use App\Services\Storage\R2StorageException;
 use App\Services\Storage\R2StorageService;
@@ -141,10 +142,14 @@ class PageMediaController
 
         PageMedia::clearCache();
 
+        $freshRecord = $record->fresh();
+        $adminItem = PageMedia::itemPayload($key, $definition, $freshRecord, true);
+        $this->broadcastPageMediaChanged($key, $definition, $freshRecord, 'updated');
+
         return response()->json([
             'success' => true,
             'message' => $definition['label'] . ' updated successfully.',
-            'item' => PageMedia::itemPayload($key, $definition, $record->fresh(), true),
+            'item' => $adminItem,
         ]);
     }
 
@@ -184,10 +189,14 @@ class PageMediaController
 
         PageMedia::clearCache();
 
+        $freshRecord = $record->fresh();
+        $adminItem = PageMedia::itemPayload($key, $definition, $freshRecord, true);
+        $this->broadcastPageMediaChanged($key, $definition, $freshRecord, 'reset');
+
         return response()->json([
             'success' => true,
             'message' => $definition['label'] . ' reset to the default image.',
-            'item' => PageMedia::itemPayload($key, $definition, $record->fresh(), true),
+            'item' => $adminItem,
         ]);
     }
 
@@ -311,5 +320,21 @@ class PageMediaController
     protected function storagePrefix(array $definition): string
     {
         return Str::slug($definition['page_name']) . '/' . Str::slug($definition['section_name']);
+    }
+
+    protected function broadcastPageMediaChanged(string $key, array $definition, ?PageMedia $record, string $action): void
+    {
+        try {
+            PageMediaChanged::dispatch(
+                PageMedia::itemPayload($key, $definition, $record, false),
+                $action
+            );
+        } catch (\Throwable $e) {
+            Log::warning('Page media websocket broadcast failed.', [
+                'key' => $key,
+                'action' => $action,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }
