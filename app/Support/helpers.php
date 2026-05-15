@@ -1,6 +1,7 @@
 <?php
 
 use App\Services\Storage\R2StorageService;
+use App\Models\PageMedia;
 use Illuminate\Support\Str;
 
 if (! function_exists('file_url')) {
@@ -56,5 +57,26 @@ if (! function_exists('file_url')) {
 
         // Legacy local storage fallback.
         return asset('storage/' . ltrim($keyOrUrl, '/'));
+    }
+}
+
+if (! function_exists('page_media_url')) {
+    /**
+     * Resolve a customizable user-side media key to a public image URL.
+     */
+    function page_media_url(string $key, ?string $fallback = null): string
+    {
+        try {
+            return PageMedia::urlFor($key, $fallback);
+        } catch (\Throwable $e) {
+            return $fallback ?: asset('img/camp.jpg');
+        }
+    }
+}
+
+if (! function_exists('page_media')) {
+    function page_media(string $key, ?string $fallback = null): string
+    {
+        return page_media_url($key, $fallback);
     }
 }

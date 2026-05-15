@@ -37,6 +37,12 @@
             'active' => ['dnc.*'],
         ],
         [
+            'label' => 'Page Media',
+            'route' => 'admin.page-media',
+            'icon' => 'ri-image-line',
+            'active' => ['admin.page-media', 'admin.page-media.*'],
+        ],
+        [
             'label' => 'Settings',
             'route' => 'admin.settings',
             'icon' => 'ri-settings-3-line',

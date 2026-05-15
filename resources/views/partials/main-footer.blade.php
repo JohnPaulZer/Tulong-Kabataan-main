@@ -180,7 +180,7 @@
         <div class="footer-top">
             <div class="footer-content-left">
                 <a href="{{ route('landpage') }}" class="footer-logo" aria-label="Tulong Kabataan homepage">
-                    <img src="{{ asset('img/log1.png') }}" alt="Tulong Kabataan Logo">
+                    <img src="{{ page_media_url('footer_logo', asset('img/log1.png')) }}" alt="Tulong Kabataan Logo">
                 </a>
                 <p class="footer-description">
                     Empowering the next generation. Connecting generosity with community needs through secure donations and meaningful volunteer opportunities across the Bicol region.

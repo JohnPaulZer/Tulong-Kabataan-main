@@ -9,8 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('events', function (Blueprint $table) {
-            $table->decimal('lat', 10, 7)->nullable()->after('location');
-            $table->decimal('lng', 10, 7)->nullable()->after('lat');
+            $table->decimal('lat', 10, 7)->nullable();
+            $table->decimal('lng', 10, 7)->nullable();
         });
     }
 

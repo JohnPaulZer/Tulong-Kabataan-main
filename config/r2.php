@@ -45,6 +45,7 @@ return [
         'manual_donation_proofs' => 'donations/manual-proofs',
         'event_photos'         => 'events/banners',
         'impact_report_photos' => 'admin/impact-reports',
+        'page_media'           => 'admin/page-media',
         'admin_uploads'        => 'admin/uploads',
         'documents'            => 'documents',
     ],

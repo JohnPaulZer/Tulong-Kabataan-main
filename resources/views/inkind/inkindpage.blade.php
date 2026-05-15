@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>In-Kind | Tulong Kabataan</title>
-    <link rel="icon" href="{{ asset('img/log2.png') }}" type="image/png">
+    <link rel="icon" href="{{ page_media_url('site_favicon', asset('img/log2.png')) }}" type="image/png">
     <!-- Remixicon -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -19,7 +19,7 @@
     <main class="page-wrap">
         <section class="hero-section">
             <div class="image-container">
-                <img src="{{ asset('img/bg1.jpg') }}" alt="In-Kind Donations Hero" class="hero-image">
+                <img src="{{ page_media_url('donation_hero_image', asset('img/bg1.jpg')) }}" alt="In-Kind Donations Hero" class="hero-image">
                 <div class="overlay"></div>
             </div>
             <div class="content">

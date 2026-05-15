@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Campaign | Tulong Kabataan</title>
-    <link rel="icon" href="img/log2.png" type="image/png">
+    <link rel="icon" href="{{ page_media_url('site_favicon', asset('img/log2.png')) }}" type="image/png">
     <!-- Remixicon -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -54,7 +54,7 @@
                 <div class="tk-featured-program">
                     <article class="tk-featured-card">
                         <div class="tk-featured-media">
-                            <img src="{{ asset('img/diss.jpg') }}" alt="Tulong Kabataan Youth Program" class="featured-img">
+                            <img src="{{ page_media_url('campaign_featured_banner', asset('img/diss.jpg')) }}" alt="Tulong Kabataan Youth Program" class="featured-img">
                         </div>
                         <div class="tk-featured-content">
                             <div class="tk-featured-content-header">

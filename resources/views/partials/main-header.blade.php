@@ -3,7 +3,7 @@
     <div class="header-container">
         <div class="header-left">
             <a href="{{ route('landpage') }}" class="logo" aria-label="Tulong Kabataan homepage">
-                <img src="{{ asset('img/log.png') }}" alt="Tulong Kabataan" style="height: 40px; vertical-align: middle;">
+                <img src="{{ page_media_url('header_logo', asset('img/log.png')) }}" alt="Tulong Kabataan" style="height: 40px; vertical-align: middle;">
             </a>
             <nav class="main-nav body-font" aria-label="Main navigation">
                 <a href="{{ route('campaignpage') }}">Campaigns</a>

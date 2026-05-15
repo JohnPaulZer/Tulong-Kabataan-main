@@ -9,20 +9,20 @@
     <meta http-equiv="Expires" content="0">
 
     <title>Login | Tulong Kabataan</title>
-    <link rel="icon" href="{{asset ('img/log2.png')}}" type="image/png">
-    <link rel="preload" as="image" href="{{ asset('img/backlogin.png') }}">
+    <link rel="icon" href="{{ page_media_url('site_favicon', asset('img/log2.png')) }}" type="image/png">
+    <link rel="preload" as="image" href="{{ page_media_url('login_background', asset('img/backlogin.png')) }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="login-page relative flex min-h-screen items-center justify-center overflow-hidden bg-[url('/img/backlogin.png')] bg-cover bg-center bg-no-repeat px-4 py-8 font-body text-slate-950"
-    style="--auth-bg: url('{{ asset('img/backlogin.png') }}');">
+<body class="login-page relative flex min-h-screen items-center justify-center overflow-hidden bg-cover bg-center bg-no-repeat px-4 py-8 font-body text-slate-950"
+    style="--auth-bg: url('{{ page_media_url('login_background', asset('img/backlogin.png')) }}');">
     <div class="fixed inset-0 bg-slate-950/25 backdrop-blur-[1px]"></div>
     <div class="fixed inset-x-0 top-0 h-40 bg-gradient-to-b from-white/40 to-transparent"></div>
 
     <main class="relative z-10 w-full max-w-[430px] rounded-2xl border border-white/70 bg-white/90 p-6 shadow-[0_20px_60px_rgba(15,23,42,0.35)] backdrop-blur-md sm:p-8 lg:p-10">
         <div class="mb-6 flex justify-center">
             <a href="{{ route('landpage') }}" class="inline-flex rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-4">
-                <img src="{{ asset('img/log.png') }}" alt="TKA Logo" class="h-[60px] w-auto">
+                <img src="{{ page_media_url('login_logo', asset('img/log.png')) }}" alt="TKA Logo" class="h-[60px] w-auto">
             </a>
         </div>
         <h1 class="mb-6 text-center font-heading text-2xl font-bold tracking-normal text-slate-950">Log in to your account</h1>

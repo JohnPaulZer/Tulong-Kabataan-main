@@ -27,7 +27,7 @@ body.land-page .tk-land-hero::before {
     z-index: 0;
     background:
         linear-gradient(135deg, rgba(15, 23, 42, 0.58), rgba(79, 70, 229, 0.46)),
-        url('/img/doodle.svg') center / 720px auto no-repeat;
+        var(--tk-decorative-pattern, url('/img/doodle.svg')) center / 720px auto no-repeat;
     opacity: 0.18;
     pointer-events: none;
 }
@@ -177,7 +177,7 @@ body.land-page .tk-land-cta {
     overflow: hidden;
     background:
         linear-gradient(135deg, rgba(49, 46, 129, 0.96), rgba(79, 70, 229, 0.92)),
-        url('/img/bg2.jpg') center / cover no-repeat;
+        var(--tk-home-cta-bg, url('/img/bg2.jpg')) center / cover no-repeat;
     box-shadow: 0 24px 50px rgba(49, 46, 129, 0.25);
 }
 
@@ -185,7 +185,7 @@ body.land-page .tk-land-cta::before {
     content: "";
     position: absolute;
     inset: 0;
-    background: url('/img/doodle.svg') center / 560px auto no-repeat;
+    background: var(--tk-decorative-pattern, url('/img/doodle.svg')) center / 560px auto no-repeat;
     opacity: 0.07;
 }
 

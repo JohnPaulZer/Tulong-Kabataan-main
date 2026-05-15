@@ -182,13 +182,20 @@ document.getElementById("valid-id")?.addEventListener("change", function (e) {
     document.getElementById("file-name").textContent = fileName;
 });
 
-const images = ["img/eyy.png", "img/yagit.png", "img/diss.jpg"];
-
 let currentImage = 0;
 const imageEl = document.getElementById("panelImage");
 const dots = document.querySelectorAll(".dot");
+let images = [];
+
+try {
+    images = JSON.parse(imageEl?.dataset.images || "[]").filter(Boolean);
+} catch (error) {
+    images = [];
+}
 
 function updateImage() {
+    if (!imageEl || images.length === 0) return;
+
     imageEl.style.backgroundImage = `url('${images[currentImage]}')`;
     dots.forEach((dot, idx) => {
         const isActive = idx === currentImage;
@@ -198,12 +205,14 @@ function updateImage() {
     });
 }
 
-setInterval(() => {
-    currentImage = (currentImage + 1) % images.length;
-    updateImage();
-}, 4000);
+if (images.length > 0) {
+    setInterval(() => {
+        currentImage = (currentImage + 1) % images.length;
+        updateImage();
+    }, 4000);
 
-updateImage();
+    updateImage();
+}
 
 // Initial check
 checkFormValidity();

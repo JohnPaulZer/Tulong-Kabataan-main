@@ -50,7 +50,7 @@ return new class extends Migration
         // Add a status column to user_account for suspend/activate (safe if not present)
         if (!Schema::hasColumn('user_account', 'status')) {
             Schema::table('user_account', function (Blueprint $table) {
-                $table->string('status')->default('active')->after('profile_photo_url');
+                $table->string('status')->default('active');
             });
         }
     }

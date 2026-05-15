@@ -24,6 +24,8 @@ body.info-page .info-hero {
     justify-content: center;
     overflow: hidden;
     background:
+        linear-gradient(135deg, rgba(49, 46, 129, 0.88), rgba(67, 56, 202, 0.82)),
+        var(--info-hero-bg, none) center / cover no-repeat,
         radial-gradient(circle at 18% 20%, rgba(255, 255, 255, 0.18), transparent 30%),
         linear-gradient(135deg, rgba(79, 70, 229, 0.98), rgba(49, 46, 129, 0.98));
     text-align: center;

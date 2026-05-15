@@ -19,7 +19,7 @@
 
         <div class="evt-details-modal-header">
             <div class="evt-details-modal-image">
-                <img src="{{ file_url($event->photo, asset('img/bg2.jpg')) }}" alt="{{ $event->title }}">
+                <img src="{{ file_url($event->photo, page_media_url('event_default_image', asset('img/bg2.jpg'))) }}" alt="{{ $event->title }}">
             </div>
             <div class="evt-details-modal-heading">
                 <div class="evt-status-badge evt-status-{{ $status }}">

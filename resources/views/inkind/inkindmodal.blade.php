@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Donate Items | Tulong Kabataan</title>
-    <link rel="icon" href="img/log2.png" type="image/png" />
+    <link rel="icon" href="{{ page_media_url('site_favicon', asset('img/log2.png')) }}" type="image/png" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
@@ -15,7 +15,7 @@
     <!-- Hero Banner -->
     <section class="hero-banner">
         <div class="hero-media" aria-hidden="true">
-            <img src="{{ asset('img/bg1.jpg') }}" alt="" class="hero-image">
+            <img src="{{ page_media_url('donation_hero_image', asset('img/bg1.jpg')) }}" alt="" class="hero-image">
             <div class="hero-overlay"></div>
         </div>
         <div class="hero-content">

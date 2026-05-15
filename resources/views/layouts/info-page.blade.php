@@ -5,11 +5,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@yield('title', 'Tulong Kabataan')</title>
-    <link rel="icon" href="{{ asset('img/log2.png') }}" type="image/png" />
+    <link rel="icon" href="{{ page_media_url('site_favicon', asset('img/log2.png')) }}" type="image/png" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="@yield('body_class', 'info-page')">
+<body class="@yield('body_class', 'info-page')"
+    style="--info-hero-bg: url('{{ page_media_url(request()->routeIs('contact.us') ? 'contact_hero_image' : 'default_placeholder_image', asset('img/bg2.jpg')) }}');">
     @include('administrator.partials.loading-screen')
     @include('partials.main-header')
 

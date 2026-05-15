@@ -5,14 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register | Tulong Kabataan</title>
-    <link rel="icon" href="{{ asset('img/log2.png') }}" type="image/png">
-    <link rel="preload" as="image" href="{{ asset('img/backlogin.png') }}">
+    <link rel="icon" href="{{ page_media_url('site_favicon', asset('img/log2.png')) }}" type="image/png">
+    <link rel="preload" as="image" href="{{ page_media_url('register_background', asset('img/backlogin.png')) }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body
-    class="register-page relative m-0 flex h-screen w-screen items-center justify-center overflow-hidden bg-[url('/img/backlogin.png')] bg-cover bg-center bg-fixed font-body text-gray-800"
-    style="--auth-bg: url('{{ asset('img/backlogin.png') }}');">
+    class="register-page relative m-0 flex h-screen w-screen items-center justify-center overflow-hidden bg-cover bg-center bg-fixed font-body text-gray-800"
+    style="--auth-bg: url('{{ page_media_url('register_background', asset('img/backlogin.png')) }}');">
     <div class="fixed inset-0 bg-white/40 backdrop-blur-[1px]" aria-hidden="true"></div>
 
     <div
@@ -21,7 +21,7 @@
             class="relative flex w-full shrink-0 flex-row items-center justify-between border-b border-gray-100 bg-white p-4 md:flex-col md:items-start md:justify-between md:p-6 lg:min-w-[360px] lg:w-[42%] lg:border-b-0 lg:border-r lg:p-8">
             <a href="{{ route('landpage') }}" class="mb-0 no-underline md:mb-4 lg:mb-10"
                 aria-label="Tulong Kabataan homepage">
-                <img src="{{ asset('img/log.png') }}" alt="TKA Logo" class="h-10 w-auto md:h-[50px]">
+                <img src="{{ page_media_url('website_logo', asset('img/log.png')) }}" alt="TKA Logo" class="h-10 w-auto md:h-[50px]">
             </a>
 
             <a href="{{ route('login.page') }}" class="static no-underline md:absolute md:right-6 md:top-6 lg:right-8 lg:top-7">
@@ -32,7 +32,12 @@
             </a>
 
             <div id="panelImage"
-                class="hidden w-full rounded-[14px] bg-cover bg-center transition-[background-image] duration-1000 md:block md:h-[120px] lg:h-[260px]">
+                class="hidden w-full rounded-[14px] bg-cover bg-center transition-[background-image] duration-1000 md:block md:h-[120px] lg:h-[260px]"
+                data-images='@json([
+                    page_media_url('register_panel_image_1', asset('img/eyy.png')),
+                    page_media_url('register_panel_image_2', asset('img/yagit.png')),
+                    page_media_url('register_panel_image_3', asset('img/diss.jpg')),
+                ])'>
             </div>
 
             <div class="mt-3 hidden font-heading text-[1.18rem] font-semibold tracking-[0.3px] text-gray-800 lg:block">

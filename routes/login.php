@@ -2,9 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\PageMediaController;
 // ================================================LOGIN ROUTE=====================================================
 Route::middleware('throttle:public')->group(function () {
     Route::get('/', [LoginController::class, 'landingpage'])->name('landpage');
+    Route::get('/api/page-media', [PageMediaController::class, 'publicIndex'])->name('page-media.public');
     Route::view('/privacy-policy', 'legal.privacy-policy')->name('privacy.policy');
     Route::view('/terms-of-service', 'legal.terms-of-service')->name('terms.service');
     Route::view('/cookie-policy', 'legal.cookie-policy')->name('cookie.policy');

@@ -11,6 +11,18 @@
         <table width="100%" cellspacing="0" cellpadding="0"
             style="max-width:500px; margin:auto; background:#29243b; border-radius:16px;
                    padding:36px 28px; box-shadow:0 10px 25px rgba(0,0,0,0.25); border-collapse:separate;">
+            <tr>
+                <td align="center" style="padding-bottom:18px;">
+                    <img src="{{ page_media_url('email_template_logo', asset('img/log.png')) }}" alt="Tulong Kabataan"
+                        style="max-width:150px; height:auto; display:block;">
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-bottom:22px;">
+                    <img src="{{ page_media_url('email_reset_banner', asset('img/backlogin.png')) }}"
+                        alt="" style="width:100%; max-height:160px; object-fit:cover; border-radius:12px; display:block;">
+                </td>
+            </tr>
             
             <tr>
                 <td style="font-family: 'Merriweather', serif; color:#f3e8ff;
@@ -58,4 +70,3 @@
 
 </body>
 </html>
-
