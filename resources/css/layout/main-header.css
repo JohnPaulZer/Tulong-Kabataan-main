@@ -1092,46 +1092,47 @@ body.reloading{
         color: inherit;
     }
 }@media (max-width: 767px){.header .header-container{
-        height: 58px;
-        min-height: 58px;
-        padding: 0 12px;
-        gap: 6px;
+        height: 72px;
+        min-height: 72px;
+        padding-top: 0;
+        padding-bottom: 0;
+        gap: 10px;
     }.header .logo img{
-        height: 26px !important;
-        max-width: min(130px, 38vw);
+        height: 36px !important;
+        max-width: min(160px, 44vw);
     }.header .sign-in-btn, .header .register-btn{
         min-width: 0;
         width: auto;
-        height: 34px;
-        padding: 0 10px;
-        font-size: 12px;
-        gap: 4px;
+        height: 40px;
+        padding: 0 12px;
+        font-size: 13px;
+        gap: 6px;
         border-radius: 10px;
     }.header .register-btn{
         margin-left: 0;
     }.header .sign-in-btn i, .header .register-btn i{
-        font-size: 1rem;
+        font-size: 1.08rem;
     }.header .header-right{
-        gap: 6px !important;
+        gap: 8px !important;
     }.header .user-btn{
-        max-width: 126px;
-        padding: 6px 8px;
+        max-width: 166px;
+        padding: 7px 10px;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
     }.header .user-avatar{
-        width: 26px;
-        height: 26px;
-        min-width: 26px;
-        flex: 0 0 26px;
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        flex: 0 0 32px;
         aspect-ratio: 1 / 1;
     }.header .icon-btn{
-        width: 36px;
-        height: 36px;
+        width: 40px;
+        height: 40px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.25rem;
+        font-size: 1.35rem;
     }.header .mobile-bottom-nav{
         width: min(calc(100% - 20px), 410px);
         min-height: 62px;
@@ -1158,6 +1159,36 @@ body.reloading{
     }.header .mobile-bottom-nav--profile .mobile-bottom-nav__item.is-active{
         min-width: 94px;
         flex: 1.75 1 0;
+    }
+}@media (max-width: 420px){.header .header-container{
+        height: 70px;
+        min-height: 70px;
+        gap: 8px;
+    }.header .logo img{
+        height: 34px !important;
+        max-width: min(145px, 42vw);
+    }.header .sign-in-btn, .header .register-btn{
+        height: 40px;
+        padding: 0 11px;
+        font-size: 12.5px;
+    }.header .user-btn{
+        max-width: 132px;
+    }
+}@media (max-width: 360px){.header .logo img{
+        max-width: min(132px, 41vw);
+    }.header .sign-in-btn, .header .register-btn{
+        width: 40px;
+        padding: 0;
+        font-size: 0;
+    }.header .sign-in-btn i, .header .register-btn i{
+        font-size: 1.12rem;
+    }.header .user-btn{
+        max-width: 82px;
+        font-size: 0;
+        gap: 4px;
+        padding: 6px 8px;
+    }.header .user-btn i{
+        font-size: 1rem;
     }
 }@media (max-width: 600px){.header .notif-dropdown{
         position: fixed;
