@@ -22,6 +22,7 @@ class TulongKabataanChatbotService
     public function reply(string $message, array $history = []): string
     {
         $message = $this->normalizeMessage($message);
+        $history = $this->safeHistory($history);
 
         if ($message === '') {
             return self::UNKNOWN_REPLY;
@@ -33,6 +34,10 @@ class TulongKabataanChatbotService
 
         if ($this->isSensitiveRequest($message)) {
             return self::SENSITIVE_REPLY;
+        }
+
+        if ($reply = $this->contextualShortReply($message, $history)) {
+            return $reply;
         }
 
         if ($reply = $this->simpleIntentReply($message)) {
@@ -314,6 +319,10 @@ PROMPT;
             return "You're welcome! If you need help using Tulong Kabataan, just ask about registration, donations, events, status tracking, or your profile.";
         }
 
+        if (preg_match('/^(help|help po|menu|options|what can i ask|what can you help with)[!. ]*$/i', $message)) {
+            return $this->assistantOverviewReply();
+        }
+
         // Chatbot / assistant purpose — fast reply
         if (Str::contains($normalized, [
             'purpose of this chatbot',
@@ -371,6 +380,41 @@ PROMPT;
 
         // Everything else (including short/one-word questions) goes to the LLM
         return null;
+    }
+
+    private function contextualShortReply(string $message, array $history): ?string
+    {
+        $normalized = Str::lower(trim($message));
+
+        if (! preg_match('/^(why|why\?|bakit|bakit\?|what now|what should i do|what do i do|how|how\?)$/i', $normalized)) {
+            return null;
+        }
+
+        $recent = $this->recentUserContext($history);
+
+        if ($recent === '') {
+            return null;
+        }
+
+        if (preg_match("/\b(banned|ban|suspended|blocked|locked|can't login|cant login|cannot login|account disabled)\b/i", $recent)) {
+            return "Answer:\nIf your account is banned, suspended, blocked, or locked, it means an administrator has restricted sign-in for review or safety reasons. I cannot see the exact reason from chat.\n\nSteps:\n1. Check the message shown on the login page.\n2. Email tulongkabataan.bicol@gmail.com or message Facebook @tulongkabataanbicol.\n3. Use the email address registered to your account when asking for help.\n\nReminder:\nOnly an administrator can review or reactivate a restricted account.";
+        }
+
+        if (preg_match('/\b(help|what can you do|assistant|chatbot)\b/i', $recent)) {
+            return $this->assistantOverviewReply();
+        }
+
+        return null;
+    }
+
+    private function recentUserContext(array $history): string
+    {
+        return collect($history)
+            ->reverse()
+            ->filter(fn (array $item) => ($item['role'] ?? '') === 'user')
+            ->pluck('content')
+            ->take(3)
+            ->implode(' ');
     }
 
     /**
