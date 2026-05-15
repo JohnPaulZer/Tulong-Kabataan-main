@@ -27,12 +27,18 @@
                     <h1 class="title">In-Kind Donations That Make a Difference</h1>
                     <p class="description">Contribute clothing, food, supplies, and more. Your donated items can help
                         those in need in your community.</p>
-                    <div class="button-group">
-                        <form action="{{ route('inkindmodal') }}" method="POST">
+                    <div class="button-group" aria-label="In-kind donation actions">
+                        <form action="{{ route('inkindmodal') }}" method="POST" class="donate-action-form">
                             @csrf
-                            <button type="submit" id="openModalBtn" class="donate-btn">Donate Items Now</button>
-                            <a href="{{ route('inkind.tracking') }}" class="learn-btn" type="button">Donation Impact</a>
+                            <button type="submit" id="openModalBtn" class="donate-btn">
+                                <i class="ri-hand-heart-line" aria-hidden="true"></i>
+                                <span>Donate Items Now</span>
+                            </button>
                         </form>
+                        <a href="{{ route('inkind.tracking') }}" class="learn-btn">
+                            <i class="ri-line-chart-line" aria-hidden="true"></i>
+                            <span>Donation Impact</span>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -42,22 +48,22 @@
         <section class="impact-statistics">
             <div class="constrain">
                 <div class="grid">
-                    <div class="stat-card">
-                        <div class="icon-container"><i class="ri-user-heart-line icon"></i></div>
+                    <div class="stat-card stat-card-donors">
+                        <div class="icon-container" aria-hidden="true"><i class="ri-user-heart-line icon"></i></div>
                         <div class="stat-text">
                             <div id="donors-count" class="stat-number">0</div>
                             <div class="stat-description">In-Kind Donors</div>
                         </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="icon-container"><i class="ri-gift-line icon"></i></div>
+                    <div class="stat-card stat-card-donations">
+                        <div class="icon-container" aria-hidden="true"><i class="ri-gift-line icon"></i></div>
                         <div class="stat-text">
                             <div id="donations-made-count" class="stat-number">0</div>
                             <div class="stat-description">Donations Made</div>
                         </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="icon-container"><i class="ri-heart-pulse-line icon"></i></div>
+                    <div class="stat-card stat-card-upcoming">
+                        <div class="icon-container" aria-hidden="true"><i class="ri-heart-pulse-line icon"></i></div>
                         <div class="stat-text">
                             <div id="upcoming-donations-count" class="stat-number">0</div>
                             <div class="stat-description">Upcoming Donations</div>
@@ -69,20 +75,24 @@
 
         <section class="donation-categories-v2">
             <div class="constrain">
-                <div class="section-header centered-header">
+                <div class="section-header">
                     <h2 class="section-title">What You Can Donate</h2>
                     <p class="section-description">
-                        We accept a variety of items that can help individuals and families in need. Check our<br>
-                        current needs in each category.
+                        We accept a variety of items that can help individuals and families in need. Check our current
+                        needs in each category.
                     </p>
                 </div>
                 <div class="category-grid-v2">
                     <!-- Food & Groceries -->
-                    <div class="category-card-v2">
-                        <div class="icon-circle red"><i class="ri-shopping-basket-line"></i></div>
-                        <h3 class="category-title-v2">Food & Groceries</h3>
-                        <p class="category-desc-v2">Non-perishable food items, canned goods, and pantry staples to
-                            support food security programs.</p>
+                    <article class="category-card-v2 category-card-food">
+                        <div class="category-card-header">
+                            <div class="icon-circle red" aria-hidden="true"><i class="ri-shopping-basket-line"></i></div>
+                            <div>
+                                <h3 class="category-title-v2">Food & Groceries</h3>
+                                <p class="category-desc-v2">Non-perishable food items, canned goods, and pantry staples to
+                                    support food security programs.</p>
+                            </div>
+                        </div>
                         <div class="needs-box red-bg">
                             <div class="needs-title-v2">Current Needs:</div>
                             <ul>
@@ -91,13 +101,17 @@
                                 <li><i class="ri-checkbox-circle-fill red"></i> Cooking oils</li>
                             </ul>
                         </div>
-                    </div>
+                    </article>
                     <!-- Clothing & Accessories -->
-                    <div class="category-card-v2">
-                        <div class="icon-circle blue"><i class="ri-t-shirt-line"></i></div>
-                        <h3 class="category-title-v2">Clothing & Accessories</h3>
-                        <p class="category-desc-v2">New or gently used clothing items for all ages, seasons, and sizes
-                            to help those in need.</p>
+                    <article class="category-card-v2 category-card-clothing">
+                        <div class="category-card-header">
+                            <div class="icon-circle blue" aria-hidden="true"><i class="ri-t-shirt-line"></i></div>
+                            <div>
+                                <h3 class="category-title-v2">Clothing & Accessories</h3>
+                                <p class="category-desc-v2">New or gently used clothing items for all ages, seasons, and sizes
+                                    to help those in need.</p>
+                            </div>
+                        </div>
                         <div class="needs-box blue-bg">
                             <div class="needs-title-v2">Current Needs:</div>
                             <ul>
@@ -106,13 +120,17 @@
                                 <li><i class="ri-checkbox-circle-fill blue"></i> New underwear and socks</li>
                             </ul>
                         </div>
-                    </div>
+                    </article>
                     <!-- Home Goods -->
-                    <div class="category-card-v2">
-                        <div class="icon-circle yellow"><i class="ri-home-line"></i></div>
-                        <h3 class="category-title-v2">Home Goods</h3>
-                        <p class="category-desc-v2">Household items, furniture, and appliances to help families
-                            establish stable homes.</p>
+                    <article class="category-card-v2 category-card-home">
+                        <div class="category-card-header">
+                            <div class="icon-circle yellow" aria-hidden="true"><i class="ri-home-line"></i></div>
+                            <div>
+                                <h3 class="category-title-v2">Home Goods</h3>
+                                <p class="category-desc-v2">Household items, furniture, and appliances to help families
+                                    establish stable homes.</p>
+                            </div>
+                        </div>
                         <div class="needs-box yellow-bg">
                             <div class="needs-title-v2">Current Needs:</div>
                             <ul>
@@ -121,13 +139,17 @@
                                 <li><i class="ri-checkbox-circle-fill yellow"></i> Small appliances</li>
                             </ul>
                         </div>
-                    </div>
+                    </article>
                     <!-- School Supplies -->
-                    <div class="category-card-v2">
-                        <div class="icon-circle green"><i class="ri-book-open-line"></i></div>
-                        <h3 class="category-title-v2">School Supplies</h3>
-                        <p class="category-desc-v2">Educational materials and supplies to support students and promote
-                            learning opportunities.</p>
+                    <article class="category-card-v2 category-card-school">
+                        <div class="category-card-header">
+                            <div class="icon-circle green" aria-hidden="true"><i class="ri-book-open-line"></i></div>
+                            <div>
+                                <h3 class="category-title-v2">School Supplies</h3>
+                                <p class="category-desc-v2">Educational materials and supplies to support students and promote
+                                    learning opportunities.</p>
+                            </div>
+                        </div>
                         <div class="needs-box green-bg">
                             <div class="needs-title-v2">Current Needs:</div>
                             <ul>
@@ -136,13 +158,17 @@
                                 <li><i class="ri-checkbox-circle-fill green"></i> Art supplies</li>
                             </ul>
                         </div>
-                    </div>
+                    </article>
                     <!-- Medical Supplies -->
-                    <div class="category-card-v2">
-                        <div class="icon-circle purple"><i class="ri-medicine-bottle-line"></i></div>
-                        <h3 class="category-title-v2">Medical Supplies</h3>
-                        <p class="category-desc-v2">Basic medical and hygiene items to support health and wellness for
-                            vulnerable populations.</p>
+                    <article class="category-card-v2 category-card-medical">
+                        <div class="category-card-header">
+                            <div class="icon-circle purple" aria-hidden="true"><i class="ri-medicine-bottle-line"></i></div>
+                            <div>
+                                <h3 class="category-title-v2">Medical Supplies</h3>
+                                <p class="category-desc-v2">Basic medical and hygiene items to support health and wellness for
+                                    vulnerable populations.</p>
+                            </div>
+                        </div>
                         <div class="needs-box purple-bg">
                             <div class="needs-title-v2">Current Needs:</div>
                             <ul>
@@ -151,13 +177,17 @@
                                 <li><i class="ri-checkbox-circle-fill purple"></i> Over-the-counter medications</li>
                             </ul>
                         </div>
-                    </div>
+                    </article>
                     <!-- Electronics -->
-                    <div class="category-card-v2">
-                        <div class="icon-circle indigo"><i class="ri-computer-line"></i></div>
-                        <h3 class="category-title-v2">Electronics</h3>
-                        <p class="category-desc-v2">Working electronic devices to bridge the digital divide and support
-                            education and job searching.</p>
+                    <article class="category-card-v2 category-card-electronics">
+                        <div class="category-card-header">
+                            <div class="icon-circle indigo" aria-hidden="true"><i class="ri-computer-line"></i></div>
+                            <div>
+                                <h3 class="category-title-v2">Electronics</h3>
+                                <p class="category-desc-v2">Working electronic devices to bridge the digital divide and support
+                                    education and job searching.</p>
+                            </div>
+                        </div>
                         <div class="needs-box indigo-bg">
                             <div class="needs-title-v2">Current Needs:</div>
                             <ul>
@@ -166,7 +196,7 @@
                                 <li><i class="ri-checkbox-circle-fill indigo"></i> Chargers and accessories</li>
                             </ul>
                         </div>
-                    </div>
+                    </article>
 
                 </div>
             </div>
