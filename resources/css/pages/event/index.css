@@ -461,7 +461,7 @@ body.event-page .evt-calendar-tooltip {
     position: fixed;
     z-index: 10001;
     display: flex;
-    width: 290px;
+    width: clamp(260px, calc(100vw - 28px), 320px);
     flex-direction: column;
     overflow: hidden;
     border: 1px solid var(--event-border);
@@ -501,6 +501,7 @@ body.event-page .evt-calendar-tooltip.position-bottom .evt-tooltip-arrow {
 }
 
 body.event-page .tooltip-img-container {
+    flex: 0 0 auto;
     width: 100%;
     height: 140px;
     overflow: hidden;
@@ -508,6 +509,7 @@ body.event-page .tooltip-img-container {
 }
 
 body.event-page .tooltip-img-container img {
+    display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -539,6 +541,13 @@ body.event-page .tooltip-desc {
     line-height: 1.5;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
+}
+
+body.event-page .evt-calendar-tooltip .evt-register-button {
+    display: inline-flex !important;
+    width: 100%;
+    min-height: 42px;
+    white-space: normal;
 }
 
 body.event-page .tooltip-nav {

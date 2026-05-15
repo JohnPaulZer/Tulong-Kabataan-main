@@ -131,10 +131,6 @@
                                         - {{ $end->format('M d, Y') }} &bull; {{ $end->format('h:i A') }}
                                     @endif
                                 </span>
-                                {{ $start->format('M d, Y • h:i A') }}
-                                @if (!$isOngoing && !$isPast)
-                                    - {{ $end->format('M d, Y • h:i A') }}
-                                @endif
                             </span>
                             <span class="evt-card-location">
                                 <i class="ri-map-pin-line"></i>
@@ -862,7 +858,7 @@
             // ✅ FIXED: Update the link without replacing the element
             if (evt.id) {
                 tooltipEventLink.href = '#';
-                tooltipEventLink.style.display = 'inline-block';
+                tooltipEventLink.style.display = 'inline-flex';
                 tooltipEventLink.textContent = 'View Event Details';
 
                 // Store the current event ID in a data attribute for the click handler
