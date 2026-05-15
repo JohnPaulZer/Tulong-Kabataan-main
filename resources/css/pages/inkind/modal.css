@@ -193,6 +193,9 @@ body.inkind-modal-page .hero-badge i {
 body.inkind-modal-page .hero-banner .hero-content {
     position: relative;
     z-index: 2;
+    display: grid;
+    justify-items: center;
+    row-gap: 0.85rem;
     width: min(100%, 760px);
 }
 
@@ -201,7 +204,7 @@ body.inkind-modal-page .hero-banner h1 {
     font-family: var(--font-body);
     font-size: clamp(2.1rem, 3.7vw, 3.15rem);
     line-height: 1.12;
-    margin: 0 auto 0.85rem;
+    margin: 0 auto;
     color: #fff;
     font-weight: 700;
     letter-spacing: 0;
@@ -218,25 +221,26 @@ body.inkind-modal-page .hero-banner p {
 }
 
 body.inkind-modal-page .hero-back-link {
+    position: absolute;
+    top: clamp(-4.5rem, -5vw, -3rem);
+    left: 0;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    min-height: 44px;
-    margin-top: 1.5rem;
-    padding: 0 1.25rem;
-    border: 1px solid rgba(255, 255, 255, 0.72);
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.08);
+    gap: 6px;
+    min-height: 40px;
+    padding: 0 0.35rem;
     color: #fff;
-    font-weight: 600;
+    font-weight: 700;
     text-decoration: none;
-    transition: background 0.2s ease, border-color 0.2s ease;
+    text-shadow: 0 2px 8px rgba(15, 23, 42, 0.45);
+    transition: color 0.2s ease, opacity 0.2s ease;
 }
 
-body.inkind-modal-page .hero-back-link:hover {
-    border-color: rgba(255, 255, 255, 0.64);
-    background: rgba(255, 255, 255, 0.16);
+body.inkind-modal-page .hero-back-link:hover,
+body.inkind-modal-page .hero-back-link:focus-visible {
+    color: #ffffff;
+    opacity: 0.82;
 }
 
 /* ── Container ──────────────────────────────────────────── */

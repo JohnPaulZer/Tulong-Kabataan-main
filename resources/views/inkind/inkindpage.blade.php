@@ -78,122 +78,122 @@
                 <div class="section-header">
                     <h2 class="section-title">What You Can Donate</h2>
                     <p class="section-description">
-                        We accept a variety of items that can help individuals and families in need. Check our current
-                        needs in each category.
+                        For Bicol calamities such as typhoons, floods, landslides, and volcanic activity, these are the
+                        items families commonly need first.
                     </p>
                 </div>
                 <div class="category-grid-v2">
-                    <!-- Food & Groceries -->
+                    <!-- Food & Potable Water -->
                     <article class="category-card-v2 category-card-food">
                         <div class="category-card-header">
                             <div class="icon-circle red" aria-hidden="true"><i class="ri-shopping-basket-line"></i></div>
                             <div>
-                                <h3 class="category-title-v2">Food & Groceries</h3>
-                                <p class="category-desc-v2">Non-perishable food items, canned goods, and pantry staples to
-                                    support food security programs.</p>
+                                <h3 class="category-title-v2">Food & Potable Water</h3>
+                                <p class="category-desc-v2">Ready-to-eat and shelf-stable food, plus safe drinking water
+                                    for families in evacuation centers.</p>
                             </div>
                         </div>
                         <div class="needs-box red-bg">
                             <div class="needs-title-v2">Current Needs:</div>
                             <ul>
-                                <li><i class="ri-checkbox-circle-fill red"></i> Canned proteins (tuna, chicken)</li>
-                                <li><i class="ri-checkbox-circle-fill red"></i> Rice and pasta</li>
-                                <li><i class="ri-checkbox-circle-fill red"></i> Cooking oils</li>
+                                <li><i class="ri-checkbox-circle-fill red"></i> Bottled potable water</li>
+                                <li><i class="ri-checkbox-circle-fill red"></i> Rice and easy-open canned goods</li>
+                                <li><i class="ri-checkbox-circle-fill red"></i> Ready-to-eat food and biscuits</li>
                             </ul>
                         </div>
                     </article>
-                    <!-- Clothing & Accessories -->
+                    <!-- Hygiene & Sanitation Kits -->
                     <article class="category-card-v2 category-card-clothing">
                         <div class="category-card-header">
-                            <div class="icon-circle blue" aria-hidden="true"><i class="ri-t-shirt-line"></i></div>
+                            <div class="icon-circle blue" aria-hidden="true"><i class="ri-hand-sanitizer-line"></i></div>
                             <div>
-                                <h3 class="category-title-v2">Clothing & Accessories</h3>
-                                <p class="category-desc-v2">New or gently used clothing items for all ages, seasons, and sizes
-                                    to help those in need.</p>
+                                <h3 class="category-title-v2">Hygiene & Sanitation Kits</h3>
+                                <p class="category-desc-v2">Cleanliness essentials for evacuees during floods, typhoons,
+                                    ashfall, and crowded shelters.</p>
                             </div>
                         </div>
                         <div class="needs-box blue-bg">
                             <div class="needs-title-v2">Current Needs:</div>
                             <ul>
-                                <li><i class="ri-checkbox-circle-fill blue"></i> Children's clothing (all sizes)</li>
-                                <li><i class="ri-checkbox-circle-fill blue"></i> Winter coats and jackets</li>
-                                <li><i class="ri-checkbox-circle-fill blue"></i> New underwear and socks</li>
+                                <li><i class="ri-checkbox-circle-fill blue"></i> Soap, shampoo, toothbrush and toothpaste</li>
+                                <li><i class="ri-checkbox-circle-fill blue"></i> Sanitary pads, diapers and tissue</li>
+                                <li><i class="ri-checkbox-circle-fill blue"></i> Alcohol, masks and cleaning supplies</li>
                             </ul>
                         </div>
                     </article>
-                    <!-- Home Goods -->
+                    <!-- Sleeping & Evacuation Kits -->
                     <article class="category-card-v2 category-card-home">
                         <div class="category-card-header">
-                            <div class="icon-circle yellow" aria-hidden="true"><i class="ri-home-line"></i></div>
+                            <div class="icon-circle yellow" aria-hidden="true"><i class="ri-hotel-bed-line"></i></div>
                             <div>
-                                <h3 class="category-title-v2">Home Goods</h3>
-                                <p class="category-desc-v2">Household items, furniture, and appliances to help families
-                                    establish stable homes.</p>
+                                <h3 class="category-title-v2">Sleeping & Evacuation Kits</h3>
+                                <p class="category-desc-v2">Basic comfort items for families staying in evacuation centers
+                                    or whose homes were damaged.</p>
                             </div>
                         </div>
                         <div class="needs-box yellow-bg">
                             <div class="needs-title-v2">Current Needs:</div>
                             <ul>
-                                <li><i class="ri-checkbox-circle-fill yellow"></i> Bedding and towels</li>
-                                <li><i class="ri-checkbox-circle-fill yellow"></i> Kitchen essentials</li>
-                                <li><i class="ri-checkbox-circle-fill yellow"></i> Small appliances</li>
+                                <li><i class="ri-checkbox-circle-fill yellow"></i> Sleeping mats and blankets</li>
+                                <li><i class="ri-checkbox-circle-fill yellow"></i> Towels and light bedding</li>
+                                <li><i class="ri-checkbox-circle-fill yellow"></i> Clean clothes and rain protection</li>
                             </ul>
                         </div>
                     </article>
-                    <!-- School Supplies -->
+                    <!-- Kitchen & Family Kits -->
                     <article class="category-card-v2 category-card-school">
                         <div class="category-card-header">
-                            <div class="icon-circle green" aria-hidden="true"><i class="ri-book-open-line"></i></div>
+                            <div class="icon-circle green" aria-hidden="true"><i class="ri-bowl-line"></i></div>
                             <div>
-                                <h3 class="category-title-v2">School Supplies</h3>
-                                <p class="category-desc-v2">Educational materials and supplies to support students and promote
-                                    learning opportunities.</p>
+                                <h3 class="category-title-v2">Kitchen & Family Kits</h3>
+                                <p class="category-desc-v2">Simple household items families can use when preparing meals
+                                    after evacuation or displacement.</p>
                             </div>
                         </div>
                         <div class="needs-box green-bg">
                             <div class="needs-title-v2">Current Needs:</div>
                             <ul>
-                                <li><i class="ri-checkbox-circle-fill green"></i> Backpacks</li>
-                                <li><i class="ri-checkbox-circle-fill green"></i> Notebooks and paper</li>
-                                <li><i class="ri-checkbox-circle-fill green"></i> Art supplies</li>
+                                <li><i class="ri-checkbox-circle-fill green"></i> Plates, cups, spoons and forks</li>
+                                <li><i class="ri-checkbox-circle-fill green"></i> Cooking pots, pans and ladles</li>
+                                <li><i class="ri-checkbox-circle-fill green"></i> Water containers and pails</li>
                             </ul>
                         </div>
                     </article>
-                    <!-- Medical Supplies -->
+                    <!-- First Aid & Health -->
                     <article class="category-card-v2 category-card-medical">
                         <div class="category-card-header">
                             <div class="icon-circle purple" aria-hidden="true"><i class="ri-medicine-bottle-line"></i></div>
                             <div>
-                                <h3 class="category-title-v2">Medical Supplies</h3>
-                                <p class="category-desc-v2">Basic medical and hygiene items to support health and wellness for
-                                    vulnerable populations.</p>
+                                <h3 class="category-title-v2">First Aid & Health</h3>
+                                <p class="category-desc-v2">Basic care items for minor injuries, common illness, and
+                                    health monitoring while families wait for assistance.</p>
                             </div>
                         </div>
                         <div class="needs-box purple-bg">
                             <div class="needs-title-v2">Current Needs:</div>
                             <ul>
-                                <li><i class="ri-checkbox-circle-fill purple"></i> First aid kits</li>
-                                <li><i class="ri-checkbox-circle-fill purple"></i> Personal hygiene items</li>
-                                <li><i class="ri-checkbox-circle-fill purple"></i> Over-the-counter medications</li>
+                                <li><i class="ri-checkbox-circle-fill purple"></i> First aid kits and antiseptics</li>
+                                <li><i class="ri-checkbox-circle-fill purple"></i> Fever, pain and diarrhea medicine</li>
+                                <li><i class="ri-checkbox-circle-fill purple"></i> Thermometers and basic health supplies</li>
                             </ul>
                         </div>
                     </article>
-                    <!-- Electronics -->
+                    <!-- Emergency Power & Safety -->
                     <article class="category-card-v2 category-card-electronics">
                         <div class="category-card-header">
-                            <div class="icon-circle indigo" aria-hidden="true"><i class="ri-computer-line"></i></div>
+                            <div class="icon-circle indigo" aria-hidden="true"><i class="ri-flashlight-line"></i></div>
                             <div>
-                                <h3 class="category-title-v2">Electronics</h3>
-                                <p class="category-desc-v2">Working electronic devices to bridge the digital divide and support
-                                    education and job searching.</p>
+                                <h3 class="category-title-v2">Emergency Power & Safety</h3>
+                                <p class="category-desc-v2">Useful tools for blackouts, communication gaps, cleanup, and
+                                    safer movement after storms or eruptions.</p>
                             </div>
                         </div>
                         <div class="needs-box indigo-bg">
                             <div class="needs-title-v2">Current Needs:</div>
                             <ul>
-                                <li><i class="ri-checkbox-circle-fill indigo"></i> Laptops and tablets</li>
-                                <li><i class="ri-checkbox-circle-fill indigo"></i> Cell phones</li>
-                                <li><i class="ri-checkbox-circle-fill indigo"></i> Chargers and accessories</li>
+                                <li><i class="ri-checkbox-circle-fill indigo"></i> Flashlights and batteries</li>
+                                <li><i class="ri-checkbox-circle-fill indigo"></i> Power banks and charging cables</li>
+                                <li><i class="ri-checkbox-circle-fill indigo"></i> Whistles, rope and battery radios</li>
                             </ul>
                         </div>
                     </article>
