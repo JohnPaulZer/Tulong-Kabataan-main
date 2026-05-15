@@ -7,16 +7,21 @@ use App\Models\DropOffPoint;
 use App\Models\InkindDonation;
 
 
-Route::get('/inkindpage', [InkindController::class, 'inkindpage'])->name('inkind.page');
+Route::get('/inkindpage', [InkindController::class, 'inkindpage'])
+    ->middleware('throttle:public')
+    ->name('inkind.page');
 Route::match(['get', 'post'], '/inkindmodal', [InkindController::class, 'inkindmodal'])
+    ->middleware('throttle:public')
     ->name('inkindmodal');
 
-Route::post('/inkind-donate', [InkindController::class, 'inkindsubmit'])->name('inkind.donate');
+Route::post('/inkind-donate', [InkindController::class, 'inkindsubmit'])
+    ->middleware(['throttle:payment', 'throttle:upload'])
+    ->name('inkind.donate');
 
 Route::get('/my-donations', [InkindController::class, 'myDonations'])
-    ->middleware('auth')
+    ->middleware(['auth', 'throttle:api'])
     ->name('donations.track');
-Route::get('/stats', [InkindController::class, 'getStats']);
+Route::get('/stats', [InkindController::class, 'getStats'])->middleware('throttle:api');
 
 // routes/web.php
 
@@ -42,7 +47,7 @@ Route::get('/in-kind-tracking', function () {
         ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
         ->header('Pragma', 'no-cache')
         ->header('Expires', '0');
-})->name('inkind.tracking');
+})->middleware('throttle:public')->name('inkind.tracking');
 
 
 
@@ -58,10 +63,9 @@ Route::get('/api/impact-reports/{id}', function ($id) {
                 'item_name' => $donation->item_name,
                 'quantity' => $donation->quantity,
                 'category' => $donation->category,
-                'donor_name' => $donation->donor_name
             ];
         }),
         // Resolve R2 keys to full public URLs so the frontend can render them directly.
         'photos' => collect($report->photos ?? [])->map(fn ($key) => file_url($key))->filter()->values(),
     ]);
-});
+})->middleware('throttle:api');

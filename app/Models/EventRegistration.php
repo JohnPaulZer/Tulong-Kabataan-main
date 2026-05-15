@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\EncryptsSensitiveAttributes;
 use MongoDB\Laravel\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class EventRegistration extends Model
 {
+    use EncryptsSensitiveAttributes;
+
     protected $connection = 'mongodb';
     protected $collection = 'event_registrations';
 
@@ -37,6 +40,26 @@ class EventRegistration extends Model
     public function getRegistrationIdAttribute()
     {
         return (string) ($this->attributes['_id'] ?? $this->getKey());
+    }
+
+    public function getMessengerLinkAttribute($value)
+    {
+        return $this->decryptSensitiveValue($value);
+    }
+
+    public function setMessengerLinkAttribute($value): void
+    {
+        $this->attributes['messenger_link'] = $this->encryptSensitiveValue($value);
+    }
+
+    public function getAddressAttribute($value)
+    {
+        return $this->decryptSensitiveValue($value);
+    }
+
+    public function setAddressAttribute($value): void
+    {
+        $this->attributes['address'] = $this->encryptSensitiveValue($value);
     }
 
     public function user(): BelongsTo

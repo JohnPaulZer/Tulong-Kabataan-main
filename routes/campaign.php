@@ -5,23 +5,29 @@ use App\Http\Controllers\CampaignController;
 use Illuminate\Support\Facades\Auth;
 
 // Campaign listing page
-Route::get('/campaignpage', [CampaignController::class, 'campaignpage'])->name('campaignpage');
+Route::get('/campaignpage', [CampaignController::class, 'campaignpage'])
+    ->middleware('throttle:public')
+    ->name('campaignpage');
 // Show a single campaign (unique views)
-Route::get('/campaignview/{id}', [CampaignController::class, 'campaignview'])->name('campaign.view');
+Route::get('/campaignview/{id}', [CampaignController::class, 'campaignview'])
+    ->middleware('throttle:public')
+    ->name('campaign.view');
 // Campaign creation page
 Route::get('/campaign/create', [CampaignController::class, 'createpage'])
-    ->middleware('auth')
+    ->middleware(['auth', 'throttle:public'])
     ->name('campaign.createpage');
 // Store new campaign
 Route::post('/campaigns', [CampaignController::class, 'createcampaign'])
-    ->middleware('auth')
+    ->middleware(['auth', 'throttle:upload'])
     ->name('campaign.create');
 
-Route::post('/donations/store', [CampaignController::class, 'donate'])->name('donations.store');
+Route::post('/donations/store', [CampaignController::class, 'donate'])
+    ->middleware(['throttle:payment', 'throttle:upload'])
+    ->name('donations.store');
 
 // Add this route
 Route::get('/notifications', [CampaignController::class, 'notificationpage'])
-    ->middleware('auth')
+    ->middleware(['auth', 'throttle:api'])
     ->name('notifications.index');
 
 
@@ -34,7 +40,7 @@ Route::post('/notifications/mark-all-read', function () {
         ->update(['read_at' => now()]);
 
     return response()->json(['success' => true, 'updated' => $updated]);
-})->middleware('auth')->name('notifications.mark-all-read');
+})->middleware(['auth', 'throttle:api'])->name('notifications.mark-all-read');
 
 // Mark single notification as read. Keep this after the specific mark-all route.
 Route::post('/notifications/{notification}/read', function ($notificationId) {
@@ -45,7 +51,7 @@ Route::post('/notifications/{notification}/read', function ($notificationId) {
     }
 
     return response()->json(['success' => true]);
-})->middleware('auth')->name('notifications.read');
+})->middleware(['auth', 'throttle:api'])->name('notifications.read');
 
 
 
@@ -53,16 +59,16 @@ Route::get('/notifications/all', function () {
     $notifications = Auth::user()->notifications()->latest()->get();
 
     return response()->json($notifications);
-})->middleware('auth');
+})->middleware(['auth', 'throttle:api']);
 
 
 // Delete routes for notifications
 Route::post('/notifications/delete-all', [CampaignController::class, 'deleteAll'])
-    ->middleware('auth')
+    ->middleware(['auth', 'throttle:api'])
     ->name('notifications.delete-all');
 Route::post('/notifications/delete-selected', [CampaignController::class, 'deleteSelected'])
-    ->middleware('auth')
+    ->middleware(['auth', 'throttle:api'])
     ->name('notifications.delete-selected');
 Route::delete('/notifications/{id}', [CampaignController::class, 'delete'])
-    ->middleware('auth')
+    ->middleware(['auth', 'throttle:api'])
     ->name('notifications.delete');

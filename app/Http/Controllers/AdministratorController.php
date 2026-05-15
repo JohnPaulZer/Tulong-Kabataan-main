@@ -947,7 +947,7 @@ class AdministratorController
                         foreach ($photoPaths as $orphan) { $this->storage->delete($orphan); }
                         return response()->json([
                             'success' => false,
-                            'message' => $e->getMessage(),
+                            'message' => 'File upload failed. Please try again.',
                         ], 422);
                     }
                 }
@@ -1006,7 +1006,7 @@ class AdministratorController
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error: ' . $e->getMessage()
+                'message' => 'Failed to create impact report.'
             ], 500);
         }
     }
@@ -1108,7 +1108,7 @@ class AdministratorController
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error loading donations: ' . $e->getMessage()
+                'message' => 'Failed to load donations.'
             ], 500);
         }
     }
@@ -1151,7 +1151,7 @@ class AdministratorController
                     ['max_kb' => 5120, 'mimes' => ['image/jpeg', 'image/png', 'image/webp']])
                 : null;
         } catch (R2StorageException $e) {
-            return back()->withInput()->with('error', $e->getMessage());
+            return back()->withInput()->with('error', 'File upload failed. Please try again.');
         }
 
         try {
@@ -1188,7 +1188,7 @@ class AdministratorController
 
             Log::error('[Event] Create failed', [
                 'title' => $validated['title'] ?? null,
-                'message' => $e->getMessage(),
+                'error' => $e::class,
             ]);
 
             return back()->withInput()->with('error', 'Event was not saved. Please try again.');
@@ -1476,7 +1476,7 @@ class AdministratorController
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'An error occurred while saving the record: ' . $e->getMessage());
+                ->with('error', 'An error occurred while saving the record.');
         }
     }
 
@@ -1555,7 +1555,7 @@ class AdministratorController
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'An error occurred while updating the record: ' . $e->getMessage());
+                ->with('error', 'An error occurred while updating the record.');
         }
     }
 
