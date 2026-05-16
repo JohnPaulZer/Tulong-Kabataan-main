@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use App\Models\CampaignView;
 use Illuminate\Http\Request;
 use App\Models\Campaign;
@@ -87,6 +88,7 @@ class CampaignController
         $uploadedKeys = [];
         try {
             $featuredImagePath = $this->completedChunkPath($request, 'featured_image_uploaded_path', 'campaign_featured');
+            $this->ensureValidUploadReference($request, 'featured_image_uploaded_path', 'featured_image', $featuredImagePath, 'cover image');
             if (! $featuredImagePath && $request->hasFile('featured_image')) {
                 $featuredImagePath = tap($this->storage->upload($request->file('featured_image'), 'campaign_featured',
                     ['max_kb' => 8192, 'mimes' => config('r2.validation.image_mimes')]),
@@ -94,6 +96,7 @@ class CampaignController
             }
 
             $qrCodePath = $this->completedChunkPath($request, 'qr_code_uploaded_path', 'campaign_qr');
+            $this->ensureValidUploadReference($request, 'qr_code_uploaded_path', 'qr_code', $qrCodePath, 'GCash QR code');
             if (! $qrCodePath && $request->hasFile('qr_code')) {
                 $qrCodePath = tap($this->storage->upload($request->file('qr_code'), 'campaign_qr',
                     ['max_kb' => 8192, 'mimes' => config('r2.validation.image_mimes')]),
@@ -101,6 +104,7 @@ class CampaignController
             }
 
             $additionalImages = $this->completedChunkPaths($request, 'images_uploaded_paths', 'campaign_image');
+            $this->ensureValidUploadReferences($request, 'images_uploaded_paths', 'images', $additionalImages, 'additional image');
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $image) {
                     $key = $this->storage->upload($image, 'campaign_images',
@@ -111,7 +115,8 @@ class CampaignController
             }
         } catch (R2StorageException $e) {
             foreach ($uploadedKeys as $k) { $this->storage->delete($k); }
-            return back()->withInput()->with('error', 'File upload failed. Please try again.');
+            $reason = trim($e->getMessage()) ?: 'The uploaded file could not be stored.';
+            return back()->withInput()->with('error', "File upload failed. Reason: {$reason}");
         }
 
         // Determine initial status
@@ -430,5 +435,25 @@ class CampaignController
             ->filter()
             ->values()
             ->all();
+    }
+
+    private function ensureValidUploadReference(Request $request, string $uploadedField, string $fileField, ?string $resolvedPath, string $label): void
+    {
+        if ($request->filled($uploadedField) && ! $resolvedPath && ! $request->hasFile($fileField)) {
+            throw ValidationException::withMessages([
+                $fileField => "The uploaded {$label} could not be verified. Please choose the file again.",
+            ]);
+        }
+    }
+
+    private function ensureValidUploadReferences(Request $request, string $uploadedField, string $fileField, array $resolvedPaths, string $label): void
+    {
+        $submittedPaths = array_filter(array_map('trim', (array) $request->input($uploadedField, [])));
+
+        if (count($submittedPaths) > count($resolvedPaths) && ! $request->hasFile($fileField)) {
+            throw ValidationException::withMessages([
+                $fileField => "One or more uploaded {$label}s could not be verified. Please choose the files again.",
+            ]);
+        }
     }
 }

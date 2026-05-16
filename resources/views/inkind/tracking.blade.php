@@ -1010,6 +1010,7 @@
 <body class="impact-tracker-page">
 
     @include('partials.main-header')
+    @include('partials.universalmodal')
     @include('administrator.partials.loading-screen')
 
     <header class="tracking-header">

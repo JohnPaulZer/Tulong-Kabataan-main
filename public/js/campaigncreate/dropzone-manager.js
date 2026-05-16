@@ -93,6 +93,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     const arr = Array.from(inputEl.files || []);
                     arr.splice(idx, 1);
                     inputEl.files = fileListFrom(arr);
+                    window.TKResetChunkInput?.(inputEl);
                     renderPreviews(arr);
                 });
                 previewEl.appendChild(card);
