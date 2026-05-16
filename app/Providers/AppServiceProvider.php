@@ -6,6 +6,7 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Console\ServeCommand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use App\Models\SiteSetting;
@@ -28,6 +29,17 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureRateLimiters();
+
+        // When the app is deployed behind an HTTPS terminator (Railway, Cloudflare, etc.)
+        // force every generated URL to use https:// so login redirects, form actions,
+        // and fetch endpoints don't get blocked by mixed-content / CSP rules.
+        $appUrl = (string) config('app.url');
+        if (
+            $this->app->environment('production', 'staging')
+            || str_starts_with($appUrl, 'https://')
+        ) {
+            URL::forceScheme('https');
+        }
 
         // Expose site settings to every view as $siteSettings
         View::composer('*', function ($view) {

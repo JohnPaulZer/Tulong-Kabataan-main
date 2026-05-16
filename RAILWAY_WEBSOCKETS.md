@@ -53,3 +53,36 @@ REVERB_ALLOWED_ORIGINS=https://your-main-app.up.railway.app
 ```
 
 The `VITE_REVERB_*` values are compiled into the frontend bundle, so rebuild/redeploy the main Laravel service after changing them.
+
+
+## Required Variables for Any Railway Service Behind HTTPS
+
+Railway terminates TLS at its edge proxy and forwards plain HTTP to the
+container. To stop the browser from blocking redirects, form posts, and fetch
+requests with `Mixed Content` / `form-action 'self'` / `connect-src 'self'`
+errors, set these on the main Laravel service:
+
+```env
+APP_ENV=staging        # or production
+APP_DEBUG=false
+APP_URL=https://tkb-staging.tulongkabataanbicol.com
+SESSION_SECURE_COOKIE=true
+SESSION_SAME_SITE=lax
+SESSION_DOMAIN=tkb-staging.tulongkabataanbicol.com
+TRUSTED_PROXIES=*
+```
+
+The application now:
+- trusts forwarded headers from the Railway/Cloudflare proxy
+  (`bootstrap/app.php` calls `trustProxies(at: '*')`), so `$request->isSecure()`
+  returns true and Laravel generates `https://` URLs.
+- forces `https://` whenever `APP_URL` starts with `https://` or the env is
+  `staging` / `production` (`AppServiceProvider::boot`).
+- allows the Cloudflare insights script (`static.cloudflareinsights.com`) and
+  beacon endpoint in CSP, which Cloudflare injects automatically on proxied
+  domains.
+
+If the staging domain is also proxied through Cloudflare, also add Cloudflare
+as a trusted proxy by leaving `TRUSTED_PROXIES=*`. After updating environment
+variables, redeploy the service so `php artisan config:cache` picks up the new
+values.
