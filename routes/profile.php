@@ -3,6 +3,18 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DiditVerificationController;
+use App\Http\Controllers\ChunkUploadController;
+
+Route::middleware(['auth', 'throttle:upload'])->group(function () {
+    Route::post('/api/uploads/chunk/init', [ChunkUploadController::class, 'init'])
+        ->name('uploads.chunk.init');
+    Route::post('/api/uploads/chunk', [ChunkUploadController::class, 'store'])
+        ->name('uploads.chunk.store');
+    Route::post('/api/uploads/chunk/complete', [ChunkUploadController::class, 'complete'])
+        ->name('uploads.chunk.complete');
+    Route::delete('/api/uploads/chunk/cancel/{uploadId}', [ChunkUploadController::class, 'cancel'])
+        ->name('uploads.chunk.cancel');
+});
 
 Route::middleware(['auth', 'throttle:api'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'profileview'])->name('profile');

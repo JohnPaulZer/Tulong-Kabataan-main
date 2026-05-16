@@ -26,6 +26,7 @@ use App\Services\Storage\R2StorageService;
 use App\Services\Storage\R2StorageException;
 use App\Services\Verification\IdVerificationService;
 use App\Services\Verification\VerificationException;
+use App\Services\Uploads\ChunkUploadService;
 
 class ProfileController
 {
@@ -42,11 +43,13 @@ class ProfileController
      * rejections before they hit the admin queue.
      */
     protected IdVerificationService $idVerification;
+    protected ChunkUploadService $chunkUploads;
 
-    public function __construct(R2StorageService $storage, IdVerificationService $idVerification)
+    public function __construct(R2StorageService $storage, IdVerificationService $idVerification, ChunkUploadService $chunkUploads)
     {
         $this->storage = $storage;
         $this->idVerification = $idVerification;
+        $this->chunkUploads = $chunkUploads;
     }
 
     protected function noCacheView($view, $data = [])
@@ -131,19 +134,25 @@ class ProfileController
     public function changePhoto(Request $request)
     {
         $request->validate([
-            'photo' => 'required|image|max:2048',
+            'photo' => 'required_without:photo_uploaded_path|image|max:8192',
+            'photo_uploaded_path' => 'nullable|string|max:500',
         ]);
 
         $user = Auth::user();
 
         try {
-            // Upload new photo to R2 and remove the previous one (if it was on R2).
-            $newKey = $this->storage->replace(
-                $request->file('photo'),
-                $user->profile_photo_url,
-                'profile_photos',
-                ['max_kb' => 2048, 'mimes' => config('r2.validation.image_mimes')]
-            );
+            $newKey = $this->completedChunkPath($request, 'photo_uploaded_path', 'profile_photo');
+            if ($newKey) {
+                $this->storage->delete($user->profile_photo_url);
+            } else {
+                // Upload new photo to R2 and remove the previous one (if it was on R2).
+                $newKey = $this->storage->replace(
+                    $request->file('photo'),
+                    $user->profile_photo_url,
+                    'profile_photos',
+                    ['max_kb' => 8192, 'mimes' => config('r2.validation.image_mimes')]
+                );
+            }
         } catch (R2StorageException $e) {
             return back()->with('error', 'File upload failed. Please try again.');
         }
@@ -245,16 +254,20 @@ class ProfileController
 
             // Only require what admin requested
             if (in_array('id_front', $reuploadFields)) {
-                $rules['id_front'] = $requiredIdImage;
+                $rules['id_front'] = "required_without:id_front_uploaded_path|image|mimes:{$allowedTypes}|max:{$idMaxKb}";
+                $rules['id_front_uploaded_path'] = 'nullable|string|max:500';
             }
             if (in_array('id_back', $reuploadFields)) {
-                $rules['id_back'] = $requiredIdImage;
+                $rules['id_back'] = "required_without:id_back_uploaded_path|image|mimes:{$allowedTypes}|max:{$idMaxKb}";
+                $rules['id_back_uploaded_path'] = 'nullable|string|max:500';
             }
             if (in_array('face_photo', $reuploadFields)) {
-                $rules['face_photo'] = $requiredVerificationImage;
+                $rules['face_photo'] = 'required_without:face_photo_uploaded_path|image|mimes:jpeg,png,webp|max:' . $verificationImageMaxKb;
+                $rules['face_photo_uploaded_path'] = 'nullable|string|max:500';
             }
             if (in_array('selfie', $reuploadFields)) {
-                $rules['selfie'] = $requiredVerificationImage;
+                $rules['selfie'] = 'required_without:selfie_uploaded_path|image|mimes:jpeg,png,webp|max:' . $verificationImageMaxKb;
+                $rules['selfie_uploaded_path'] = 'nullable|string|max:500';
             }
 
             $r->validate($rules);
@@ -279,24 +292,36 @@ class ProfileController
                         $r->file('id_front'), $vr->id_front_path, 'kyc_ids',
                         ['mimes' => ['image/jpeg', 'image/png', 'image/webp']]
                     );
+                } elseif ($path = $this->completedChunkPath($r, 'id_front_uploaded_path', 'kyc_id')) {
+                    $this->storage->delete($vr->id_front_path);
+                    $vr->id_front_path = $path;
                 }
                 if ($r->hasFile('id_back')) {
                     $vr->id_back_path = $this->storage->replace(
                         $r->file('id_back'), $vr->id_back_path, 'kyc_ids',
                         ['mimes' => ['image/jpeg', 'image/png', 'image/webp']]
                     );
+                } elseif ($path = $this->completedChunkPath($r, 'id_back_uploaded_path', 'kyc_id')) {
+                    $this->storage->delete($vr->id_back_path);
+                    $vr->id_back_path = $path;
                 }
                 if ($r->hasFile('face_photo')) {
                     $vr->face_photo_path = $this->storage->replace(
                         $r->file('face_photo'), $vr->face_photo_path, 'kyc_faces',
                         ['mimes' => ['image/jpeg', 'image/png', 'image/webp']]
                     );
+                } elseif ($path = $this->completedChunkPath($r, 'face_photo_uploaded_path', 'kyc_face')) {
+                    $this->storage->delete($vr->face_photo_path);
+                    $vr->face_photo_path = $path;
                 }
                 if ($r->hasFile('selfie')) {
                     $vr->selfie_path = $this->storage->replace(
                         $r->file('selfie'), $vr->selfie_path, 'kyc_selfies',
                         ['mimes' => ['image/jpeg', 'image/png', 'image/webp']]
                     );
+                } elseif ($path = $this->completedChunkPath($r, 'selfie_uploaded_path', 'kyc_selfie')) {
+                    $this->storage->delete($vr->selfie_path);
+                    $vr->selfie_path = $path;
                 }
             } catch (R2StorageException $e) {
                 return back()->withErrors(['server' => 'File upload failed. Please try again.'])->withInput();
@@ -376,11 +401,15 @@ class ProfileController
             // automated review has the full set of evidence to score.
             // The face-only photo is optional (legacy) — the selfie
             // already establishes face presence and ID-holder context.
-            'id_front'    => $requiredIdImage,
-            'id_back'     => $requiredIdImage,
+            'id_front'    => "required_without:id_front_uploaded_path|image|mimes:{$allowedTypes}|max:{$idMaxKb}",
+            'id_front_uploaded_path' => 'nullable|string|max:500',
+            'id_back'     => "required_without:id_back_uploaded_path|image|mimes:{$allowedTypes}|max:{$idMaxKb}",
+            'id_back_uploaded_path' => 'nullable|string|max:500',
             'id_expiry'   => 'nullable|date',
             'face_photo'  => $nullableVerificationImage,
-            'selfie'      => $requiredVerificationImage,
+            'face_photo_uploaded_path' => 'nullable|string|max:500',
+            'selfie'      => 'required_without:selfie_uploaded_path|image|mimes:jpeg,png,webp|max:' . $verificationImageMaxKb,
+            'selfie_uploaded_path' => 'nullable|string|max:500',
         ]);
 
         if ($r->id_type === 'drivers_license') {
@@ -403,16 +432,20 @@ class ProfileController
         // both sides for a more accurate match. Face photo is optional —
         // the selfie-with-ID covers the face-presence requirement.
         try {
-            $frontPath  = $this->storage->upload($r->file('id_front'), 'kyc_ids',
-                ['mimes' => ['image/jpeg', 'image/png', 'image/webp']]);
-            $backPath   = $this->storage->upload($r->file('id_back'), 'kyc_ids',
-                ['mimes' => ['image/jpeg', 'image/png', 'image/webp']]);
-            $facePath   = $r->hasFile('face_photo')
+            $frontPath  = $this->completedChunkPath($r, 'id_front_uploaded_path', 'kyc_id')
+                ?: $this->storage->upload($r->file('id_front'), 'kyc_ids',
+                    ['mimes' => ['image/jpeg', 'image/png', 'image/webp']]);
+            $backPath   = $this->completedChunkPath($r, 'id_back_uploaded_path', 'kyc_id')
+                ?: $this->storage->upload($r->file('id_back'), 'kyc_ids',
+                    ['mimes' => ['image/jpeg', 'image/png', 'image/webp']]);
+            $facePath   = $this->completedChunkPath($r, 'face_photo_uploaded_path', 'kyc_face')
+                ?: ($r->hasFile('face_photo')
                 ? $this->storage->upload($r->file('face_photo'), 'kyc_faces',
                     ['mimes' => ['image/jpeg', 'image/png', 'image/webp']])
-                : null;
-            $selfiePath = $this->storage->upload($r->file('selfie'), 'kyc_selfies',
-                ['mimes' => ['image/jpeg', 'image/png', 'image/webp']]);
+                : null);
+            $selfiePath = $this->completedChunkPath($r, 'selfie_uploaded_path', 'kyc_selfie')
+                ?: $this->storage->upload($r->file('selfie'), 'kyc_selfies',
+                    ['mimes' => ['image/jpeg', 'image/png', 'image/webp']]);
         } catch (R2StorageException $e) {
             return back()->withErrors(['server' => 'File upload failed. Please try again.'])->withInput();
         }
@@ -832,14 +865,15 @@ class ProfileController
         $validated = $request->validate([
             'amount' => 'required|numeric|min:1',
             'reference_number' => 'nullable|regex:/^\d{5,30}$/',
-            'proof_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'proof_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:8192',
+            'proof_image_uploaded_path' => 'nullable|string|max:500',
         ]);
 
-        $proofPath = null;
+        $proofPath = $this->completedChunkPath($request, 'proof_image_uploaded_path', 'manual_donation_proof');
         if ($request->hasFile('proof_image')) {
             try {
                 $proofPath = $this->storage->upload($request->file('proof_image'), 'manual_donation_proofs',
-                    ['max_kb' => 2048, 'mimes' => ['image/jpeg', 'image/png', 'image/webp']]);
+                    ['max_kb' => 8192, 'mimes' => ['image/jpeg', 'image/png', 'image/webp']]);
             } catch (R2StorageException $e) {
                 return $request->ajax()
                     ? response()->json(['success' => false, 'error' => 'File upload failed. Please try again.'], 422)
@@ -915,7 +949,9 @@ class ProfileController
         $request->validate([
             'campaign_id' => 'required|string',
             'message' => 'required|string|max:1000',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:8192',
+            'images_uploaded_paths' => 'nullable|array',
+            'images_uploaded_paths.*' => 'string|max:500',
         ]);
 
         $campaign = Campaign::findOrFail($request->campaign_id);
@@ -928,14 +964,14 @@ class ProfileController
             ], 403);
         }
 
-        $imagePaths = [];
+        $imagePaths = $this->completedChunkPaths($request, 'images_uploaded_paths', 'campaign_update');
 
         // Handle multiple image uploads via R2
         if ($request->hasFile('images')) {
             try {
                 foreach ($request->file('images') as $image) {
                     $imagePaths[] = $this->storage->upload($image, 'campaign_updates',
-                        ['max_kb' => 5120, 'mimes' => config('r2.validation.image_mimes')]);
+                        ['max_kb' => 8192, 'mimes' => config('r2.validation.image_mimes')]);
                 }
             } catch (R2StorageException $e) {
                 // Roll back any successfully uploaded files so we don't leak orphans.
@@ -1245,5 +1281,28 @@ class ProfileController
             'impactReports',
             'endedCampaigns'
         ));
+    }
+
+    private function completedChunkPath(Request $request, string $input, string $module): ?string
+    {
+        $path = trim((string) $request->input($input, ''));
+        if ($path === '' || ! $request->user()) {
+            return null;
+        }
+
+        return $this->chunkUploads->completedPathForUser($path, $module, (string) $request->user()->getAuthIdentifier());
+    }
+
+    private function completedChunkPaths(Request $request, string $input, string $module): array
+    {
+        if (! $request->user()) {
+            return [];
+        }
+
+        return collect((array) $request->input($input, []))
+            ->map(fn ($path) => $this->chunkUploads->completedPathForUser(trim((string) $path), $module, (string) $request->user()->getAuthIdentifier()))
+            ->filter()
+            ->values()
+            ->all();
     }
 }

@@ -253,6 +253,7 @@
                     <div class="verification-stepper"></div>
 
                     <form action="{{ route('submit.verification') }}" method="POST" enctype="multipart/form-data"
+                        data-chunk-upload-form
                         id="kycForm" novalidate>
                     @csrf
                     @if ($vr && $vr->status === 'reupload')
@@ -289,6 +290,7 @@
                                         ID (Front)</label>
                                     <input type="file" name="id_front" id="id_front"
                                         class="verification-form-control" accept="image/*" capture="environment"
+                                        data-chunk-module="kyc_id" data-chunk-path-name="id_front_uploaded_path"
                                         @if ($vr && $vr->status === 'reupload') @if (in_array('id_front', $reuploadFields)) required @else disabled @endif
                                     @else required @endif />
                                     <div class="verification-form-text">Make sure all text and the photo on the front are clearly visible.</div>
@@ -323,6 +325,7 @@
                                     ID (Back)</label>
                                 <input type="file" name="id_back" id="id_back"
                                     class="verification-form-control" accept="image/*" capture="environment"
+                                    data-chunk-module="kyc_id" data-chunk-path-name="id_back_uploaded_path"
                                     @if ($vr && $vr->status === 'reupload') @if (in_array('id_back', $reuploadFields)) required @else disabled @endif
                                 @else required @endif />
                                 <div class="verification-form-text">Flip your ID over and photograph the back side.</div>
@@ -346,6 +349,7 @@
                                     selfie while holding your ID</label>
                                 <input type="file" name="selfie" id="selfie"
                                     class="verification-form-control" accept="image/*" capture="user"
+                                    data-chunk-module="kyc_selfie" data-chunk-path-name="selfie_uploaded_path"
                                     @if ($vr && $vr->status === 'reupload') @if (in_array('selfie', $reuploadFields)) required @else disabled @endif
                                 @else required @endif />
                                 <div class="verification-form-text">Hold your ID next to your face. Both your face and the ID must be clearly visible.</div>
@@ -449,6 +453,7 @@
 
     @include('partials.main-footer')
 
+    <script src="{{ asset('js/chunk-upload.js') }}"></script>
     <script>
         // ====== Back (previous page) button ======
         (function() {
