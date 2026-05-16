@@ -106,6 +106,38 @@ body.profile-page{
 }body.profile-page .verify-btn:hover{
     background-color: #ffca4d;
     color: #3a2d00;
+}body.profile-page .verify-actions{
+    display: flex;
+    flex: 0 0 auto;
+    gap: 10px;
+    align-items: center;
+}body.profile-page .verify-banner.didit-started{
+    background-color: #eff6ff;
+    border-color: #bfdbfe;
+    color: #1e3a8a;
+}body.profile-page .verify-banner.didit-started strong{
+    color: #1e40af;
+}body.profile-page .verify-banner.didit-started .verify-btn{
+    min-height: 36px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    padding: 7px 14px;
+    text-align: center;
+    white-space: nowrap;
+}body.profile-page .verify-banner.didit-started .verify-btn-primary{
+    background: #2563eb;
+    color: #ffffff;
+}body.profile-page .verify-banner.didit-started .verify-btn-primary:hover{
+    background: #1d4ed8;
+    color: #ffffff;
+}body.profile-page .verify-banner.didit-started .verify-btn-secondary{
+    background: #ffffff;
+    border-color: #bfdbfe;
+    color: #1e3a8a;
+}body.profile-page .verify-banner.didit-started .verify-btn-secondary:hover{
+    background: #dbeafe;
+    border-color: #93c5fd;
+    color: #1e40af;
 }body.profile-page .prof-btn{
     padding: 8px 16px;
     border-radius: 8px;
@@ -471,6 +503,10 @@ body.profile-page{
         width: 100%;
         display: block;
         margin-bottom: 4px;
+    }body.profile-page .verify-actions{
+        width: 100%;
+        flex-direction: column;
+        gap: 8px;
     }body.profile-page .verify-btn{
         width: 100%;
         

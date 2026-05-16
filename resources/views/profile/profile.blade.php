@@ -41,11 +41,13 @@
                     @if ($status === 'verified')
                         {{-- Nothing to show when already verified --}}
                     @elseif($status === 'didit_started')
-                        <div class="verify-banner pending">
+                        <div class="verify-banner pending didit-started">
                             <strong>Verification Not Completed:</strong>
                             <span>You started Didit verification, but no document upload was completed yet.</span>
-                            <a href="{{ route('verification.didit.start') }}" class="verify-btn">Continue</a>
-                            <a href="{{ route('verification.didit.start', ['restart_didit' => 1]) }}" class="verify-btn">Start Over</a>
+                            <div class="verify-actions">
+                                <a href="{{ route('verification.didit.start') }}" class="verify-btn verify-btn-primary">Continue</a>
+                                <a href="{{ route('verification.didit.start', ['restart_didit' => 1]) }}" class="verify-btn verify-btn-secondary">Start Over</a>
+                            </div>
                         </div>
                     @elseif($status === 'pending')
                         <div class="verify-banner pending">
@@ -474,11 +476,13 @@
                     bannerContainer.style.display = 'none';
                 } else if (status === 'didit_started') {
                     bannerContainer.innerHTML = `
-                <div class="verify-banner pending">
+                <div class="verify-banner pending didit-started">
                     <strong>Verification Not Completed:</strong>
                     <span>You started Didit verification, but no document upload was completed yet.</span>
-                    <a href="{{ route('verification.didit.start') }}" class="verify-btn">Continue</a>
-                    <a href="{{ route('verification.didit.start', ['restart_didit' => 1]) }}" class="verify-btn">Start Over</a>
+                    <div class="verify-actions">
+                        <a href="{{ route('verification.didit.start') }}" class="verify-btn verify-btn-primary">Continue</a>
+                        <a href="{{ route('verification.didit.start', ['restart_didit' => 1]) }}" class="verify-btn verify-btn-secondary">Start Over</a>
+                    </div>
                 </div>
             `;
                 } else if (status === 'pending') {

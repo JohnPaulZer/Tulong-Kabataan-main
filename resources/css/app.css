@@ -1295,11 +1295,43 @@ body.verification-page .verification-badge i {
 }
 
 body.verification-page .verification-alert {
+    display: block;
     margin-bottom: 18px;
     border-radius: 10px;
     padding: 14px 16px;
     font-size: 0.93rem;
     line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+body.verification-page .verification-status-alert strong,
+body.verification-page .verification-alert > strong {
+    display: inline-block;
+    margin-right: 8px;
+}
+
+body.verification-page .verification-status-alert span {
+    font-size: 0.78rem;
+    opacity: 0.78;
+}
+
+body.verification-page .verification-didit-alert > strong {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 2px;
+}
+
+body.verification-page .verification-didit-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+body.verification-page .verification-didit-actions .verification-btn {
+    max-width: 100%;
+    white-space: normal;
+    text-wrap: balance;
 }
 
 body.verification-page .verification-btn {
@@ -1597,6 +1629,34 @@ body.verification-page .verification-actions-wrap {
 
     body.verification-page .verification-card-body {
         padding: 20px;
+    }
+
+    body.verification-page .verification-alert {
+        padding: 14px;
+    }
+
+    body.verification-page .verification-status-alert strong,
+    body.verification-page .verification-alert > strong {
+        display: block;
+        margin: 0 0 6px;
+    }
+
+    body.verification-page .verification-didit-alert > strong {
+        margin-bottom: 6px;
+    }
+
+    body.verification-page .verification-didit-actions {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    body.verification-page .verification-didit-actions .verification-btn {
+        width: 100%;
+        margin-left: 0 !important;
+        padding-left: 12px;
+        padding-right: 12px;
     }
 
     body.verification-page .verification-badge {
