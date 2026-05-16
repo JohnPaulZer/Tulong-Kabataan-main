@@ -37,6 +37,7 @@
         </div>
 
         <form class="campaign-form tk-form" action="{{ route('campaign.create') }}" method="POST"
+            data-chunk-upload-form
             enctype="multipart/form-data">
             @csrf
 
@@ -180,6 +181,7 @@
                     <div class="tk-field">
                         <label class="tk-label">Upload GCash QR Code</label>
                         <input type="file" id="qr_code" name="qr_code" accept="image/*"
+                            data-chunk-module="campaign_qr" data-chunk-path-name="qr_code_uploaded_path"
                             style="position:absolute;left:-9999px">
                         <div class="tk-drop" id="qrDrop">
                             <button type="button" class="tk-drop-btn" id="qrPick">
@@ -203,6 +205,7 @@
                     <div class="tk-field">
                         <label class="tk-label">Cover Image</label>
                         <input type="file" id="featured_image" name="featured_image" accept="image/*"
+                            data-chunk-module="campaign_featured" data-chunk-path-name="featured_image_uploaded_path"
                             style="position:absolute;left:-9999px">
                         <div class="tk-drop" id="coverDrop">
                             <button type="button" class="tk-drop-btn" id="coverPick"><i
@@ -216,6 +219,7 @@
                     <div class="tk-field">
                         <label class="tk-label">Additional Images</label>
                         <input type="file" id="images" name="images[]" accept="image/*" multiple
+                            data-chunk-module="campaign_image" data-chunk-path-name="images_uploaded_paths"
                             style="position:absolute;left:-9999px">
                         <div class="tk-drop" id="galleryDrop">
                             <button type="button" class="tk-drop-btn" id="galleryPick"><i
@@ -241,6 +245,7 @@
 
 
     <script src="{{ asset('js/campaigncreate/form-ux-enhancements.js') }}"></script>
+    <script src="{{ asset('js/chunk-upload.js') }}"></script>
     <script src="{{ asset('js/campaigncreate/dropzone-manager.js') }}"></script>
     <script src="{{ asset('js/campaigncreate/image-upload-validation.js') }}"></script>
     <script src="{{ asset('js/campaigncreate/qr-code-cropper.js') }}"></script>

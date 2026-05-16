@@ -478,7 +478,7 @@
             <span class="modal-close">&times;</span>
             <h2>Upload Donation Proof</h2>
 
-            <form method="POST" action="{{ route('donations.store') }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('donations.store') }}" enctype="multipart/form-data" @auth data-chunk-upload-form @endauth>
                 @csrf
                 <input type="hidden" name="campaign_id" value="{{ $campaign->campaign_id }}">
 
@@ -498,7 +498,7 @@
                 </div>
 
                 <label>Upload Screenshot</label>
-                <input type="file" name="proof_image" accept="image/*" required>
+                <input type="file" name="proof_image" accept="image/*" required @auth data-chunk-module="donation_proof" data-chunk-path-name="proof_image_uploaded_path" @endauth>
 
                 @guest
                     <label>Your Name</label>
@@ -563,7 +563,10 @@
 
 <script src="{{ asset('js/campaignview/seemodal-script.js') }}"></script>
 <script src="{{ asset('js/campaignview/donation-validation.js') }}"></script>
-<script src="{{ asset('js/campaignview/donatemodal-script.js') }}"></script>
+    <script src="{{ asset('js/campaignview/donatemodal-script.js') }}"></script>
+    @auth
+        <script src="{{ asset('js/chunk-upload.js') }}"></script>
+    @endauth
 <script src="{{ asset('js/campaignview/image-modal.js') }}"></script>
 <script src="{{ asset('js/campaignview/updates-modal.js') }}"></script>
 <script src="{{ asset('js/campaignview/updates-carousel.js') }}"></script>

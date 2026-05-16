@@ -31,25 +31,31 @@ document.addEventListener("DOMContentLoaded", function () {
 
         zoneEl.addEventListener("drop", (e) => {
             const files = Array.from(e.dataTransfer.files || []);
-            handleFiles(files);
+            handleFiles(files, false);
         });
 
         inputEl.addEventListener("change", () =>
             handleFiles(Array.from(inputEl.files || []), true)
         );
 
-        function handleFiles(newFiles) {
+        function handleFiles(newFiles, fromInput = false) {
             if (!newFiles.length) return;
 
             if (single) {
                 inputEl.files = fileListFrom(newFiles.slice(0, 1));
                 renderPreviews([inputEl.files[0]]);
+                if (!fromInput) notifyFilesSelected();
                 return;
             }
             const existing = Array.from(inputEl.files || []);
             const merged = existing.concat(newFiles).slice(0, max);
             inputEl.files = fileListFrom(merged);
             renderPreviews(merged);
+            if (!fromInput) notifyFilesSelected();
+        }
+
+        function notifyFilesSelected() {
+            inputEl.dispatchEvent(new CustomEvent("tk:files-selected", { bubbles: true }));
         }
 
         function renderPreviews(files) {

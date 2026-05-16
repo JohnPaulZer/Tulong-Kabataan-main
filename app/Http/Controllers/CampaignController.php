@@ -16,15 +16,18 @@ use App\Models\Donation;
 use App\Notifications\NewDonationNotification;
 use App\Services\Storage\R2StorageService;
 use App\Services\Storage\R2StorageException;
+use App\Services\Uploads\ChunkUploadService;
 
 
 class CampaignController
 {
     protected R2StorageService $storage;
+    protected ChunkUploadService $chunkUploads;
 
-    public function __construct(R2StorageService $storage)
+    public function __construct(R2StorageService $storage, ChunkUploadService $chunkUploads)
     {
         $this->storage = $storage;
+        $this->chunkUploads = $chunkUploads;
     }
 
     protected function noCacheView($view, $data = [])
@@ -68,10 +71,14 @@ class CampaignController
             'recurring_days'  => 'nullable|array|required_if:schedule_type,recurring',
             'recurring_days.*' => 'string',
             'recurring_time'  => 'nullable|required_if:schedule_type,recurring|date_format:H:i',
-            'featured_image'  => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
-            'qr_code'         => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+            'featured_image'  => 'required_without:featured_image_uploaded_path|image|mimes:jpeg,png,jpg,gif,svg,webp|max:8192',
+            'featured_image_uploaded_path' => 'nullable|string|max:500',
+            'qr_code'         => 'required_without:qr_code_uploaded_path|image|mimes:jpeg,png,jpg,gif,svg,webp|max:8192',
+            'qr_code_uploaded_path' => 'nullable|string|max:500',
             'gcash_number'    => 'required|string|regex:/^09[0-9]{9}$/|max:11',
-            'images.*'        => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+            'images.*'        => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:8192',
+            'images_uploaded_paths' => 'nullable|array',
+            'images_uploaded_paths.*' => 'string|max:500',
 
         ]);
 
@@ -79,23 +86,25 @@ class CampaignController
         // objects we already wrote so R2 never retains orphaned files.
         $uploadedKeys = [];
         try {
-            $featuredImagePath = $request->hasFile('featured_image')
-                ? tap($this->storage->upload($request->file('featured_image'), 'campaign_featured',
-                    ['max_kb' => 2048, 'mimes' => config('r2.validation.image_mimes')]),
-                    function ($k) use (&$uploadedKeys) { $uploadedKeys[] = $k; })
-                : null;
+            $featuredImagePath = $this->completedChunkPath($request, 'featured_image_uploaded_path', 'campaign_featured');
+            if (! $featuredImagePath && $request->hasFile('featured_image')) {
+                $featuredImagePath = tap($this->storage->upload($request->file('featured_image'), 'campaign_featured',
+                    ['max_kb' => 8192, 'mimes' => config('r2.validation.image_mimes')]),
+                    function ($k) use (&$uploadedKeys) { $uploadedKeys[] = $k; });
+            }
 
-            $qrCodePath = $request->hasFile('qr_code')
-                ? tap($this->storage->upload($request->file('qr_code'), 'campaign_qr',
-                    ['max_kb' => 2048, 'mimes' => config('r2.validation.image_mimes')]),
-                    function ($k) use (&$uploadedKeys) { $uploadedKeys[] = $k; })
-                : null;
+            $qrCodePath = $this->completedChunkPath($request, 'qr_code_uploaded_path', 'campaign_qr');
+            if (! $qrCodePath && $request->hasFile('qr_code')) {
+                $qrCodePath = tap($this->storage->upload($request->file('qr_code'), 'campaign_qr',
+                    ['max_kb' => 8192, 'mimes' => config('r2.validation.image_mimes')]),
+                    function ($k) use (&$uploadedKeys) { $uploadedKeys[] = $k; });
+            }
 
-            $additionalImages = [];
+            $additionalImages = $this->completedChunkPaths($request, 'images_uploaded_paths', 'campaign_image');
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $image) {
                     $key = $this->storage->upload($image, 'campaign_images',
-                        ['max_kb' => 2048, 'mimes' => config('r2.validation.image_mimes')]);
+                        ['max_kb' => 8192, 'mimes' => config('r2.validation.image_mimes')]);
                     $additionalImages[] = $key;
                     $uploadedKeys[] = $key;
                 }
@@ -277,7 +286,8 @@ class CampaignController
             'campaign_id'      => 'required|string',
             'amount'           => 'required|numeric|min:1',
             'reference_number' => 'required|digits:13',
-            'proof_image'      => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'proof_image'      => 'required_without:proof_image_uploaded_path|image|mimes:jpg,jpeg,png,webp|max:8192',
+            'proof_image_uploaded_path' => 'nullable|string|max:500',
         ];
 
         if (!Auth::check()) {
@@ -294,8 +304,11 @@ class CampaignController
         }
 
         try {
-            $proofPath = $this->storage->upload($request->file('proof_image'), 'donation_proofs',
-                ['max_kb' => 2048, 'mimes' => ['image/jpeg', 'image/png', 'image/webp']]);
+            $proofPath = $this->completedChunkPath($request, 'proof_image_uploaded_path', 'donation_proof');
+            if (! $proofPath) {
+                $proofPath = $this->storage->upload($request->file('proof_image'), 'donation_proofs',
+                    ['max_kb' => 8192, 'mimes' => ['image/jpeg', 'image/png', 'image/webp']]);
+            }
         } catch (R2StorageException $e) {
             return back()->withInput()->with('error', 'File upload failed. Please try again.');
         }
@@ -398,5 +411,24 @@ class CampaignController
                 'message' => 'Failed to delete notification'
             ], 500);
         }
+    }
+
+    private function completedChunkPath(Request $request, string $input, string $module): ?string
+    {
+        $path = trim((string) $request->input($input, ''));
+        if ($path === '' || ! $request->user()) {
+            return null;
+        }
+
+        return $this->chunkUploads->completedPathForUser($path, $module, (string) $request->user()->getAuthIdentifier());
+    }
+
+    private function completedChunkPaths(Request $request, string $input, string $module): array
+    {
+        return collect((array) $request->input($input, []))
+            ->map(fn ($path) => $this->chunkUploads->completedPathForUser(trim((string) $path), $module, (string) $request->user()->getAuthIdentifier()))
+            ->filter()
+            ->values()
+            ->all();
     }
 }

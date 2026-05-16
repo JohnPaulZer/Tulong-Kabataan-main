@@ -254,7 +254,7 @@
             <p class="modal-subtitle">Upload your payment proof for verification</p>
         </div>
 
-        <form id="manualDonationForm" method="POST" enctype="multipart/form-data" class="modal-form">
+        <form id="manualDonationForm" method="POST" enctype="multipart/form-data" class="modal-form" data-chunk-upload-form>
             @csrf
             <input type="hidden" name="campaign_id" id="manualCampaignId">
 
@@ -307,6 +307,7 @@
                         </div>
                     </div>
                     <input type="file" id="manualProofUpload" name="proof_image" accept="image/*" required
+                        data-chunk-module="manual_donation_proof" data-chunk-path-name="proof_image_uploaded_path"
                         class="file-upload-input">
                 </label>
 
@@ -381,7 +382,7 @@
             <p class="modal-subtitle">Share your campaign progress with supporters</p>
         </div>
 
-        <form id="updateProgressForm" method="POST" enctype="multipart/form-data" class="modal-form">
+        <form id="updateProgressForm" method="POST" enctype="multipart/form-data" class="modal-form" data-chunk-upload-form>
             @csrf
             <input type="hidden" name="campaign_id" id="updateCampaignId">
 
@@ -412,6 +413,7 @@
                         </div>
                     </div>
                     <input type="file" id="updateImages" name="images[]" multiple accept="image/*"
+                        data-chunk-module="campaign_update" data-chunk-path-name="images_uploaded_paths"
                         class="file-upload-input">
                 </label>
 
@@ -439,6 +441,7 @@
 {{-- TOAST NOTIFICATION --}}
 @include('partials.universalmodal')
 
+<script src="{{ asset('js/chunk-upload.js') }}"></script>
 <script>
     // Global state management
     let modalStack = [];
@@ -795,7 +798,8 @@
 
         // Validate proof image
         const proofImage = formData.get('proof_image');
-        if (!proofImage || proofImage.size === 0) {
+        const chunkedProofImage = formData.get('proof_image_uploaded_path');
+        if ((!proofImage || proofImage.size === 0) && !chunkedProofImage) {
             showToast('Please upload a payment proof image', 'error');
             return;
         }
