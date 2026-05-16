@@ -87,6 +87,8 @@ return [
             'workflow_id'   => env('DIDIT_WORKFLOW_ID'),
             'base_url'      => env('DIDIT_BASE_URL', 'https://verification.didit.me'),
             'webhook_secret' => env('DIDIT_WEBHOOK_SECRET'),
+            'webhook_url'   => env('DIDIT_WEBHOOK_URL'),
+            'callback_url'  => env('DIDIT_CALLBACK_URL'),
             'timeout'       => (int) env('DIDIT_TIMEOUT', 30),
         ],
         'ocr_space' => [

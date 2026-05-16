@@ -221,6 +221,19 @@ class AdministratorController
         // The active provider is determined by: SiteSetting override > .env default
         $activeProvider = SiteSetting::get('verification.provider', config('id_verification.provider', 'didit'));
         $enabled = SiteSetting::isTrue('verification.enabled');
+        $trackedStats = function (string $provider): array {
+            $base = fn () => VerificationRequest::where('provider_used', $provider);
+
+            return [
+                'today' => $base()->where('created_at', '>=', now()->startOfDay())->count(),
+                'month' => $base()->where('created_at', '>=', now()->startOfMonth())->count(),
+                'total' => $base()->count(),
+                'pending' => $base()->where('status', VerificationRequest::STATUS_PENDING)->count(),
+                'approved' => $base()->where('status', VerificationRequest::STATUS_APPROVED)->count(),
+                'rejected' => $base()->where('status', VerificationRequest::STATUS_REJECTED)->count(),
+                'reupload' => $base()->where('status', VerificationRequest::STATUS_REUPLOAD)->count(),
+            ];
+        };
 
         // Check which providers are actually configured (have API keys)
         $providers = [
@@ -229,6 +242,7 @@ class AdministratorController
                 'configured' => $ocrService->provider('didit')->isConfigured(),
                 'features'   => 'Face match, liveness, OCR, authenticity',
                 'quota'      => $quotaGuard->usage('didit'),
+                'stats'      => $trackedStats('didit'),
                 'primary'    => true,
             ],
             'ocr_space' => [
@@ -236,6 +250,7 @@ class AdministratorController
                 'configured' => $ocrService->provider('ocr_space')->isConfigured(),
                 'features'   => 'Text extraction only (manual review mode)',
                 'quota'      => $quotaGuard->usage('ocr_space'),
+                'stats'      => $trackedStats('ocr_space'),
                 'primary'    => false,
             ],
             'google_vision' => [
@@ -243,6 +258,7 @@ class AdministratorController
                 'configured' => $ocrService->provider('google_vision')->isConfigured(),
                 'features'   => 'Text extraction only (manual review mode)',
                 'quota'      => $quotaGuard->usage('google_vision'),
+                'stats'      => $trackedStats('google_vision'),
                 'primary'    => false,
             ],
         ];
