@@ -2,27 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Storage;
+use App\Jobs\EndCampaignJob;
+use App\Jobs\PublishCampaignJob;
+use App\Jobs\PublishRecurringCampaignJob;
+use App\Models\Campaign;
+use App\Models\CampaignView;
+use App\Models\Donation;
+use App\Notifications\NewDonationNotification;
+use App\Services\Storage\R2StorageException;
+use App\Services\Storage\R2StorageService;
+use App\Services\Uploads\ChunkUploadService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-use App\Models\CampaignView;
-use Illuminate\Http\Request;
-use App\Models\Campaign;
-use App\Jobs\PublishCampaignJob;
-use App\Jobs\EndCampaignJob;
-use App\Jobs\PublishRecurringCampaignJob;
-use Livewire\Livewire;
-use App\Models\Donation;
-use App\Notifications\NewDonationNotification;
-use App\Services\Storage\R2StorageService;
-use App\Services\Storage\R2StorageException;
-use App\Services\Uploads\ChunkUploadService;
-
 
 class CampaignController
 {
     protected R2StorageService $storage;
+
     protected ChunkUploadService $chunkUploads;
 
     public function __construct(R2StorageService $storage, ChunkUploadService $chunkUploads)
@@ -57,27 +55,29 @@ class CampaignController
 
     public function createcampaign(Request $request)
     {
+        $campaignImageMaxKb = max(1, (int) config('r2.validation.campaign_image_max_size_kb', 15360));
+
         $request->merge([
             'gcash_number' => preg_replace('/\D+/', '', (string) $request->input('gcash_number')),
         ]);
 
         $request->validate([
-            'title'           => 'required|string|max:255',
-            'description'     => 'required|string',
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
             'campaign_organizer' => 'required|string|max:30',
-            'target_amount'   => 'required|numeric|min:1',
-            'starts_at'       => 'nullable|date',
-            'ends_at'         => 'nullable|date|after_or_equal:starts_at',
-            'schedule_type'   => 'required|in:one_time,recurring',
-            'recurring_days'  => 'nullable|array|required_if:schedule_type,recurring',
+            'target_amount' => 'required|numeric|min:1',
+            'starts_at' => 'nullable|date',
+            'ends_at' => 'nullable|date|after_or_equal:starts_at',
+            'schedule_type' => 'required|in:one_time,recurring',
+            'recurring_days' => 'nullable|array|required_if:schedule_type,recurring',
             'recurring_days.*' => 'string',
-            'recurring_time'  => 'nullable|required_if:schedule_type,recurring|date_format:H:i',
-            'featured_image'  => 'required_without:featured_image_uploaded_path|image|mimes:jpeg,png,jpg,gif,svg,webp|max:8192',
+            'recurring_time' => 'nullable|required_if:schedule_type,recurring|date_format:H:i',
+            'featured_image' => "required_without:featured_image_uploaded_path|image|mimes:jpeg,png,jpg,gif,svg,webp|max:{$campaignImageMaxKb}",
             'featured_image_uploaded_path' => 'nullable|string|max:500',
-            'qr_code'         => 'required_without:qr_code_uploaded_path|image|mimes:jpeg,png,jpg,gif,svg,webp|max:8192',
+            'qr_code' => "required_without:qr_code_uploaded_path|image|mimes:jpeg,png,jpg,gif,svg,webp|max:{$campaignImageMaxKb}",
             'qr_code_uploaded_path' => 'nullable|string|max:500',
-            'gcash_number'    => 'required|string|regex:/^09[0-9]{9}$/|max:11',
-            'images.*'        => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:8192',
+            'gcash_number' => 'required|string|regex:/^09[0-9]{9}$/|max:11',
+            'images.*' => "nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:{$campaignImageMaxKb}",
             'images_uploaded_paths' => 'nullable|array',
             'images_uploaded_paths.*' => 'string|max:500',
 
@@ -91,16 +91,20 @@ class CampaignController
             $this->ensureValidUploadReference($request, 'featured_image_uploaded_path', 'featured_image', $featuredImagePath, 'cover image');
             if (! $featuredImagePath && $request->hasFile('featured_image')) {
                 $featuredImagePath = tap($this->storage->upload($request->file('featured_image'), 'campaign_featured',
-                    ['max_kb' => 8192, 'mimes' => config('r2.validation.image_mimes')]),
-                    function ($k) use (&$uploadedKeys) { $uploadedKeys[] = $k; });
+                    ['max_kb' => $campaignImageMaxKb, 'mimes' => config('r2.validation.image_mimes')]),
+                    function ($k) use (&$uploadedKeys) {
+                        $uploadedKeys[] = $k;
+                    });
             }
 
             $qrCodePath = $this->completedChunkPath($request, 'qr_code_uploaded_path', 'campaign_qr');
             $this->ensureValidUploadReference($request, 'qr_code_uploaded_path', 'qr_code', $qrCodePath, 'GCash QR code');
             if (! $qrCodePath && $request->hasFile('qr_code')) {
                 $qrCodePath = tap($this->storage->upload($request->file('qr_code'), 'campaign_qr',
-                    ['max_kb' => 8192, 'mimes' => config('r2.validation.image_mimes')]),
-                    function ($k) use (&$uploadedKeys) { $uploadedKeys[] = $k; });
+                    ['max_kb' => $campaignImageMaxKb, 'mimes' => config('r2.validation.image_mimes')]),
+                    function ($k) use (&$uploadedKeys) {
+                        $uploadedKeys[] = $k;
+                    });
             }
 
             $additionalImages = $this->completedChunkPaths($request, 'images_uploaded_paths', 'campaign_image');
@@ -108,14 +112,17 @@ class CampaignController
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $image) {
                     $key = $this->storage->upload($image, 'campaign_images',
-                        ['max_kb' => 8192, 'mimes' => config('r2.validation.image_mimes')]);
+                        ['max_kb' => $campaignImageMaxKb, 'mimes' => config('r2.validation.image_mimes')]);
                     $additionalImages[] = $key;
                     $uploadedKeys[] = $key;
                 }
             }
         } catch (R2StorageException $e) {
-            foreach ($uploadedKeys as $k) { $this->storage->delete($k); }
+            foreach ($uploadedKeys as $k) {
+                $this->storage->delete($k);
+            }
             $reason = trim($e->getMessage()) ?: 'The uploaded file could not be stored.';
+
             return back()->withInput()->with('error', "File upload failed. Reason: {$reason}");
         }
 
@@ -131,27 +138,25 @@ class CampaignController
 
         // Create campaign
         $campaign = Campaign::create([
-            'user_id'         => Auth::id(),
-            'title'           => $request->input('title'),
-            'description'     => $request->input('description'),
+            'user_id' => Auth::id(),
+            'title' => $request->input('title'),
+            'description' => $request->input('description'),
             'campaign_organizer' => $request->input('campaign_organizer'),
-            'target_amount'   => $request->input('target_amount'),
-            'current_amount'  => 0,
-            'status'          => $status,
-            'schedule_type'   => $request->input('schedule_type'),
-            'recurring_days'  => $request->input('recurring_days') ?? [],
-            'recurring_time'  => $request->input('recurring_time'),
-            'starts_at'       => $request->input('starts_at'),
-            'ends_at'         => $request->input('ends_at'),
-            'featured_image'  => $featuredImagePath,
-            'qr_code'        => $qrCodePath,
-            'gcash_number'    => $request->input('gcash_number'),
-            'images'          => $additionalImages,
-            'views'           => 0,
-            'donor_count'     => 0,
+            'target_amount' => $request->input('target_amount'),
+            'current_amount' => 0,
+            'status' => $status,
+            'schedule_type' => $request->input('schedule_type'),
+            'recurring_days' => $request->input('recurring_days') ?? [],
+            'recurring_time' => $request->input('recurring_time'),
+            'starts_at' => $request->input('starts_at'),
+            'ends_at' => $request->input('ends_at'),
+            'featured_image' => $featuredImagePath,
+            'qr_code' => $qrCodePath,
+            'gcash_number' => $request->input('gcash_number'),
+            'images' => $additionalImages,
+            'views' => 0,
+            'donor_count' => 0,
         ]);
-
-
 
         // One-time schedule handling
         if ($request->input('schedule_type') === 'one_time') {
@@ -192,7 +197,7 @@ class CampaignController
             }
         }
 
-        return redirect()->route('campaignpage')->with('success');
+        return redirect()->route('campaignpage')->with('success', 'Campaign created successfully.');
     }
 
     //   Determine campaign status based on start date
@@ -201,7 +206,7 @@ class CampaignController
         $now = Carbon::now();
 
         // Check if campaign has already ended
-        if (!empty($endDate)) {
+        if (! empty($endDate)) {
             $endTime = Carbon::parse($endDate);
             if ($endTime->isPast()) {
                 return 'ended';
@@ -242,7 +247,7 @@ class CampaignController
             'updates' => function ($q) {
                 $q->with('organizer') // Load the organizer relationship
                     ->latest(); // Get updates in descending order (newest first)
-            }
+            },
         ])->findOrFail($id);
 
         $user = Auth::user();
@@ -257,12 +262,12 @@ class CampaignController
             ->where('user_agent', $agent)
             ->exists();
 
-        if (!$exists) {
+        if (! $exists) {
             CampaignView::create([
                 'campaign_id' => $id,
-                'user_id'     => $userId,
-                'ip_address'  => $ip,
-                'user_agent'  => $agent,
+                'user_id' => $userId,
+                'ip_address' => $ip,
+                'user_agent' => $agent,
             ]);
 
             $campaign->views = ((int) ($campaign->views ?? 0)) + 1;
@@ -278,6 +283,7 @@ class CampaignController
         if ($request->ajax() && $request->has('reference_number')) {
             $ref = preg_replace('/\D+/', '', (string) $request->input('reference_number'));
             $exists = Donation::where('reference_number', $ref)->exists();
+
             return response()->json(['exists' => $exists]);
         }
 
@@ -288,15 +294,15 @@ class CampaignController
         }
 
         $rules = [
-            'campaign_id'      => 'required|string',
-            'amount'           => 'required|numeric|min:1',
+            'campaign_id' => 'required|string',
+            'amount' => 'required|numeric|min:1',
             'reference_number' => 'required|digits:13',
-            'proof_image'      => 'required_without:proof_image_uploaded_path|image|mimes:jpg,jpeg,png,webp|max:8192',
+            'proof_image' => 'required_without:proof_image_uploaded_path|image|mimes:jpg,jpeg,png,webp|max:8192',
             'proof_image_uploaded_path' => 'nullable|string|max:500',
         ];
 
-        if (!Auth::check()) {
-            $rules['donor_name']  = 'required|string|max:191';
+        if (! Auth::check()) {
+            $rules['donor_name'] = 'required|string|max:191';
             $rules['donor_email'] = 'nullable|email';
         }
 
@@ -321,28 +327,28 @@ class CampaignController
         $isAnonymous = $request->boolean('is_anonymous');
         $donorName = $donorEmail = null;
 
-        if (!$isAnonymous) {
+        if (! $isAnonymous) {
             if (Auth::check()) {
-                $donorName  = Auth::user()->first_name ?? Auth::user()->name;
+                $donorName = Auth::user()->first_name ?? Auth::user()->name;
                 $donorEmail = Auth::user()->email;
             } else {
-                $donorName  = $validated['donor_name'] ?? null;
+                $donorName = $validated['donor_name'] ?? null;
                 $donorEmail = $validated['donor_email'] ?? null;
             }
         }
 
         // Create donation
         $donation = Donation::create([
-            'campaign_id'      => $validated['campaign_id'],
-            'user_id'          => ($isAnonymous ? null : Auth::id()),
-            'donor_name'       => $donorName,
-            'donor_email'      => $donorEmail,
-            'is_anonymous'     => $isAnonymous,
-            'amount'           => $validated['amount'],
+            'campaign_id' => $validated['campaign_id'],
+            'user_id' => ($isAnonymous ? null : Auth::id()),
+            'donor_name' => $donorName,
+            'donor_email' => $donorEmail,
+            'is_anonymous' => $isAnonymous,
+            'amount' => $validated['amount'],
             'reference_number' => $ref,
-            'proof_image'      => $proofPath,
-            'message_code'     => "CAMP-" . $validated['campaign_id'],
-            'status'           => 'pending',
+            'proof_image' => $proofPath,
+            'message_code' => 'CAMP-'.$validated['campaign_id'],
+            'status' => 'pending',
         ]);
 
         // Update campaign stats
@@ -350,13 +356,8 @@ class CampaignController
         $campaign->adjustDonationStats((float) $validated['amount'], 1);
         $campaign->organizer->notify(new NewDonationNotification($donation, $campaign));
 
-
-
-
-
         return redirect()->back()->with('success', 'Donation submitted successfully! Thank you for your support.');
     }
-
 
     public function deleteAll(Request $request)
     {
@@ -365,12 +366,12 @@ class CampaignController
 
             return response()->json([
                 'success' => true,
-                'message' => 'All notifications deleted successfully'
+                'message' => 'All notifications deleted successfully',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to delete notifications'
+                'message' => 'Failed to delete notifications',
             ], 500);
         }
     }
@@ -383,7 +384,7 @@ class CampaignController
             if (empty($notificationIds)) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'No notifications selected'
+                    'message' => 'No notifications selected',
                 ], 400);
             }
 
@@ -391,12 +392,12 @@ class CampaignController
 
             return response()->json([
                 'success' => true,
-                'message' => 'Selected notifications deleted successfully'
+                'message' => 'Selected notifications deleted successfully',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to delete selected notifications'
+                'message' => 'Failed to delete selected notifications',
             ], 500);
         }
     }
@@ -408,12 +409,12 @@ class CampaignController
 
             return response()->json([
                 'success' => true,
-                'message' => 'Notification deleted successfully'
+                'message' => 'Notification deleted successfully',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to delete notification'
+                'message' => 'Failed to delete notification',
             ], 500);
         }
     }
@@ -425,7 +426,10 @@ class CampaignController
             return null;
         }
 
-        return $this->chunkUploads->completedPathForUser($path, $module, (string) $request->user()->getAuthIdentifier());
+        $userId = (string) $request->user()->getAuthIdentifier();
+
+        return $this->chunkUploads->completedPathForUser($path, $module, $userId)
+            ?? $this->chunkUploads->latestCompletedPathForUser($module, $userId);
     }
 
     private function completedChunkPaths(Request $request, string $input, string $module): array

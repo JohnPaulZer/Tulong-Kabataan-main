@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\SiteSetting;
+use App\Observers\ChatbotKnowledgeObserver;
+use App\Services\Chatbot\TulongKabataanKnowledgeService;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Console\ServeCommand;
 use Illuminate\Http\Request;
@@ -9,9 +12,6 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
-use App\Models\SiteSetting;
-use App\Observers\ChatbotKnowledgeObserver;
-use App\Services\Chatbot\TulongKabataanKnowledgeService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -91,7 +91,7 @@ class AppServiceProvider extends ServiceProvider
 
     private function configureRateLimiters(): void
     {
-        foreach (['public', 'api', 'admin', 'payment', 'upload', 'chatbot', 'webhook'] as $name) {
+        foreach (['public', 'api', 'admin', 'payment', 'upload', 'chunk_upload', 'chatbot', 'webhook'] as $name) {
             RateLimiter::for($name, function (Request $request) use ($name) {
                 return $this->limit($name)->by($this->rateLimitKey($request, $name));
             });
@@ -100,7 +100,7 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('auth', function (Request $request) {
             $login = strtolower((string) ($request->input('email') ?: $request->input('username') ?: $request->query('email')));
 
-            return $this->limit('auth')->by($this->rateLimitKey($request, 'auth') . '|' . $login);
+            return $this->limit('auth')->by($this->rateLimitKey($request, 'auth').'|'.$login);
         });
     }
 
