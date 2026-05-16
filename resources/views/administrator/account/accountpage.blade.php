@@ -349,6 +349,12 @@
                                                 ? 'Automated Review'
                                                 : ($req->decision_source === 'admin' ? 'Manual Admin Decision' : 'Pending Auto Review');
                                             $providerLabel = $req->provider_used ?: 'none';
+                                            $providerDisplay = match ($providerLabel) {
+                                                'didit' => 'Didit',
+                                                'ocr_space' => 'OCR.Space',
+                                                'google_vision' => 'Google Vision',
+                                                default => ucfirst(str_replace('_', ' ', $providerLabel)),
+                                            };
                                         @endphp
                                         <div class="auto-review-panel"
                                             style="margin:15px 0;border:1px solid #e5e7eb;border-radius:8px;background:#fafafa;padding:14px">
@@ -370,8 +376,14 @@
                                                 </div>
                                                 <div>
                                                     <div style="font-size:11px;color:#6b7280;text-transform:uppercase">Provider Used</div>
-                                                    <div style="font-weight:600">{{ ucfirst(str_replace('_', ' ', $providerLabel)) }}</div>
+                                                    <div style="font-weight:600">{{ $providerDisplay }}</div>
                                                 </div>
+                                                @if (!empty($req->provider_reference_id))
+                                                    <div>
+                                                        <div style="font-size:11px;color:#6b7280;text-transform:uppercase">Provider Reference</div>
+                                                        <div style="font-weight:600;word-break:break-all">{{ $req->provider_reference_id }}</div>
+                                                    </div>
+                                                @endif
                                                 <div>
                                                     <div style="font-size:11px;color:#6b7280;text-transform:uppercase">Detected ID Type</div>
                                                     <div style="font-weight:600">
@@ -1705,20 +1717,42 @@
                 statusEl.innerHTML = `Active: <strong>${name}</strong>` +
                     (data.enabled ? ' <span style="color:#16a34a">● Enabled</span>' : ' <span style="color:#dc2626">● Disabled</span>');
 
-                // Quota display
-                if (activeInfo && activeInfo.quota) {
-                    const q = activeInfo.quota;
-                    const dailyPct = q.daily_limit > 0 ? Math.round((q.daily_used / q.daily_limit) * 100) : 0;
-                    const monthlyPct = q.monthly_limit > 0 ? Math.round((q.monthly_used / q.monthly_limit) * 100) : 0;
-                    const barColor = monthlyPct >= 90 ? '#dc2626' : monthlyPct >= 70 ? '#f59e0b' : '#16a34a';
+                // Quota + tracked request display for every provider.
+                const providerEntries = Object.entries(data.providers || {});
+                if (providerEntries.length) {
                     quotaEl.innerHTML = `
-                        <div style="display:flex;gap:20px;flex-wrap:wrap">
-                            <div>Today: <strong>${q.daily_used}</strong> / ${q.daily_limit}</div>
-                            <div>This month: <strong>${q.monthly_used}</strong> / ${q.monthly_limit}
-                                <div style="width:120px;height:6px;background:#e5e7eb;border-radius:3px;margin-top:3px;display:inline-block;vertical-align:middle">
-                                    <div style="width:${monthlyPct}%;height:100%;background:${barColor};border-radius:3px"></div>
-                                </div>
-                            </div>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px">
+                            ${providerEntries.map(([key, info]) => {
+                                const q = info.quota || {};
+                                const stats = info.stats || {};
+                                const isActive = key === data.active;
+                                const dailyLimit = Number(q.daily_limit || 0);
+                                const monthlyLimit = Number(q.monthly_limit || 0);
+                                const dailyUsed = Number(q.daily_used || 0);
+                                const monthlyUsed = Number(q.monthly_used || 0);
+                                const dailyPct = dailyLimit > 0 ? Math.min(100, Math.round((dailyUsed / dailyLimit) * 100)) : 0;
+                                const monthlyPct = monthlyLimit > 0 ? Math.min(100, Math.round((monthlyUsed / monthlyLimit) * 100)) : 0;
+                                const barColor = monthlyPct >= 90 ? '#dc2626' : monthlyPct >= 70 ? '#f59e0b' : '#16a34a';
+
+                                return `
+                                    <div style="padding:10px;border:1px solid ${isActive ? '#2563eb' : '#e5e7eb'};border-radius:8px;background:${isActive ? '#eff6ff' : '#fff'}">
+                                        <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:8px">
+                                            <strong>${info.name || key}</strong>
+                                            ${isActive ? '<span style="font-size:10px;color:#2563eb;font-weight:700">ACTIVE</span>' : ''}
+                                        </div>
+                                        <div>Today: <strong>${dailyUsed}</strong> / ${dailyLimit || 'No cap'}</div>
+                                        <div style="margin-top:4px">This month: <strong>${monthlyUsed}</strong> / ${monthlyLimit || 'No cap'}</div>
+                                        <div style="height:6px;background:#e5e7eb;border-radius:3px;margin-top:6px;overflow:hidden">
+                                            <div style="width:${monthlyPct}%;height:100%;background:${barColor};border-radius:3px"></div>
+                                        </div>
+                                        <div style="margin-top:8px;color:#4b5563">
+                                            Tracked requests: <strong>${stats.month || 0}</strong> this month, <strong>${stats.total || 0}</strong> total
+                                        </div>
+                                        <div style="margin-top:4px;color:#6b7280">
+                                            Pending ${stats.pending || 0} / Approved ${stats.approved || 0} / Rejected ${stats.rejected || 0}
+                                        </div>
+                                    </div>`;
+                            }).join('')}
                         </div>`;
                 } else {
                     quotaEl.innerHTML = '';
@@ -1754,6 +1788,7 @@
                     .then(r => r.json())
                     .then(data => {
                         if (data.success) {
+                            showToast(data.message || 'Verification provider updated.');
                             loadProvider();
                         } else {
                             alert(data.message || 'Failed to switch provider');

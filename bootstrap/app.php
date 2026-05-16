@@ -29,6 +29,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append(\Illuminate\Http\Middleware\HandleCors::class);
         $middleware->append(\App\Http\Middleware\AddSecurityHeaders::class);
         $middleware->web(append: ['throttle:public']);
+        $middleware->validateCsrfTokens(except: [
+            'webhooks/didit',
+        ]);
         $middleware->alias([
             'admin.session' => \App\Http\Middleware\RequireAdminSession::class,
             'webhook.signature' => \App\Http\Middleware\VerifyWebhookSignature::class,

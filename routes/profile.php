@@ -2,12 +2,15 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DiditVerificationController;
 
 Route::middleware(['auth', 'throttle:api'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'profileview'])->name('profile');
 
     //VERIFCATION ACCOUNT ROUTE
     Route::get('/verifypage', [ProfileController::class, 'verifypage'])->name('verify.page'); // GET page
+    Route::match(['get', 'post'], '/verification/didit/start', [DiditVerificationController::class, 'start'])
+        ->name('verification.didit.start');
     Route::post('/submit', [ProfileController::class, 'submitverifcation'])
         ->middleware('throttle:upload')
         ->name('submit.verification');   // POST submit
@@ -103,3 +106,11 @@ Route::middleware(['auth', 'throttle:api'])->group(function () {
 
 
 Route::get('/about-us', [ProfileController::class, 'aboutus'])->name('about.us');
+
+Route::get('/verification/didit/callback', [DiditVerificationController::class, 'callback'])
+    ->middleware('throttle:api')
+    ->name('verification.didit.callback');
+
+Route::post('/webhooks/didit', [DiditVerificationController::class, 'webhook'])
+    ->middleware('throttle:webhook')
+    ->name('verification.didit.webhook');

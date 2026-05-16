@@ -205,7 +205,7 @@ class ProfileController
     //VERFICATION
     public function verifypage(Request $request)
     {
-        $userId = Auth::id();
+        $userId = (string) Auth::user()->user_id;
 
         $verificationRequest = VerificationRequest::where('user_id', $userId)
             ->latest()

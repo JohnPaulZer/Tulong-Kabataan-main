@@ -80,13 +80,17 @@
             <div class="verification-card-body verification-p-4 verification-p-md-5">
 
                 @php
-                    $vr = \App\Models\VerificationRequest::where('user_id', auth()->id())
+                    $currentUserId = (string) auth()->user()->user_id;
+                    $vr = \App\Models\VerificationRequest::where('user_id', $currentUserId)
                         ->latest('created_at')
                         ->first();
                     $reuploadFields = $vr && $vr->status === 'reupload' ? $vr->reupload_fields ?? [] : [];
 
                     // Friendly status data for the status banner / tips card.
-                    $autoDecided = $vr && method_exists($vr, 'wasAutoDecided') && $vr->wasAutoDecided();
+                    $autoDecided = $vr
+                        && method_exists($vr, 'wasAutoDecided')
+                        && $vr->wasAutoDecided()
+                        && in_array($vr->status, ['approved', 'rejected'], true);
                     $statusFriendly = match ($vr?->status) {
                         'approved' => 'Verified',
                         'pending'  => 'Under Review',
@@ -94,6 +98,46 @@
                         'rejected' => 'Not Approved',
                         default    => null,
                     };
+                    $activeProvider = (string) \App\Models\SiteSetting::get(
+                        'verification.provider',
+                        config('id_verification.provider', 'didit')
+                    );
+                    $verificationEnabled = \App\Models\SiteSetting::isTrue('verification.enabled');
+                    $providerLabels = [
+                        'didit' => 'Didit',
+                        'ocr_space' => 'OCR.Space',
+                        'google_vision' => 'Google Vision',
+                    ];
+                    $activeProviderLabel = $providerLabels[$activeProvider] ?? ucfirst(str_replace('_', ' ', $activeProvider));
+                    $diditConfigured = filled(config('id_verification.providers.didit.api_key'))
+                        && filled(config('id_verification.providers.didit.workflow_id'));
+                    $diditSessionUrl = $vr
+                        && ($vr->provider_used ?? null) === 'didit'
+                        && $vr->status === 'pending'
+                        ? data_get($vr->raw_provider_response, 'url',
+                            data_get($vr->raw_provider_response, 'verification_url',
+                                data_get($vr->raw_provider_response, 'session_url')))
+                        : null;
+                    $allowLocalDiditRetest = app()->environment('local')
+                        && $activeProvider === 'didit'
+                        && $diditConfigured
+                        && $vr
+                        && $vr->status === 'approved';
+                    $useDiditHostedFlow = $verificationEnabled
+                        && $activeProvider === 'didit'
+                        && $diditConfigured
+                        && (!$vr || $vr->status !== 'approved' || $allowLocalDiditRetest);
+                    $showUploadFlow = $verificationEnabled
+                        && !$useDiditHostedFlow
+                        && (
+                            !$vr
+                            || in_array($vr->status, ['reupload', 'rejected', 'superseded'], true)
+                            || (
+                                $activeProvider !== 'didit'
+                                && $vr->status === 'pending'
+                                && ($vr->provider_used ?? null) === 'didit'
+                            )
+                        );
                 @endphp
 
                 {{-- Status summary --}}
@@ -115,6 +159,8 @@
                         <br>
                         @if ($vr->status === 'approved')
                             Your account is verified. You now have access to all platform features.
+                        @elseif ($vr->status === 'pending' && ($vr->provider_used ?? null) === 'didit' && $activeProvider === 'didit')
+                            Continue the Didit verification flow to complete ID, liveness, and face-match checks.
                         @elseif ($vr->status === 'pending')
                             We received your documents and they are being reviewed. This usually takes a few minutes for
                             the automated check, with admin review if needed.
@@ -126,8 +172,51 @@
                     </div>
                 @endif
 
+                @if (!$verificationEnabled)
+                    <div class="verification-alert verification-alert-warning verification-mb-4">
+                        Account verification is currently disabled by the administrator.
+                    </div>
+                @elseif ($showUploadFlow && $activeProvider !== 'didit')
+                    <div class="verification-alert verification-alert-info verification-mb-4" style="background:#eff6ff;border-color:#bfdbfe;color:#1e3a8a">
+                        <strong><i class="ri-shield-keyhole-line"></i> Current provider: {{ $activeProviderLabel }}</strong><br>
+                        Upload your ID photos and selfie here. This provider extracts ID text for admin review, so face-match approval will be confirmed manually.
+                    </div>
+                @elseif ($activeProvider === 'didit' && !$diditConfigured)
+                    <div class="verification-alert verification-alert-warning verification-mb-4">
+                        Didit is selected by the administrator, but the Didit API key or workflow ID is missing.
+                    </div>
+                @endif
+
+                @if ($useDiditHostedFlow)
+                    <div class="verification-alert verification-alert-info verification-mb-4" style="background:#eefdf5;border-color:#bbf7d0;color:#14532d">
+                        <strong><i class="ri-shield-check-line"></i> Verify with Didit</strong><br>
+                        Complete secure ID, liveness, and face-match verification through Didit's hosted flow.
+                        @if ($diditSessionUrl)
+                            <div style="margin-top:12px">
+                                <a href="{{ $diditSessionUrl }}" class="verification-btn verification-btn-primary verification-px-4">
+                                    Continue Didit Verification
+                                </a>
+                                @if (app()->environment('local'))
+                                    <a href="{{ route('verification.didit.start', ['restart_didit' => 1]) }}"
+                                        class="verification-btn verification-btn-outline-secondary verification-px-4"
+                                        style="margin-left:8px">
+                                        Start Fresh Test
+                                    </a>
+                                @endif
+                            </div>
+                        @else
+                            <div style="margin-top:12px">
+                                <a href="{{ route('verification.didit.start', $allowLocalDiditRetest ? ['restart_didit' => 1] : []) }}"
+                                    class="verification-btn verification-btn-primary verification-px-4">
+                                    {{ $allowLocalDiditRetest ? 'Start New Didit Test' : 'Start Didit Verification' }}
+                                </a>
+                            </div>
+                        @endif
+                    </div>
+                @endif
+
                 {{-- Show admin reupload message --}}
-                @if ($vr && $vr->status === 'reupload')
+                @if ($showUploadFlow && $vr && $vr->status === 'reupload')
                     <div class="verification-alert verification-alert-warning verification-mb-4">
                         <strong>Reupload Required</strong><br>
                         {{ $vr->review_notes ?? 'Please reupload the requested documents.' }}
@@ -135,7 +224,7 @@
                 @endif
 
                 {{-- Image quality tips --}}
-                @if (!$vr || in_array($vr->status, ['reupload', 'rejected']))
+                @if ($showUploadFlow && (!$vr || in_array($vr->status, ['reupload', 'rejected', 'superseded'])))
                     <div class="verification-alert verification-alert-info verification-mb-4" style="background:#eff6ff;border-color:#bfdbfe;color:#1e3a8a">
                         <strong><i class="ri-lightbulb-line"></i> Tips for a clear ID photo</strong>
                         <ul style="margin:8px 0 0 18px;padding:0;font-size:13px">
@@ -150,11 +239,12 @@
                     </div>
                 @endif
 
-                <!-- Wizard stepper -->
-                <div class="verification-stepper"></div>
+                @if ($showUploadFlow)
+                    <!-- Wizard stepper -->
+                    <div class="verification-stepper"></div>
 
-                <form action="{{ route('submit.verification') }}" method="POST" enctype="multipart/form-data"
-                    id="kycForm" novalidate>
+                    <form action="{{ route('submit.verification') }}" method="POST" enctype="multipart/form-data"
+                        id="kycForm" novalidate>
                     @csrf
                     @if ($vr && $vr->status === 'reupload')
                         <input type="hidden" name="mode" value="reupload">
@@ -342,7 +432,8 @@
                                 id="btnSubmit" style="display:none;">Submit Verification</button>
                         </div>
                     </div>
-                </form>
+                    </form>
+                @endif
             </div>
         </div>
     </div>
@@ -364,7 +455,10 @@
                 passive: true
             });
         })();
+    </script>
 
+    @if ($showUploadFlow)
+        <script>
         // ====== Wizard Logic ======
         const reuploadMode = @json($vr && $vr->status === 'reupload');
         const reuploadFields = @json($reuploadFields);
@@ -671,7 +765,7 @@
 
             if (totalBytes > maxVerificationPostBytes) {
                 e.preventDefault();
-                const firstFileInput = [idFront, idBack, facePhoto, selfie].find(input => input?.files?.length);
+                const firstFileInput = [idFront, idBack, selfie].find(input => input?.files?.length);
                 if (firstFileInput) {
                     showError(firstFileInput,
                         `Total uploaded images must be ${formatBytes(maxVerificationPostBytes)} or smaller`);
@@ -753,7 +847,8 @@
         }
 
         syncIdNumberFieldForType();
-    </script>
+        </script>
+    @endif
 
 </body>
 

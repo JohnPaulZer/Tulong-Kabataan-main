@@ -3,8 +3,11 @@
 namespace App\Services\Verification;
 
 use App\Models\IdentityStatus;
+use App\Models\AdminAccount;
+use App\Models\SiteSetting;
 use App\Models\User;
 use App\Models\VerificationRequest;
+use App\Notifications\ProviderQuotaExhaustedNotification;
 use App\Notifications\VerificationDecisionNotification;
 use App\Services\Storage\R2StorageService;
 use App\Services\Verification\Contracts;
@@ -107,7 +110,10 @@ class IdVerificationService
      */
     public function runAutomatedReview(VerificationRequest $request, ?User $user = null): array
     {
-        if (! filter_var(config('id_verification.enabled', true), FILTER_VALIDATE_BOOLEAN)) {
+        $automationEnabled = filter_var(config('id_verification.enabled', true), FILTER_VALIDATE_BOOLEAN)
+            && SiteSetting::isTrue('verification.enabled');
+
+        if (! $automationEnabled) {
             // Automated review disabled — leave at "pending" for legacy admin flow.
             $this->audit->record($request, 'submitted', 'Automated review disabled — sent to admin queue.');
             return ['decision' => self::DECISION_MANUAL_REVIEW, 'score' => null];
@@ -696,6 +702,9 @@ class IdVerificationService
             return null;
         }
 
+        SiteSetting::set('verification.provider', $fallbackKey, 'string', 'verification');
+        SiteSetting::set('verification.enabled', true, 'bool', 'verification');
+
         // Alert the admin ONCE per calendar month that the primary provider
         // quota was exhausted and we've switched to the fallback. We use a
         // cache flag so the notification doesn't fire on every single request.
@@ -707,9 +716,9 @@ class IdVerificationService
 
         // Log the switch for the audit trail.
         $this->audit->record($request, 'provider_fallback', sprintf(
-            '%s monthly quota exhausted — falling back to %s (manual review mode).',
-            ucfirst(str_replace('_', ' ', $exhaustedProvider)),
-            ucfirst(str_replace('_', ' ', $fallbackKey))
+            '%s monthly quota exhausted; active provider switched to %s (manual review mode).',
+            $this->providerLabel($exhaustedProvider),
+            $this->providerLabel($fallbackKey)
         ));
 
         return $fallback;
@@ -723,16 +732,16 @@ class IdVerificationService
     {
         try {
             $usage = $this->quotaGuard->usage($exhaustedProvider);
-            $providerName = ucfirst(str_replace('_', ' ', $exhaustedProvider));
-            $fallbackName = ucfirst(str_replace('_', ' ', $fallbackProvider));
+            $providerName = $this->providerLabel($exhaustedProvider);
+            $fallbackName = $this->providerLabel($fallbackProvider);
 
             // Use the DatabaseNotification model directly to push a notice
             // into every admin's notification feed. We target AdminAccount
             // if it's notifiable, otherwise log it.
-            $admins = \App\Models\AdminAccount::all();
+            $admins = AdminAccount::all();
             foreach ($admins as $admin) {
                 if (method_exists($admin, 'notify')) {
-                    $admin->notify(new \App\Notifications\ProviderQuotaExhaustedNotification(
+                    $admin->notify(new ProviderQuotaExhaustedNotification(
                         $providerName,
                         $fallbackName,
                         $usage
@@ -751,6 +760,16 @@ class IdVerificationService
                 'error' => $e::class,
             ]);
         }
+    }
+
+    private function providerLabel(string $provider): string
+    {
+        return match ($provider) {
+            'didit' => 'Didit',
+            'ocr_space' => 'OCR.Space',
+            'google_vision' => 'Google Vision',
+            default => ucfirst(str_replace('_', ' ', $provider)),
+        };
     }
 
     /**
