@@ -13,6 +13,7 @@
     style="--tk-home-cta-bg: url('{{ page_media_url('home_cta_background', asset('img/bg2.jpg')) }}'); --tk-decorative-pattern: url('{{ page_media_url('decorative_pattern_image', asset('img/doodle.svg')) }}');">
     @include('administrator.partials.loading-screen')
     @include('partials.main-header')
+    @include('partials.universalmodal')
     @include('partials.site-announcement')
 
     <main id="main-content" class="overflow-x-hidden">

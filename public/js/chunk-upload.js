@@ -218,6 +218,28 @@
         form.querySelectorAll(`[data-chunk-generated][data-source-input="${input.id}"]`).forEach((el) => el.remove());
     }
 
+    function resetChunkState(input) {
+        removeGeneratedInputsFor(input);
+        input.disabled = false;
+        input.dataset.chunkStatus = "";
+        input.dataset.chunkError = "";
+        input.dataset.chunkPromiseId = "";
+
+        const progress = input.closest(".tk-field, form")?.querySelector(`[data-chunk-progress-for="${input.id}"]`);
+        if (progress) progress.style.display = "none";
+    }
+
+    function showUploadModal(message, type = "error") {
+        if (typeof window.showNotificationModal === "function") {
+            window.showNotificationModal(message, type, type === "error" ? "Upload failed" : null);
+            return;
+        }
+
+        if (type === "error") {
+            alert(message);
+        }
+    }
+
     function appendUploadedPath(form, input, name, value) {
         const generated = hiddenInput(form, name, value);
         generated.dataset.sourceInput = input.id;
@@ -291,6 +313,8 @@
             input.disabled = false;
             removeGeneratedInputsFor(input);
             setProgress(progress, input.dataset.chunkError, 0);
+            showUploadModal(input.dataset.chunkError, "error");
+            throw error;
         } finally {
             if (input.dataset.chunkPromiseId === promiseId) {
                 submitters.forEach((button) => {
@@ -333,6 +357,11 @@
             try {
                 await Promise.all(incomplete.map((input) => uploadInputFiles(form, input)));
 
+                const failed = inputs.find((input) => input.dataset.chunkStatus === "failed");
+                if (failed) {
+                    throw new Error(failed.dataset.chunkError || statusText.failed);
+                }
+
                 form.dataset.chunkSubmitting = "true";
                 form.requestSubmit();
             } catch (error) {
@@ -341,6 +370,7 @@
                     const progress = ensureProgress(input);
                     setProgress(progress, error.message || statusText.failed, 0);
                 });
+                showUploadModal(error.message || statusText.failed, "error");
                 submitters.forEach((button) => button.disabled = false);
             }
         }, true);
@@ -362,6 +392,7 @@
 
     window.TKChunkUploader = ChunkUploader;
     window.TKBindChunkedForm = bindChunkedForm;
+    window.TKResetChunkInput = resetChunkState;
 
     document.addEventListener("DOMContentLoaded", () => {
         injectStyles();

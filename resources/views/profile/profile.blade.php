@@ -17,6 +17,7 @@
 <body class="profile-page">
     <!-- Navigation & Header -->
     @include('partials.main-header')
+    @include('partials.universalmodal')
     @include('administrator.partials.loading-screen')
 
     <div class="prof-flex">

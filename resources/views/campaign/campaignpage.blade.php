@@ -15,6 +15,7 @@
 <body class="campaign-page">
     <!-- Navigation & Header -->
     @include('partials.main-header')
+    @include('partials.universalmodal')
     @include('administrator.partials.loading-screen')
 
     <!-- Main Content -->

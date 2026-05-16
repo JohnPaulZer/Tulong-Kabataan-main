@@ -11,9 +11,14 @@
 </head>
 
 <body class="campaign-create-page">
+    @php
+        $campaignUploadMaxMb = max(1, (int) config('chunk_upload.max_file_size_mb', 25));
+        $selectedScheduleType = old('schedule_type', 'one_time');
+        $selectedRecurringDays = old('recurring_days', []);
+    @endphp
 
-    @include('partials.main-header')
     @include('partials.universalmodal')
+    @include('partials.main-header')
     @include('administrator.partials.loading-screen')
 
     <div class="tk-container">
@@ -53,7 +58,7 @@
                     <div class="tk-input-wrap">
                         <span class="tk-leading-icon"><i class="ri-flag-line"></i></span>
                         <input type="text" id="title" name="title" class="tk-input has-icon"
-                            placeholder="Enter campaign title" maxlength="100" required>
+                            placeholder="Enter campaign title" maxlength="100" value="{{ old('title') }}" required>
                     </div>
                     <div class="tk-counter"><span id="titleCount">0</span>/100</div>
                 </div>
@@ -64,7 +69,8 @@
                         <div class="tk-input-wrap">
                             <span class="tk-leading-icon"><i class="ri-user-heart-line"></i></span>
                             <input type="text" id="campaign_organizer" name="campaign_organizer"
-                                class="tk-input has-icon" placeholder="Enter organizer name" required>
+                                class="tk-input has-icon" placeholder="Enter organizer name"
+                                value="{{ old('campaign_organizer') }}" required>
                         </div>
                     </div>
 
@@ -73,7 +79,8 @@
                         <div class="tk-input-wrap">
                             <span class="tk-leading-icon"><i class="ri-money-dollar-circle-line"></i></span>
                             <input type="number" id="target_amount" name="target_amount" class="tk-input has-icon"
-                                placeholder="Enter fundraising goal" min="1" step="1" required>
+                                placeholder="Enter fundraising goal" min="1" step="1"
+                                value="{{ old('target_amount') }}" required>
                         </div>
                         <div class="tk-inline" id="goalHelper">Tip: set a realistic goal donors can help achieve.</div>
                     </div>
@@ -82,7 +89,7 @@
                 <div class="tk-field">
                     <label for="description" class="tk-label">Description</label>
                     <textarea id="description" name="description" class="tk-input tk-textarea"
-                        placeholder="Describe your campaign in detail..." maxlength="2000" required></textarea>
+                        placeholder="Describe your campaign in detail..." maxlength="2000" required>{{ old('description') }}</textarea>
                     <div class="tk-counter"><span id="descCount">0</span>/2000</div>
                 </div>
             </section>
@@ -97,24 +104,26 @@
                 <div class="tk-field">
                     <label class="tk-label">Schedule Type</label>
                     <div class="tk-seg" role="tablist" aria-label="Schedule Type">
-                        <button type="button" class="seg-opt is-active" data-value="one_time" role="tab"
-                            aria-selected="true">One-Time</button>
-                        <button type="button" class="seg-opt" data-value="recurring" role="tab"
-                            aria-selected="false">Recurring</button>
+                        <button type="button" class="seg-opt {{ $selectedScheduleType === 'one_time' ? 'is-active' : '' }}"
+                            data-value="one_time" role="tab"
+                            aria-selected="{{ $selectedScheduleType === 'one_time' ? 'true' : 'false' }}">One-Time</button>
+                        <button type="button" class="seg-opt {{ $selectedScheduleType === 'recurring' ? 'is-active' : '' }}"
+                            data-value="recurring" role="tab"
+                            aria-selected="{{ $selectedScheduleType === 'recurring' ? 'true' : 'false' }}">Recurring</button>
                     </div>
                     <select id="schedule_type" name="schedule_type" aria-hidden="true">
-                        <option value="one_time" selected>One-Time</option>
-                        <option value="recurring">Recurring</option>
+                        <option value="one_time" @selected($selectedScheduleType === 'one_time')>One-Time</option>
+                        <option value="recurring" @selected($selectedScheduleType === 'recurring')>Recurring</option>
                     </select>
                 </div>
 
-                <div class="tk-grid-2" id="one_time_dates">
+                <div class="tk-grid-2" id="one_time_dates" style="{{ $selectedScheduleType === 'recurring' ? 'display:none;' : '' }}">
                     <div class="tk-field">
                         <label for="starts_at" class="tk-label">Start Date & Time (Optional)</label>
                         <div class="tk-input-wrap">
                             <span class="tk-leading-icon"><i class="ri-time-line"></i></span>
                             <input type="datetime-local" id="starts_at" name="starts_at" step="60"
-                                class="tk-input has-icon">
+                                class="tk-input has-icon" value="{{ old('starts_at') }}">
                         </div>
                         <div id="schedule_preview" class="tk-preview immediate" style="display:block;">
                             <span class="tk-badge blue"><i class="ri-broadcast-line"></i> Immediate</span>
@@ -127,23 +136,23 @@
                         <div class="tk-input-wrap">
                             <span class="tk-leading-icon"><i class="ri-stop-circle-line"></i></span>
                             <input type="datetime-local" id="ends_at" name="ends_at" step="60"
-                                class="tk-input has-icon">
+                                class="tk-input has-icon" value="{{ old('ends_at') }}">
                         </div>
                         <div class="tk-help">Set when the campaign should end (optional).</div>
                     </div>
                 </div>
 
-                <div class="tk-grid-2" id="recurring_days_container" style="display:none;">
+                <div class="tk-grid-2" id="recurring_days_container" style="{{ $selectedScheduleType === 'recurring' ? '' : 'display:none;' }}">
                     <div class="tk-field">
                         <label for="recurring_days" class="tk-label">Select Days</label>
                         <select id="recurring_days" name="recurring_days[]" class="tk-input" multiple>
-                            <option value="mon">Monday</option>
-                            <option value="tue">Tuesday</option>
-                            <option value="wed">Wednesday</option>
-                            <option value="thu">Thursday</option>
-                            <option value="fri">Friday</option>
-                            <option value="sat">Saturday</option>
-                            <option value="sun">Sunday</option>
+                            <option value="mon" @selected(in_array('mon', $selectedRecurringDays, true))>Monday</option>
+                            <option value="tue" @selected(in_array('tue', $selectedRecurringDays, true))>Tuesday</option>
+                            <option value="wed" @selected(in_array('wed', $selectedRecurringDays, true))>Wednesday</option>
+                            <option value="thu" @selected(in_array('thu', $selectedRecurringDays, true))>Thursday</option>
+                            <option value="fri" @selected(in_array('fri', $selectedRecurringDays, true))>Friday</option>
+                            <option value="sat" @selected(in_array('sat', $selectedRecurringDays, true))>Saturday</option>
+                            <option value="sun" @selected(in_array('sun', $selectedRecurringDays, true))>Sunday</option>
                         </select>
                         <div class="tk-help">Hold ⌘/Ctrl to select multiple days.</div>
                     </div>
@@ -153,7 +162,7 @@
                         <div class="tk-input-wrap">
                             <span class="tk-leading-icon"><i class="ri-time-line"></i></span>
                             <input type="time" id="recurring_time" name="recurring_time" step="60"
-                                class="tk-input has-icon">
+                                class="tk-input has-icon" value="{{ old('recurring_time') }}">
                         </div>
                         <div class="tk-help">Set the time when the campaign runs on selected days.</div>
                     </div>
@@ -173,7 +182,8 @@
                         <div class="tk-input-wrap">
                             <span class="tk-leading-icon"><i class="ri-phone-line"></i></span>
                             <input type="tel" id="gcash_number" name="gcash_number" class="tk-input has-icon"
-                                placeholder="09XXXXXXXXX" inputmode="numeric" pattern="09[0-9]{9}" maxlength="11" required>
+                                placeholder="09XXXXXXXXX" inputmode="numeric" pattern="09[0-9]{9}" maxlength="11"
+                                value="{{ old('gcash_number') }}" required>
                         </div>
                         <div class="tk-help">Enter your 11-digit GCash mobile number</div>
                     </div>
@@ -183,11 +193,15 @@
                         <input type="file" id="qr_code" name="qr_code" accept="image/*"
                             data-chunk-module="campaign_qr" data-chunk-path-name="qr_code_uploaded_path"
                             style="position:absolute;left:-9999px">
+                        @if (old('qr_code_uploaded_path'))
+                            <input type="hidden" name="qr_code_uploaded_path" value="{{ old('qr_code_uploaded_path') }}"
+                                data-chunk-generated data-source-input="qr_code">
+                        @endif
                         <div class="tk-drop" id="qrDrop">
                             <button type="button" class="tk-drop-btn" id="qrPick">
                                 <i class="ri-upload-2-line"></i> Choose QR Code
                             </button>
-                            <small>JPG/PNG up to 5MB. Clear, high-contrast QR recommended.</small>
+                            <small>JPG/PNG up to {{ $campaignUploadMaxMb }}MB. Clear, high-contrast QR recommended.</small>
                             <div class="tk-previews" id="qrPreview" style="display:none"></div>
                         </div>
                     </div>
@@ -207,11 +221,16 @@
                         <input type="file" id="featured_image" name="featured_image" accept="image/*"
                             data-chunk-module="campaign_featured" data-chunk-path-name="featured_image_uploaded_path"
                             style="position:absolute;left:-9999px">
+                        @if (old('featured_image_uploaded_path'))
+                            <input type="hidden" name="featured_image_uploaded_path"
+                                value="{{ old('featured_image_uploaded_path') }}" data-chunk-generated
+                                data-source-input="featured_image">
+                        @endif
                         <div class="tk-drop" id="coverDrop">
                             <button type="button" class="tk-drop-btn" id="coverPick"><i
                                     class="ri-upload-2-line"></i>
                                 Choose Cover</button>
-                            <small>JPG/PNG up to 5MB. Best size 1200×630.</small>
+                            <small>JPG/PNG up to {{ $campaignUploadMaxMb }}MB. Best size 1200×630.</small>
                             <div class="tk-previews" id="coverPreview" style="display:none"></div>
                         </div>
                     </div>
@@ -221,6 +240,10 @@
                         <input type="file" id="images" name="images[]" accept="image/*" multiple
                             data-chunk-module="campaign_image" data-chunk-path-name="images_uploaded_paths"
                             style="position:absolute;left:-9999px">
+                        @foreach ((array) old('images_uploaded_paths', []) as $uploadedImagePath)
+                            <input type="hidden" name="images_uploaded_paths[]" value="{{ $uploadedImagePath }}"
+                                data-chunk-generated data-source-input="images">
+                        @endforeach
                         <div class="tk-drop" id="galleryDrop">
                             <button type="button" class="tk-drop-btn" id="galleryPick"><i
                                     class="ri-image-add-line"></i>
@@ -243,6 +266,11 @@
 
     @include('partials.main-footer')
 
+    <script>
+        window.TKCampaignUploadConfig = {
+            maxImageSizeMb: @json($campaignUploadMaxMb)
+        };
+    </script>
 
     <script src="{{ asset('js/campaigncreate/form-ux-enhancements.js') }}"></script>
     <script src="{{ asset('js/chunk-upload.js') }}"></script>

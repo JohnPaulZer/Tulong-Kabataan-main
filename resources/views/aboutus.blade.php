@@ -15,6 +15,7 @@
 
     <!-- Navigation & Header -->
     @include('partials.main-header')
+    @include('partials.universalmodal')
 
     <main class="about-main">
         <!-- Header -->

@@ -6,11 +6,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (!qrInput || !qrDrop) return;
 
+    const maxUploadSizeMb =
+        Number(window.TKCampaignUploadConfig?.maxImageSizeMb) || 25;
+    const maxUploadSizeBytes = maxUploadSizeMb * 1024 * 1024;
+
     // Track last QR validation message
     let lastQrValidationMessage = "";
 
     // Toast function
     function showToast(message, type = "success") {
+        if (type === "error" && typeof window.showNotificationModal === "function") {
+            window.showNotificationModal(message, "error", "QR upload error");
+            return;
+        }
+
         const toast = document.getElementById("toast");
         if (!toast) return;
 
@@ -131,6 +140,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const dt = new DataTransfer();
             dt.items.add(fileOut);
             qrInput.files = dt.files;
+            window.TKResetChunkInput?.(qrInput);
 
             // Show preview
             showQRPreview(blob, true);
@@ -193,9 +203,10 @@ document.addEventListener("DOMContentLoaded", function () {
             return false;
         }
 
-        if (file.size > 5 * 1024 * 1024) {
-            showToast("File size must be less than 5MB", "error");
-            lastQrValidationMessage = "File size must be less than 5MB";
+        if (file.size > maxUploadSizeBytes) {
+            const message = `File size must be ${maxUploadSizeMb}MB or smaller.`;
+            showToast(message, "error");
+            lastQrValidationMessage = message;
             // REMOVED: Don't reset border after timeout for invalid files
             return false;
         }
@@ -225,6 +236,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const dt = new DataTransfer();
                 dt.items.add(file);
                 qrInput.files = dt.files;
+                window.TKResetChunkInput?.(qrInput);
                 showQRPreview(file, false);
                 qrDrop.style.borderColor = "#f59e0b";
                 qrDrop.style.backgroundColor = "#fffbeb";
@@ -267,6 +279,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function initialize() {
         // File input change
         qrInput.addEventListener("change", async function (e) {
+            e.stopImmediatePropagation();
             const file = e.target.files[0];
             if (!file) return;
 
@@ -274,8 +287,10 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!success) {
                 this.value = "";
                 // REMOVED: The timeout that was resetting the border
+                return;
             }
-        });
+            qrInput.dispatchEvent(new CustomEvent("tk:files-selected", { bubbles: true }));
+        }, true);
 
         // Drag and drop
         ["dragenter", "dragover"].forEach((ev) => {
@@ -295,6 +310,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         qrDrop.addEventListener("drop", async (e) => {
+            e.stopImmediatePropagation();
+            qrDrop.classList.remove("is-drag");
             const files = Array.from(e.dataTransfer.files || []);
             if (files.length === 0) return;
 
@@ -303,8 +320,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (!success) {
                 qrInput.value = "";
+                return;
             }
-        });
+            qrInput.dispatchEvent(new CustomEvent("tk:files-selected", { bubbles: true }));
+        }, true);
     }
 
     // Add CSS for scanning state

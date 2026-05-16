@@ -107,8 +107,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 const en = new Date(endsAt.value);
                 if (en < s) {
                     e.preventDefault();
-                    alert(
-                        "End Date & Time must be the same or later than Start Date & Time."
+                    window.showNotificationModal?.(
+                        "End Date & Time must be the same or later than Start Date & Time.",
+                        "error",
+                        "Invalid schedule"
                     );
                     return false;
                 }

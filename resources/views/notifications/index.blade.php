@@ -11,6 +11,7 @@
 
 <body class="notifications-page">
     @include('partials.main-header')
+    @include('partials.universalmodal')
     @include('administrator.partials.loading-screen')
 
     <main class="notifications-page-main">

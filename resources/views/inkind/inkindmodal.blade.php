@@ -11,6 +11,7 @@
 
 <body class="inkind-modal-page">
     @include('partials.main-header')
+    @include('partials.universalmodal')
 
     <!-- Hero Banner -->
     <section class="hero-banner">

@@ -13,15 +13,26 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function validateImageUploads() {
         let isValid = true;
+        const missingFields = [];
+
+        function hasUpload(input, pathName) {
+            const hasSelectedFile = input?.files && input.files.length > 0;
+            const hasRetainedPath = Boolean(
+                document.querySelector(`input[type="hidden"][name="${pathName}"][value]`)
+            );
+
+            return hasSelectedFile || hasRetainedPath;
+        }
 
         // Check cover image
         const coverInput = document.getElementById("featured_image");
         const coverDrop = document.getElementById("coverDrop");
 
-        if (!coverInput.files || coverInput.files.length === 0) {
+        if (!hasUpload(coverInput, "featured_image_uploaded_path")) {
             coverDrop.style.borderColor = "#ef4444";
             coverDrop.style.backgroundColor = "#fef2f2";
             addErrorClass(coverDrop);
+            missingFields.push("Cover Image");
             isValid = false;
         } else {
             coverDrop.style.borderColor = "";
@@ -33,10 +44,11 @@ document.addEventListener("DOMContentLoaded", function () {
         const qrInput = document.getElementById("qr_code");
         const qrDrop = document.getElementById("qrDrop");
 
-        if (!qrInput.files || qrInput.files.length === 0) {
+        if (!hasUpload(qrInput, "qr_code_uploaded_path")) {
             qrDrop.style.borderColor = "#ef4444";
             qrDrop.style.backgroundColor = "#fef2f2";
             addErrorClass(qrDrop);
+            missingFields.push("GCash QR Code");
             isValid = false;
         } else {
             qrDrop.style.borderColor = "";
@@ -44,7 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
             removeErrorClass(qrDrop);
         }
 
-        return isValid;
+        return { isValid, missingFields };
     }
 
     // Add form submit event listener
@@ -52,8 +64,14 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!form) return;
 
     form.addEventListener("submit", function (e) {
-        if (!validateImageUploads()) {
+        const result = validateImageUploads();
+        if (!result.isValid) {
             e.preventDefault();
+            window.showNotificationModal?.(
+                `Please upload the required file${result.missingFields.length > 1 ? "s" : ""}: ${result.missingFields.join(", ")}.`,
+                "error",
+                "Missing upload"
+            );
 
             // Get all missing upload fields using class selector
             const errorFields = document.querySelectorAll(

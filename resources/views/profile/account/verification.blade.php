@@ -12,6 +12,7 @@
 
 <body class="verification-page overflow-x-hidden font-body text-slate-700">
     @include('partials.main-header')
+    @include('partials.universalmodal')
 
     @if ($errors->any())
         <div class="verification-container verification-page-wrap verification-pt-3" id="verification-errors">

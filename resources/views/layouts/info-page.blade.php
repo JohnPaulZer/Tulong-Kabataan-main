@@ -13,6 +13,7 @@
     style="--info-hero-bg: url('{{ page_media_url(request()->routeIs('contact.us') ? 'contact_hero_image' : 'default_placeholder_image', asset('img/bg2.jpg')) }}');">
     @include('administrator.partials.loading-screen')
     @include('partials.main-header')
+    @include('partials.universalmodal')
 
     <main id="main-content" class="info-page-main">
         <section class="info-hero" aria-labelledby="info-page-title">
