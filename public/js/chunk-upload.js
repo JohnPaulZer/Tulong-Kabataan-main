@@ -43,45 +43,50 @@
         async upload(file, module, callbacks = {}) {
             this.validate(file);
             this.controller = new AbortController();
-            callbacks.onStatus?.("preparing", statusText.preparing);
+            try {
+                callbacks.onStatus?.("preparing", statusText.preparing);
 
-            const totalChunks = Math.ceil(file.size / this.options.chunkSize);
-            const init = await this.postJson(this.options.endpoints.init, {
-                fileName: file.name,
-                fileSize: file.size,
-                fileType: file.type,
-                totalChunks,
-                chunkSize: this.options.chunkSize,
-                module,
-            });
+                const totalChunks = Math.ceil(file.size / this.options.chunkSize);
+                const init = await this.postJson(this.options.endpoints.init, {
+                    fileName: file.name,
+                    fileSize: file.size,
+                    fileType: file.type,
+                    totalChunks,
+                    chunkSize: this.options.chunkSize,
+                    module,
+                });
 
-            this.uploadId = init.uploadId;
-            callbacks.onStatus?.("uploading", statusText.uploading);
+                this.uploadId = init.uploadId;
+                callbacks.onStatus?.("uploading", statusText.uploading);
 
-            let uploadedChunks = 0;
-            const queue = Array.from({ length: totalChunks }, (_, index) => index);
-            const workerCount = Math.min(this.options.maxParallel, totalChunks);
-            const workers = Array.from({ length: workerCount }, async () => {
-                while (queue.length > 0) {
-                    const index = queue.shift();
-                    await this.uploadChunk(file, module, index, totalChunks);
-                    uploadedChunks += 1;
-                    callbacks.onProgress?.(Math.round((uploadedChunks / totalChunks) * 100), uploadedChunks, totalChunks);
-                }
-            });
+                let uploadedChunks = 0;
+                const queue = Array.from({ length: totalChunks }, (_, index) => index);
+                const workerCount = Math.min(this.options.maxParallel, totalChunks);
+                const workers = Array.from({ length: workerCount }, async () => {
+                    while (queue.length > 0) {
+                        const index = queue.shift();
+                        await this.uploadChunk(file, module, index, totalChunks);
+                        uploadedChunks += 1;
+                        callbacks.onProgress?.(Math.round((uploadedChunks / totalChunks) * 100), uploadedChunks, totalChunks);
+                    }
+                });
 
-            await Promise.all(workers);
-            callbacks.onStatus?.("processing", statusText.processing);
+                await Promise.all(workers);
+                callbacks.onStatus?.("processing", statusText.processing);
 
-            const completed = await this.postJson(this.options.endpoints.complete, {
-                uploadId: this.uploadId,
-                module,
-            });
+                const completed = await this.postJson(this.options.endpoints.complete, {
+                    uploadId: this.uploadId,
+                    module,
+                });
 
-            callbacks.onProgress?.(100, totalChunks, totalChunks);
-            callbacks.onStatus?.("complete", statusText.complete);
+                callbacks.onProgress?.(100, totalChunks, totalChunks);
+                callbacks.onStatus?.("complete", statusText.complete);
 
-            return completed;
+                return completed;
+            } catch (error) {
+                this.cancel();
+                throw error;
+            }
         }
 
         async uploadChunk(file, module, index, totalChunks) {
@@ -218,12 +223,24 @@
         form.querySelectorAll(`[data-chunk-generated][data-source-input="${input.id}"]`).forEach((el) => el.remove());
     }
 
+    function hiddenNameFor(input) {
+        return input.dataset.chunkPathName || `${input.name.replace(/\[\]$/, "")}_uploaded_path`;
+    }
+
+    function hasGeneratedInputFor(input) {
+        const form = input.form;
+        if (!form) return false;
+
+        return Boolean(form.querySelector(`[data-chunk-generated][data-source-input="${input.id}"][value]`));
+    }
+
     function resetChunkState(input) {
         removeGeneratedInputsFor(input);
         input.disabled = false;
         input.dataset.chunkStatus = "";
         input.dataset.chunkError = "";
         input.dataset.chunkPromiseId = "";
+        input._tkChunkUploadPromise = null;
 
         const progress = input.closest(".tk-field, form")?.querySelector(`[data-chunk-progress-for="${input.id}"]`);
         if (progress) progress.style.display = "none";
@@ -250,12 +267,20 @@
             return;
         }
 
+        if (input.dataset.chunkStatus === "uploading" && input._tkChunkUploadPromise) {
+            return input._tkChunkUploadPromise;
+        }
+
+        if (input.dataset.chunkStatus === "complete" && hasGeneratedInputFor(input)) {
+            return;
+        }
+
         removeGeneratedInputsFor(input);
         input.disabled = false;
 
         const files = Array.from(input.files || []);
         const moduleName = input.dataset.chunkModule;
-        const hiddenName = input.dataset.chunkPathName || `${input.name.replace(/\[\]$/, "")}_uploaded_path`;
+        const hiddenName = hiddenNameFor(input);
         const multiple = input.multiple || input.name.endsWith("[]");
         const progress = ensureProgress(input);
         const submitters = Array.from(form.querySelectorAll('button[type="submit"], input[type="submit"]'));
@@ -277,52 +302,58 @@
             submitters.forEach((button) => button.disabled = false);
         }, { once: true });
 
-        input.dataset.chunkStatus = "uploading";
-        input.dataset.chunkError = "";
-        input.dataset.chunkPromiseId = `${Date.now()}-${Math.random()}`;
-        const promiseId = input.dataset.chunkPromiseId;
+        const uploadPromise = (async () => {
+            input.dataset.chunkStatus = "uploading";
+            input.dataset.chunkError = "";
+            input.dataset.chunkPromiseId = `${Date.now()}-${Math.random()}`;
+            const promiseId = input.dataset.chunkPromiseId;
 
-        try {
-            for (let index = 0; index < files.length; index += 1) {
-                activeUploader = new ChunkUploader(window.TKChunkUploadConfig || {});
-                const file = files[index];
-                const result = await activeUploader.upload(file, moduleName, {
-                    onStatus: (_, label) => {
-                        const filePart = files.length > 1 ? ` (${index + 1}/${files.length})` : "";
-                        setProgress(progress, `${label}${filePart}`, index === 0 ? 0 : Math.round((index / files.length) * 100));
-                    },
-                    onProgress: (percent) => {
-                        const overall = files.length > 1
-                            ? Math.round(((index + percent / 100) / files.length) * 100)
-                            : percent;
-                        const filePart = files.length > 1 ? ` (${index + 1}/${files.length})` : "";
-                        setProgress(progress, `Uploading chunks${filePart}`, overall);
-                    },
-                });
+            try {
+                for (let index = 0; index < files.length; index += 1) {
+                    activeUploader = new ChunkUploader(window.TKChunkUploadConfig || {});
+                    const file = files[index];
+                    const result = await activeUploader.upload(file, moduleName, {
+                        onStatus: (_, label) => {
+                            const filePart = files.length > 1 ? ` (${index + 1}/${files.length})` : "";
+                            setProgress(progress, `${label}${filePart}`, index === 0 ? 0 : Math.round((index / files.length) * 100));
+                        },
+                        onProgress: (percent) => {
+                            const overall = files.length > 1
+                                ? Math.round(((index + percent / 100) / files.length) * 100)
+                                : percent;
+                            const filePart = files.length > 1 ? ` (${index + 1}/${files.length})` : "";
+                            setProgress(progress, `Uploading chunks${filePart}`, overall);
+                        },
+                    });
 
-                appendUploadedPath(form, input, multiple ? `${hiddenName}[]` : hiddenName, result.path);
+                    appendUploadedPath(form, input, multiple ? `${hiddenName}[]` : hiddenName, result.path);
+                }
+
+                input.dataset.chunkStatus = "complete";
+                input.disabled = true;
+                setProgress(progress, statusText.complete, 100);
+            } catch (error) {
+                if (input.dataset.chunkPromiseId !== promiseId) return;
+                input.dataset.chunkStatus = "failed";
+                input.dataset.chunkError = error.message || statusText.failed;
+                input.disabled = false;
+                removeGeneratedInputsFor(input);
+                setProgress(progress, input.dataset.chunkError, 0);
+                showUploadModal(input.dataset.chunkError, "error");
+                throw error;
+            } finally {
+                if (input.dataset.chunkPromiseId === promiseId) {
+                    input._tkChunkUploadPromise = null;
+                    submitters.forEach((button) => {
+                        button.disabled = false;
+                        if (button.value && originalLabels.has(button)) button.value = originalLabels.get(button);
+                    });
+                }
             }
+        })();
 
-            input.dataset.chunkStatus = "complete";
-            input.disabled = true;
-            setProgress(progress, statusText.complete, 100);
-        } catch (error) {
-            if (input.dataset.chunkPromiseId !== promiseId) return;
-            input.dataset.chunkStatus = "failed";
-            input.dataset.chunkError = error.message || statusText.failed;
-            input.disabled = false;
-            removeGeneratedInputsFor(input);
-            setProgress(progress, input.dataset.chunkError, 0);
-            showUploadModal(input.dataset.chunkError, "error");
-            throw error;
-        } finally {
-            if (input.dataset.chunkPromiseId === promiseId) {
-                submitters.forEach((button) => {
-                    button.disabled = false;
-                    if (button.value && originalLabels.has(button)) button.value = originalLabels.get(button);
-                });
-            }
-        }
+        input._tkChunkUploadPromise = uploadPromise;
+        return uploadPromise;
     }
 
     async function bindChunkedForm(form) {
@@ -346,7 +377,7 @@
 
             if (!inputs.length) return;
 
-            const incomplete = inputs.filter((input) => input.dataset.chunkStatus !== "complete");
+            const incomplete = inputs.filter((input) => input.dataset.chunkStatus !== "complete" || !hasGeneratedInputFor(input));
             if (!incomplete.length) return;
 
             event.preventDefault();

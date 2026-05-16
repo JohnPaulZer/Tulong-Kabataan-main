@@ -26,6 +26,10 @@ return [
             'max_attempts' => (int) env('RATE_LIMIT_UPLOAD_MAX', 12),
             'decay_minutes' => (int) env('RATE_LIMIT_UPLOAD_DECAY', 1),
         ],
+        'chunk_upload' => [
+            'max_attempts' => (int) env('RATE_LIMIT_CHUNK_UPLOAD_MAX', 240),
+            'decay_minutes' => (int) env('RATE_LIMIT_CHUNK_UPLOAD_DECAY', 1),
+        ],
         'chatbot' => [
             'max_attempts' => (int) env('RATE_LIMIT_CHATBOT_MAX', 12),
             'decay_minutes' => (int) env('RATE_LIMIT_CHATBOT_DECAY', 1),

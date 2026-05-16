@@ -38,17 +38,17 @@ return [
         'campaign_featured' => [
             'folder' => 'campaign_featured',
             'mimes' => ['image/jpeg', 'image/png', 'image/webp'],
-            'max_kb' => 25600,
+            'max_kb' => (int) env('CAMPAIGN_IMAGE_MAX_SIZE_KB', 15360),
         ],
         'campaign_qr' => [
             'folder' => 'campaign_qr',
             'mimes' => ['image/jpeg', 'image/png', 'image/webp'],
-            'max_kb' => 25600,
+            'max_kb' => (int) env('CAMPAIGN_IMAGE_MAX_SIZE_KB', 15360),
         ],
         'campaign_image' => [
             'folder' => 'campaign_images',
             'mimes' => ['image/jpeg', 'image/png', 'image/webp'],
-            'max_kb' => 25600,
+            'max_kb' => (int) env('CAMPAIGN_IMAGE_MAX_SIZE_KB', 15360),
         ],
         'campaign_update' => [
             'folder' => 'campaign_updates',

@@ -12,7 +12,9 @@
 
 <body class="campaign-create-page">
     @php
-        $campaignUploadMaxMb = max(1, (int) config('chunk_upload.max_file_size_mb', 25));
+        $campaignUploadMaxKb = max(1, (int) config('r2.validation.campaign_image_max_size_kb', 15360));
+        $campaignUploadMaxMb = max(1, (int) ceil($campaignUploadMaxKb / 1024));
+        $campaignCreateAssetVersion = fn (string $path) => file_exists(public_path($path)) ? filemtime(public_path($path)) : time();
         $selectedScheduleType = old('schedule_type', 'one_time');
         $selectedRecurringDays = old('recurring_days', []);
     @endphp
@@ -201,8 +203,26 @@
                             <button type="button" class="tk-drop-btn" id="qrPick">
                                 <i class="ri-upload-2-line"></i> Choose QR Code
                             </button>
-                            <small>JPG/PNG up to {{ $campaignUploadMaxMb }}MB. Clear, high-contrast QR recommended.</small>
-                            <div class="tk-previews" id="qrPreview" style="display:none"></div>
+                            <small>JPG/PNG/WebP up to {{ $campaignUploadMaxMb }}MB. Clear, high-contrast QR recommended.</small>
+                            <div class="tk-previews" id="qrPreview" style="{{ old('qr_code_uploaded_path') ? 'display:grid' : 'display:none' }}">
+                                @if (old('qr_code_uploaded_path'))
+                                    <div class="tk-thumb" data-restored-preview>
+                                        <div class="tk-thumb-content">
+                                            <img src="{{ file_url(old('qr_code_uploaded_path')) }}" alt="Uploaded QR code">
+                                            <div class="tk-thumb-overlay">
+                                                <div class="tk-file-info">
+                                                    <i class="ri-qr-code-line"></i>
+                                                    <span class="tk-file-name">Uploaded QR Code</span>
+                                                    <span class="tk-file-size">Ready</span>
+                                                </div>
+                                            </div>
+                                            <button type="button" class="tk-del" aria-label="Remove QR Code">
+                                                <i class="ri-close-line"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -230,8 +250,26 @@
                             <button type="button" class="tk-drop-btn" id="coverPick"><i
                                     class="ri-upload-2-line"></i>
                                 Choose Cover</button>
-                            <small>JPG/PNG up to {{ $campaignUploadMaxMb }}MB. Best size 1200×630.</small>
-                            <div class="tk-previews" id="coverPreview" style="display:none"></div>
+                            <small>JPG/PNG/WebP up to {{ $campaignUploadMaxMb }}MB. Best size 1200×630.</small>
+                            <div class="tk-previews" id="coverPreview" style="{{ old('featured_image_uploaded_path') ? 'display:grid' : 'display:none' }}">
+                                @if (old('featured_image_uploaded_path'))
+                                    <div class="tk-thumb" data-restored-preview>
+                                        <div class="tk-thumb-content">
+                                            <img src="{{ file_url(old('featured_image_uploaded_path')) }}" alt="Uploaded cover image">
+                                            <div class="tk-thumb-overlay">
+                                                <div class="tk-file-info">
+                                                    <i class="ri-image-line"></i>
+                                                    <span class="tk-file-name">Uploaded Cover</span>
+                                                    <span class="tk-file-size">Ready</span>
+                                                </div>
+                                            </div>
+                                            <button type="button" class="tk-del" aria-label="Remove Cover">
+                                                <i class="ri-close-line"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
                         </div>
                     </div>
 
@@ -248,8 +286,26 @@
                             <button type="button" class="tk-drop-btn" id="galleryPick"><i
                                     class="ri-image-add-line"></i>
                                 Add Images</button>
-                            <small>Up to 10 images. You can drag &amp; drop here.</small>
-                            <div class="tk-previews" id="galleryPreview"></div>
+                            <small>Up to 10 images, {{ $campaignUploadMaxMb }}MB each. You can drag &amp; drop here.</small>
+                            <div class="tk-previews" id="galleryPreview" style="{{ count((array) old('images_uploaded_paths', [])) ? 'display:grid' : '' }}">
+                                @foreach ((array) old('images_uploaded_paths', []) as $uploadedImagePath)
+                                    <div class="tk-thumb" data-restored-preview>
+                                        <div class="tk-thumb-content">
+                                            <img src="{{ file_url($uploadedImagePath) }}" alt="Uploaded campaign image">
+                                            <div class="tk-thumb-overlay">
+                                                <div class="tk-file-info">
+                                                    <i class="ri-image-line"></i>
+                                                    <span class="tk-file-name">Uploaded Image</span>
+                                                    <span class="tk-file-size">Ready</span>
+                                                </div>
+                                            </div>
+                                            <button type="button" class="tk-del" aria-label="Remove Image">
+                                                <i class="ri-close-line"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -270,13 +326,19 @@
         window.TKCampaignUploadConfig = {
             maxImageSizeMb: @json($campaignUploadMaxMb)
         };
+        window.TKChunkUploadConfig = {
+            ...(window.TKChunkUploadConfig || {}),
+            maxSizeMb: @json($campaignUploadMaxMb),
+            allowedExtensions: ["jpg", "jpeg", "png", "webp"],
+            allowedMimeTypes: ["image/jpeg", "image/png", "image/webp"]
+        };
     </script>
 
-    <script src="{{ asset('js/campaigncreate/form-ux-enhancements.js') }}"></script>
-    <script src="{{ asset('js/chunk-upload.js') }}"></script>
-    <script src="{{ asset('js/campaigncreate/dropzone-manager.js') }}"></script>
-    <script src="{{ asset('js/campaigncreate/image-upload-validation.js') }}"></script>
-    <script src="{{ asset('js/campaigncreate/qr-code-cropper.js') }}"></script>
+    <script src="{{ asset('js/campaigncreate/form-ux-enhancements.js') }}?v={{ $campaignCreateAssetVersion('js/campaigncreate/form-ux-enhancements.js') }}"></script>
+    <script src="{{ asset('js/chunk-upload.js') }}?v={{ $campaignCreateAssetVersion('js/chunk-upload.js') }}"></script>
+    <script src="{{ asset('js/campaigncreate/dropzone-manager.js') }}?v={{ $campaignCreateAssetVersion('js/campaigncreate/dropzone-manager.js') }}"></script>
+    <script src="{{ asset('js/campaigncreate/image-upload-validation.js') }}?v={{ $campaignCreateAssetVersion('js/campaigncreate/image-upload-validation.js') }}"></script>
+    <script src="{{ asset('js/campaigncreate/qr-code-cropper.js') }}?v={{ $campaignCreateAssetVersion('js/campaigncreate/qr-code-cropper.js') }}"></script>
 
 </body>
 

@@ -18,8 +18,7 @@ class ChunkUploadService
         private readonly FileMergeService $merger,
         private readonly ImageOptimizationService $imageOptimizer,
         private readonly R2StorageService $storage,
-    ) {
-    }
+    ) {}
 
     public function init(array $data, string $userId): UploadSession
     {
@@ -164,11 +163,11 @@ class ChunkUploadService
     {
         $cutoff = now()->subMinutes(max(1, (int) config('chunk_upload.cleanup_minutes', 60)));
         $sessions = UploadSession::whereIn('status', [
-                UploadSession::STATUS_INITIALIZED,
-                UploadSession::STATUS_UPLOADING,
-                UploadSession::STATUS_PROCESSING,
-                UploadSession::STATUS_FAILED,
-            ])
+            UploadSession::STATUS_INITIALIZED,
+            UploadSession::STATUS_UPLOADING,
+            UploadSession::STATUS_PROCESSING,
+            UploadSession::STATUS_FAILED,
+        ])
             ->where('updated_at', '<', $cutoff)
             ->get();
 
@@ -195,6 +194,18 @@ class ChunkUploadService
         return $session ? (string) $session->final_file_url : null;
     }
 
+    public function latestCompletedPathForUser(string $module, string $userId): ?string
+    {
+        $session = UploadSession::where('user_id', $userId)
+            ->where('module', $module)
+            ->where('status', UploadSession::STATUS_COMPLETED)
+            ->whereNotNull('final_file_url')
+            ->latest('updated_at')
+            ->first();
+
+        return $session ? (string) $session->final_file_url : null;
+    }
+
     private function ensureMutable(UploadSession $session): void
     {
         if (! in_array($session->status, [
@@ -208,6 +219,8 @@ class ChunkUploadService
 
     private function guardActiveUploadLimit(string $userId): void
     {
+        $this->cleanupExpired();
+
         $maxActive = max(1, (int) config('chunk_upload.max_active_uploads_per_user', 5));
         $active = UploadSession::where('user_id', $userId)
             ->whereIn('status', [

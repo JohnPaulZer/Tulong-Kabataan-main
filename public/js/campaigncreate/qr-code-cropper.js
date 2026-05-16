@@ -240,8 +240,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 showQRPreview(file, false);
                 qrDrop.style.borderColor = "#f59e0b";
                 qrDrop.style.backgroundColor = "#fffbeb";
-                lastQrValidationMessage =
-                    "No QR code detected. Using original image.";
+                lastQrValidationMessage = "";
                 // REMOVED: Don't reset border after timeout for invalid QR
             }
             return true;

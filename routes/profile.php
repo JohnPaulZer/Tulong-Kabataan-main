@@ -1,11 +1,11 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\DiditVerificationController;
 use App\Http\Controllers\ChunkUploadController;
+use App\Http\Controllers\DiditVerificationController;
+use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'throttle:upload'])->group(function () {
+Route::middleware(['auth', 'throttle:chunk_upload'])->group(function () {
     Route::post('/api/uploads/chunk/init', [ChunkUploadController::class, 'init'])
         ->name('uploads.chunk.init');
     Route::post('/api/uploads/chunk', [ChunkUploadController::class, 'store'])
@@ -19,7 +19,7 @@ Route::middleware(['auth', 'throttle:upload'])->group(function () {
 Route::middleware(['auth', 'throttle:api'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'profileview'])->name('profile');
 
-    //VERIFCATION ACCOUNT ROUTE
+    // VERIFCATION ACCOUNT ROUTE
     Route::get('/verifypage', [ProfileController::class, 'verifypage'])->name('verify.page'); // GET page
     Route::match(['get', 'post'], '/verification/didit/start', [DiditVerificationController::class, 'start'])
         ->name('verification.didit.start');
@@ -35,17 +35,17 @@ Route::middleware(['auth', 'throttle:api'])->group(function () {
 
     Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
-    //===============================================PROFILE DASHBOARD CAMPAIGN PART========================================
+    // ===============================================PROFILE DASHBOARD CAMPAIGN PART========================================
     Route::get('/profile/dashboard', [ProfileController::class, 'profiledash'])->name('profile.dash');
-    //FOR AJAX LIVE
+    // FOR AJAX LIVE
     Route::get('/profile/dash/data', [ProfileController::class, 'profileDashData'])->name('profile.dash.data');
-    //DELETE CAMPAIGN
+    // DELETE CAMPAIGN
     Route::delete('/campaigns/{campaign}', [ProfileController::class, 'destroy'])
         ->name('campaigns.destroy');
-    //ENDED CAMPAIGN
+    // ENDED CAMPAIGN
     Route::patch('/campaigns/{id}/end', [ProfileController::class, 'end'])->name('campaigns.end');
 
-//ANALYTICS AND STATISTIC CHART CAMPAIGN
+    // ANALYTICS AND STATISTIC CHART CAMPAIGN
     Route::get('/campaigns/analytics', [ProfileController::class, 'analytics'])
         ->name('campaigns.analytics');
     Route::get('/campaigns/donations-over-time', [ProfileController::class, 'donationsOverTime'])
@@ -55,17 +55,17 @@ Route::middleware(['auth', 'throttle:api'])->group(function () {
     Route::get('/donations/my-analytics', [ProfileController::class, 'myDonationsAnalytics'])
         ->name('donations.myAnalytics');
 
-// VIEW ALL DONATION MODAL
+    // VIEW ALL DONATION MODAL
     Route::get('/donations/all', [ProfileController::class, 'allMyDonations'])
         ->name('donations.all');
-    //MINI FEED RECENT DONATION
+    // MINI FEED RECENT DONATION
     Route::get('/campaigns/recent-donations', [ProfileController::class, 'recentDonations'])
         ->name('campaigns.recentDonations');
 
     Route::get('/donations/allRecent', [ProfileController::class, 'allRecent'])
         ->name('donations.allRecent');
 
-//DONATION MANUAL REQEUSEST
+    // DONATION MANUAL REQEUSEST
     Route::post('/donations/{donation}/report-fake', [ProfileController::class, 'reportFake'])
         ->name('donations.reportFake');
 
@@ -73,21 +73,19 @@ Route::middleware(['auth', 'throttle:api'])->group(function () {
         ->middleware(['throttle:payment', 'throttle:upload'])
         ->name('manual.requests.store');
 
-//ADDED ROUTE
+    // ADDED ROUTE
     Route::get('/campaigns/{campaign}/export-donations', [ProfileController::class, 'exportDonations'])->name('campaigns.export.donations');
 
-//EXPORT PDF ROUTE
+    // EXPORT PDF ROUTE
     Route::get('/campaigns/{campaign}/export-donations-pdf', [ProfileController::class, 'exportDonationsPDF'])->name('campaigns.export-pdf');
 
-//ADDED ACTION UPDATE
+    // ADDED ACTION UPDATE
     Route::post('/campaign-updates', [ProfileController::class, 'storeUpdate'])
         ->middleware('throttle:upload')
         ->name('campaign.updates.store');
-//=========================================================================================================================
+    // =========================================================================================================================
 
-
-
-//===============================================PROFILE DASHBOARD EVENT PART========================================
+    // ===============================================PROFILE DASHBOARD EVENT PART========================================
 
     Route::get('/profile/event', [ProfileController::class, 'profileevent'])->name('profile.event');
 
@@ -101,10 +99,9 @@ Route::middleware(['auth', 'throttle:api'])->group(function () {
 
         ->name('profile.refreshEvents');
     Route::get('/profile/refresh-stats', [ProfileController::class, 'refreshStats'])->name('profile.refreshStats');
-//====================================================================================================================
+    // ====================================================================================================================
 
-
-//===============================================PROFILE DASHBOARD In-Kind PART========================================
+    // ===============================================PROFILE DASHBOARD In-Kind PART========================================
     Route::get('/profile/inkind', [ProfileController::class, 'profileinkind'])->name('profile.inkind');
     Route::patch('/inkind/{donation}/cancel', [ProfileController::class, 'cancelInKind'])
         ->name('inkind.cancel');
@@ -114,8 +111,7 @@ Route::middleware(['auth', 'throttle:api'])->group(function () {
     Route::get('/inkind/list', [ProfileController::class, 'list'])
         ->name('inkind.list');
 });
-//====================================================================================================================
-
+// ====================================================================================================================
 
 Route::get('/about-us', [ProfileController::class, 'aboutus'])->name('about.us');
 

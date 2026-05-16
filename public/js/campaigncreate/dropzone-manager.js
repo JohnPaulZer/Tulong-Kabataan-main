@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const pickBtn = zoneEl.querySelector(".tk-drop-btn");
         const openPicker = () => inputEl.click();
         pickBtn.addEventListener("click", openPicker);
+        bindRestoredPreviewRemovers();
 
         // Drag and drop events
         ["dragenter", "dragover"].forEach((ev) =>
@@ -97,6 +98,27 @@ document.addEventListener("DOMContentLoaded", function () {
                     renderPreviews(arr);
                 });
                 previewEl.appendChild(card);
+            });
+        }
+
+        function bindRestoredPreviewRemovers() {
+            previewEl.querySelectorAll("[data-restored-preview] .tk-del").forEach((button) => {
+                button.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    window.TKResetChunkInput?.(inputEl);
+                    inputEl.value = "";
+                    if (inputEl.dataset.chunkPathName) {
+                        const selectorName = inputEl.multiple || inputEl.name.endsWith("[]")
+                            ? `${inputEl.dataset.chunkPathName}[]`
+                            : inputEl.dataset.chunkPathName;
+                        inputEl.form?.querySelectorAll(`input[type="hidden"][name="${selectorName}"][data-source-input="${inputEl.id}"]`)
+                            .forEach((el) => el.remove());
+                    }
+                    button.closest("[data-restored-preview]")?.remove();
+                    if (!previewEl.querySelector(".tk-thumb")) {
+                        previewEl.style.display = "none";
+                    }
+                });
             });
         }
 
