@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
 use App\Models\EventRegistration;
 use App\Models\SiteSetting;
+use App\Models\VerificationRequest;
 
 class LoginController
 {
@@ -401,7 +402,14 @@ class LoginController
         }
 
         $user = Auth::user();
+        $latestVerification = VerificationRequest::where('user_id', (string) $user->user_id)
+            ->latest('created_at')
+            ->first();
         $status = strtolower(optional($user->identityStatus)->status ?? '');
+
+        if ($latestVerification?->isIncompleteDiditSession() === true) {
+            $status = 'didit_started';
+        }
 
         return response()->json([
             'verified' => $user->hasVerifiedEmail(),

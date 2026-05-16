@@ -27,12 +27,26 @@
 
             @if (auth()->check())
                 @php
-                    $status = strtolower(optional(auth()->user()->identityStatus)->status ?? '');
+                    $latestVerification = $latestRequest
+                        ?? auth()->user()->verificationRequests()->latest('created_at')->first();
+                    $diditSessionIncomplete = $latestVerification
+                        && method_exists($latestVerification, 'isIncompleteDiditSession')
+                        && $latestVerification->isIncompleteDiditSession();
+                    $status = $diditSessionIncomplete
+                        ? 'didit_started'
+                        : strtolower(optional(auth()->user()->identityStatus)->status ?? '');
                 @endphp
 
                 <div id="verification-banner-container" data-status="{{ $status }}">
                     @if ($status === 'verified')
                         {{-- Nothing to show when already verified --}}
+                    @elseif($status === 'didit_started')
+                        <div class="verify-banner pending">
+                            <strong>Verification Not Completed:</strong>
+                            <span>You started Didit verification, but no document upload was completed yet.</span>
+                            <a href="{{ route('verification.didit.start') }}" class="verify-btn">Continue</a>
+                            <a href="{{ route('verification.didit.start', ['restart_didit' => 1]) }}" class="verify-btn">Start Over</a>
+                        </div>
                     @elseif($status === 'pending')
                         <div class="verify-banner pending">
                             <strong>Verification in Progress:</strong>
@@ -339,6 +353,12 @@
                         $memberDate = $memberSince ? $memberSince->format('F Y') : null;
 
                         $isFundraiser = $user->verificationRequests()->exists();
+                        $pendingVerification = $latestVerification && $latestVerification->status === 'pending'
+                            ? $latestVerification
+                            : $user->verificationRequests()->where('status', 'pending')->latest('created_at')->first();
+                        $pendingDiditIncomplete = $pendingVerification
+                            && method_exists($pendingVerification, 'isIncompleteDiditSession')
+                            && $pendingVerification->isIncompleteDiditSession();
                     @endphp
 
                     {{-- Verification Status --}}
@@ -354,12 +374,17 @@
                         @endif
                     @else
                         <p><i class="ri-user-fill"></i>
-                            @if ($user->verificationRequests()->where('status', 'pending')->exists())
+                            @if ($pendingDiditIncomplete)
+                                Didit verification not completed
+                            @elseif ($pendingVerification)
                                 Verification request pending
                             @else
                                 Account not yet verified
                             @endif
                         </p>
+                        @if ($pendingDiditIncomplete)
+                            <a href="{{ route('verify.page') }}" class="prof-btn prof-btn-outline">Open Verification</a>
+                        @endif
                     @endif
 
                     {{-- Member Since --}}
@@ -370,7 +395,9 @@
                     {{-- Status Note --}}
                     @if ($isVerified)
                         <p class="prof-note">Trusted, transparent, and committed to making an impact.</p>
-                    @elseif($user->verificationRequests()->where('status', 'pending')->exists())
+                    @elseif($pendingDiditIncomplete)
+                        <p class="prof-note">Continue the hosted verification or start over from the verification page.</p>
+                    @elseif($pendingVerification)
                         <p class="prof-note">Verification under review. We'll notify you once completed.</p>
                     @else
                         <p class="prof-note">Complete verification to build trust with donors.</p>
@@ -445,6 +472,15 @@
                 if (status === 'verified') {
                     bannerContainer.innerHTML = '';
                     bannerContainer.style.display = 'none';
+                } else if (status === 'didit_started') {
+                    bannerContainer.innerHTML = `
+                <div class="verify-banner pending">
+                    <strong>Verification Not Completed:</strong>
+                    <span>You started Didit verification, but no document upload was completed yet.</span>
+                    <a href="{{ route('verification.didit.start') }}" class="verify-btn">Continue</a>
+                    <a href="{{ route('verification.didit.start', ['restart_didit' => 1]) }}" class="verify-btn">Start Over</a>
+                </div>
+            `;
                 } else if (status === 'pending') {
                     bannerContainer.innerHTML = `
                 <div class="verify-banner pending">

@@ -85,19 +85,24 @@
                         ->latest('created_at')
                         ->first();
                     $reuploadFields = $vr && $vr->status === 'reupload' ? $vr->reupload_fields ?? [] : [];
+                    $diditSessionIncomplete = $vr
+                        && method_exists($vr, 'isIncompleteDiditSession')
+                        && $vr->isIncompleteDiditSession();
 
                     // Friendly status data for the status banner / tips card.
                     $autoDecided = $vr
                         && method_exists($vr, 'wasAutoDecided')
                         && $vr->wasAutoDecided()
                         && in_array($vr->status, ['approved', 'rejected'], true);
-                    $statusFriendly = match ($vr?->status) {
-                        'approved' => 'Verified',
-                        'pending'  => 'Under Review',
-                        'reupload' => 'Action Needed',
-                        'rejected' => 'Not Approved',
-                        default    => null,
-                    };
+                    $statusFriendly = $diditSessionIncomplete
+                        ? 'Not Completed'
+                        : match ($vr?->status) {
+                            'approved' => 'Verified',
+                            'pending'  => 'Under Review',
+                            'reupload' => 'Action Needed',
+                            'rejected' => 'Not Approved',
+                            default    => null,
+                        };
                     $activeProvider = (string) \App\Models\SiteSetting::get(
                         'verification.provider',
                         config('id_verification.provider', 'didit')
@@ -160,7 +165,11 @@
                         @if ($vr->status === 'approved')
                             Your account is verified. You now have access to all platform features.
                         @elseif ($vr->status === 'pending' && ($vr->provider_used ?? null) === 'didit' && $activeProvider === 'didit')
-                            Continue the Didit verification flow to complete ID, liveness, and face-match checks.
+                            @if ($diditSessionIncomplete)
+                                You started Didit verification, but no completed document upload has been received yet. Continue the hosted flow or start over.
+                            @else
+                                Continue the Didit verification flow to complete ID, liveness, and face-match checks.
+                            @endif
                         @elseif ($vr->status === 'pending')
                             We received your documents and they are being reviewed. This usually takes a few minutes for
                             the automated check, with admin review if needed.
@@ -196,11 +205,11 @@
                                 <a href="{{ $diditSessionUrl }}" class="verification-btn verification-btn-primary verification-px-4">
                                     Continue Didit Verification
                                 </a>
-                                @if (app()->environment('local'))
+                                @if ($diditSessionIncomplete || app()->environment('local'))
                                     <a href="{{ route('verification.didit.start', ['restart_didit' => 1]) }}"
                                         class="verification-btn verification-btn-outline-secondary verification-px-4"
                                         style="margin-left:8px">
-                                        Start Fresh Test
+                                        {{ $diditSessionIncomplete ? 'Start Over' : 'Start Fresh Test' }}
                                     </a>
                                 @endif
                             </div>

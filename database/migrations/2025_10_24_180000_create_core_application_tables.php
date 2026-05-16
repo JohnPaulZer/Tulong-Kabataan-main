@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -36,7 +37,7 @@ return new class extends Migration
             $table->id('request_id');
             $table->foreignId('user_id')->constrained('user_account', 'user_id')->cascadeOnDelete();
             $table->string('id_type');
-            $table->string('id_number')->unique();
+            $table->string('id_number')->nullable();
             $table->string('id_number_hash')->nullable();
             $table->date('dob')->nullable();
             $table->string('sex', 10)->nullable();
@@ -56,6 +57,8 @@ return new class extends Migration
             $table->text('review_notes')->nullable();
             $table->timestamps();
         });
+
+        $this->createVerificationRequestIdentityIndexes();
 
         Schema::create('campaigns', function (Blueprint $table) {
             $table->increments('campaign_id');
@@ -291,5 +294,29 @@ return new class extends Migration
         Schema::dropIfExists('verification_requests');
         Schema::dropIfExists('identity_statuses');
         Schema::dropIfExists('user_account');
+    }
+
+    private function createVerificationRequestIdentityIndexes(): void
+    {
+        if (DB::connection()->getDriverName() === 'mongodb') {
+            $collection = DB::connection('mongodb')->getCollection('verification_requests');
+
+            $collection->createIndex(
+                ['id_number_hash' => 1],
+                [
+                    'name' => 'id_number_hash_1',
+                    'unique' => true,
+                    'partialFilterExpression' => [
+                        'id_number_hash' => ['$type' => 'string'],
+                    ],
+                ]
+            );
+
+            return;
+        }
+
+        Schema::table('verification_requests', function (Blueprint $table) {
+            $table->unique('id_number_hash');
+        });
     }
 };
