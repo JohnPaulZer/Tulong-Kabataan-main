@@ -9,8 +9,9 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 window.Pusher = Pusher;
 
 const reverbKey = import.meta.env.VITE_REVERB_APP_KEY;
+const reverbEnabled = String(import.meta.env.VITE_REVERB_ENABLED || '').toLowerCase() === 'true';
 
-if (reverbKey) {
+if (reverbKey && reverbEnabled) {
     const scheme = import.meta.env.VITE_REVERB_SCHEME || window.location.protocol.replace(':', '');
     const forceTLS = scheme === 'https';
     const rawHost = import.meta.env.VITE_REVERB_HOST || window.location.hostname;

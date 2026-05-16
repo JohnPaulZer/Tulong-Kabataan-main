@@ -94,7 +94,9 @@
                         @endphp
 
                         @if ($avatar)
-                            <img class="user-avatar" id="userAvatar" src="{{ $avatar }}" alt="Profile photo">
+                            <img class="user-avatar" id="userAvatar" src="{{ $avatar }}" alt="Profile photo"
+                                onerror="this.style.display='none'; this.closest('.prof-avatar')?.querySelector('.prof-initial-fallback')?.removeAttribute('hidden');">
+                            <i class="ri-user-line prof-initial prof-initial-fallback" hidden></i>
                         @else
                             <i class="ri-user-line prof-initial"></i>
                         @endif
