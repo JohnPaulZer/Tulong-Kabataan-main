@@ -223,6 +223,61 @@
 
                                 {{-- Expandable Details --}}
                                 <div class="details hidden" style="margin-top:12px">
+                                    @php
+                                        $diditCredentials = $req->diditCredentialSnapshot();
+                                        $hasDiditCredentials = ($req->provider_used ?? null) === 'didit'
+                                            && !empty($diditCredentials);
+                                        $credentialName = $req->extracted_full_name
+                                            ?: ($diditCredentials['full_name'] ?? null);
+                                        $credentialBirthdate = $req->extracted_birthdate
+                                            ?: ($diditCredentials['birthdate'] ?? null);
+                                        $credentialIdType = $req->id_type_detected
+                                            ?: ($diditCredentials['document_type_code'] ?? $diditCredentials['document_type'] ?? null);
+                                        $credentialIdTypeLabel = match ($credentialIdType) {
+                                            'philid' => 'PhilSys ID',
+                                            'drivers_license' => "Driver's License",
+                                            'unknown', null, '' => $diditCredentials['document_type'] ?? 'N/A',
+                                            default => ucfirst(str_replace('_', ' ', (string) $credentialIdType)),
+                                        };
+                                        $credentialIdNumber = $req->extracted_id_number
+                                            ?: ($diditCredentials['document_number'] ?? $diditCredentials['personal_number'] ?? null);
+                                        $credentialExpiry = $req->extracted_expiration_date
+                                            ?: ($diditCredentials['expiration_date'] ?? null);
+                                        $credentialSex = $req->extracted_sex
+                                            ?: ($diditCredentials['gender'] ?? null);
+                                        $credentialNationality = $req->extracted_nationality
+                                            ?: ($diditCredentials['nationality'] ?? null);
+                                        $credentialAddress = $req->extracted_address
+                                            ?: ($diditCredentials['formatted_address'] ?? $diditCredentials['address'] ?? null);
+                                        $formatCredentialDate = function ($value) {
+                                            if (empty($value)) {
+                                                return 'N/A';
+                                            }
+
+                                            try {
+                                                return \Carbon\Carbon::parse($value)->format('M d, Y');
+                                            } catch (\Throwable) {
+                                                return (string) $value;
+                                            }
+                                        };
+                                        $formatDiditScore = function ($value) {
+                                            if (!is_numeric($value)) {
+                                                return null;
+                                            }
+
+                                            $score = (float) $value;
+                                            if ($score <= 1) {
+                                                $score *= 100;
+                                            }
+
+                                            return number_format($score, 0) . '%';
+                                        };
+                                        $hasLocalDocuments = !empty($req->id_front_path)
+                                            || !empty($req->id_back_path)
+                                            || !empty($req->face_photo_path)
+                                            || !empty($req->selfie_path);
+                                    @endphp
+
                                     {{-- Typed Information --}}
                                     <div class="typed-info" style="margin:15px 0">
                                         <h5 style="margin:0 0 8px 0;font-size:14px">Typed Information</h5>
@@ -239,6 +294,93 @@
                                                 {{ $req->id_expiry ? $req->id_expiry->format('M d, Y') : 'N/A' }}</li>
                                         </ul>
                                     </div>
+
+                                    @if ($hasDiditCredentials)
+                                        <div class="didit-credentials"
+                                            style="margin:15px 0;border:1px solid #bbf7d0;border-radius:8px;background:#f0fdf4;padding:14px">
+                                            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+                                                <h5 style="margin:0;font-size:14px;display:flex;align-items:center;gap:6px;color:#14532d">
+                                                    <i class="ri-shield-check-line"></i>
+                                                    Approved Credentials from Didit
+                                                </h5>
+                                                <span style="background:#16a34a;color:#fff;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700">
+                                                    {{ ucfirst((string) ($diditCredentials['decision_status'] ?? $diditCredentials['id_status'] ?? $req->status)) }}
+                                                </span>
+                                            </div>
+                                            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;font-size:13px;color:#14532d">
+                                                <div>
+                                                    <div style="font-size:11px;text-transform:uppercase;color:#166534">Verified Name</div>
+                                                    <div style="font-weight:700;color:#052e16">{{ $credentialName ?: 'N/A' }}</div>
+                                                </div>
+                                                <div>
+                                                    <div style="font-size:11px;text-transform:uppercase;color:#166534">Date of Birth</div>
+                                                    <div style="font-weight:700;color:#052e16">{{ $formatCredentialDate($credentialBirthdate) }}</div>
+                                                </div>
+                                                <div>
+                                                    <div style="font-size:11px;text-transform:uppercase;color:#166534">Document Type</div>
+                                                    <div style="font-weight:700;color:#052e16">{{ $credentialIdTypeLabel }}</div>
+                                                </div>
+                                                <div>
+                                                    <div style="font-size:11px;text-transform:uppercase;color:#166534">Document Number</div>
+                                                    <div style="font-weight:700;color:#052e16;word-break:break-all">{{ $credentialIdNumber ?: 'N/A' }}</div>
+                                                </div>
+                                                <div>
+                                                    <div style="font-size:11px;text-transform:uppercase;color:#166534">Expiration</div>
+                                                    <div style="font-weight:700;color:#052e16">{{ $formatCredentialDate($credentialExpiry) }}</div>
+                                                </div>
+                                                <div>
+                                                    <div style="font-size:11px;text-transform:uppercase;color:#166534">Sex</div>
+                                                    <div style="font-weight:700;color:#052e16">{{ $credentialSex ?: 'N/A' }}</div>
+                                                </div>
+                                                @if (!empty($credentialNationality))
+                                                    <div>
+                                                        <div style="font-size:11px;text-transform:uppercase;color:#166534">Nationality</div>
+                                                        <div style="font-weight:700;color:#052e16">{{ $credentialNationality }}</div>
+                                                    </div>
+                                                @endif
+                                                @if (!empty($diditCredentials['issuing_state_name']) || !empty($diditCredentials['issuing_state']))
+                                                    <div>
+                                                        <div style="font-size:11px;text-transform:uppercase;color:#166534">Issuing State</div>
+                                                        <div style="font-weight:700;color:#052e16">
+                                                            {{ $diditCredentials['issuing_state_name'] ?? $diditCredentials['issuing_state'] }}
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                                @if (!empty($credentialAddress))
+                                                    <div style="grid-column:1/-1">
+                                                        <div style="font-size:11px;text-transform:uppercase;color:#166534">Address</div>
+                                                        <div style="font-weight:700;color:#052e16">{{ $credentialAddress }}</div>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;font-size:12px">
+                                                @if (!empty($diditCredentials['id_status']))
+                                                    <span style="background:#dcfce7;color:#166534;border:1px solid #86efac;border-radius:999px;padding:4px 9px">
+                                                        ID: {{ ucfirst((string) $diditCredentials['id_status']) }}
+                                                    </span>
+                                                @endif
+                                                @if (!empty($diditCredentials['liveness_status']))
+                                                    <span style="background:#dcfce7;color:#166534;border:1px solid #86efac;border-radius:999px;padding:4px 9px">
+                                                        Liveness: {{ ucfirst((string) $diditCredentials['liveness_status']) }}
+                                                        @if ($formatDiditScore($diditCredentials['liveness_score'] ?? null))
+                                                            ({{ $formatDiditScore($diditCredentials['liveness_score']) }})
+                                                        @endif
+                                                    </span>
+                                                @endif
+                                                @if (!empty($diditCredentials['face_match_status']))
+                                                    <span style="background:#dcfce7;color:#166534;border:1px solid #86efac;border-radius:999px;padding:4px 9px">
+                                                        Face Match: {{ ucfirst((string) $diditCredentials['face_match_status']) }}
+                                                        @if ($formatDiditScore($diditCredentials['face_match_score'] ?? null))
+                                                            ({{ $formatDiditScore($diditCredentials['face_match_score']) }})
+                                                        @endif
+                                                    </span>
+                                                @endif
+                                            </div>
+                                            <div style="margin-top:10px;font-size:12px;color:#166534">
+                                                Captured by Didit hosted verification. Stored here as the admin audit record for this approval.
+                                            </div>
+                                        </div>
+                                    @endif
 
                                     {{-- Documents Section (kept from your screenshot) --}}
                                     <div class="documents" style="margin:15px 0">
@@ -321,6 +463,22 @@
                                                     data-type="Selfie with ID">
                                                     View
                                                 </button>
+                                            </div>
+                                        @endif
+
+                                        @if (!$hasLocalDocuments && ($req->provider_used ?? null) === 'didit')
+                                            <div class="doc"
+                                                style="display:flex;align-items:center;gap:12px;padding:10px;border-radius:8px;background:#f9fafb;border:1px dashed #cbd5e1">
+                                                <div class="icon-box"
+                                                    style="background:#eefdf5;border-radius:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center">
+                                                    <i class="ri-shield-check-line" style="color:#16a34a"></i>
+                                                </div>
+                                                <div style="flex:1">
+                                                    <div style="font-weight:600">Documents captured by Didit</div>
+                                                    <div style="font-size:12px;color:#6b7280">
+                                                        This verification used Didit's hosted capture flow, so no local uploaded file is stored.
+                                                    </div>
+                                                </div>
                                             </div>
                                         @endif
                                     </div>

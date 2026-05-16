@@ -46,7 +46,8 @@ class DiditVerificationController
         }
 
         $userId = (string) $user->user_id;
-        $forceNewSession = $request->boolean('restart_didit') && app()->environment('local');
+        $forceNewSession = $request->boolean('restart_didit')
+            && (app()->environment('local') || $this->hasRestartableDiditSession($userId));
 
         $approved = VerificationRequest::where('user_id', $userId)
             ->where('status', VerificationRequest::STATUS_APPROVED)
@@ -162,11 +163,6 @@ class DiditVerificationController
                 : 'Didit verification session created. Awaiting completion.',
         ]);
 
-        IdentityStatus::updateOrCreate(
-            ['user_id' => $userId],
-            ['status' => 'Pending']
-        );
-
         $this->audit->record(
             $verificationRequest,
             'didit_session_created',
@@ -175,6 +171,17 @@ class DiditVerificationController
         );
 
         return redirect()->away($url);
+    }
+
+    private function hasRestartableDiditSession(string $userId): bool
+    {
+        $pending = VerificationRequest::where('user_id', $userId)
+            ->where('provider_used', 'didit')
+            ->where('status', VerificationRequest::STATUS_PENDING)
+            ->latest()
+            ->first();
+
+        return $pending?->isIncompleteDiditSession() === true;
     }
 
     public function callback(Request $request)
@@ -233,6 +240,16 @@ class DiditVerificationController
             return response()->json(['message' => 'Invalid JSON.'], 400);
         }
 
+        $sessionId = (string) data_get($payload, 'session_id', '');
+        if ($sessionId !== '' && ! $this->hasDiditCredentialData($payload)) {
+            $decision = $this->fetchDecision($sessionId);
+            if ($decision) {
+                $payload = array_merge($payload, $decision, [
+                    'webhook_event' => $payload,
+                ]);
+            }
+        }
+
         $verificationRequest = $this->applyDiditDecision($payload, 'webhook');
 
         if (! $verificationRequest) {
@@ -243,6 +260,14 @@ class DiditVerificationController
         }
 
         return response()->json(['received' => true]);
+    }
+
+    private function hasDiditCredentialData(array $payload): bool
+    {
+        return is_array(data_get($payload, 'id_verifications.0'))
+            || is_array(data_get($payload, 'id_verification'))
+            || is_array(data_get($payload, 'document'))
+            || is_array(data_get($payload, 'decision.id_verification.document'));
     }
 
     private function refundDiditQuota(bool &$reserved): void
@@ -403,6 +428,7 @@ class DiditVerificationController
             $payload,
             $source
         );
+        $verificationRequest->fillDiditCredentialSnapshot($payload);
 
         if (in_array($localStatus, [VerificationRequest::STATUS_APPROVED, VerificationRequest::STATUS_REJECTED], true)) {
             $verificationRequest->reviewed_at = Carbon::now();
