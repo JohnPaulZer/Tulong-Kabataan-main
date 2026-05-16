@@ -26,6 +26,15 @@ return Application::configure(basePath: dirname(__DIR__))
 
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Trust the reverse proxy in front of the app (Railway, Cloudflare, etc.)
+        // so $request->isSecure(), $request->ip() and generated URLs honour
+        // X-Forwarded-Proto / X-Forwarded-For / X-Forwarded-Host.
+        $middleware->trustProxies(at: '*', headers: Request::HEADER_X_FORWARDED_FOR
+            | Request::HEADER_X_FORWARDED_HOST
+            | Request::HEADER_X_FORWARDED_PORT
+            | Request::HEADER_X_FORWARDED_PROTO
+            | Request::HEADER_X_FORWARDED_AWS_ELB);
+
         $middleware->append(\Illuminate\Http\Middleware\HandleCors::class);
         $middleware->append(\App\Http\Middleware\AddSecurityHeaders::class);
         $middleware->web(append: ['throttle:public']);
