@@ -30,12 +30,12 @@ if (! function_exists('file_url')) {
             return $fallback;
         }
 
-        if (Str::startsWith($keyOrUrl, ['http://', 'https://'])) {
-            return $keyOrUrl;
-        }
-
         /** @var R2StorageService $service */
         $service = app(R2StorageService::class);
+
+        if (Str::startsWith($keyOrUrl, ['http://', 'https://'])) {
+            return $service->url($keyOrUrl) ?: $keyOrUrl;
+        }
 
         // Treat the key as an R2 object when an R2 public URL is configured and
         // the key starts with one of the configured module folder prefixes. This

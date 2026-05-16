@@ -146,9 +146,14 @@ class R2StorageService
             return null;
         }
 
-        // Already a full URL — pass through.
+        // External URLs pass through; managed R2 URLs are rebuilt from their key.
         if (Str::startsWith($key, ['http://', 'https://'])) {
-            return $key;
+            $managedKey = $this->managedUrlToKey($key);
+            if ($managedKey === null) {
+                return $key;
+            }
+
+            $key = $managedKey;
         }
 
         $publicBase = $this->publicBaseUrl();
@@ -360,18 +365,40 @@ class R2StorageService
     protected function normalizeToKey(string $keyOrUrl): string
     {
         if (! Str::startsWith($keyOrUrl, ['http://', 'https://'])) {
-            return $keyOrUrl;
+            return $this->stripLeadingBucket($keyOrUrl);
         }
 
-        foreach (array_filter([$this->rawPublicBaseUrl(), $this->publicBaseUrl()]) as $publicBase) {
-            if (Str::startsWith($keyOrUrl, $publicBase)) {
-                return ltrim(Str::after($keyOrUrl, $publicBase), '/');
-            }
+        $managedKey = $this->managedUrlToKey($keyOrUrl);
+        if ($managedKey !== null) {
+            return $managedKey;
         }
 
         // Fallback: strip scheme+host so the remaining path acts as a key.
         $parsed = parse_url($keyOrUrl);
-        return isset($parsed['path']) ? ltrim($parsed['path'], '/') : $keyOrUrl;
+        return isset($parsed['path']) ? $this->stripLeadingBucket(ltrim($parsed['path'], '/')) : $keyOrUrl;
+    }
+
+    protected function managedUrlToKey(string $url): ?string
+    {
+        foreach (array_filter([$this->rawPublicBaseUrl(), $this->publicBaseUrl()]) as $publicBase) {
+            if (Str::startsWith($url, $publicBase)) {
+                return $this->stripLeadingBucket(ltrim(Str::after($url, $publicBase), '/'));
+            }
+        }
+
+        return null;
+    }
+
+    protected function stripLeadingBucket(string $key): string
+    {
+        $bucket = trim((string) config('r2.bucket'), '/');
+        $key = ltrim($key, '/');
+
+        if ($bucket !== '' && Str::startsWith($key, $bucket . '/')) {
+            return Str::after($key, $bucket . '/');
+        }
+
+        return $key;
     }
 
     protected function publicBaseUrl(): string
