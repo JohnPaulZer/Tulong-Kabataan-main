@@ -156,7 +156,7 @@
                             default    => 'info',
                         };
                     @endphp
-                    <div class="verification-alert verification-alert-{{ $tone }} verification-mb-4">
+                    <div class="verification-alert verification-alert-{{ $tone }} verification-status-alert verification-mb-4">
                         <strong>Status: {{ $statusFriendly }}</strong>
                         @if ($autoDecided)
                             <span style="font-size:12px;opacity:.8"> · Decided automatically</span>
@@ -197,11 +197,11 @@
                 @endif
 
                 @if ($useDiditHostedFlow)
-                    <div class="verification-alert verification-alert-info verification-mb-4" style="background:#eefdf5;border-color:#bbf7d0;color:#14532d">
+                    <div class="verification-alert verification-alert-info verification-didit-alert verification-mb-4" style="background:#eefdf5;border-color:#bbf7d0;color:#14532d">
                         <strong><i class="ri-shield-check-line"></i> Verify with Didit</strong><br>
                         Complete secure ID, liveness, and face-match verification through Didit's hosted flow.
                         @if ($diditSessionUrl)
-                            <div style="margin-top:12px">
+                            <div class="verification-didit-actions" style="margin-top:12px">
                                 <a href="{{ $diditSessionUrl }}" class="verification-btn verification-btn-primary verification-px-4">
                                     Continue Didit Verification
                                 </a>
@@ -214,7 +214,7 @@
                                 @endif
                             </div>
                         @else
-                            <div style="margin-top:12px">
+                            <div class="verification-didit-actions" style="margin-top:12px">
                                 <a href="{{ route('verification.didit.start', $allowLocalDiditRetest ? ['restart_didit' => 1] : []) }}"
                                     class="verification-btn verification-btn-primary verification-px-4">
                                     {{ $allowLocalDiditRetest ? 'Start New Didit Test' : 'Start Didit Verification' }}
