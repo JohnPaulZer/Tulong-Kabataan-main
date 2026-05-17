@@ -41,6 +41,15 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI'), // for login
     ],
 
+    'turnstile' => [
+        'enabled' => env('TURNSTILE_ENABLED', false),
+        'site_key' => env('TURNSTILE_SITE_KEY'),
+        'secret_key' => env('TURNSTILE_SECRET_KEY'),
+        'allowed_hostnames' => env('TURNSTILE_ALLOWED_HOSTNAMES', ''),
+        'endpoint' => env('TURNSTILE_ENDPOINT', 'https://challenges.cloudflare.com/turnstile/v0/siteverify'),
+        'timeout' => env('TURNSTILE_TIMEOUT', 8),
+    ],
+
     'groq' => [
         'key' => env('GROQ_API_KEY'),
         'base_url' => env('GROQ_BASE_URL', 'https://api.groq.com/openai/v1'),
