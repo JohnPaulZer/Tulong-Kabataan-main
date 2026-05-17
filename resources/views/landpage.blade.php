@@ -165,7 +165,12 @@
                 <a href="{{ route('campaignpage') }}" class="font-heading font-bold text-indigo-600 no-underline transition hover:text-indigo-800">View all campaigns</a>
             </div>
 
-            <div class="mx-auto flex max-w-7xl snap-x gap-4 overflow-x-auto px-4 pb-2 sm:px-6 md:grid md:grid-cols-2 md:gap-8 md:overflow-visible md:px-6 md:pb-0 lg:px-8">
+            @php
+                $featuredCount = $featuredCampaigns->count();
+            @endphp
+
+            <div class="tk-featured-campaigns-grid mx-auto max-w-7xl px-4 pb-2 sm:px-6 md:px-6 md:pb-0 lg:px-8"
+                data-count="{{ $featuredCount }}">
                 @forelse ($featuredCampaigns as $campaign)
                     @php
                         $imageUrl = $campaign->featured_image
@@ -180,17 +185,10 @@
                             : ($daysLeft < 0 ? 'Ended' : ($daysLeft === 0 ? 'Ends today' : $daysLeft . ' days left'));
                         $badgeClass = !is_null($daysLeft) && $daysLeft >= 0 && $daysLeft <= 7 ? 'urgent' : '';
                         $badgeLabel = $badgeClass ? 'Urgent' : ucfirst($campaign->status);
-                        $layoutClass = '';
-
-                        if ($loop->count === 3 && $loop->last) {
-                            $layoutClass = 'md:col-span-2 md:w-[calc((100%_-_2rem)/2)] md:min-w-[min(340px,100%)] md:justify-self-center';
-                        } elseif ($loop->count === 1) {
-                            $layoutClass = 'md:col-span-2 md:max-w-[540px] md:justify-self-center';
-                        }
                     @endphp
 
                     <article
-                        class="flex w-[min(86vw,340px)] shrink-0 snap-start flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-[0_2px_8px_rgba(15,23,42,0.04)] transition hover:-translate-y-1.5 hover:border-indigo-200 hover:shadow-[0_18px_36px_rgba(15,23,42,0.12)] md:w-full md:shrink {{ $layoutClass }}">
+                        class="tk-featured-campaign-card flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-[0_2px_8px_rgba(15,23,42,0.04)] transition hover:-translate-y-1.5 hover:border-indigo-200 hover:shadow-[0_18px_36px_rgba(15,23,42,0.12)]">
                         <a href="{{ route('campaign.view', $campaign->campaign_id) }}" class="group block overflow-hidden"
                             aria-label="View campaign {{ $campaign->title }}">
                             <img class="h-[190px] w-full object-cover transition duration-200 group-hover:scale-[1.04] md:h-[200px]"

@@ -277,3 +277,50 @@ body.land-page .tk-land-section-soft[aria-labelledby="trust-title"] > div:last-c
     border-color: #e5e7eb;
     background: #fff;
 }
+
+body.land-page .tk-featured-campaigns-grid {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+}
+
+body.land-page .tk-featured-campaign-card {
+    width: min(86vw, 340px);
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+}
+
+@media (min-width: 768px) {
+    body.land-page .tk-featured-campaigns-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 32px;
+        overflow: visible;
+        scroll-snap-type: none;
+    }
+
+    body.land-page .tk-featured-campaign-card {
+        width: 100%;
+        min-width: 0;
+    }
+
+    body.land-page .tk-featured-campaigns-grid[data-count="1"] {
+        grid-template-columns: minmax(0, 540px);
+        justify-content: center;
+    }
+}
+
+@media (min-width: 1180px) {
+    body.land-page .tk-featured-campaigns-grid[data-count="2"] {
+        grid-template-columns: repeat(2, minmax(0, 420px));
+        justify-content: center;
+    }
+
+    body.land-page .tk-featured-campaigns-grid[data-count="3"],
+    body.land-page .tk-featured-campaigns-grid[data-count="4"],
+    body.land-page .tk-featured-campaigns-grid[data-count="5"],
+    body.land-page .tk-featured-campaigns-grid[data-count="6"] {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
