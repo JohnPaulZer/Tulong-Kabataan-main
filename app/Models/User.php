@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 use MongoDB\Laravel\Auth\User as Authenticatable;
 use App\Notifications\CustomVerifyEmail;
+use App\Services\Auth\EmailVerificationTokenService;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -26,20 +27,27 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'google_id',
         'profile_photo_url',
+        'status',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
+        'email_verification_token_hash',
     ];
 
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'email_verification_token_expires_at' => 'datetime',
+        'email_verification_token_used_at' => 'datetime',
+        'email_verification_sent_at' => 'datetime',
     ];
 
     public function sendEmailVerificationNotification()
     {
-        $this->notify(new CustomVerifyEmail);
+        $token = app(EmailVerificationTokenService::class)->issue($this);
+
+        $this->notify(new CustomVerifyEmail($token));
     }
 
     public function verificationRequests()

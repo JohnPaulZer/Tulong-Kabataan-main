@@ -57,8 +57,8 @@
             <tr>
                 <td style="color:#4a5a6a; font-size:14px; text-align:left;
                            line-height:1.7; padding-bottom:20px;">
-                    This verification link will expire in <strong style="color:#1a2e40;">5 minutes</strong>.<br>
-                    If you didn’t register for Tulong Kabataan, you can safely ignore this email.
+                    This verification link will expire in <strong style="color:#1a2e40;">{{ $expiresInMinutes ?? 60 }} minutes</strong> and can only be used once.<br>
+                    If you did not register for Tulong Kabataan, you can safely ignore this email.
                 </td>
             </tr>
 

@@ -14,6 +14,14 @@ return [
             'max_attempts' => (int) env('RATE_LIMIT_AUTH_MAX', 8),
             'decay_minutes' => (int) env('RATE_LIMIT_AUTH_DECAY', 1),
         ],
+        'registration' => [
+            'max_attempts' => (int) env('RATE_LIMIT_REGISTRATION_MAX', 5),
+            'decay_minutes' => (int) env('RATE_LIMIT_REGISTRATION_DECAY', 1),
+        ],
+        'verification_resend' => [
+            'max_attempts' => (int) env('RATE_LIMIT_VERIFICATION_RESEND_MAX', 3),
+            'decay_minutes' => (int) env('RATE_LIMIT_VERIFICATION_RESEND_DECAY', 5),
+        ],
         'admin' => [
             'max_attempts' => (int) env('RATE_LIMIT_ADMIN_MAX', 60),
             'decay_minutes' => (int) env('RATE_LIMIT_ADMIN_DECAY', 1),

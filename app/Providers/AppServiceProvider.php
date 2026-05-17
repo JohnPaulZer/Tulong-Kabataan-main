@@ -91,7 +91,7 @@ class AppServiceProvider extends ServiceProvider
 
     private function configureRateLimiters(): void
     {
-        foreach (['public', 'api', 'admin', 'payment', 'upload', 'chunk_upload', 'chatbot', 'webhook'] as $name) {
+        foreach (['public', 'api', 'registration', 'verification_resend', 'admin', 'payment', 'upload', 'chunk_upload', 'chatbot', 'webhook'] as $name) {
             RateLimiter::for($name, function (Request $request) use ($name) {
                 return $this->limit($name)->by($this->rateLimitKey($request, $name));
             });

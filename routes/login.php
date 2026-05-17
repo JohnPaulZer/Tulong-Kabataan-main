@@ -37,7 +37,7 @@ Route::post('/reset-password', [LoginController::class, 'updatePassword'])
 
 // ==================================================REGISTER ROUTE====================================================
 Route::post('/registeraccount', [LoginController::class, 'registeraccount'])
-    ->middleware('throttle:auth')
+    ->middleware('throttle:registration')
     ->name('register.acc');
 
 Route::get('/check-email', [LoginController::class, 'checkEmail'])->middleware('throttle:auth');
@@ -48,8 +48,8 @@ Route::get('/email/verify', [LoginController::class, 'verificationNotice'])
     ->middleware(['auth', 'throttle:public'])
     ->name('verification.notice');
 
-Route::get('/email/verify/{id}/{hash}', [LoginController::class, 'verifyEmail'])
-    ->middleware(['signed', 'throttle:auth'])
+Route::get('/email/verify/{id}/{token}', [LoginController::class, 'verifyEmail'])
+    ->middleware('throttle:auth')
     ->name('verification.verify');
 
 // AJAX route to check verification status
@@ -59,6 +59,6 @@ Route::get('/check-verification-status', [LoginController::class, 'checkVerifica
 
 // Resend Email verification routes
 Route::post('/email/verification-notification', [LoginController::class, 'resendVerification'])
-    ->middleware(['auth', 'throttle:auth'])
+    ->middleware(['auth', 'throttle:verification_resend'])
     ->name('verification.send');
 // ====================================================================================================================
