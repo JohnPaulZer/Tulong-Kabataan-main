@@ -160,7 +160,7 @@
             <div class="mx-auto mb-8 flex max-w-7xl flex-col items-start justify-between gap-3 px-4 sm:px-6 md:flex-row md:items-center lg:px-8">
                 <div>
                     <h2 class="font-heading text-3xl font-bold text-slate-800" id="featured-campaigns-title">Featured Campaigns</h2>
-                    <p class="mt-1 text-[15px] text-slate-500 md:text-base">Support active campaigns with the highest views and donations.</p>
+                    <p class="mt-1 text-[15px] text-slate-500 md:text-base">Support active campaigns with the highest donations and engagement.</p>
                 </div>
                 <a href="{{ route('campaignpage') }}" class="font-heading font-bold text-indigo-600 no-underline transition hover:text-indigo-800">View all campaigns</a>
             </div>
@@ -169,80 +169,93 @@
                 $featuredCount = $featuredCampaigns->count();
             @endphp
 
-            <div class="tk-featured-campaigns-grid mx-auto max-w-7xl px-4 pb-2 sm:px-6 md:px-6 md:pb-0 lg:px-8"
-                data-count="{{ $featuredCount }}">
-                @forelse ($featuredCampaigns as $campaign)
-                    @php
-                        $imageUrl = $campaign->featured_image
-                            ? file_url($campaign->featured_image)
-                            : page_media_url('campaign_default_image', asset('img/camp.jpg'));
-                        $progress = $campaign->target_amount > 0
-                            ? min(100, round(($campaign->current_amount / $campaign->target_amount) * 100))
-                            : 0;
-                        $daysLeft = $campaign->ends_at ? (int) now()->diffInDays($campaign->ends_at, false) : null;
-                        $timeLabel = is_null($daysLeft)
-                            ? 'Open campaign'
-                            : ($daysLeft < 0 ? 'Ended' : ($daysLeft === 0 ? 'Ends today' : $daysLeft . ' days left'));
-                        $badgeClass = !is_null($daysLeft) && $daysLeft >= 0 && $daysLeft <= 7 ? 'urgent' : '';
-                        $badgeLabel = $badgeClass ? 'Urgent' : ucfirst($campaign->status);
-                    @endphp
+            <div class="tk-featured-campaigns-carousel mx-auto max-w-7xl px-4 pb-2 sm:px-6 md:px-6 md:pb-0 lg:px-8">
+                <div class="tk-featured-campaigns-grid" data-count="{{ $featuredCount }}">
+                    @forelse ($featuredCampaigns as $campaign)
+                        @php
+                            $imageUrl = $campaign->featured_image
+                                ? file_url($campaign->featured_image)
+                                : page_media_url('campaign_default_image', asset('img/camp.jpg'));
+                            $progress = $campaign->target_amount > 0
+                                ? min(100, round(($campaign->current_amount / $campaign->target_amount) * 100))
+                                : 0;
+                            $daysLeft = $campaign->ends_at ? (int) now()->diffInDays($campaign->ends_at, false) : null;
+                            $timeLabel = is_null($daysLeft)
+                                ? 'Open campaign'
+                                : ($daysLeft < 0 ? 'Ended' : ($daysLeft === 0 ? 'Ends today' : $daysLeft . ' days left'));
+                            $badgeClass = !is_null($daysLeft) && $daysLeft >= 0 && $daysLeft <= 7 ? 'urgent' : '';
+                            $badgeLabel = $badgeClass ? 'Urgent' : ucfirst($campaign->status);
+                        @endphp
 
-                    <article
-                        class="tk-featured-campaign-card flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-[0_2px_8px_rgba(15,23,42,0.04)] transition hover:-translate-y-1.5 hover:border-indigo-200 hover:shadow-[0_18px_36px_rgba(15,23,42,0.12)]">
-                        <a href="{{ route('campaign.view', $campaign->campaign_id) }}" class="group block overflow-hidden"
-                            aria-label="View campaign {{ $campaign->title }}">
-                            <img class="h-[190px] w-full object-cover transition duration-200 group-hover:scale-[1.04] md:h-[200px]"
-                                src="{{ $imageUrl }}" alt="{{ $campaign->title }} campaign image" loading="lazy"
-                                decoding="async" />
-                        </a>
-                        <div class="flex flex-1 flex-col p-4 md:p-5">
-                            <div class="mb-2 flex flex-wrap items-start justify-between gap-2">
-                                <span @class([
-                                    'inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs',
-                                    'bg-blue-100 text-blue-800' => $badgeClass,
-                                    'bg-indigo-100 text-indigo-800' => ! $badgeClass,
-                                ])>
-                                    <i class="ri-megaphone-line" aria-hidden="true"></i> {{ $badgeLabel }}
-                                </span>
-                                <span class="text-sm text-gray-500">
-                                    <i class="ri-timer-line" aria-hidden="true"></i> {{ $timeLabel }}
-                                </span>
-                            </div>
-                            <h3 class="font-heading text-lg font-bold leading-snug md:text-xl">
-                                <a href="{{ route('campaign.view', $campaign->campaign_id) }}" class="text-slate-800 no-underline transition hover:text-indigo-600">{{ $campaign->title }}</a>
-                            </h3>
-                            <p class="mt-2 text-[15px] leading-relaxed text-gray-600">
-                                {{ \Illuminate\Support\Str::limit(strip_tags($campaign->description), 130) }}</p>
-                            <div class="mt-auto pt-4" aria-label="{{ $progress }} percent funded">
-                                <div class="mb-2 h-2 overflow-hidden rounded-lg bg-gray-200">
-                                    <div class="h-2 rounded-l-lg bg-indigo-600" style="width: {{ $progress }}%;"></div>
+                        <article
+                            class="tk-featured-campaign-card flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-[0_2px_8px_rgba(15,23,42,0.04)] transition hover:-translate-y-1.5 hover:border-indigo-200 hover:shadow-[0_18px_36px_rgba(15,23,42,0.12)]">
+                            <a href="{{ route('campaign.view', $campaign->campaign_id) }}" class="group block overflow-hidden"
+                                aria-label="View campaign {{ $campaign->title }}">
+                                <img class="h-[190px] w-full object-cover transition duration-200 group-hover:scale-[1.04] md:h-[200px]"
+                                    src="{{ $imageUrl }}" alt="{{ $campaign->title }} campaign image" loading="lazy"
+                                    decoding="async" />
+                            </a>
+                            <div class="flex flex-1 flex-col p-4 md:p-5">
+                                <div class="mb-2 flex flex-wrap items-start justify-between gap-2">
+                                    <span @class([
+                                        'inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs',
+                                        'bg-blue-100 text-blue-800' => $badgeClass,
+                                        'bg-indigo-100 text-indigo-800' => ! $badgeClass,
+                                    ])>
+                                        <i class="ri-megaphone-line" aria-hidden="true"></i> {{ $badgeLabel }}
+                                    </span>
+                                    <span class="text-sm text-gray-500">
+                                        <i class="ri-timer-line" aria-hidden="true"></i> {{ $timeLabel }}
+                                    </span>
                                 </div>
-                                <div class="flex flex-wrap justify-between gap-x-3 gap-y-1 text-sm text-gray-500">
-                                    <span>&#8369;{{ number_format($campaign->current_amount, 0) }} raised</span>
-                                    <span>of &#8369;{{ number_format($campaign->target_amount, 0) }} goal</span>
+                                <h3 class="font-heading text-lg font-bold leading-snug md:text-xl">
+                                    <a href="{{ route('campaign.view', $campaign->campaign_id) }}" class="text-slate-800 no-underline transition hover:text-indigo-600">{{ $campaign->title }}</a>
+                                </h3>
+                                <p class="mt-2 text-[15px] leading-relaxed text-gray-600">
+                                    {{ \Illuminate\Support\Str::limit(strip_tags($campaign->description), 130) }}</p>
+                                <div class="mt-auto pt-4" aria-label="{{ $progress }} percent funded">
+                                    <div class="mb-2 h-2 overflow-hidden rounded-lg bg-gray-200">
+                                        <div class="h-2 rounded-l-lg bg-indigo-600" style="width: {{ $progress }}%;"></div>
+                                    </div>
+                                    <div class="flex flex-wrap justify-between gap-x-3 gap-y-1 text-sm text-gray-500">
+                                        <span>&#8369;{{ number_format($campaign->current_amount, 0) }} raised</span>
+                                        <span>of &#8369;{{ number_format($campaign->target_amount, 0) }} goal</span>
+                                    </div>
+                                </div>
+                                <div class="mt-4 grid grid-cols-[minmax(0,1fr)_44px] items-stretch gap-2">
+                                    <a href="{{ route('campaign.view', $campaign->campaign_id) }}"
+                                        class="inline-flex min-h-[42px] items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 font-heading text-[15px] font-semibold text-white no-underline transition hover:-translate-y-0.5 hover:shadow-[0_10px_22px_rgba(79,70,229,0.18)] focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-indigo-300">
+                                        <i class="ri-heart-add-line" aria-hidden="true"></i> Donate Now
+                                    </a>
+                                    <button type="button"
+                                        class="campaign-share-btn inline-flex min-h-[42px] items-center justify-center rounded-lg border border-gray-200 bg-transparent text-lg text-gray-700 transition hover:-translate-y-0.5 hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-600 focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-indigo-300"
+                                        aria-label="Share {{ $campaign->title }}"
+                                        data-share-url="{{ route('campaign.view', $campaign->campaign_id) }}"
+                                        data-share-title="{{ $campaign->title }}">
+                                        <i class="ri-share-line" aria-hidden="true"></i>
+                                    </button>
                                 </div>
                             </div>
-                            <div class="mt-4 grid grid-cols-[minmax(0,1fr)_44px] items-stretch gap-2">
-                                <a href="{{ route('campaign.view', $campaign->campaign_id) }}"
-                                    class="inline-flex min-h-[42px] items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 font-heading text-[15px] font-semibold text-white no-underline transition hover:-translate-y-0.5 hover:shadow-[0_10px_22px_rgba(79,70,229,0.18)] focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-indigo-300">
-                                    <i class="ri-heart-add-line" aria-hidden="true"></i> Donate Now
-                                </a>
-                                <button type="button"
-                                    class="campaign-share-btn inline-flex min-h-[42px] items-center justify-center rounded-lg border border-gray-200 bg-transparent text-lg text-gray-700 transition hover:-translate-y-0.5 hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-600 focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-indigo-300"
-                                    aria-label="Share {{ $campaign->title }}"
-                                    data-share-url="{{ route('campaign.view', $campaign->campaign_id) }}"
-                                    data-share-title="{{ $campaign->title }}">
-                                    <i class="ri-share-line" aria-hidden="true"></i>
-                                </button>
-                            </div>
+                        </article>
+                    @empty
+                        <div class="mx-auto w-full max-w-2xl rounded-lg border border-dashed border-slate-300 bg-slate-50 p-8 text-center text-slate-500 md:col-span-2">
+                            <h3 class="font-heading text-xl font-bold text-slate-800">No active campaigns yet</h3>
+                            <p class="mt-2">New featured campaigns will appear here once they are published.</p>
                         </div>
-                    </article>
-                @empty
-                    <div class="mx-auto w-full max-w-2xl rounded-lg border border-dashed border-slate-300 bg-slate-50 p-8 text-center text-slate-500 md:col-span-2">
-                        <h3 class="font-heading text-xl font-bold text-slate-800">No active campaigns yet</h3>
-                        <p class="mt-2">New featured campaigns will appear here once they are published.</p>
+                    @endforelse
+                </div>
+
+                @if ($featuredCount > 1)
+                    <div class="tk-featured-carousel-dots" role="tablist" aria-label="Featured campaign slides">
+                        @foreach ($featuredCampaigns as $campaign)
+                            <button type="button"
+                                class="tk-featured-carousel-dot {{ $loop->first ? 'is-active' : '' }}"
+                                data-featured-slide="{{ $loop->index }}"
+                                aria-label="Show featured campaign {{ $loop->iteration }}"
+                                aria-selected="{{ $loop->first ? 'true' : 'false' }}"></button>
+                        @endforeach
                     </div>
-                @endforelse
+                @endif
             </div>
         </section>
 
@@ -318,6 +331,223 @@
                 }
             });
         });
+
+        (() => {
+            const carousel = document.querySelector('.tk-featured-campaigns-carousel');
+            const track = carousel?.querySelector('.tk-featured-campaigns-grid');
+            const dots = Array.from(document.querySelectorAll('.tk-featured-carousel-dot'));
+            const mobileQuery = window.matchMedia('(max-width: 767px)');
+
+            if (!carousel || !track || dots.length < 2) {
+                return;
+            }
+
+            let realCards = [];
+            let slides = [];
+            let enabled = false;
+            let currentIndex = 1;
+            let slideSize = 0;
+            let startX = 0;
+            let startY = 0;
+            let dragDelta = 0;
+            let isDragging = false;
+            let hasDragged = false;
+
+            const realIndex = () => ((currentIndex - 1) % realCards.length + realCards.length) % realCards.length;
+
+            const updateDots = () => {
+                const activeIndex = enabled ? realIndex() : 0;
+
+                dots.forEach((dot, index) => {
+                    const isActive = index === activeIndex;
+                    dot.classList.toggle('is-active', isActive);
+                    dot.setAttribute('aria-selected', isActive ? 'true' : 'false');
+                });
+            };
+
+            const measure = () => {
+                if (!enabled || slides.length === 0) {
+                    return;
+                }
+
+                const gap = Number.parseFloat(window.getComputedStyle(track).columnGap) || 0;
+                slideSize = slides[0].getBoundingClientRect().width + gap;
+            };
+
+            const translateTo = (index, animate = true, offset = 0) => {
+                if (!enabled || slideSize === 0) {
+                    return;
+                }
+
+                currentIndex = index;
+                track.style.transition = animate ? 'transform 260ms ease' : 'none';
+                track.style.transform = `translate3d(${(-slideSize * currentIndex) + offset}px, 0, 0)`;
+                updateDots();
+            };
+
+            const markClone = (clone) => {
+                clone.classList.add('is-clone');
+                clone.setAttribute('aria-hidden', 'true');
+                clone.querySelectorAll('a, button, input, select, textarea, [tabindex]').forEach((element) => {
+                    element.setAttribute('tabindex', '-1');
+                });
+            };
+
+            const enableCarousel = () => {
+                if (enabled) {
+                    measure();
+                    translateTo(currentIndex, false);
+                    return;
+                }
+
+                realCards = Array.from(track.querySelectorAll('.tk-featured-campaign-card:not(.is-clone)'));
+
+                if (realCards.length < 2) {
+                    return;
+                }
+
+                const firstClone = realCards[0].cloneNode(true);
+                const lastClone = realCards[realCards.length - 1].cloneNode(true);
+                markClone(firstClone);
+                markClone(lastClone);
+
+                track.insertBefore(lastClone, realCards[0]);
+                track.appendChild(firstClone);
+
+                slides = Array.from(track.querySelectorAll('.tk-featured-campaign-card'));
+                enabled = true;
+                currentIndex = 1;
+                measure();
+                translateTo(currentIndex, false);
+            };
+
+            const disableCarousel = () => {
+                if (!enabled) {
+                    updateDots();
+                    return;
+                }
+
+                track.querySelectorAll('.tk-featured-campaign-card.is-clone').forEach((clone) => clone.remove());
+                track.style.transition = '';
+                track.style.transform = '';
+                realCards = Array.from(track.querySelectorAll('.tk-featured-campaign-card'));
+                slides = realCards;
+                enabled = false;
+                currentIndex = 1;
+                updateDots();
+            };
+
+            const syncCarousel = () => {
+                if (mobileQuery.matches) {
+                    enableCarousel();
+                    return;
+                }
+
+                disableCarousel();
+            };
+
+            track.addEventListener('transitionend', (event) => {
+                if (!enabled || event.target !== track || event.propertyName !== 'transform') {
+                    return;
+                }
+
+                if (currentIndex === slides.length - 1) {
+                    translateTo(1, false);
+                } else if (currentIndex === 0) {
+                    translateTo(realCards.length, false);
+                }
+            });
+
+            track.addEventListener('pointerdown', (event) => {
+                if (!enabled) {
+                    return;
+                }
+
+                isDragging = true;
+                hasDragged = false;
+                dragDelta = 0;
+                startX = event.clientX;
+                startY = event.clientY;
+                track.setPointerCapture?.(event.pointerId);
+                translateTo(currentIndex, false);
+            });
+
+            track.addEventListener('pointermove', (event) => {
+                if (!enabled || !isDragging) {
+                    return;
+                }
+
+                const deltaX = event.clientX - startX;
+                const deltaY = event.clientY - startY;
+
+                if (Math.abs(deltaX) <= Math.abs(deltaY)) {
+                    return;
+                }
+
+                event.preventDefault();
+                dragDelta = deltaX;
+                hasDragged = Math.abs(deltaX) > 8;
+                translateTo(currentIndex, false, dragDelta);
+            });
+
+            const finishDrag = () => {
+                if (!enabled || !isDragging) {
+                    return;
+                }
+
+                isDragging = false;
+
+                if (Math.abs(dragDelta) > 48) {
+                    translateTo(currentIndex + (dragDelta < 0 ? 1 : -1));
+                } else {
+                    translateTo(currentIndex);
+                }
+
+                window.setTimeout(() => {
+                    hasDragged = false;
+                }, 0);
+            };
+
+            track.addEventListener('pointerup', finishDrag);
+            track.addEventListener('pointercancel', finishDrag);
+
+            track.addEventListener('click', (event) => {
+                if (!hasDragged) {
+                    return;
+                }
+
+                event.preventDefault();
+                event.stopPropagation();
+            }, true);
+
+            dots.forEach((dot) => {
+                dot.addEventListener('click', () => {
+                    if (!mobileQuery.matches) {
+                        return;
+                    }
+
+                    enableCarousel();
+                    translateTo(Number(dot.dataset.featuredSlide) + 1);
+                });
+            });
+
+            window.addEventListener('resize', () => {
+                if (!enabled) {
+                    return;
+                }
+
+                measure();
+                translateTo(currentIndex, false);
+            });
+
+            if (typeof mobileQuery.addEventListener === 'function') {
+                mobileQuery.addEventListener('change', syncCarousel);
+            } else {
+                mobileQuery.addListener(syncCarousel);
+            }
+
+            syncCarousel();
+        })();
     </script>
 </body>
 

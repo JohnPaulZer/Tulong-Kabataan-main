@@ -278,36 +278,80 @@ body.land-page .tk-land-section-soft[aria-labelledby="trust-title"] > div:last-c
     background: #fff;
 }
 
+body.land-page .tk-featured-campaigns-carousel {
+    overflow: hidden;
+}
+
 body.land-page .tk-featured-campaigns-grid {
     display: flex;
     gap: 16px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
+    touch-action: pan-y;
+    will-change: transform;
 }
 
 body.land-page .tk-featured-campaign-card {
-    width: min(86vw, 340px);
-    flex: 0 0 auto;
-    scroll-snap-align: start;
+    min-width: 0;
+    flex: 0 0 100%;
+}
+
+body.land-page .tk-featured-carousel-dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: max-content;
+    min-height: 18px;
+    margin: 14px auto 0;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.94);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.14);
+}
+
+body.land-page .tk-featured-carousel-dot {
+    width: 9px;
+    height: 9px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: #475569;
+    cursor: pointer;
+    transition: width 0.22s ease, background-color 0.22s ease, opacity 0.22s ease;
+}
+
+body.land-page .tk-featured-carousel-dot.is-active {
+    width: 34px;
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.24);
 }
 
 @media (min-width: 768px) {
+    body.land-page .tk-featured-campaigns-carousel {
+        overflow: visible;
+    }
+
     body.land-page .tk-featured-campaigns-grid {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 32px;
-        overflow: visible;
-        scroll-snap-type: none;
+        transform: none !important;
+        transition: none !important;
+        touch-action: auto;
     }
 
     body.land-page .tk-featured-campaign-card {
         width: 100%;
         min-width: 0;
+        flex: initial;
     }
 
     body.land-page .tk-featured-campaigns-grid[data-count="1"] {
         grid-template-columns: minmax(0, 540px);
         justify-content: center;
+    }
+
+    body.land-page .tk-featured-carousel-dots {
+        display: none;
     }
 }
 
@@ -317,10 +361,7 @@ body.land-page .tk-featured-campaign-card {
         justify-content: center;
     }
 
-    body.land-page .tk-featured-campaigns-grid[data-count="3"],
-    body.land-page .tk-featured-campaigns-grid[data-count="4"],
-    body.land-page .tk-featured-campaigns-grid[data-count="5"],
-    body.land-page .tk-featured-campaigns-grid[data-count="6"] {
+    body.land-page .tk-featured-campaigns-grid[data-count="3"] {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
