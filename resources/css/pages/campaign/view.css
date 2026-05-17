@@ -1255,3 +1255,108 @@ body.campaign-view-page .donation-submit-btn, body.campaign-view-page .donation-
         flex-direction: column;
     }
 }
+
+@media (max-width: 767px){
+    body.campaign-view-page .campaign-view-main{
+        width: 100%;
+        padding: 24px clamp(16px, 5vw, 24px) 40px !important;
+    }
+
+    body.campaign-view-page .campaign-view-layout{
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0;
+    }
+
+    body.campaign-view-page .campaign-view-content,
+    body.campaign-view-page .campaign-view-sidebar{
+        display: contents;
+    }
+
+    body.campaign-view-page .campaign-view-topbar{
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 26px;
+    }
+
+    body.campaign-view-page .campaign-view-topbar > a{
+        min-width: 0;
+        flex: 1 1 auto;
+        padding-left: 0;
+        line-height: 1.35;
+    }
+
+    body.campaign-view-page .campaign-view-actions{
+        gap: 8px;
+    }
+
+    body.campaign-view-page .campaign-view-category{
+        order: 1;
+        margin-bottom: 18px;
+    }
+
+    body.campaign-view-page .campaign-view-title{
+        order: 2;
+        max-width: 100%;
+        font-size: clamp(1.95rem, 8vw, 2.35rem);
+        line-height: 1.18;
+    }
+
+    body.campaign-view-page .campaign-view-cover{
+        order: 3;
+        margin-top: 22px;
+        border-radius: 18px;
+    }
+
+    body.campaign-view-page .campaign-view-cover img{
+        aspect-ratio: 16 / 10;
+    }
+
+    body.campaign-view-page .campaign-view-meta{
+        order: 4;
+        gap: 10px;
+        margin-top: 16px;
+    }
+
+    body.campaign-view-page .campaign-view-meta > span{
+        min-height: 34px;
+        padding-inline: 12px;
+    }
+
+    body.campaign-view-page .campaign-view-section{
+        margin-top: 38px;
+    }
+
+    body.campaign-view-page .campaign-view-section h2{
+        font-size: 1.5rem;
+        line-height: 1.25;
+    }
+
+    body.campaign-view-page .campaign-view-donate-card{
+        order: 5;
+        margin-top: 24px;
+    }
+
+    body.campaign-view-page .campaign-view-organizer-card{
+        order: 7;
+        margin-top: 16px;
+    }
+
+    body.campaign-view-page .campaign-view-about{
+        order: 6;
+    }
+
+    body.campaign-view-page .campaign-view-updates{
+        order: 9;
+    }
+
+    body.campaign-view-page .campaign-view-donations-card{
+        order: 8;
+        margin-top: 26px;
+    }
+
+    body.campaign-view-page .campaign-view-safety-card{
+        order: 10;
+        margin-top: 16px;
+    }
+}
