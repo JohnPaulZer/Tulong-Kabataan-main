@@ -50,9 +50,9 @@ class LoginController
         ];
 
         $featuredCampaigns = Campaign::where('status', 'active')
-            ->orderByDesc('views')
             ->orderByDesc('current_amount')
             ->orderByDesc('donor_count')
+            ->orderByDesc('views')
             ->latest()
             ->take(3)
             ->get();
