@@ -302,10 +302,10 @@ body.land-page .tk-featured-carousel-dots {
     width: max-content;
     min-height: 18px;
     margin: 14px auto 0;
-    padding: 8px 12px;
+    padding: 6px 8px;
     border-radius: 999px;
-    background: rgba(15, 23, 42, 0.94);
-    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.14);
+    background: transparent;
+    box-shadow: none;
 }
 
 body.land-page .tk-featured-carousel-dot {
@@ -314,15 +314,15 @@ body.land-page .tk-featured-carousel-dot {
     padding: 0;
     border: 0;
     border-radius: 999px;
-    background: #475569;
+    background: #cbd5e1;
     cursor: pointer;
     transition: width 0.22s ease, background-color 0.22s ease, opacity 0.22s ease;
 }
 
 body.land-page .tk-featured-carousel-dot.is-active {
     width: 34px;
-    background: #ffffff;
-    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.24);
+    background: #4f46e5;
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.24);
 }
 
 @media (min-width: 768px) {
