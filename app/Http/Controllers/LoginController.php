@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Events\Verified;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Cookie;
@@ -13,15 +12,18 @@ use App\Mail\NewPasswordMail;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 use App\Models\Campaign;
 use App\Models\Donation;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
+use Illuminate\Validation\ValidationException;
 use App\Models\EventRegistration;
 use App\Models\SiteSetting;
 use App\Models\VerificationRequest;
+use App\Services\Auth\EmailVerificationTokenService;
 
 class LoginController
 {
@@ -304,13 +306,22 @@ class LoginController
 
     public function checkEmail(Request $request)
     {
-        $exists = User::where('email', $request->email)->exists();
+        $email = Str::lower(trim((string) $request->query('email')));
+        if ($email === '' || ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return response()->json(['exists' => false]);
+        }
+
+        $exists = User::where('email', $email)->exists();
         return response()->json(['exists' => $exists]);
     }
 
     public function checkPhone(Request $request)
     {
         $phone = preg_replace('/\D+/', '', (string) $request->query('phone')); // get phone from query string
+        if (! preg_match('/^09\d{9}$/', $phone)) {
+            return response()->json(['exists' => false]);
+        }
+
         $exists = User::where('phone_number', $phone)->exists();
         return response()->json(['exists' => $exists]);
     }
@@ -318,81 +329,148 @@ class LoginController
     public function registeraccount(Request $request)
     {
         if (!SiteSetting::isTrue('user.registration.enabled')) {
+            if ($request->expectsJson()) {
+                return $this->jsonAuthResponse(
+                    'registration_closed',
+                    'New account registration is currently disabled.',
+                    ['redirect' => route('login.page')],
+                    403
+                );
+            }
+
             return back()->with('error', 'New account registration is currently disabled.');
         }
 
         $request->merge([
+            'first_name' => trim((string) $request->input('first_name')),
+            'last_name' => trim((string) $request->input('last_name')),
+            'email' => Str::lower(trim((string) $request->input('email'))),
             'phone_number' => preg_replace('/\D+/', '', (string) $request->input('phone_number')),
         ]);
 
         $request->validate([
             'first_name'   => 'required|string|max:100',
             'last_name'    => 'required|string|max:100',
-            'email'        => 'required|email|unique:user_account,email',
-            'phone_number' => 'required|regex:/^09\d{9}$/|unique:user_account,phone_number',
-            'birthday' => 'required|date|before:today',
+            'email'        => 'required|email:rfc|max:255',
+            'phone_number' => 'required|regex:/^09\d{9}$/',
+            'birthday' => 'required|date|before_or_equal:' . now()->subYears(18)->toDateString(),
             'password'     => 'required|min:8|max:20',
+        ], [
+            'birthday.before_or_equal' => 'You must be at least 18 years old.',
+            'phone_number.regex' => 'Enter an 11-digit phone number starting with 09.',
         ]);
 
-        // Create user
-        $user = User::create([
-            'first_name'   => $request->first_name,
-            'last_name'    => $request->last_name,
-            'email'        => $request->email,
-            'phone_number' => $request->phone_number,
-            'birthday' => $request->birthday,
-            'password'     => bcrypt($request->password),
-            'status'       => 'unverified',
-        ]);
-
-        // Log the user in temporarily to access verification page
-        Auth::login($user);
+        $lock = Cache::lock('registration:' . hash('sha256', (string) $request->email), 15);
+        $lockAcquired = false;
 
         try {
-            event(new Registered($user));
-        } catch (\Throwable $e) {
-            Log::error('Email verification send failed after registration.', [
-                'user_id' => $user->getKey(),
-                'error' => $e::class,
+            if (! $lock->get()) {
+                throw ValidationException::withMessages([
+                    'email' => 'Registration is already processing for this email. Please wait a moment.',
+                ]);
+            }
+            $lockAcquired = true;
+
+            if (User::where('email', $request->email)->exists()) {
+                throw ValidationException::withMessages([
+                    'email' => 'This email is already registered. Please log in or use the verification resend option.',
+                ]);
+            }
+
+            if (User::where('phone_number', $request->phone_number)->exists()) {
+                throw ValidationException::withMessages([
+                    'phone_number' => 'This phone number is already registered.',
+                ]);
+            }
+
+            $user = User::create([
+                'first_name'   => $request->first_name,
+                'last_name'    => $request->last_name,
+                'email'        => $request->email,
+                'phone_number' => $request->phone_number,
+                'birthday' => $request->birthday,
+                'password'     => $request->password,
+                'status'       => 'unverified',
             ]);
 
-            return redirect()
-                ->route('verification.notice')
-                ->with('mail_error', 'We could not send the verification email. Please check the mail settings and try Resend Verification Email.');
+            Auth::login($user);
+            $request->session()->regenerate();
+        } finally {
+            if ($lockAcquired) {
+                $lock->release();
+            }
         }
 
-        // Redirect to verification notice page instead of login
+        $message = 'Account created. Please continue to the verification page to send your email verification link.';
+        session()->flash('message', $message);
+
+        if ($request->expectsJson()) {
+            return $this->jsonAuthResponse(
+                'verification_pending',
+                $message,
+                [
+                    'redirect' => route('verification.notice'),
+                    'email_status' => 'not_sent',
+                ],
+                201
+            );
+        }
+
         return redirect()
-            ->route('verification.notice')
-            ->with('message', 'Verification email sent. Please check your inbox or spam folder.');
+            ->route('verification.notice');
     }
 
     //VERIFCATION NOTICE
     public function verificationNotice()
     {
+        if (Auth::user()?->hasVerifiedEmail()) {
+            return redirect()->route('landpage')
+                ->with('message', 'Your email is already verified.');
+        }
+
         return view('auth.verify-email');
     }
 
     //VERIFY EMAIL
-    public function verifyEmail(Request $request)
+    public function verifyEmail(Request $request, EmailVerificationTokenService $tokens)
     {
-        $user = User::findOrFail($request->route('id'));
+        $result = $tokens->verify(
+            (string) $request->route('id'),
+            (string) $request->route('token')
+        );
 
+        $user = $result['user'] ?? null;
 
-        if (! hash_equals(
-            (string) $request->route('hash'),
-            sha1($user->getEmailForVerification())
-        )) {
-            abort(403, 'Invalid verification link.');
-        }
-
-        if (! $user->hasVerifiedEmail()) {
-            $user->markEmailAsVerified();
+        if ($result['status'] === 'success' && $user instanceof User) {
             event(new Verified($user));
+
+            if (($user->status ?? 'active') === 'suspended') {
+                return redirect()->route('login.page')
+                    ->with('error', 'This account has been suspended. Please contact support.');
+            }
+
+            Auth::login($user);
+            $request->session()->regenerate();
+
+            return redirect()->route('landpage')
+                ->with('message', 'Your email has been verified. Welcome to Tulong Kabataan!');
         }
 
+        Log::notice('Email verification link rejected.', [
+            'status' => $result['status'],
+            'user_id' => $user instanceof User ? $user->getKey() : null,
+        ]);
 
-        return view('auth.email-verified');
+        $httpStatus = match ($result['status']) {
+            'expired' => 410,
+            'already_used' => 409,
+            default => 400,
+        };
+
+        return response()->view('auth.email-verified', [
+            'status' => $result['status'],
+            'message' => $result['message'],
+        ], $httpStatus);
     }
 
     public function checkVerificationStatus(Request $request)
@@ -421,18 +499,55 @@ class LoginController
     //VERICATION RESEND
     public function resendVerification(Request $request)
     {
+        $user = $request->user();
+
+        if ($user->hasVerifiedEmail()) {
+            $message = 'Your email is already verified.';
+
+            if ($request->expectsJson()) {
+                return $this->jsonAuthResponse('already_verified', $message, [
+                    'redirect' => route('landpage'),
+                ]);
+            }
+
+            return redirect()->route('landpage')->with('message', $message);
+        }
+
         try {
-            $request->user()->sendEmailVerificationNotification();
+            $user->sendEmailVerificationNotification();
         } catch (\Throwable $e) {
             Log::error('Email verification resend failed.', [
-                'user_id' => $request->user()?->getKey(),
+                'user_id' => $user->getKey(),
+                'email_hash' => hash('sha256', (string) $user->email),
                 'error' => $e::class,
             ]);
 
-            return back()->with('mail_error', 'Verification email was not sent because the mail server rejected the current credentials.');
+            $message = 'Verification email was not sent. Please try again in a moment or contact support if it continues.';
+
+            if ($request->expectsJson()) {
+                return $this->jsonAuthResponse('email_sending_failed', $message, [], 503);
+            }
+
+            return back()->with('mail_error', $message);
         }
 
-        return back()->with('message', 'Verification link sent!');
+        $message = 'Verification link sent! Please check your inbox or spam folder.';
+
+        if ($request->expectsJson()) {
+            return $this->jsonAuthResponse('verification_pending', $message, [
+                'email_status' => 'sent',
+            ]);
+        }
+
+        return back()->with('message', $message);
+    }
+
+    private function jsonAuthResponse(string $status, string $message, array $extra = [], int $httpStatus = 200)
+    {
+        return response()->json(array_merge([
+            'status' => $status,
+            'message' => $message,
+        ], $extra), $httpStatus);
     }
 
     public function logout(Request $request)

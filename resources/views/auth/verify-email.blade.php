@@ -35,8 +35,20 @@
             </div>
         @endif
 
+        @if (session('error'))
+            <div class="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-800">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        <div id="resendMessage" class="mb-5 hidden rounded-lg border px-4 py-3 text-sm font-medium"></div>
+
+        @php
+            $verificationEmailSent = filled(Auth::user()?->email_verification_sent_at);
+        @endphp
+
         <p class="mb-7 text-base leading-relaxed text-slate-600 sm:text-lg">
-            Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn't receive the email, we will gladly send you another.
+            Thanks for signing up! Click the button below and we will send a secure verification link to {{ Auth::user()?->email }}. After that, open the email and click the link to verify your account.
         </p>
 
         <div class="mt-5 hidden font-semibold text-indigo-600" id="loadingMessage">
@@ -45,10 +57,10 @@
         </div>
 
         <div id="buttonContainer" class="flex flex-wrap justify-center gap-3">
-            <form method="POST" action="{{ route('verification.send') }}">
+            <form method="POST" action="{{ route('verification.send') }}" id="resendVerificationForm">
                 @csrf
-                <button type="submit" class="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-5 py-3 font-heading text-sm font-semibold text-white transition hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2">
-                    RESEND VERIFICATION EMAIL
+                <button type="submit" id="resendVerificationButton" class="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-5 py-3 font-heading text-sm font-semibold text-white transition hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:bg-slate-400 disabled:opacity-70">
+                    <span id="resendVerificationLabel">{{ $verificationEmailSent ? 'Resend Verification Email' : 'Send Verification Email' }}</span>
                 </button>
             </form>
 
@@ -65,77 +77,147 @@
     @include('partials.logout-confirm-modal')
 
     <script>
-        // Check if user has verified their email every 2 seconds
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        const resendForm = document.getElementById('resendVerificationForm');
+        const resendButton = document.getElementById('resendVerificationButton');
+        const resendLabel = document.getElementById('resendVerificationLabel');
+        const resendMessage = document.getElementById('resendMessage');
+        const buttonContainer = document.getElementById('buttonContainer');
+        const loadingMessage = document.getElementById('loadingMessage');
+        const CHECK_TIMEOUT_MS = 8000;
+        const RESEND_TIMEOUT_MS = 15000;
+        const defaultResendLabel = @json($verificationEmailSent ? 'Resend Verification Email' : 'Send Verification Email');
+        let verificationEmailSent = @json($verificationEmailSent);
         let checkInterval;
-        
-        function checkEmailVerification() {
-            fetch('/check-verification-status', {
-                method: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.verified) {
-                    // Stop checking
-                    clearInterval(checkInterval);
-                    
-                    // Show loading message
-                    document.getElementById('buttonContainer').style.display = 'none';
-                    document.getElementById('loadingMessage').style.display = 'block';
-                    
-                    // Redirect to landing page after a short delay
-                    setTimeout(() => {
-                        window.location.replace('{{ route('landpage') }}');
-                    }, 1500);
-                }
-            })
-            .catch(error => {
-                console.log('Checking verification status...');
-            });
+        let checking = false;
+
+        function fetchWithTimeout(url, options = {}, timeoutMs = CHECK_TIMEOUT_MS) {
+            const controller = new AbortController();
+            const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
+
+            return fetch(url, { ...options, signal: controller.signal })
+                .finally(() => window.clearTimeout(timeout));
         }
-        
-        // Check immediately when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check if coming from verification link (has verified session)
-            @if(session('verified'))
-                // Show loading immediately
-                document.getElementById('buttonContainer').style.display = 'none';
-                document.getElementById('loadingMessage').style.display = 'block';
-                
-                // Redirect to landing page
-                setTimeout(() => {
-                    window.location.replace('{{ route('landpage') }}');
-                }, 1500);
-                return;
-            @endif
 
-            // Otherwise start normal polling
-            checkEmailVerification();
-            checkInterval = setInterval(checkEmailVerification, 2000);
-        });
+        function showResendMessage(type, message) {
+            if (!resendMessage) return;
 
-        // Stop checking when user leaves the page
-        window.addEventListener('beforeunload', function() {
+            const styles = {
+                success: 'border-emerald-200 bg-emerald-50 text-emerald-800',
+                warning: 'border-amber-200 bg-amber-50 text-amber-800',
+                error: 'border-red-200 bg-red-50 text-red-800',
+            };
+
+            resendMessage.className = `mb-5 rounded-lg border px-4 py-3 text-sm font-medium ${styles[type] || styles.error}`;
+            resendMessage.textContent = message;
+            resendMessage.classList.remove('hidden');
+        }
+
+        function redirectHomeSoon() {
             if (checkInterval) {
                 clearInterval(checkInterval);
+                checkInterval = null;
+            }
+
+            buttonContainer.style.display = 'none';
+            loadingMessage.style.display = 'block';
+
+            setTimeout(() => {
+                window.location.replace('{{ route('landpage') }}');
+            }, 1200);
+        }
+
+        async function checkEmailVerification() {
+            if (checking || document.hidden) return;
+            checking = true;
+
+            try {
+                const response = await fetchWithTimeout('{{ route('verification.check') }}', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    credentials: 'same-origin',
+                });
+                const data = await response.json();
+
+                if (data.verified) {
+                    redirectHomeSoon();
+                }
+            } catch (error) {
+                // The page remains usable; the next poll or a manual refresh can recover.
+            } finally {
+                checking = false;
+            }
+        }
+
+        resendForm?.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            window.TKLoadingModal?.show();
+            resendButton.disabled = true;
+            resendLabel.textContent = 'Sending...';
+            showResendMessage('warning', 'Sending a fresh verification email...');
+
+            try {
+                const response = await fetchWithTimeout(resendForm.action, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: new FormData(resendForm),
+                    credentials: 'same-origin',
+                }, RESEND_TIMEOUT_MS);
+                const data = await response.json().catch(() => ({}));
+
+                if (response.ok) {
+                    verificationEmailSent = true;
+                    showResendMessage('success', data.message || 'Verification link sent. Please check your inbox or spam folder.');
+                    return;
+                }
+
+                if (response.status === 429) {
+                    showResendMessage('error', data.message || 'Too many resend attempts. Please wait a moment before trying again.');
+                } else {
+                    showResendMessage('error', data.message || 'The verification email could not be sent. Please try again.');
+                }
+            } catch (error) {
+                showResendMessage(
+                    'warning',
+                    error.name === 'AbortError'
+                        ? 'Sending is taking longer than expected. Please wait a moment and check your inbox before trying again.'
+                        : 'We could not reach the server. Please check your connection and try again.'
+                );
+            } finally {
+                window.TKLoadingModal?.hide();
+                resendButton.disabled = false;
+                resendLabel.textContent = verificationEmailSent ? 'Resend Verification Email' : defaultResendLabel;
             }
         });
 
-        // Handle visibility change (when user switches tabs)
+        document.addEventListener('DOMContentLoaded', function() {
+            checkEmailVerification();
+            checkInterval = setInterval(checkEmailVerification, 3000);
+        });
+
+        window.addEventListener('beforeunload', function() {
+            if (checkInterval) {
+                clearInterval(checkInterval);
+                checkInterval = null;
+            }
+        });
+
         document.addEventListener('visibilitychange', function() {
-            if (document.hidden) {
-                if (checkInterval) {
-                    clearInterval(checkInterval);
-                }
-            } else {
-                // Resume checking when user comes back to tab
-                @if(!session('verified'))
-                    checkEmailVerification();
-                    checkInterval = setInterval(checkEmailVerification, 2000);
-                @endif
+            if (document.hidden && checkInterval) {
+                clearInterval(checkInterval);
+                checkInterval = null;
+            } else if (!document.hidden && !checkInterval) {
+                checkEmailVerification();
+                checkInterval = setInterval(checkEmailVerification, 3000);
             }
         });
     </script>

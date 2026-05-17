@@ -1,177 +1,390 @@
 // =========================
-// form validation
+// registration form UX
 // =========================
+const form = document.getElementById("registerForm");
 const submitBtn = document.getElementById("submitBtn");
+const submitLabel = submitBtn?.querySelector(".register-submit-label");
+const registerMessage = document.getElementById("registerMessage");
+const firstNameInput = document.getElementById("first_name");
+const lastNameInput = document.getElementById("last_name");
 const emailInput = document.getElementById("email");
 const emailFeedback = document.getElementById("emailFeedback");
 const phoneInput = document.getElementById("phone");
 const phoneFeedback = document.getElementById("phoneFeedback");
 const passwordInput = document.getElementById("password");
 const passwordFeedback = document.getElementById("passwordFeedback");
+const birthdayInput = document.getElementById("birthday");
+const birthdayFeedback = document.getElementById("birthdayFeedback");
 const togglePassword = document.getElementById("togglePassword");
 
-function checkFormValidity() {
-    const hasEmailError =
-        emailInput.classList.contains("input-error") ||
-        emailInput.value.trim() === "";
-    const hasPhoneError =
-        phoneInput.classList.contains("input-error") ||
-        phoneInput.value.trim() === "";
-    const hasPasswordError =
-        passwordInput.classList.contains("input-error") ||
-        passwordInput.value.trim() === "";
+const REGISTER_TIMEOUT_MS = 20000;
+const CHECK_TIMEOUT_MS = 6000;
+let isSubmitting = false;
 
-    if (!hasEmailError && !hasPhoneError && !hasPasswordError) {
-        submitBtn.disabled = false;
-    } else {
-        submitBtn.disabled = true;
+const messageStyles = {
+    success: "border-emerald-200 bg-emerald-50 text-emerald-800",
+    warning: "border-amber-200 bg-amber-50 text-amber-800",
+    error: "border-red-200 bg-red-50 text-red-800",
+};
+
+const feedbackMap = {
+    email: { input: emailInput, feedback: emailFeedback },
+    phone_number: { input: phoneInput, feedback: phoneFeedback },
+    birthday: { input: birthdayInput, feedback: birthdayFeedback },
+    password: { input: passwordInput, feedback: passwordFeedback },
+};
+
+function csrfToken() {
+    return document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") || "";
+}
+
+function showMessage(type, message) {
+    if (!registerMessage) return;
+
+    registerMessage.className = `mb-5 rounded-lg border px-4 py-3 text-sm font-medium ${messageStyles[type] || messageStyles.error}`;
+    registerMessage.textContent = message;
+    registerMessage.classList.remove("hidden");
+}
+
+function hideMessage() {
+    registerMessage?.classList.add("hidden");
+}
+
+function setFieldError(field, message) {
+    const target = feedbackMap[field];
+    if (!target) return;
+
+    target.input?.classList.add("input-error");
+    if (target.feedback) {
+        target.feedback.textContent = message || "";
     }
 }
 
-// EMAIL VALIDATION
-emailInput.addEventListener("blur", () => {
-    const email = emailInput.value.trim();
-    const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+function clearFieldError(field) {
+    const target = feedbackMap[field];
+    if (!target) return;
+
+    target.input?.classList.remove("input-error");
+    if (target.feedback) {
+        target.feedback.textContent = "";
+    }
+}
+
+function clearServerErrors() {
+    Object.keys(feedbackMap).forEach(clearFieldError);
+}
+
+function applyValidationErrors(errors = {}) {
+    Object.entries(errors).forEach(([field, messages]) => {
+        const message = Array.isArray(messages) ? messages[0] : messages;
+        setFieldError(field, message);
+    });
+}
+
+function fetchWithTimeout(url, options = {}, timeoutMs = REGISTER_TIMEOUT_MS) {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
+
+    return fetch(url, {
+        ...options,
+        signal: controller.signal,
+    }).finally(() => window.clearTimeout(timeout));
+}
+
+function isFormReady() {
+    const requiredFields = [
+        firstNameInput,
+        lastNameInput,
+        emailInput,
+        phoneInput,
+        birthdayInput,
+        passwordInput,
+    ];
+
+    const hasMissingValue = requiredFields.some((field) => !field || field.value.trim() === "");
+    const hasFieldError = Object.values(feedbackMap).some(({ input }) => input?.classList.contains("input-error"));
+
+    return !hasMissingValue && !hasFieldError;
+}
+
+function checkFormValidity() {
+    if (!submitBtn) return;
+    submitBtn.disabled = isSubmitting || !isFormReady();
+}
+
+function setSubmitting(submitting) {
+    isSubmitting = submitting;
+    if (submitBtn) {
+        submitBtn.disabled = submitting || !isFormReady();
+        submitBtn.setAttribute("aria-busy", submitting ? "true" : "false");
+    }
+    if (submitLabel) {
+        submitLabel.textContent = submitting ? "Creating account..." : "Create account";
+    }
+}
+
+function validateEmail() {
+    const email = emailInput?.value.trim() || "";
 
     if (email === "") {
-        emailFeedback.textContent = "";
-        emailInput.classList.remove("input-error");
+        clearFieldError("email");
         checkFormValidity();
-        return;
+        return false;
     }
 
-    if (!gmailRegex.test(email)) {
-        emailFeedback.textContent = "Invalid Email";
-        emailInput.classList.add("input-error");
+    if (!emailInput.checkValidity()) {
+        setFieldError("email", "Enter a valid email address.");
         checkFormValidity();
-        return;
+        return false;
     }
 
-    fetch(`/check-email?email=${encodeURIComponent(email)}`)
-        .then((res) => res.json())
-        .then((data) => {
-            if (data.exists) {
-                emailFeedback.textContent = "Email already exists!";
-                emailInput.classList.add("input-error");
-            } else {
-                emailFeedback.textContent = "";
-                emailInput.classList.remove("input-error");
-            }
-            checkFormValidity();
-        })
-        .catch((err) => console.error(err));
-});
-
-// PHONE VALIDATION
-phoneInput.addEventListener("input", () => {
-    phoneInput.value = phoneInput.value.replace(/\s+/g, "");
-    phoneInput.classList.remove("input-error");
-    phoneFeedback.textContent = "";
+    clearFieldError("email");
     checkFormValidity();
-});
+    return true;
+}
 
-phoneInput.addEventListener("blur", () => {
-    const phone = phoneInput.value.trim();
+async function checkEmailAvailability() {
+    if (!validateEmail()) return;
+
+    try {
+        const response = await fetchWithTimeout(`/check-email?email=${encodeURIComponent(emailInput.value.trim())}`, {
+            headers: { Accept: "application/json" },
+        }, CHECK_TIMEOUT_MS);
+        const data = await response.json();
+
+        if (data.exists) {
+            setFieldError("email", "Email already exists.");
+        } else {
+            clearFieldError("email");
+        }
+    } catch (error) {
+        clearFieldError("email");
+    }
+
+    checkFormValidity();
+}
+
+function validatePhone() {
+    const phone = phoneInput?.value.trim() || "";
     const phRegex = /^09\d{9}$/;
 
-    if (!phRegex.test(phone) && phone.length > 0) {
-        phoneFeedback.textContent = "Invalid phone number!";
-        phoneInput.classList.add("input-error");
+    if (phone === "") {
+        clearFieldError("phone_number");
         checkFormValidity();
-        return;
+        return false;
     }
 
-    if (phone.length === 11) {
-        fetch(`/check-phone?phone=${encodeURIComponent(phone)}`)
-            .then((res) => res.json())
-            .then((data) => {
-                if (data.exists) {
-                    phoneFeedback.textContent = "Phone number already exists!";
-                    phoneInput.classList.add("input-error");
-                } else {
-                    phoneFeedback.textContent = "";
-                    phoneInput.classList.remove("input-error");
-                }
-                checkFormValidity();
-            })
-            .catch((err) => console.error(err));
-    } else {
+    if (!phRegex.test(phone)) {
+        setFieldError("phone_number", "Enter an 11-digit phone number starting with 09.");
         checkFormValidity();
+        return false;
     }
-});
 
-// PASSWORD VALIDATION
-passwordInput.addEventListener("input", () => {
-    passwordInput.classList.remove("input-error");
-    passwordFeedback.textContent = "";
+    clearFieldError("phone_number");
     checkFormValidity();
-});
+    return true;
+}
 
-passwordInput.addEventListener("blur", () => {
-    const password = passwordInput.value.trim();
-    if (password.length === 0) return;
+async function checkPhoneAvailability() {
+    if (!validatePhone()) return;
+
+    try {
+        const response = await fetchWithTimeout(`/check-phone?phone=${encodeURIComponent(phoneInput.value.trim())}`, {
+            headers: { Accept: "application/json" },
+        }, CHECK_TIMEOUT_MS);
+        const data = await response.json();
+
+        if (data.exists) {
+            setFieldError("phone_number", "Phone number already exists.");
+        } else {
+            clearFieldError("phone_number");
+        }
+    } catch (error) {
+        clearFieldError("phone_number");
+    }
+
+    checkFormValidity();
+}
+
+function validatePassword() {
+    const password = passwordInput?.value.trim() || "";
+
+    if (password === "") {
+        clearFieldError("password");
+        checkFormValidity();
+        return false;
+    }
 
     if (password.length < 8 || password.length > 20) {
-        passwordInput.classList.add("input-error");
-        passwordFeedback.textContent = "Password must be 8 to 20 characters!";
-    } else {
-        passwordInput.classList.remove("input-error");
-        passwordFeedback.textContent = "";
+        setFieldError("password", "Password must be 8 to 20 characters.");
+        checkFormValidity();
+        return false;
     }
+
+    clearFieldError("password");
     checkFormValidity();
-});
+    return true;
+}
 
-// BIRTHDAY VALIDATION
-const birthdayInput = document.getElementById("birthday");
-const birthdayFeedback = document.getElementById("birthdayFeedback");
-
-birthdayInput.addEventListener("change", () => {
-    const birthdayValue = birthdayInput.value;
-    birthdayInput.classList.remove("input-error");
-    birthdayFeedback.textContent = "";
+function validateBirthday() {
+    const birthdayValue = birthdayInput?.value || "";
 
     if (!birthdayValue) {
-        birthdayFeedback.textContent = "Please select your birthday.";
-        birthdayInput.classList.add("input-error");
+        setFieldError("birthday", "Please select your birthday.");
         checkFormValidity();
-        return;
+        return false;
     }
 
     const today = new Date();
-    const birthDate = new Date(birthdayValue);
+    const birthDate = new Date(`${birthdayValue}T00:00:00`);
     if (birthDate > today) {
-        birthdayFeedback.textContent = "Birthday cannot be in the future!";
-        birthdayInput.classList.add("input-error");
+        setFieldError("birthday", "Birthday cannot be in the future.");
         checkFormValidity();
-        return;
+        return false;
     }
 
     const age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
     const dayDiff = today.getDate() - birthDate.getDate();
-
-    const isUnderage =
-        age < 18 ||
-        (age === 18 && (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)));
+    const isUnderage = age < 18 || (age === 18 && (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)));
 
     if (isUnderage) {
-        birthdayFeedback.textContent = "You must be at least 18 years old.";
-        birthdayInput.classList.add("input-error");
-    } else {
-        birthdayFeedback.textContent = "";
-        birthdayInput.classList.remove("input-error");
+        setFieldError("birthday", "You must be at least 18 years old.");
+        checkFormValidity();
+        return false;
     }
 
+    clearFieldError("birthday");
+    checkFormValidity();
+    return true;
+}
+
+function validateBeforeSubmit() {
+    const valid = [
+        validateEmail(),
+        validatePhone(),
+        validateBirthday(),
+        validatePassword(),
+    ].every(Boolean);
+
+    if (!valid) {
+        showMessage("error", "Please fix the highlighted fields before creating your account.");
+    }
+
+    return valid;
+}
+
+emailInput?.addEventListener("input", () => {
+    clearFieldError("email");
+    hideMessage();
     checkFormValidity();
 });
+emailInput?.addEventListener("blur", checkEmailAvailability);
 
-// PASSWORD TOGGLE
-togglePassword.addEventListener("click", () => {
-    const type =
-        passwordInput.getAttribute("type") === "password" ? "text" : "password";
+phoneInput?.addEventListener("input", () => {
+    phoneInput.value = phoneInput.value.replace(/\D+/g, "").slice(0, 11);
+    clearFieldError("phone_number");
+    hideMessage();
+    checkFormValidity();
+});
+phoneInput?.addEventListener("blur", checkPhoneAvailability);
+
+passwordInput?.addEventListener("input", () => {
+    clearFieldError("password");
+    hideMessage();
+    checkFormValidity();
+});
+passwordInput?.addEventListener("blur", validatePassword);
+
+birthdayInput?.addEventListener("change", () => {
+    hideMessage();
+    validateBirthday();
+});
+
+[firstNameInput, lastNameInput].forEach((input) => {
+    input?.addEventListener("input", () => {
+        hideMessage();
+        checkFormValidity();
+    });
+});
+
+togglePassword?.addEventListener("click", () => {
+    const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
     passwordInput.setAttribute("type", type);
     togglePassword.classList.toggle("ri-eye-line");
     togglePassword.classList.toggle("ri-eye-off-line");
+});
+
+form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    if (isSubmitting) return;
+    clearServerErrors();
+
+    if (!validateBeforeSubmit()) {
+        checkFormValidity();
+        return;
+    }
+
+    let willRedirect = false;
+    setSubmitting(true);
+    window.TKLoadingModal?.show();
+    showMessage("warning", "Creating your account...");
+
+    try {
+        const response = await fetchWithTimeout(form.action, {
+            method: "POST",
+            headers: {
+                Accept: "application/json",
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRF-TOKEN": csrfToken(),
+            },
+            body: new FormData(form),
+            credentials: "same-origin",
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (response.ok) {
+            const messageType = data.status === "email_sending_failed" ? "warning" : "success";
+            showMessage(messageType, data.message || "Account created. Please continue to email verification.");
+
+            if (data.redirect) {
+                willRedirect = true;
+                window.setTimeout(() => {
+                    window.location.assign(data.redirect);
+                }, messageType === "warning" ? 1200 : 700);
+            } else {
+                window.TKLoadingModal?.hide();
+            }
+            return;
+        }
+
+        if (response.status === 422 && data.errors) {
+            applyValidationErrors(data.errors);
+            showMessage("error", data.message || "Please check the highlighted fields.");
+        } else if (response.status === 419) {
+            showMessage("error", "Your session expired. Please refresh the page and try again.");
+        } else if (response.status === 429) {
+            showMessage("error", data.message || "Too many attempts. Please wait a moment before trying again.");
+        } else {
+            showMessage("error", data.message || "Registration failed. Please try again.");
+        }
+    } catch (error) {
+        const timedOut = error.name === "AbortError";
+        showMessage(
+            "warning",
+            timedOut
+                ? "This is taking longer than expected. Please wait a moment, then try again."
+                : "We could not reach the server. Please check your connection and try again."
+        );
+    } finally {
+        if (!willRedirect) {
+            window.TKLoadingModal?.hide();
+            setSubmitting(false);
+            checkFormValidity();
+        }
+    }
 });
 
 // =========================
@@ -214,5 +427,4 @@ if (images.length > 0) {
     updateImage();
 }
 
-// Initial check
 checkFormValidity();

@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Register | Tulong Kabataan</title>
     <link rel="icon" href="{{ page_media_url('site_favicon', asset('img/log2.png')) }}" type="image/png">
     <link rel="preload" as="image" href="{{ page_media_url('register_background', asset('img/backlogin.png')) }}">
@@ -77,20 +78,34 @@
                 $feedbackClass = 'mt-1 block min-h-4 text-xs leading-4 text-red-600';
             @endphp
 
-            <form action="{{ route('register.acc') }}" method="POST" class="flex flex-col gap-5">
+            <div id="registerMessage" class="mb-5 hidden rounded-lg border px-4 py-3 text-sm font-medium"></div>
+
+            @if (session('error'))
+                <div class="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-800">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            @if ($errors->any())
+                <div class="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-800">
+                    {{ $errors->first() }}
+                </div>
+            @endif
+
+            <form action="{{ route('register.acc') }}" method="POST" id="registerForm" class="flex flex-col gap-5">
                 @csrf
 
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div>
                         <div class="relative">
-                            <input type="text" placeholder=" " name="first_name" required class="{{ $inputClass }}">
+                            <input type="text" id="first_name" placeholder=" " name="first_name" value="{{ old('first_name') }}" required class="{{ $inputClass }} @error('first_name') input-error @enderror">
                             <label class="{{ $labelClass }}">First Name</label>
                         </div>
                     </div>
 
                     <div>
                         <div class="relative">
-                            <input type="text" placeholder=" " name="last_name" required class="{{ $inputClass }}">
+                            <input type="text" id="last_name" placeholder=" " name="last_name" value="{{ old('last_name') }}" required class="{{ $inputClass }} @error('last_name') input-error @enderror">
                             <label class="{{ $labelClass }}">Last Name</label>
                         </div>
                     </div>
@@ -98,43 +113,43 @@
 
                 <div>
                     <div class="relative">
-                        <input type="email" id="email" placeholder=" " name="email" required class="{{ $inputClass }}">
+                        <input type="email" id="email" placeholder=" " name="email" value="{{ old('email') }}" required class="{{ $inputClass }} @error('email') input-error @enderror">
                         <label class="{{ $labelClass }}">Email</label>
                     </div>
-                    <span id="emailFeedback" class="{{ $feedbackClass }}"></span>
+                    <span id="emailFeedback" class="{{ $feedbackClass }}">@error('email'){{ $message }}@enderror</span>
                 </div>
 
                 <div>
                     <div class="relative">
-                        <input type="tel" id="phone" placeholder=" " name="phone_number" required
-                            inputmode="numeric" pattern="09[0-9]{9}" maxlength="11" class="{{ $inputClass }}">
+                        <input type="tel" id="phone" placeholder=" " name="phone_number" value="{{ old('phone_number') }}" required
+                            inputmode="numeric" pattern="09[0-9]{9}" maxlength="11" class="{{ $inputClass }} @error('phone_number') input-error @enderror">
                         <label class="{{ $labelClass }}">Contact Number</label>
                     </div>
-                    <span id="phoneFeedback" class="{{ $feedbackClass }}"></span>
+                    <span id="phoneFeedback" class="{{ $feedbackClass }}">@error('phone_number'){{ $message }}@enderror</span>
                 </div>
 
                 <div>
                     <div class="relative">
-                        <input type="date" id="birthday" name="birthday" required class="{{ $inputClass }}">
+                        <input type="date" id="birthday" name="birthday" value="{{ old('birthday') }}" required class="{{ $inputClass }} @error('birthday') input-error @enderror">
                         <label class="{{ $staticLabelClass }}">Birthday</label>
                     </div>
-                    <span id="birthdayFeedback" class="{{ $feedbackClass }}"></span>
+                    <span id="birthdayFeedback" class="{{ $feedbackClass }}">@error('birthday'){{ $message }}@enderror</span>
                 </div>
 
                 <div>
                     <div class="relative">
                         <input type="password" id="password" placeholder=" " name="password" required
-                            class="{{ $inputClass }} pr-10">
+                            class="{{ $inputClass }} pr-10 @error('password') input-error @enderror">
                         <label class="{{ $labelClass }}">Password</label>
                         <i class="password-toggle ri-eye-off-line absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-lg text-gray-500 transition hover:text-indigo-600"
                             id="togglePassword"></i>
                     </div>
-                    <span id="passwordFeedback" class="{{ $feedbackClass }}"></span>
+                    <span id="passwordFeedback" class="{{ $feedbackClass }}">@error('password'){{ $message }}@enderror</span>
                 </div>
 
                 <button id="submitBtn" type="submit" disabled
                     class="mt-2 w-full rounded-lg border-0 bg-indigo-600 py-3.5 font-heading text-lg font-semibold text-white transition hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:bg-gray-400 disabled:opacity-70 disabled:hover:bg-gray-400">
-                    Create account
+                    <span class="register-submit-label">Create account</span>
                 </button>
             </form>
         </div>

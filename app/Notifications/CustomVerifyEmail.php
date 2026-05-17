@@ -4,11 +4,14 @@ namespace App\Notifications;
 
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\URL;
+use App\Services\Auth\EmailVerificationTokenService;
 
 class CustomVerifyEmail extends Notification
 {
+    public function __construct(private readonly string $token)
+    {
+    }
+
     public function via($notifiable)
     {
         return ['mail'];
@@ -16,12 +19,11 @@ class CustomVerifyEmail extends Notification
 
     protected function verificationUrl($notifiable)
     {
-        return URL::temporarySignedRoute(
+        return route(
             'verification.verify',
-            Carbon::now()->addMinutes(60),
             [
                 'id' => $notifiable->getKey(),
-                'hash' => sha1($notifiable->getEmailForVerification()),
+                'token' => $this->token,
             ]
         );
     }
@@ -35,6 +37,7 @@ class CustomVerifyEmail extends Notification
             ->view('emails.verify_email', [
                 'user' => $notifiable,
                 'verifyUrl' => $verifyUrl,
+                'expiresInMinutes' => app(EmailVerificationTokenService::class)->expiresInMinutes(),
             ]);
     }
 }
