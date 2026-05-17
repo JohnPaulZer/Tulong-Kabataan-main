@@ -61,15 +61,15 @@
         $shareUrl = route('campaign.view', $campaign->campaign_id);
     @endphp
 
-    <main class="mx-auto w-full max-w-[1180px] px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
-        <div class="mb-6 flex items-center justify-between gap-4">
+    <main class="campaign-view-main mx-auto w-full max-w-[1180px] px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+        <div class="campaign-view-topbar mb-6 flex items-center justify-between gap-4">
             <a href="{{ route('campaignpage') }}"
                 class="inline-flex items-center gap-2 rounded-lg px-1 py-2 text-sm font-medium text-slate-600 no-underline transition hover:text-indigo-600 focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-indigo-300">
                 <i class="ri-arrow-left-line text-lg" aria-hidden="true"></i>
                 <span>Back to Community Projects</span>
             </a>
 
-            <div class="flex shrink-0 items-center gap-2">
+            <div class="campaign-view-actions flex shrink-0 items-center gap-2">
                 <button type="button"
                     class="campaign-share-btn inline-flex size-10 items-center justify-center rounded-full border border-slate-200 bg-white text-lg text-slate-600 shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-600 focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-indigo-300"
                     aria-label="Share this campaign" data-share-url="{{ $shareUrl }}"
@@ -84,25 +84,25 @@
             </div>
         </div>
 
-        <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_370px] lg:items-start">
-            <div class="min-w-0">
-                <div class="mb-4">
+        <div class="campaign-view-layout grid gap-8 lg:grid-cols-[minmax(0,1fr)_370px] lg:items-start">
+            <div class="campaign-view-content min-w-0">
+                <div class="campaign-view-category mb-4">
                     <span
                         class="inline-flex items-center rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">
                         {{ $categoryLabel }}
                     </span>
                 </div>
 
-                <h1 class="max-w-3xl font-heading text-[clamp(1.85rem,4vw,2.75rem)] font-bold leading-tight text-slate-900">
+                <h1 class="campaign-view-title max-w-3xl font-heading text-[clamp(1.85rem,4vw,2.75rem)] font-bold leading-tight text-slate-900">
                     {{ $campaign->title }}
                 </h1>
 
-                <figure class="mt-5 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_16px_38px_rgba(15,23,42,0.08)]">
+                <figure class="campaign-view-cover mt-5 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_16px_38px_rgba(15,23,42,0.08)]">
                     <img src="{{ $coverImage }}" alt="{{ $campaign->title }} campaign cover"
                         class="aspect-[16/10] w-full object-cover sm:aspect-[16/9]" loading="eager" decoding="async">
                 </figure>
 
-                <div class="mt-4 flex flex-wrap items-center gap-3">
+                <div class="campaign-view-meta mt-4 flex flex-wrap items-center gap-3">
                     <span
                         class="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
                         <i class="ri-eye-line text-indigo-600" aria-hidden="true"></i>
@@ -120,7 +120,7 @@
                     </span>
                 </div>
 
-                <section class="mt-9">
+                <section class="campaign-view-section campaign-view-about mt-9">
                     <h2 class="font-heading text-2xl font-bold text-slate-900">About the Campaign</h2>
                     <div class="mt-4 space-y-4 text-[15px] leading-7 text-slate-600 sm:text-base">
                         @forelse ($descriptionParagraphs as $paragraph)
@@ -131,7 +131,7 @@
                     </div>
                 </section>
 
-                <section class="mt-10">
+                <section class="campaign-view-section campaign-view-updates mt-10">
                     <div class="mb-4 flex items-center justify-between gap-3">
                         <h2 class="font-heading text-2xl font-bold text-slate-900">Latest Updates</h2>
                         @if ($campaign->updates->count() > 0)
@@ -231,8 +231,8 @@
                 </section>
             </div>
 
-            <aside class="space-y-5 lg:sticky lg:top-[112px]">
-                <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_14px_34px_rgba(15,23,42,0.08)]">
+            <aside class="campaign-view-sidebar space-y-5 lg:sticky lg:top-[112px]">
+                <section class="campaign-view-donate-card rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_14px_34px_rgba(15,23,42,0.08)]">
                     <p class="font-heading text-3xl font-bold text-indigo-700">&#8369;{{ number_format($campaign->current_amount, 0) }}</p>
                     <p class="mt-1 text-sm text-slate-500">raised of &#8369;{{ number_format($campaign->target_amount, 0) }} goal</p>
 
@@ -259,7 +259,7 @@
                     </p>
                 </section>
 
-                <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_10px_26px_rgba(15,23,42,0.06)]">
+                <section class="campaign-view-organizer-card rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_10px_26px_rgba(15,23,42,0.06)]">
                     <h2 class="text-sm font-bold text-slate-900">Organizer</h2>
                     <div class="mt-4 flex items-center gap-3">
                         @if ($organizerAvatar)
@@ -292,7 +292,7 @@
                     @endif
                 </section>
 
-                <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_10px_26px_rgba(15,23,42,0.06)]">
+                <section class="campaign-view-donations-card rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_10px_26px_rgba(15,23,42,0.06)]">
                     <div class="mb-3 flex items-center justify-between gap-3">
                         <h2 class="text-sm font-bold text-slate-900">Recent Donations</h2>
                         <span class="text-xs font-medium text-slate-500">{{ number_format($campaign->donor_count) }} total</span>
@@ -339,7 +339,7 @@
                     </button>
                 </section>
 
-                <section class="rounded-2xl border border-slate-200 bg-white/85 p-4 shadow-[0_6px_18px_rgba(15,23,42,0.04)]">
+                <section class="campaign-view-safety-card rounded-2xl border border-slate-200 bg-white/85 p-4 shadow-[0_6px_18px_rgba(15,23,42,0.04)]">
                     <div class="flex gap-3">
                         <div class="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-indigo-50 text-indigo-600">
                             <i class="ri-lock-2-line" aria-hidden="true"></i>
