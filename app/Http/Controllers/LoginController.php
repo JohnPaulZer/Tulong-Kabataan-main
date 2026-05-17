@@ -24,6 +24,7 @@ use App\Models\EventRegistration;
 use App\Models\SiteSetting;
 use App\Models\VerificationRequest;
 use App\Services\Auth\EmailVerificationTokenService;
+use App\Services\Security\TurnstileService;
 
 class LoginController
 {
@@ -96,18 +97,21 @@ class LoginController
 
     public function loginaccount(Request $request)
     {
+        $request->merge([
+            'email' => Str::lower(trim((string) $request->input('email'))),
+        ]);
+
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
 
-        $credentials = $request->only('email', 'password');
+        $user = User::where('email', $request->email)->first();
 
-        if (Auth::attempt($credentials)) {
+        if ($user && $this->passwordMatchesUser($user, (string) $request->password, true)) {
+            Auth::login($user);
             $request->session()->regenerate();
-            $user = Auth::user();
 
-            // Block suspended accounts
             if (($user->status ?? 'active') === 'suspended') {
                 Auth::logout();
                 $request->session()->invalidate();
@@ -115,13 +119,11 @@ class LoginController
                 return back()->with('error', 'This account has been suspended. Please contact support.');
             }
 
-            // If not verified, keep them logged in but force them to the notice page
             if (!$user->hasVerifiedEmail()) {
                 return redirect()
                     ->route('verification.notice')
-                    ->with('message', 'Please verify your email. We can resend the link.');
+                    ->with('message', 'Please verify your email before continuing. You can send or resend the verification link here.');
             }
-
 
             return redirect()->route('landpage');
         }
@@ -294,14 +296,17 @@ class LoginController
 
 
     //   ===============================================REGISTER CONTROLLER PART==========================================
-    public function registerpage()
+    public function registerpage(TurnstileService $turnstile)
     {
         if (!SiteSetting::isTrue('user.registration.enabled')) {
             return redirect()->route('login.page')
                 ->with('error', 'New account registration is currently disabled.');
         }
 
-        return view('login.registerpage');
+        return view('login.registerpage', [
+            'turnstileEnabled' => $turnstile->enabled(),
+            'turnstileSiteKey' => $turnstile->siteKey(),
+        ]);
     }
 
     public function checkEmail(Request $request)
@@ -326,7 +331,7 @@ class LoginController
         return response()->json(['exists' => $exists]);
     }
 
-    public function registeraccount(Request $request)
+    public function registeraccount(Request $request, TurnstileService $turnstile)
     {
         if (!SiteSetting::isTrue('user.registration.enabled')) {
             if ($request->expectsJson()) {
@@ -355,10 +360,18 @@ class LoginController
             'phone_number' => 'required|regex:/^09\d{9}$/',
             'birthday' => 'required|date|before_or_equal:' . now()->subYears(18)->toDateString(),
             'password'     => 'required|min:8|max:20',
+            'cf-turnstile-response' => $turnstile->enabled() ? 'required|string|max:2048' : 'nullable|string|max:2048',
         ], [
             'birthday.before_or_equal' => 'You must be at least 18 years old.',
             'phone_number.regex' => 'Enter an 11-digit phone number starting with 09.',
+            'cf-turnstile-response.required' => 'Please complete the security check.',
         ]);
+
+        if (! $turnstile->verifyRequest($request, 'register')) {
+            throw ValidationException::withMessages([
+                'cf-turnstile-response' => $turnstile->failureMessage(),
+            ]);
+        }
 
         $lock = Cache::lock('registration:' . hash('sha256', (string) $request->email), 15);
         $lockAcquired = false;
@@ -371,7 +384,33 @@ class LoginController
             }
             $lockAcquired = true;
 
-            if (User::where('email', $request->email)->exists()) {
+            $existingUser = User::where('email', $request->email)->first();
+            if ($existingUser) {
+                if (
+                    ! $existingUser->hasVerifiedEmail()
+                    && ($existingUser->status ?? 'active') !== 'suspended'
+                    && $this->passwordMatchesUser($existingUser, (string) $request->password, true)
+                ) {
+                    Auth::login($existingUser);
+                    $request->session()->regenerate();
+
+                    $message = 'This account is already waiting for email verification. Please continue from the verification page.';
+                    session()->flash('message', $message);
+
+                    if ($request->expectsJson()) {
+                        return $this->jsonAuthResponse(
+                            'verification_pending',
+                            $message,
+                            [
+                                'redirect' => route('verification.notice'),
+                                'email_status' => filled($existingUser->email_verification_sent_at) ? 'sent' : 'not_sent',
+                            ]
+                        );
+                    }
+
+                    return redirect()->route('verification.notice');
+                }
+
                 throw ValidationException::withMessages([
                     'email' => 'This email is already registered. Please log in or use the verification resend option.',
                 ]);
@@ -389,7 +428,7 @@ class LoginController
                 'email'        => $request->email,
                 'phone_number' => $request->phone_number,
                 'birthday' => $request->birthday,
-                'password'     => $request->password,
+                'password'     => Hash::make($request->password),
                 'status'       => 'unverified',
             ]);
 
@@ -548,6 +587,34 @@ class LoginController
             'status' => $status,
             'message' => $message,
         ], $extra), $httpStatus);
+    }
+
+    private function passwordMatchesUser(User $user, string $password, bool $repairLegacyPlaintext = false): bool
+    {
+        $stored = (string) ($user->password ?? '');
+        if ($stored === '') {
+            return false;
+        }
+
+        if (password_get_info($stored)['algo'] === 0) {
+            if (! $repairLegacyPlaintext || ! hash_equals($stored, $password)) {
+                return false;
+            }
+
+            $user->forceFill(['password' => Hash::make($password)])->save();
+
+            Log::warning('Rehashed legacy plaintext user password during authentication.', [
+                'user_id' => $user->getKey(),
+            ]);
+
+            return true;
+        }
+
+        try {
+            return Hash::check($password, $stored);
+        } catch (\Throwable) {
+            return false;
+        }
     }
 
     public function logout(Request $request)

@@ -8,6 +8,9 @@
     <title>Register | Tulong Kabataan</title>
     <link rel="icon" href="{{ page_media_url('site_favicon', asset('img/log2.png')) }}" type="image/png">
     <link rel="preload" as="image" href="{{ page_media_url('register_background', asset('img/backlogin.png')) }}">
+    @if ($turnstileEnabled ?? false)
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    @endif
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
@@ -76,6 +79,7 @@
                 $staticLabelClass =
                     'form-label pointer-events-none absolute left-2.5 top-0 z-10 -translate-y-1/2 bg-white px-1 text-[0.8rem] text-indigo-600 transition-all duration-200';
                 $feedbackClass = 'mt-1 block min-h-4 text-xs leading-4 text-red-600';
+                $turnstileInputClass = 'mt-1 block min-h-4 text-xs leading-4 text-red-600';
             @endphp
 
             <div id="registerMessage" class="mb-5 hidden rounded-lg border px-4 py-3 text-sm font-medium"></div>
@@ -146,6 +150,19 @@
                     </div>
                     <span id="passwordFeedback" class="{{ $feedbackClass }}">@error('password'){{ $message }}@enderror</span>
                 </div>
+
+                @if ($turnstileEnabled ?? false)
+                    <div>
+                        <div class="cf-turnstile"
+                            data-sitekey="{{ $turnstileSiteKey }}"
+                            data-action="register"
+                            data-theme="light"
+                            data-callback="onRegisterTurnstileSuccess"
+                            data-expired-callback="onRegisterTurnstileExpired"
+                            data-error-callback="onRegisterTurnstileError"></div>
+                        <span id="turnstileFeedback" class="{{ $turnstileInputClass }}">@error('cf-turnstile-response'){{ $message }}@enderror</span>
+                    </div>
+                @endif
 
                 <button id="submitBtn" type="submit" disabled
                     class="mt-2 w-full rounded-lg border-0 bg-indigo-600 py-3.5 font-heading text-lg font-semibold text-white transition hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:bg-gray-400 disabled:opacity-70 disabled:hover:bg-gray-400">

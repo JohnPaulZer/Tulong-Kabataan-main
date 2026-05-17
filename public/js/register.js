@@ -16,6 +16,8 @@ const passwordFeedback = document.getElementById("passwordFeedback");
 const birthdayInput = document.getElementById("birthday");
 const birthdayFeedback = document.getElementById("birthdayFeedback");
 const togglePassword = document.getElementById("togglePassword");
+const turnstileFeedback = document.getElementById("turnstileFeedback");
+const hasTurnstile = Boolean(document.querySelector(".cf-turnstile"));
 
 const REGISTER_TIMEOUT_MS = 20000;
 const CHECK_TIMEOUT_MS = 6000;
@@ -32,6 +34,7 @@ const feedbackMap = {
     phone_number: { input: phoneInput, feedback: phoneFeedback },
     birthday: { input: birthdayInput, feedback: birthdayFeedback },
     password: { input: passwordInput, feedback: passwordFeedback },
+    "cf-turnstile-response": { input: null, feedback: turnstileFeedback },
 };
 
 function csrfToken() {
@@ -70,6 +73,31 @@ function clearFieldError(field) {
     }
 }
 
+function turnstileToken() {
+    return form?.querySelector('[name="cf-turnstile-response"]')?.value || "";
+}
+
+function resetTurnstile() {
+    if (hasTurnstile && window.turnstile?.reset) {
+        window.turnstile.reset();
+    }
+}
+
+window.onRegisterTurnstileSuccess = function () {
+    clearFieldError("cf-turnstile-response");
+    checkFormValidity();
+};
+
+window.onRegisterTurnstileExpired = function () {
+    setFieldError("cf-turnstile-response", "The security check expired. Please try again.");
+    checkFormValidity();
+};
+
+window.onRegisterTurnstileError = function () {
+    setFieldError("cf-turnstile-response", "The security check could not load. Please refresh and try again.");
+    checkFormValidity();
+};
+
 function clearServerErrors() {
     Object.keys(feedbackMap).forEach(clearFieldError);
 }
@@ -103,8 +131,9 @@ function isFormReady() {
 
     const hasMissingValue = requiredFields.some((field) => !field || field.value.trim() === "");
     const hasFieldError = Object.values(feedbackMap).some(({ input }) => input?.classList.contains("input-error"));
+    const hasMissingTurnstile = hasTurnstile && turnstileToken() === "";
 
-    return !hasMissingValue && !hasFieldError;
+    return !hasMissingValue && !hasFieldError && !hasMissingTurnstile;
 }
 
 function checkFormValidity() {
@@ -269,9 +298,17 @@ function validateBeforeSubmit() {
 
     if (!valid) {
         showMessage("error", "Please fix the highlighted fields before creating your account.");
+        return false;
     }
 
-    return valid;
+    if (hasTurnstile && turnstileToken() === "") {
+        setFieldError("cf-turnstile-response", "Please complete the security check.");
+        showMessage("error", "Please complete the security check before creating your account.");
+        return false;
+    }
+
+    clearFieldError("cf-turnstile-response");
+    return true;
 }
 
 emailInput?.addEventListener("input", () => {
@@ -349,11 +386,10 @@ form?.addEventListener("submit", async (event) => {
             const messageType = data.status === "email_sending_failed" ? "warning" : "success";
             showMessage(messageType, data.message || "Account created. Please continue to email verification.");
 
-            if (data.redirect) {
+            const redirectUrl = data.redirect || (data.status === "verification_pending" ? "/email/verify" : "");
+            if (redirectUrl) {
                 willRedirect = true;
-                window.setTimeout(() => {
-                    window.location.assign(data.redirect);
-                }, messageType === "warning" ? 1200 : 700);
+                window.location.replace(redirectUrl);
             } else {
                 window.TKLoadingModal?.hide();
             }
@@ -363,12 +399,16 @@ form?.addEventListener("submit", async (event) => {
         if (response.status === 422 && data.errors) {
             applyValidationErrors(data.errors);
             showMessage("error", data.message || "Please check the highlighted fields.");
+            resetTurnstile();
         } else if (response.status === 419) {
             showMessage("error", "Your session expired. Please refresh the page and try again.");
+            resetTurnstile();
         } else if (response.status === 429) {
             showMessage("error", data.message || "Too many attempts. Please wait a moment before trying again.");
+            resetTurnstile();
         } else {
             showMessage("error", data.message || "Registration failed. Please try again.");
+            resetTurnstile();
         }
     } catch (error) {
         const timedOut = error.name === "AbortError";
@@ -378,6 +418,7 @@ form?.addEventListener("submit", async (event) => {
                 ? "This is taking longer than expected. Please wait a moment, then try again."
                 : "We could not reach the server. Please check your connection and try again."
         );
+        resetTurnstile();
     } finally {
         if (!willRedirect) {
             window.TKLoadingModal?.hide();
