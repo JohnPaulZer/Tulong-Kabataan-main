@@ -1,6 +1,6 @@
 # Tulong Kabataan
 
-Tulong Kabataan is a web-based donation, campaign, volunteer, and community support platform. It helps users browse active campaigns, donate through a QR/payment proof flow, track donation activity, register for volunteer events, submit in-kind donations, and view transparency updates about how donations are used.
+Tulong Kabataan is a web-based donation, campaign, volunteer, and community support platform. It helps users browse active campaigns, donate through a QR/payment proof flow, track donation activity, register for volunteer events, submit in-kind donations, and view transparency updates about how donations are used. 
 
 Live website: **https://tkb-staging.tulongkabataanbicol.com/**
 
